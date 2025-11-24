@@ -1,0 +1,128 @@
+@use '../../../theme/fgstore.web/style/variable.scss' as *;
+
+
+.smr_AppointmentBanner {
+  width: 100%;
+  height: 650px;
+  display: grid;
+  place-content: center;
+  font-family: $Pratafonts;
+  margin-bottom: 4rem;
+
+  @media (max-width: 920px) {
+    height: auto;
+  }
+
+  .center_mode_banner {
+    width: 60%;
+    height: 100%;
+    margin-right: 30rem;
+
+    @media (max-width: 1284px) {
+      margin-right: 25rem;
+    }
+    @media (max-width: 1180px) {
+      margin-right: 10rem;
+    }
+    @media (max-width: 920px) {
+      margin-right: 0;
+      width: 100%;
+      margin-top: 2rem;
+    }
+
+    .image_banner_smr {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+
+      .banner-img {
+        object-fit: cover;
+      }
+
+      @media (max-width: 920px) {
+        .banner-img {
+          object-fit: cover !important;
+          width: 100% !important;
+        }
+      }
+
+      .content_detail_smr {
+        position: absolute;
+        top: 25%;
+        right: -70%;
+        width: 85%;
+        background-color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px,
+          rgba(0, 0, 0, 0.08) 0px 0px 1px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 5rem 3rem;
+        z-index: 10;
+
+        @media (max-width: 920px) {
+          position: relative;
+          right: 0;
+          top: unset;
+          width: unset ;
+          height: auto;
+          padding: 3rem 1rem;
+        }
+
+        h1 {
+          font-size: 38px;
+          line-height: 46px;
+          font-weight: 400;
+
+          @media (max-width: 768px) {
+            font-size: 32px;
+            line-height: 45px;
+          }
+        }
+
+        p {
+          font-family: $Pfonts;
+          font-size: 16px;
+          line-height: 24px;
+          font-weight: 300;
+          margin: 1.5rem 0;
+          text-align: justify;
+          text-wrap: pretty;
+
+          @media (max-width: 768px) {
+            font-size: 14px;
+            line-height: 20px;
+          }
+        }
+
+        .banner-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1.5rem;
+          padding: 10px 45px;
+          border: 1px solid #000;
+          font-size: 18px;
+          font-family: $Pfonts;
+          text-transform: uppercase;
+          color: #000;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.3s ease-in-out;
+          text-decoration: none;
+
+          &:hover {
+            background: #000;
+            color: #fff;
+
+            .moving-arrow {
+              transform: translateX(50%);
+              transition: transform 0.3s ease;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,141 @@
+@use '../../../theme/fgstore.web/style/variable.scss' as *;
+
+
+.smr_newsletter-signup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-inline: 15px;
+  font-family: $primaryFontFamily;
+  margin: 40px 0px 20px 0px;
+  text-align: center;
+  padding-top: 1rem;
+
+  .icon {
+    margin-bottom: 4px;
+    margin-top: 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    padding-inline: 10px;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+
+  .email-input {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+
+    .email-input-with-error {
+      display: flex;
+      flex-direction: column;
+   
+
+      input {
+        padding: 8.2px 12px;
+        font-size: $fontSize2;
+        border: 1px solid #ccc;
+        margin-right: 20px;
+        outline: none;
+        color: $primaryfontcolor;
+        width: 250px;
+
+        &:focus {
+          border-color: #000;
+        }
+      }
+
+      .for-error-message-news {
+        display: flex;
+        width: 15.5rem;
+        text-align: justify;
+      }
+    }
+
+    button {
+      padding: 8px 20px;
+      font-size: $fontSize2;
+      height: 2.4rem;
+    }
+    .btn_for_new{
+      background: $btnBg ;
+      color: $btncolor;
+      border: none;
+      &:hover{
+        transition: 0.2s ease-in-out;
+      }
+    }
+  }
+
+  .disclaimer {
+    font-size: $fontSize1;
+    color: $primaryfontcolor2;
+    margin-top: 20px;
+    width: 500px;
+    padding: 0;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .newslatterEmail {
+    a {
+      text-decoration: none;
+      color: $primaryfontcolor2;
+      font-size: $fontSize1;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .sub-text {
+      font-size: 12px;
+      margin-left: -10px;
+      font-weight: 400;
+      text-align: left;
+      color: black;
+    }
+
+    .email-input {
+      flex-direction: column;
+      width: 100%;
+
+      .email-input-with-error {
+        width: 100%;
+
+        input {
+          border-radius: 1px;
+          margin-bottom: 2px;
+          width: 100%;
+        }
+
+        .for-error-message-news{
+          width: 100%;
+          margin-bottom: 2px;
+        }
+      }
+
+      button {
+        border-radius: 1px;
+        width: 100%;
+      }
+    }
+
+    .disclaimer {
+      width: 100%;
+      text-align: left;
+    }
+  }
+}

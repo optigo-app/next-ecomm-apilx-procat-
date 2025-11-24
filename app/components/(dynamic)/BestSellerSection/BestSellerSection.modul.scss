@@ -1,0 +1,285 @@
+//backgroundcolors
+
+:root {
+    --primary-background-smr: black;
+    --primary-color-smr: black;
+  }
+  
+  $backgroundColor: var(--background-color);
+  // $backgroundColor:  storeInit?.IsPLW == 1 ? #c4cfdb :#c0bbb1 ;
+  $btn1bgColor: #fff;
+  $btn1ActivebgColor: #7d7f85;
+  
+
+  
+  @keyframes scaleUpDown {
+    0% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(1.1);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  //fontcolors
+  $primaryfontcolor: #8f8c8be6;
+  $primaryfontcolor2: #7d7f85;
+  // $primaryfontcolor:#8f8c8b;
+  $homePageFontColor: #7d7f85;
+  $titleColor: #7d7f85;
+  $btn1FontColor: #7d7f85;
+  $btn1hoverColor: #7d7f85;
+  $btn1hoverFontColor: #fff;
+  $primaryfontcolorLight: #7d7f856e;
+  
+  //fontFamily
+  $homePageFontFamily: "PanText-Regular", serif;
+  // $homePageFontFamily: "FreightDispProMedium-Regular,Times New Roman,serif";
+  // $primaryFontFamily:"Rubik", sans-serif;
+  $primaryFontFamily: "PanDisplay-Regular", serif;
+  // $primaryFontFamily: "TT Commons Regular";
+  // $primaryFontFamily:"Roboto", sans-serif;
+  $primaryFontFamilyMedium: "PanText-Regular", serif;
+  // $primaryFontFamilyMedium: "TT Commons Medium";
+  // $primaryFontFamilyMedium:"Roboto", sans-serif;
+  $Pfonts : "PanText-Regular",
+  serif;
+  $Pratafonts : "PanText-Regular",
+  serif;
+  
+  
+  
+  //fontSize
+  $fontSize0: 10px;
+  $fontSize1: 12px;
+  $fontSize2: 14px;
+  $fontSize3: 16px;
+  $fontSize4: 18px;
+  $fontSize5: 22px;
+  $fontSize6: 28px;
+  $fontSize7: 35px;
+  $fontSize8: 40px;
+  
+  //borderColor
+  $primaryBorderColor: #e1e1e1;
+  $primaryBorderColor2: #42424233;
+  
+  // $bgColor: #c0bbb1;  // Light gray background
+  $bgColor: white; // Light gray background
+  $textColor: #1B1212; // Dark gray text color
+  $menuColor : #7D7F85;
+  $navbarbg : black;
+  $navbarcolor : white;
+  $badgecolor : white;
+  $badgetxtcolor : black;
+  $footerbg: black;
+  $footertextcolor: white;
+  $sliderbar: #7d7f85;
+  $btnBg: black;
+  $btncolor: white;
+  $authbtnbg: black;
+  $authbtncolor :white;
+  $footertextcolor : white;
+  $menutitle: black;
+  
+
+
+.proCat_bestSallerMain {
+
+    margin-top: 10px;
+
+    .linkingLoveMain {
+        display: flex;
+        margin-inline: 0px;
+        padding-block: 3%;
+    }
+
+    .linkingLove {
+        width: 70%;
+        /* border-bottom: 1px solid; */
+    }
+
+    .linkingLoveImage {
+        width: 40%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* border: 1px solid; */
+        margin-right: 10px;
+    }
+
+    .linkingTitle {
+        // color: $homePageFontColor;
+        // font-family: $homePageFontFamily;
+        // font-size: $fontSize5;
+        color: $textColor;
+        font-size: 27px;
+        font-family: $Pratafonts;
+        font-weight: 500 !important;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        padding-block: 20px;
+    }
+
+    .linkingDesc {
+        color: $homePageFontColor;
+        font-family: $homePageFontFamily;
+        font-size: $fontSize2;
+        margin: 0px;
+        text-align: center;
+    }
+
+    .linkingShopCol {
+        color: $homePageFontColor;
+        font-family: $homePageFontFamily;
+        font-size: $fontSize1;
+        text-align: center;
+    }
+
+    .linkRingLove {
+        display: flex !important;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .smr_bestselerDiv {
+        max-width: 250px;
+    }
+
+    .linkLoveRing1 {
+        /* border: 1px solid; */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 5px;
+
+    }
+
+    .linkLoveRing1Desc {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ring1Desc {
+        width: 70%;
+        text-align: center;
+        font-weight: 500;
+        color: $homePageFontColor;
+        font-family: $homePageFontFamily;
+        font-size: $fontSize3;
+        margin: 5px;
+
+    }
+
+    .linkLoveRing2 {
+        /* border: 1px solid; */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5px;
+    }
+
+    .linkingLoveImageDesign {
+        max-height: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .likingLoveImages {
+        width: 100%;
+        max-height: 400px;
+        cursor: pointer;
+    }
+
+    .smr_bestSellerPrice {
+        color: $homePageFontColor;
+        margin: 0px;
+        font-weight: 600;
+    }
+
+    .smr_BestSallerViewAll {
+        color: $homePageFontColor;
+        font-family: $homePageFontFamily;
+        font-size: $fontSize1;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: underline;
+        margin-top: 50px;
+        font-weight: 600;
+    }
+
+    @media screen and (max-width: 1200px) {
+
+        .likingLoveImages {
+            width: 100%;
+            object-fit: contain;
+        }
+    }
+
+    @media screen and (max-width: 1000px) {
+
+        .linkingLoveMain {
+            display: flex;
+            margin-top: 10px;
+            flex-direction: column;
+        }
+
+        .linkRingLove {
+            display: flex !important;
+            justify-content: center;
+        }
+
+        .linkingLoveMain2 {
+            margin-top: 30px;
+        }
+
+        .linkingLove {
+            width: 100%;
+            order: 2;
+        }
+
+        .linkingLoveImage {
+            width: 100%;
+            order: 1;
+        }
+
+        .likingLoveImages {
+            width: 100%;
+        }
+
+        .linkingLoveMain {
+            margin-inline: 10px !important;
+        }
+
+
+        .likingLoveImages {
+            height: 250px;
+        }
+
+        .linkRingLoveSubMain {
+            height: 250px !important;
+            width: 50% !important;
+        }
+    }
+
+    @media screen and (max-width: 800px) {
+        .linkingLoveImageDesign {
+            object-fit: contain;
+            height: auto !important;
+        }
+    }
+
+    @media screen and (max-width: 420px) {
+
+        .likingLoveImages {
+            height: 150px;
+        }
+    }
+}

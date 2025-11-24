@@ -1,0 +1,107 @@
+@use '../../../theme/fgstore.web/style/variable.scss' as *;
+
+.smr_newwArr1MainDiv {
+    .smrN_NewArr1Title {
+        text-align: center;
+        // color: $titleColor;
+        // font-family: $homePageFontFamily;
+        // font-size: 28px;
+        padding-block: 2%;
+        color: $textColor;
+        font-size: 27px;
+        font-family: $Pratafonts;
+        font-weight: 500 !important;
+    }
+
+    .smr_NewArrival1product-list {
+        padding: 0px 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .smr_NewArrproduct-card {
+        background: #fff;
+        border: none;
+        border-radius: 5px;
+        // box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+        box-shadow: none;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease-in-out;
+
+        &:hover {
+            box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 0px 1px;
+        }
+
+        .smr_newArr1Image {
+            padding: 50px;
+            background-color: #f1f1f1;
+
+            .smr_newArrImage {
+                max-width: 100%;
+                height: auto;
+                display: block;
+            }
+        }
+
+
+        .smr_newarrproduct-info {
+            padding: 0px 10px;
+
+            .smr_newArrPrice {
+                font-size: $fontSize2 !important;
+                color: $titleColor !important;
+                font-family: $primaryFontFamily;
+                font-weight: bold !important;
+                letter-spacing: .5px;
+            }
+
+            .smr_newArrTitle {
+                font-size: $fontSize2;
+                color: $titleColor;
+                font-family: $primaryFontFamily;
+                letter-spacing: .5px;
+            }
+
+            p {
+                margin: 5px 0;
+                color: $titleColor;
+                font-size: $fontSize1;
+                font-family: $primaryFontFamily;
+                letter-spacing: .5px;
+            }
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .smrN_NewArr1Title {
+            font-size: 18px !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .smr_newwArr1MainDiv {
+            .smrN_NewArr1Title {
+                padding-block: 6%;
+            }
+        }
+
+        .smr_NewArrproduct-card {
+            .smr_newArr1Image {
+                padding: 10px !important;
+            }
+        }
+
+        .smr_newarrproduct-info {
+            .smr_newArrTitle {
+                font-size: $fontSize1 !important;
+            }
+
+            p {
+                font-size: $fontSize0 !important;
+                letter-spacing: .1px;
+            }
+        }
+    }
+}
