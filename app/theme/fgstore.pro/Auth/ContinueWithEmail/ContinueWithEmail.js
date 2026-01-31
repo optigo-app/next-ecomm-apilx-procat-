@@ -7,20 +7,23 @@ import OTPContainer from '@/app/(core)/utils/Glob_Functions/Otpflow/App';
 import { useRouter } from 'next/navigation';
 
 
-export default function ContinueWithEmail({params , searchParams ,storeInit}) {
+export default function ContinueWithEmail({ params, searchParams, storeInit }) {
     console.log("🚀 ~ ContinueWithEmail ~ storeInit:", storeInit)
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false)
     const Router = useRouter();
-    const navigation = (path)=>{
-      Router.push(path)
+    const navigation = (path) => {
+        Router.push(path)
     }
-    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-    const redirectEmailUrl = `/LoginWithEmail/?LoginRedirect=${search}`;
-    const redirectSignUpUrl = `/register/?LoginRedirect=${search}`;
-    const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
+    const paramsObj = searchParams || {};
+    const search = paramsObj.LoginRedirect || paramsObj.loginRedirect || paramsObj.search || "";
+    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+
+    const redirectEmailUrl = `/LoginWithEmail?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const redirectSignUpUrl = `/register?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,24 +45,7 @@ export default function ContinueWithEmail({params , searchParams ,storeInit}) {
 
     const handleSubmit = async () => {
         const trimmedEmail = email.trim();
-const encodedKeyFromStorage = (() => {
-  try {
-    return JSON.parse(sessionStorage.getItem("keylogs") || "null");
-  } catch {
-    return null;
-  }
-})();
-
-const getSecKey = encodedKeyFromStorage
-  ? decodeURIComponent(atob(encodedKeyFromStorage))
-  : "";
-const SecurityKey = (() => {
-  try {
-    return JSON.parse(sessionStorage.getItem("SecurityKey") || "null") ?? getSecKey;
-  } catch {
-    return getSecKey;
-  }
-})();        if (!trimmedEmail) {
+        if (!trimmedEmail) {
             setEmailError('Email is required.');
             return;
         }
@@ -77,7 +63,6 @@ const SecurityKey = (() => {
                 navigation(redirectEmailUrl);
                 if (trimmedEmail) {
                     sessionStorage.setItem("registerEmail", trimmedEmail);
-                    sessionStorage.setItem("SecurityKey", SecurityKey);
                 }
             } else {
                 if (storeInit?.IsEcomOtpVerification == 0) {
@@ -89,7 +74,6 @@ const SecurityKey = (() => {
                     navigation(redirectSignUpUrl);
                     if (trimmedEmail) {
                         sessionStorage.setItem("registerEmail", trimmedEmail);
-                        sessionStorage.setItem("SecurityKey", SecurityKey);
                     }
                 }
             }
@@ -109,7 +93,7 @@ const SecurityKey = (() => {
                 </div>
             )}
             <div>
-                { storeInit?.IsEcomOtpVerification === 1 ? (
+                {storeInit?.IsEcomOtpVerification === 1 ? (
                     <OTPContainer emailId={email.trim()} isOpen={isOpen} type='email' setIsOpen={() => setIsOpen(!isOpen)} onClose={() => setIsOpen(false)}
                         navigation={navigation}
                         location={location}
@@ -134,7 +118,7 @@ const SecurityKey = (() => {
                         fontSize: '15px',
                         color: '#7d7f85',
                         fontFamily: 'FreightDispProBook-Regular,Times New Roman,serif',
-                        marginBottom:'25px'
+                        marginBottom: '25px'
                     }}
 
                         className='AuthScreenSubTitle'

@@ -66,7 +66,7 @@ const CartPage = ({ storeinit, visiterId }) => {
   const isLargeScreen = useMediaQuery('(min-width:1000px)');
   const isMobileScreen = useMediaQuery('(max-width:768px)');
 
-  const redirectUrl = `/loginOption/?LoginRedirect=/delivery`;
+  const redirectUrl = `/LoginOption/?LoginRedirect=/delivery`;
   const handlePlaceOrder = () => {
     let priceData = finalCartData?.reduce(
       (total, item) => total + item?.FinalCost,

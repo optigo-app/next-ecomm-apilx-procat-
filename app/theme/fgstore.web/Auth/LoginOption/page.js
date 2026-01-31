@@ -5,8 +5,8 @@ import { IoMdMail } from "react-icons/io";
 import Link from "next/link";
 
 const LoginOption = ({ searchParams }) => {
-    const {  LoginRedirect = "" , search = "" } = searchParams || {};
-  const loginRedirect =  LoginRedirect || search || "";
+  const { LoginRedirect = "", loginRedirect: loginRedirLow = "", search = "" } = searchParams || {};
+  const loginRedirect = LoginRedirect || loginRedirLow || search || "";
   const redirectEmailUrl = `/ContinueWithEmail${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}` : ""}`;
   const redirectMobileUrl = `/ContinueWithMobile${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}` : ""}`;
 

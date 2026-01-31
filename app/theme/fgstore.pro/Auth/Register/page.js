@@ -35,7 +35,7 @@ export default function Register({searchParams }) {
   const confirmPasswordRef = useRef(null);
   const [open, setOpen] = useState(false); // Track dropdown open/close
 
-  const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
+const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
   console.log("🚀 ~ Register ~ search:", search);
   // const updatedSearch = search.replace('?LoginRedirect=', '');
   // const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;

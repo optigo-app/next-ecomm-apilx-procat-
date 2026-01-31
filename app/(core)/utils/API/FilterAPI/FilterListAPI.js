@@ -32,21 +32,44 @@ export const FilterListAPI = async (mainData, visiterId) => {
   } else {
     if (mainData !== "") {
 
-      if(mainData?.split("=")[0] == "S") {
+      const [prefix, value] = mainData?.split("=") || [];
 
-        serachVar = JSON.parse(atob(mainData.split("=")[1]))
-      } else {
-        MenuParams.FilterKey = atob(mainData)
-        MenuParams.FilterVal = atob(mainData)
-      }
-
-      if(mainData?.split("=")[0] !== "S") {
-        if (atob(mainData)?.split("=")[0] == "AlbumName") {
-          MenuParams.FilterKey = atob(mainData)?.split("=")[0]
-          MenuParams.FilterVal = atob(mainData)?.split("=")[1]
-        }else {
-          MenuParams.FilterKey = atob(mainData)
-          MenuParams.FilterVal = atob(mainData)
+      if (prefix === "S") {
+        try {
+          serachVar = JSON.parse(atob(value));
+        } catch (e) {
+          console.error("Error decoding searchVar:", e);
+        }
+      } else if (prefix === "A") {
+        try {
+          const decodedValue = atob(value);
+          if (decodedValue?.split("=")[0] === "AlbumName") {
+            MenuParams.FilterKey = decodedValue.split("=")[0];
+            MenuParams.FilterVal = decodedValue.split("=")[1];
+          } else {
+            MenuParams.FilterKey = decodedValue;
+            MenuParams.FilterVal = decodedValue;
+          }
+        } catch (e) {
+          console.error("Error decoding album data:", e);
+        }
+      } else if (prefix === "SK" || prefix === "SecurityKey") {
+        // Do nothing or handle as needed, but don't atob
+      } else if (mainData !== "") {
+        // Fallback for legacy calls that might pass raw base64 without prefix
+        try {
+          const decoded = atob(mainData);
+          if (decoded?.split("=")[0] === "AlbumName") {
+            MenuParams.FilterKey = decoded.split("=")[0];
+            MenuParams.FilterVal = decoded.split("=")[1];
+          } else {
+            MenuParams.FilterKey = decoded;
+            MenuParams.FilterVal = decoded;
+          }
+        } catch (e) {
+          // If not base64, treat as raw value
+          MenuParams.FilterKey = mainData;
+          MenuParams.FilterVal = mainData;
         }
       }
     }

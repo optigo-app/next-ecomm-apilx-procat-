@@ -1,16 +1,26 @@
 import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
 import { getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
-import { themeMap } from "@/app/(core)/utils/ThemeMap";
 import React from "react";
 
 
+
+export const themeMap = {
+  "nxt10.optigoapps.com": {
+    page: "@/app/theme/fgstore.pro/Auth/ForgotPassword/page.js",
+  },
+  "thereflections.procatalog.in": {
+    page: "@/app/theme/fgstore.pro/Auth/ForgotPassword/page.js",
+  },
+};
+
+
 const page = async ({ params, searchParams }) => {
+  const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
   const theme = await getActiveTheme();
   const themeData = themeMap[theme];
-      const storeInit = await getStoreInit();
-  
-  const ForgotPassword = (await import(`@/app/theme/${themeData.page}/Auth/ForgotPassword/page.js`)).default;
-  return <ForgotPassword params={params} searchParams={searchParams} storeInit={storeInit} />;
+  const storeInit = await getStoreInit();
+  const ForgotPassword = (await import(themeData.page)).default;
+  return <ForgotPassword params={awaitedParams} searchParams={awaitedSearchParams} storeInit={storeInit} />;
 };
 
 export default page;

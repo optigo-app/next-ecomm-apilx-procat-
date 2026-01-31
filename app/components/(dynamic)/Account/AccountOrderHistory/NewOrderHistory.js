@@ -102,7 +102,7 @@ const NewOrderHistory = () => {
     try {
       const response = await getOrderHistory(storeinit, loginInfo, UserEmail);
 
-      if (response?.Status === "200") {
+if (response?.Status === "200" || response?.Status === 200 || response?.Status == 200) {
         if (response?.Data?.rd) {
           setOrderHistoryData(response?.Data?.rd);
           setLoaderOH(false);
@@ -207,7 +207,7 @@ const NewOrderHistory = () => {
     const response = await CommonAPI(body);
     let arr = [];
 
-    if (response?.Status === "200") {
+if (response?.Status === "200" || response?.Status === 200 || response?.Status == 200) {
       setOpenListStatus(false);
       setShowActions(false);
       orderHistoryData?.map((e) => {

@@ -21,9 +21,9 @@ const IMAGE_NOT_FOUND = "/Assets/image-not-found.jpg";
 // Memoized Album Item Component
 const AlbumItem = React.memo(({ data, onClick, getImageUrl }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  
+
   return (
-    <div 
+    <div
       className="album-item"
       onClick={() => onClick(data)}
       role="button"
@@ -31,10 +31,10 @@ const AlbumItem = React.memo(({ data, onClick, getImageUrl }) => {
       onKeyDown={(e) => e.key === 'Enter' && onClick(data)}
     >
       {!imageLoaded && (
-        <Skeleton 
-          variant="rectangular" 
-          width="100%" 
-          height={200} 
+        <Skeleton
+          variant="rectangular"
+          width="100%"
+          height={200}
           animation="wave"
         />
       )}
@@ -60,7 +60,7 @@ const AlbumItem = React.memo(({ data, onClick, getImageUrl }) => {
 AlbumItem.displayName = 'AlbumItem';
 
 const OptimizedAlbum = () => {
-  const { islogin } = useStore();
+  const { islogin, loginUserDetail } = useStore();
   const [albumData, setAlbumData] = useState([]);
   const [visibleItems, setVisibleItems] = useState(BATCH_SIZE);
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,7 @@ const OptimizedAlbum = () => {
   // Memoized function to get image URL
   const getImageUrl = useCallback((data) => {
     if (!data) return IMAGE_NOT_FOUND;
-    
+
     if (data.AlbumImageName && data.AlbumImageFol && storeinit?.AlbumImageFol) {
       return `${storeinit.AlbumImageFol}${data.AlbumImageFol}/${data.AlbumImageName}`;
     }
@@ -103,11 +103,10 @@ const OptimizedAlbum = () => {
 
     try {
       setLoading(true);
-      const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail") || '{}');
       const visiterID = Cookies.get("visiterId") || '';
       const queryParams = new URLSearchParams(window.location.search);
       const ALCVAL = queryParams.get('ALC');
-      
+
       const finalID = storeinit?.IsB2BWebsite === 0
         ? (islogin ? (loginUserDetail?.id || "") : visiterID)
         : (loginUserDetail?.id || "");
@@ -131,19 +130,19 @@ const OptimizedAlbum = () => {
   // Handle navigation
   const handleNavigate = useCallback((data) => {
     if (!data) return;
-    
+
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
     const url = `/p/${encodeURIComponent(albumName)}/K=${btoa(securityKey)}/?A=${btoa(`AlbumName=${albumName}`)}`;
-    const redirectUrl = `/loginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     const albumDetails = data?.AlbumDetail ? JSON.parse(data.AlbumDetail) : [];
     const state = { SecurityKey: securityKey };
 
     if (data?.IsDual === 1 && albumDetails?.length > 1) {
       const finalNewData = albumDetails.map((item) => ({
         ...item,
-        imageKey: item?.Image_Name 
-          ? `${storeinit?.CDNDesignImageFol || ''}${item.Image_Name}` 
+        imageKey: item?.Image_Name
+          ? `${storeinit?.CDNDesignImageFol || ''}${item.Image_Name}`
           : IMAGE_NOT_FOUND
       }));
 
@@ -159,15 +158,15 @@ const OptimizedAlbum = () => {
   // Infinite scroll implementation
   const lastAlbumElementRef = useCallback(node => {
     if (loading) return;
-    
+
     if (observer.current) observer.current.disconnect();
-    
+
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && visibleItems < albumData.length) {
         setVisibleItems(prev => Math.min(prev + BATCH_SIZE, albumData.length));
       }
     });
-    
+
     if (node) observer.current.observe(node);
   }, [loading, visibleItems, albumData.length]);
 
@@ -196,11 +195,11 @@ const OptimizedAlbum = () => {
       <div className="album-grid">
         <LazyMasonry columns={{ xs: 2, sm: 3, md: 4 }} spacing={2}>
           {visibleAlbumData.map((data, index) => (
-            <div 
+            <div
               key={`${data.AlbumId || index}`}
               ref={index === visibleAlbumData.length - 1 ? lastAlbumElementRef : null}
             >
-              <AlbumItem 
+              <AlbumItem
                 data={data}
                 onClick={handleNavigate}
                 getImageUrl={getImageUrl}

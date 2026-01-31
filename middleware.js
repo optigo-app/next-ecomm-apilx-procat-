@@ -68,51 +68,51 @@ export default async function middleware(req) {
     response.cookies.set("x-CompanyInfoData-data", JSON.stringify(storeData?.rd2?.[0] || {}), { httpOnly: false, path: "/" });
     response.headers.set("Cache-Control", "public, max-age=604800, immutable");
 
-    if (isPublicPage) {
-      return response;
-    }
+    // if (isPublicPage) {
+    //   return response;
+    // }
 
-    const isRestrictPage = RestrictPages.some((page) => pathname.startsWith(page.toLowerCase()));
-
-
-    if (pathname.startsWith("LoginOption") || isAuthPage) {
-      return response;
-    }
+    // const isRestrictPage = RestrictPages.some((page) => pathname.startsWith(page.toLowerCase()));
 
 
-    const isB2BPage = B2BPages.some((page) => {
-      if (page.includes("/*")) {
-        const prefix = page.replace("/*", "").toLowerCase();
-        return pathname.startsWith(prefix);
-      }
-      return pathname === page.toLowerCase();
-    });
+    // if (pathname.startsWith("LoginOption") || isAuthPage) {
+    //   return response;
+    // }
 
-    // 🔹 Case 1: B2B Website → only restrict B2B-specific pages
-    if (IsB2BWebsite === 1) {
-      if (!isAuthenticated && isB2BPage) {
-        return NextResponse.redirect(
-          new URL(
-            `/LoginOption?LoginRedirect=${encodeURIComponent(Next_URL.pathname + Next_URL.search)}`,
-            req.url
-          )
-        );
-      }
-    } else {
-      // 🔹 Case 2: Non-B2B Website → only restrict "RestrictPages"
-      if (!isAuthenticated && isRestrictPage) {
-        return NextResponse.redirect(
-          new URL(
-            `/LoginOption?LoginRedirect=${encodeURIComponent(Next_URL.pathname + Next_URL.search)}`,
-            req.url
-          )
-        );
-      }
-    }
 
-    if (isAuthPage && isAuthenticated && pathname !== "") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+    // const isB2BPage = B2BPages.some((page) => {
+    //   if (page.includes("/*")) {
+    //     const prefix = page.replace("/*", "").toLowerCase();
+    //     return pathname.startsWith(prefix);
+    //   }
+    //   return pathname === page.toLowerCase();
+    // });
+
+    // // 🔹 Case 1: B2B Website → only restrict B2B-specific pages
+    // if (IsB2BWebsite === 1) {
+    //   if (!isAuthenticated && isB2BPage) {
+    //     return NextResponse.redirect(
+    //       new URL(
+    //         `/LoginOption?LoginRedirect=${encodeURIComponent(Next_URL.pathname + Next_URL.search)}`,
+    //         req.url
+    //       )
+    //     );
+    //   }
+    // } else {
+    //   // 🔹 Case 2: Non-B2B Website → only restrict "RestrictPages"
+    //   if (!isAuthenticated && isRestrictPage) {
+    //     return NextResponse.redirect(
+    //       new URL(
+    //         `/LoginOption?LoginRedirect=${encodeURIComponent(Next_URL.pathname + Next_URL.search)}`,
+    //         req.url
+    //       )
+    //     );
+    //   }
+    // }
+
+    // if (isAuthPage && isAuthenticated && pathname !== "") {
+    //   return NextResponse.redirect(new URL("/", req.url));
+    // }
 
 
     

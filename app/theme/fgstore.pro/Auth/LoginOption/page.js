@@ -6,17 +6,34 @@ import { IoMdMail } from "react-icons/io";
 import Link from "next/link";
 
 const LoginOption = ({ searchParams }) => {
-    const {  LoginRedirect = "" , search = "" } = searchParams || {};
-  const loginRedirect =  LoginRedirect || search || "";
-  const SecurityKey = JSON.parse(localStorage.getItem("SecurityKey")) || "";
-  if(SecurityKey){
-     const encodedKey = btoa( (SecurityKey));
-        sessionStorage.setItem("keylogs", JSON.stringify(encodedKey));
-  }
-    const encodedKeyFromStorage = JSON.parse(sessionStorage.getItem("keylogs"));
-const getSecurityKey = encodedKeyFromStorage  ? atob(encodedKeyFromStorage) : "";
-  const redirectEmailUrl = `/ContinueWithEmail${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${getSecurityKey ? `&SecurityKey=${encodeURIComponent(getSecurityKey)}` : ""}` : ""}`;
-  const redirectMobileUrl = `/ContinueWithMobile${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${getSecurityKey ? `&SecurityKey=${encodeURIComponent(getSecurityKey)}` : ""}` : ""}`;
+  const { LoginRedirect = "", loginRedirect: loginRedirLow = "", search = "" } = searchParams || {};
+  const loginRedirect = LoginRedirect || loginRedirLow || search || "";
+  const getSecurityKeyFromUrl = () => {
+    // 1. Check direct query param SK or SecurityKey
+    if (searchParams?.SK) return searchParams.SK;
+    if (searchParams?.SecurityKey) return searchParams.SecurityKey;
+
+    // 2. Extract from LoginRedirect if present
+    if (loginRedirect) {
+      const urlText = decodeURIComponent(loginRedirect);
+
+      // Try path segment K=
+      const kMatch = urlText.match(/\/K=([^/?&#]+)/);
+      if (kMatch) {
+        try { return atob(kMatch[1]); } catch (e) { }
+      }
+
+      // Try query param SK= or SecurityKey= inside the redirect URL
+      const skMatch = urlText.match(/[?&](SK|SecurityKey)=([^&]+)/);
+      if (skMatch) return skMatch[2];
+    }
+
+    return "";
+  };
+
+  const securityKey = getSecurityKeyFromUrl();
+  const redirectEmailUrl = `/ContinueWithEmail${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}` : (securityKey ? `?SK=${encodeURIComponent(securityKey)}` : "")}`;
+  const redirectMobileUrl = `/ContinueWithMobile${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}` : (securityKey ? `?SK=${encodeURIComponent(securityKey)}` : "")}`;
 
   return (
     <div className="smr_Loginoption">

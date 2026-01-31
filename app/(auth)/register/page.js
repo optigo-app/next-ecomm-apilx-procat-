@@ -2,22 +2,19 @@ import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
 import React from "react";
 
 export const themeMap = {
-  "fgstore.web": {
-    page: "fgstore.web",
-  },
-  "sonasons.optigoapps.com": {
-    page: "fgstore.web",
-  },
   "nxt10.optigoapps.com": {
-    page: "fgstore.web",
+    page: "@/app/theme/fgstore.pro/Auth/Register/page.js",
   },
-  // Add more themes as needed
+  "thereflections.procatalog.in": {
+    page: "@/app/theme/fgstore.pro/Auth/Register/page.js",
+  },
 };
 const page = async ({ params, searchParams }) => {
+  const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
   const theme = await getActiveTheme();
   const themeData = themeMap[theme];
-  const Register = (await import(`@/app/theme/${themeData.page}/Auth/Register/page.js`)).default;
-  return <Register params={params} searchParams={searchParams} />;
+  const Register = (await import(themeData.page)).default;
+  return <Register params={awaitedParams} searchParams={awaitedSearchParams} />;
 };
 
 export default page;

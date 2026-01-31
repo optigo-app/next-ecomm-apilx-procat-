@@ -41,6 +41,7 @@ const Confirmation = ({ storeinit }) => {
             "--background-color",
             backgroundColor
         );
+
     };
 
     useEffect(() => {

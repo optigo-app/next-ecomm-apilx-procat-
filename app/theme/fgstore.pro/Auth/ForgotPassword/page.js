@@ -6,6 +6,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CryptoJS from "crypto-js";
 import { ResetPasswordAPI } from "@/app/(core)/utils/API/Auth/ResetPasswordAPI";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
+import { useSearchParams } from "next/navigation";
 
 export default function ForgotPassword() {
   const location = useNextRouterLikeRR();
@@ -18,6 +19,9 @@ export default function ForgotPassword() {
   const [errors, setErrors] = useState({});
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams()
+  const userid = searchParams.get('userid')
+
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("userEmailForPdList");
@@ -87,10 +91,6 @@ export default function ForgotPassword() {
     } else if (confirmPassword !== password) {
       errors.confirmPassword = "Passwords do not match";
     }
-
-    const queryParams = new URLSearchParams(window?.location?.search);
-    const userid = queryParams?.get("userid");
-
     if (Object.keys(errors).length === 0) {
       const hashedPassword = hashPasswordSHA1(password);
       setIsLoading(true);
@@ -126,7 +126,7 @@ export default function ForgotPassword() {
               margin: "0px",
               fontSize: "40px",
               color: "#7d7f85",
-              marginBottom:'15px'
+              marginBottom: '15px'
             }}
             className="AuthScreenMainTitle"
           >
@@ -141,7 +141,7 @@ export default function ForgotPassword() {
             }}
             className="AuthScreenSubTitle"
           >
-            {}
+            { }
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>

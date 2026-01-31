@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./Album.modul.scss";
 import { Get_Procatalog } from "@/app/(core)/utils/API/Home/Get_Procatalog/Get_Procatalog";
 import Cookies from "js-cookie";
@@ -9,9 +9,38 @@ import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import { useSearchParams } from 'next/navigation'
+
+
+const buildAlbumCacheKey = (type, storeData, pricing, id, custom) => {
+  const meta = {
+    type,
+    PackageId: pricing?.PackageId ?? "",
+    Laboursetid: pricing?.Laboursetid ?? "",
+    diamondpricelistname: pricing?.diamondpricelistname ?? "",
+    colorstonepricelistname: pricing?.colorstonepricelistname ?? "",
+    ACL: custom
+  };
+
+  const key = [
+    type,
+    pricing?.PackageId,
+    pricing?.Laboursetid,
+    pricing?.diamondpricelistname,
+    pricing?.colorstonepricelistname,
+    custom
+  ].join("_");
+
+  return {
+    key,
+    meta,
+  }
+};
+
+
 
 const Album = ({ storeinit }) => {
-  const { islogin } = useStore();
+  const { islogin, loginUserDetail } = useStore();
   const [albumData, setAlbumData] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
   const [imageStatus, setImageStatus] = useState({});
@@ -22,6 +51,10 @@ const Album = ({ storeinit }) => {
   const [isLoding, setIsLoding] = useState(true);
   const [imagesReady, setImagesReady] = useState(false);
   const imageNotFound = "/Assets/image-not-found.jpg";
+  const [mounted, setMounted] = useState(false);
+  const searchParams = useSearchParams()
+  const ALCVAL = searchParams.get('ALC')
+
 
   const navigation = useNextRouterLikeRR();
 
@@ -35,18 +68,42 @@ const Album = ({ storeinit }) => {
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     setImageUrl(storeinit?.AlbumImageFol || "");
   }, []);
 
-  useEffect(() => {
-    const fetchAlbumData = async () => {
-      const loginUserDetail = sessionStorage.getItem("loginUserDetail");
-      const visiterID = Cookies.get("visiterId");
-      const queryParams = new URLSearchParams(window.location.search);
-      const ALCVAL = queryParams.get("ALC");
-      const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? loginUserDetail?.id || "" : visiterID) : loginUserDetail?.id || "";
-      if (isFetching) return;
+  const pricingContext = useMemo(() => {
+    if (!mounted) return null;
+    const loginInfo = loginUserDetail;
 
+    return {
+      PackageId: (loginInfo?.PackageId ?? storeinit?.PackageId) ?? "",
+      Laboursetid:
+        !islogin
+          ? storeinit?.pricemanagement_laboursetid
+          : loginInfo?.pricemanagement_laboursetid ?? "",
+      diamondpricelistname:
+        !islogin
+          ? storeinit?.diamondpricelistname
+          : loginInfo?.diamondpricelistname ?? "",
+      colorstonepricelistname:
+        !islogin
+          ? storeinit?.colorstonepricelistname
+          : loginInfo?.colorstonepricelistname ?? "",
+    };
+  }, [mounted, loginUserDetail, storeinit, islogin]);
+
+  useEffect(() => {
+    if (!mounted || !pricingContext) return;
+
+    const fetchAlbumData = async () => {
+      const visiterID = Cookies.get("visiterId");
+      const userId = loginUserDetail?.id;
+      const finalID = storeinit?.IsB2BWebsite === 0
+        ? (islogin ? userId || "" : visiterID)
+        : userId || "";
+
+      if (isFetching) return;
       if (ALCVAL) {
         sessionStorage.setItem("ALCVALUE", ALCVAL);
         await fetchAndSetAlbumData(ALCVAL, finalID);
@@ -57,24 +114,24 @@ const Album = ({ storeinit }) => {
     };
 
     fetchAlbumData();
-  }, [islogin, isFetching]);
+  }, [islogin, mounted, pricingContext, storeinit?.IsB2BWebsite]);
+
 
   const fetchAndSetAlbumData = async (value, finalID) => {
-    const storeInit =storeinit;
-    const key = `procatalog_album_${storeinit?.ukey}`;
+    const storeInit = storeinit;
+    const { key, meta } = buildAlbumCacheKey("procatalog_album_", storeinit, pricingContext, finalID, value);
+    // const cachedRes = await fetch(`/api/cache?key=${key}`);
+    // const cached = await cachedRes.json();
 
-    const cachedRes = await fetch(`/api/cache?key=${key}`);
-    const cached = await cachedRes.json();
-
-    if (cached.cached && Array.isArray(cached.data)) {
-      setAlbumData(cached.data);
-      setImagesReady(true);
-      return cached.data;
-    }
+    // if (cached.cached && Array.isArray(cached.data)) {
+    //   setAlbumData(cached.data);
+    //   setImagesReady(true);
+    //   return cached.data;
+    // }
 
     if (!storeInit) {
       if (!isFetching) {
-        setIsFetching(true); 
+        setIsFetching(true);
         setTimeout(() => {
           setIsFetching(false);
           fetchAndSetAlbumData(value, finalID);
@@ -90,11 +147,11 @@ const Album = ({ storeinit }) => {
         setAlbumData(albums);
         setImagesReady(true);
 
-        fetch("/api/cache", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ key, data: albums }),
-        }).catch(console.error);
+        // fetch("/api/cache", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({ key, data: albums, meta }),
+        // }).catch(console.error);
 
         const status = {};
         const fallbackImages = {};
@@ -124,8 +181,8 @@ const Album = ({ storeinit }) => {
   const handleNavigate = (data) => {
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
-    const url = `/p/${encodeURIComponent(data?.AlbumName)}/K=${btoa(securityKey)}/?A=${btoa(`AlbumName=${albumName}`)}`;
-    const redirectUrl = `/loginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     const Newdata = data?.AlbumDetail ? JSON.parse(data?.AlbumDetail) : [];
     setSecurityKey(securityKey);
     const state = { SecurityKey: securityKey };
@@ -140,7 +197,6 @@ const Album = ({ storeinit }) => {
     } else {
       sessionStorage.setItem("redirectURL", url);
       navigate(islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0) ? url : redirectUrl);
-      sessionStorage.setItem('SecurityKey', JSON.stringify(state));
     }
   };
 
@@ -148,12 +204,10 @@ const Album = ({ storeinit }) => {
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
     setSecurityKey(securityKey);
-    const url = `/p/${encodeURIComponent(data?.AlbumName)}/K=${btoa(securityKey)}/?A=${btoa(`AlbumName=${albumName}`)}`;
-    const state = { SecurityKey: securityKey };
-    const redirectUrl = `/loginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     sessionStorage.setItem("redirectURL", url);
     navigate(islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0) ? url : redirectUrl);
-    sessionStorage.setItem("SecurityKey", JSON.stringify(state));
   };
 
   const handleOpen = () => setOpen(true);

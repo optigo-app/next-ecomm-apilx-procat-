@@ -20,5 +20,4 @@ export const pages = {
             "Jewellery store management system",
         ],
     },
-
 }

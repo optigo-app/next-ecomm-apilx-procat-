@@ -20,10 +20,10 @@ export default function LoginWithEmailCode({ params, searchParams }) {
     const [isLoginState, setIsLoginState] = useState(false);
     const inputsRef = useRef([]);
 
-    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-    const updatedSearch = search.replace('?LoginRedirect=', '');
+    const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+    const updatedSearch = search?.replace('?LoginRedirect=', '');
     const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;
-    const cancelRedireactUrl = `/LoginOption/${search}`;
+    const cancelRedireactUrl = `/LoginOption?${search}`;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,11 +80,16 @@ export default function LoginWithEmailCode({ params, searchParams }) {
                 sessionStorage.setItem('loginUserDetail', JSON.stringify(response.Data.rd[0]));
 
                 if (redirectEmailUrl) {
-                    // navigation(redirectEmailUrl);
-                    window.location.href = redirectEmailUrl;
+                    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+                    let finalRedirectUrl = redirectEmailUrl;
+                    if (securityKey) {
+                        const separator = finalRedirectUrl.includes('?') ? '&' : '?';
+                        finalRedirectUrl = `${finalRedirectUrl}${separator}SK=${encodeURIComponent(securityKey)}`;
+                    }
+                    window.location.href = finalRedirectUrl;
                 } else {
-                    // navigation('/');
-                    window.location.href = '/';
+                    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+                    window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
                 }
             } else {
                 setErrors({ otp: 'The code you entered is invalid.' });

@@ -1,7 +1,6 @@
 @use "../../../scss/variable.scss" as *;
 
 .smr_loginwithemailCode {
-  background-color: $bgColor;
   height: 70vh;
   display: grid;
   align-content: center;
@@ -13,11 +12,11 @@
 
   .fg_opt_div {
     .MuiBox-root {
-      @media screen and (max-width:500px) {
+      @media screen and (max-width: 500px) {
         gap: 3px;
       }
 
-      @media screen and (max-width:338px) {
+      @media screen and (max-width: 338px) {
         gap: 1px;
 
         .css-1cb4u56 {
@@ -31,7 +30,6 @@
     margin-right: 0px !important;
     margin-left: 0px !important;
   }
-
 
   .smling-register-main {
     margin-inline: 6%;
@@ -126,7 +124,6 @@
   }
 
   @media screen and (max-width: 700px) {
-
     .labgrowRegister {
       width: 90%;
       margin: 10px;
@@ -148,7 +145,7 @@
       height: 40px !important;
     }
 
-    @media screen and (max-width:340px) {
+    @media screen and (max-width: 340px) {
       .fg_resnd_msg {
         font-size: 13px !important;
       }

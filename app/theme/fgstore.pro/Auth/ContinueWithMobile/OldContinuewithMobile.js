@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { Button, CircularProgress, TextField } from '@mui/material';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { ContimueWithMobileAPI } from '@/app/(core)/utils/API/Auth/ContimueWithMobileAPI';
 import './ContimueWithMobile.modul.scss'
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 
-export default function ContimueWithMobile({params , searchParams}) {
-          const location = useNextRouterLikeRR();
+export default function ContimueWithMobile({ params, searchParams }) {
+    const location = useNextRouterLikeRR();
     const [mobileNo, setMobileNo] = useState('');
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [buttonFocused, setButtonFocused] = useState(false);
-     const navigation = location?.push;
+    const navigation = location?.push;
 
 
-  const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-  const updatedSearch = search?.replace('?LoginRedirect=', '');
-  const redirectMobileUrl = `/LoginWithMobileCode/${updatedSearch}`;
-  const redirectSignUpUrl = `/register/${updatedSearch}`;
-  const cancelRedireactUrl = `/LoginOption/${search}`;
+    const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+
+    const updatedSearch = search?.replace('?LoginRedirect=', '');
+    const redirectMobileUrl = `/LoginWithMobileCode?${updatedSearch}`;
+    const redirectSignUpUrl = `/register?${updatedSearch}`;
+    const cancelRedireactUrl = `/LoginOption?${search}`;
 
     const handleInputChange = (e, setter, fieldName) => {
         const { value } = e.target;
@@ -100,12 +101,12 @@ export default function ContimueWithMobile({params , searchParams}) {
     const handleMobileInputChange = (e) => {
         const numericValue = e.target.value.replace(/[^0-9]/g, "");
         if (numericValue !== e.target.value) {
-          e.preventDefault();
-          return;
+            e.preventDefault();
+            return;
         }
         handleInputChange(e, setMobileNo, "mobileNo");
-      };
-      
+    };
+
 
     return (
         <div className='proCat_continuMobile'>
@@ -155,8 +156,8 @@ export default function ContimueWithMobile({params , searchParams}) {
                             helperText={errors.mobileNo}
                             inputMode="numeric"
                             inputProps={{
-                            maxLength: 10,
-                            pattern: '[0-9]*',
+                                maxLength: 10,
+                                pattern: '[0-9]*',
                             }}
                         />
 

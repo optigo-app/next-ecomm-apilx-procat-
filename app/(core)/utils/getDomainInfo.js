@@ -4,7 +4,7 @@ import { NEXT_APP_WEB } from "./env";
 
 export async function getDomainInfo() {
     try {
-        const headerList = headers();
+        const headerList = await headers();
         const headersObj = {};
 
         headerList.forEach((value, key) => {
@@ -12,7 +12,7 @@ export async function getDomainInfo() {
         });
         if (process.env.NODE_ENV === "development") {
         }
-        const rawHost = headerList.get("x-forwarded-host")  || "";
+        const rawHost = headerList.get("x-forwarded-host") || "";
         const rawProto = headerList.get("x-forwarded-proto") || "";
         const hostname = rawHost || NEXT_APP_WEB;
         const protocol = `${rawProto}:`;

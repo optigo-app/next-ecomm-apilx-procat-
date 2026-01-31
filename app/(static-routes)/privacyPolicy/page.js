@@ -1,21 +1,17 @@
 import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
 
 export const themeMap = {
-  "fgstore.web": {
-    page: "fgstore.web",
-  },
-  "sonasons.optigoapps.com": {
-    page: "fgstore.web",
-  },
   "nxt10.optigoapps.com": {
-    page: "fgstore.web",
+    page: "@/app/theme/fgstore.pro/privacyPolicy/page.js",
   },
-  // Add more themes as needed
+  "thereflections.procatalog.in": {
+    page: "@/app/theme/fgstore.pro/privacyPolicy/page.js",
+  },
 };
 
 export default async function Page() {
   const theme = await getActiveTheme();
   const themeData = themeMap[theme];
-  const PrivacyPolicy = (await import(`@/app/theme/${themeData.page}/privacyPolicy/page.js`)).default;
+  const PrivacyPolicy = (await import(`${themeData.page}`)).default;
   return <PrivacyPolicy />;
 }

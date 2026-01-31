@@ -19,7 +19,7 @@ import { GetCountAPI } from "@/app/(core)/utils/API/GetCount/GetCountAPI";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
 
-export default function LoginWithEmail({params ,  searchParams}) {
+export default function LoginWithEmail({ params, searchParams }) {
   const { islogin, setislogin, setCartCountNum, setWishCountNum } = useStore();
   const [email, setEmail] = useState("");
 
@@ -31,10 +31,10 @@ export default function LoginWithEmail({params ,  searchParams}) {
   const navigation = push;
   const location = useNextRouterLikeRR();
 
-  const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-  const updatedSearch = search?.replace("?LoginRedirect=", "");
-  const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;
-  const cancelRedireactUrl = `/LoginOption/${search}`;
+  const paramsObj = searchParams || {};
+  const search = paramsObj.LoginRedirect || paramsObj.loginRedirect || paramsObj.search || "";
+  const redirectEmailUrl = search ? decodeURIComponent(search) : "/";
+  const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
 
   // const setPdData = useSetRecoilState(productDataNew)
   // const setDesignList = useSetRecoilState(designSet)
@@ -67,16 +67,11 @@ export default function LoginWithEmail({params ,  searchParams}) {
   // }
 
   useEffect(() => {
-    setCSSVariable();
     const storedEmail = sessionStorage.getItem("registerEmail") ?? "";
     if (storedEmail) setEmail(storedEmail);
   }, []);
 
-  const setCSSVariable = () => {
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const backgroundColor = storeInit?.IsPLW == 1 ? "#c4cfdb" : "#c0bbb1";
-    document.documentElement.style.setProperty("--background-color", backgroundColor);
-  };
+
 
   const handleInputChange = (e, setter, fieldName) => {
     const { value } = e.target;

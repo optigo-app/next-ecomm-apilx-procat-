@@ -18,13 +18,13 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
     const [isOpen, setIsOpen] = useState(false)
     const [Countrycodestate, setCountrycodestate] = useState();
 
+    const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
 
-
-    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
     const updatedSearch = search?.replace('?LoginRedirect=', '');
-    const redirectMobileUrl = `/LoginWithMobileCode/${updatedSearch}`;
-    const redirectSignUpUrl = `/register/${updatedSearch}`;
-    const cancelRedireactUrl = `/LoginOption/${search}`;
+    const redirectMobileUrl = `/LoginWithMobileCode?${updatedSearch}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const redirectSignUpUrl = `/register?${updatedSearch}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const cancelRedireactUrl = `/LoginOption?${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
 
     const handleInputChange = (e, setter, fieldName) => {
         const { value } = e.target;
@@ -33,17 +33,8 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
 
         setter(formattedValue);
 
-        // if (fieldName === 'mobileNo') {
-        //     if (!formattedValue) {
-        //         setErrors(prevErrors => ({ ...prevErrors, mobileNo: 'Mobile No. is required' }));
-        //     } else if (!/^\d{10}$/.test(formattedValue)) {
-        //         setErrors(prevErrors => ({ ...prevErrors, mobileNo: 'Enter Valid mobile number' }));
-        //     } else {
-        //         setErrors(prevErrors => ({ ...prevErrors, mobileNo: '' }));
-        //     }
-        // }
     };
-    
+
     const handleSubmit = async () => {
         if (isSubmitting) {
             return;
@@ -53,47 +44,26 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
             setErrors({ mobileNo: 'Mobile No. is required' });
             return;
         }
-        const { SecurityKey, AllCode } = (() => {
+        const { AllCode } = (() => {
             try {
-                const keylogs = sessionStorage.getItem("keylogs");
-                const secKeyRaw = sessionStorage.getItem("SecurityKey");
                 const countryList = sessionStorage.getItem("CountryCodeListApi");
-                const decodedKey = keylogs ? decodeURIComponent(atob(JSON.parse(keylogs))) : "";
                 return {
-                    SecurityKey: secKeyRaw ? JSON.parse(secKeyRaw) : decodedKey,
                     AllCode: countryList ? JSON.parse(countryList) : []
                 };
             } catch {
-                return { SecurityKey: "", AllCode: [] };
+                return { AllCode: [] };
             }
         })();
 
-        const phonecode = AllCode?.find((val) => val?.mobileprefix == Countrycodestate);
-        const requiredLength = phonecode?.PhoneLength;
+        const phonecode = AllCode?.find((val) => (val?.mobileprefix == Countrycodestate || val?.MobilePrefix == Countrycodestate));
+        const requiredLength = phonecode?.PhoneLength || phonecode?.phonelength || 10;
         const isValid = new RegExp(`^\\d{${requiredLength}}$`).test(mobileNo.trim());
         if (!isValid) {
-            setErrors({ mobileNo: `Mobile number must be  ${requiredLength} digits.` });
-            return { mobileNo: `Enter a valid ${requiredLength}-digit mobile number` };
+            setErrors({ mobileNo: `Mobile number must be ${requiredLength} digits.` });
+            setIsSubmitting(false);
+            setIsLoading(false);
+            return;
         }
-        // else if (!/^\d{10}$/.test(mobileNo.trim())) {
-        //     setErrors({ mobileNo: 'Enter Valid mobile number' });
-        //     return;
-        // }
-
-        // try {
-        //     const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
-        //     const { FrontEnd_RegNo } = storeInit;
-        //     const combinedValue = JSON.stringify({
-        //         country_code: '91', mobile: `${mobileNo}`, FrontEnd_RegNo: `${FrontEnd_RegNo}`
-        //     });
-        //     const encodedCombinedValue = btoa(combinedValue);
-        //     const body = {
-        //         "con": "{\"id\":\"\",\"mode\":\"WEBVALDNMOBILE\"}",
-        //         "f": "continueWithMobile (handleSubmit)",
-        //         p: encodedCombinedValue
-        //     };
-
-        //     const response = await CommonAPI(body);
         setIsSubmitting(true);
         setIsLoading(true);
         ContimueWithMobileAPI(mobileNo, Countrycodestate).then((response) => {
@@ -110,19 +80,16 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                 toast.success('OTP send Sucssessfully');
                 navigation(redirectMobileUrl);
                 sessionStorage.setItem('registerMobile', mobileNo)
-                sessionStorage.setItem('SecurityKey', SecurityKey)
                 sessionStorage.setItem('Countrycodestate', Countrycodestate)
                 setIsSubmitting(false);
             } else {
                 // navigation(redirectSignUpUrl, { state: { mobileNo: mobileNo } });
                 if (Countrycodestate != "91") {
                     navigation(redirectSignUpUrl);
-                    sessionStorage.setItem('SecurityKey', SecurityKey)
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
                 } else if (Countrycodestate == "91" && storeInit?.IsEcomOtpVerification == 1) {
                     navigation(redirectSignUpUrl);
-                    sessionStorage.setItem('SecurityKey', SecurityKey)
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
                 } else {
@@ -138,20 +105,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
             setIsSubmitting(false);
         })
 
-
-
-        // } catch (error) {
-        //     console.error('Error:', error);
-        // } finally {
-        //     setIsSubmitting(false);
-        //     setIsLoading(false);
-        // }
     };
-
-    useEffect(() => {
-        sessionStorage.removeItem("Countrycodestate")
-    }, [])
-
     return (
         <div className='proCat_continuMobile'>
             <ToastContainer limit={5} hideProgressBar={true} pauseOnHover={false} />
@@ -192,23 +146,6 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                     >We'll check if you have an account, and help create one if you don't.</p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        {/* <TextField
-                            autoFocus
-                            id="outlined-basic"
-                            label="Enter Mobile No"
-                            variant="outlined"
-                            className='smr_loginmobileBox'
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    handleSubmit();
-                                }
-                            }}
-                            style={{ margin: '15px' }}
-                            value={mobileNo}
-                            onChange={(e) => handleInputChange(e, setMobileNo, 'mobileNo')}
-                            error={!!errors.mobileNo}
-                            helperText={errors.mobileNo}
-                        /> */}
                         <ContinueMobile
                             Errors={errors}
                             mobileNo={mobileNo}

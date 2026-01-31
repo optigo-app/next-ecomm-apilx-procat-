@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import './LoginWithMobileCode.modul.scss';
 import { ContimueWithMobileAPI } from '@/app/(core)/utils/API/Auth/ContimueWithMobileAPI';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { LoginWithEmailAPI } from '@/app/(core)/utils/API/Auth/LoginWithEmailAPI';
 import Cookies from 'js-cookie';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import OTP from './OTP';
 
 export default function LoginWithMobileCode({ params, searchParams }) {
     const location = useNextRouterLikeRR();
@@ -18,14 +19,14 @@ export default function LoginWithMobileCode({ params, searchParams }) {
     const [resendTimer, setResendTimer] = useState(120);
     const [isLoginState, setIsLoginState] = useState(false)
 
-    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
+    const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
     const updatedSearch = search?.replace('?LoginRedirect=', '');
     const redirectMobileUrl = `${decodeURIComponent(updatedSearch)}`;
-    const cancelRedireactUrl = `/LoginOption/${search}`;
+    const cancelRedireactUrl = `/LoginOption?${search}`;
 
 
     useEffect(() => {
-        const storedMobile = sessionStorage?.getItem('registerMobile')?? '';
+        const storedMobile = sessionStorage?.getItem('registerMobile') ?? '';
         if (storedMobile) setMobileNo(storedMobile);
     }, []);
 
@@ -59,11 +60,11 @@ export default function LoginWithMobileCode({ params, searchParams }) {
 
     const handleSubmit = async () => {
         const visiterId = Cookies.get('visiterId');
-        if (!enterOTP.trim()) {
-            errors.otp = 'Code is required';
+        if (enterOTP.length < 5) {
+            setErrors(prevErrors => ({ ...prevErrors, otp: 'Please complete the code.' }));
             return;
         }
-        LoginWithEmailAPI('', mobileNo, enterOTP, 'otp_mobile_login', '',visiterId).then((response) => {
+        LoginWithEmailAPI('', mobileNo, enterOTP, 'otp_mobile_login', '', visiterId).then((response) => {
             if (response.Data.rd[0].stat === 1) {
                 Cookies.set('LoginUser', true)
                 sessionStorage.setItem('LoginUser', true)
@@ -71,12 +72,17 @@ export default function LoginWithMobileCode({ params, searchParams }) {
                 sessionStorage.setItem('loginUserDetail', JSON.stringify(response.Data.rd[0]));
                 sessionStorage.setItem('registerMobile', mobileNo);
 
-                if(redirectMobileUrl){
-                    // navigation(redirectMobileUrl);
-                    window.location.href = redirectMobileUrl;
-                }else{
-                    // navigation('/')
-                    window.location.href = '/';
+                if (redirectMobileUrl) {
+                    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+                    let finalRedirectUrl = redirectMobileUrl;
+                    if (securityKey) {
+                        const separator = finalRedirectUrl.includes('?') ? '&' : '?';
+                        finalRedirectUrl = `${finalRedirectUrl}${separator}SK=${encodeURIComponent(securityKey)}`;
+                    }
+                    window.location.href = finalRedirectUrl;
+                } else {
+                    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+                    window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
                 }
 
             } else {
@@ -107,7 +113,7 @@ export default function LoginWithMobileCode({ params, searchParams }) {
                 </div>
             )}
             <div >
-            {/* style={{ backgroundColor: '#c0bbb1' }} */}
+                {/* style={{ backgroundColor: '#c0bbb1' }} */}
                 <div className='smling-forgot-main'>
                     <p style={{
                         textAlign: 'center',
@@ -115,8 +121,8 @@ export default function LoginWithMobileCode({ params, searchParams }) {
                         marginTop: '0px',
                         fontSize: '40px',
                         color: '#7d7f85',
-                        marginBottom:'10px'
-                       
+                        marginBottom: '10px'
+
                     }}
                         className='AuthScreenMainTitle'
                     >Login With Code</p>
@@ -125,30 +131,19 @@ export default function LoginWithMobileCode({ params, searchParams }) {
                         marginTop: '-80px',
                         fontSize: '15px',
                         color: '#7d7f85',
-                       
+
                     }}
                         className='AuthScreenSubTitle'
                     >Last step! To secure your account, enter the code we just sent to {mobileNo}.</p>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' , marginTop: '20px' }}>
-                        <TextField
-                            autoFocus
-                            id="outlined-basic"
-                            label="Enter Code"
-                            variant="outlined"
-                            className='labgrowRegister'
-                            style={{ margin: '15px' }}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    handleSubmit();
-                                }
-                            }}
-                            onChange={(e) => handleInputChange(e, setEnterOTP, 'mobileNo')}
-                            error={!!errors.otp}
-                            helperText={errors.otp}
-                        />
+                    <div className='fg_opt_div' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+                        <OTP separator={<span> </span>} value={enterOTP} onChange={setEnterOTP} length={6} onSubmit={handleSubmit} />
 
-                        <button className='submitBtnForgot_for btnColorProCat' onClick={handleSubmit}>Login</button>
+                        {errors.otp && (
+                            <p style={{ color: 'red', marginTop: '5px' }}>{errors.otp}</p>
+                        )}
+
+                        <button className='submitBtnForgot_for btnColorProCat' style={{ marginTop: '20px' }} onClick={handleSubmit}>Login</button>
                         <p className='resend_msg' style={{ marginTop: '10px' }}>Didn't get the code ? {resendTimer === 0 ? <span style={{ fontWeight: 500, color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={handleResendCode}>Resend Code</span> : <span>Resend in {Math.floor(resendTimer / 60).toString().padStart(2, '0')}:{(resendTimer % 60).toString().padStart(2, '0')}</span>}</p>
                         <Button style={{ marginTop: '10px', color: 'gray' }} onClick={() => navigation(cancelRedireactUrl)}>CANCEL</Button>
                     </div>

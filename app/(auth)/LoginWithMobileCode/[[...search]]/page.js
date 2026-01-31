@@ -1,13 +1,23 @@
 import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
 import React from "react";
-import { themeMap } from "@/app/(core)/utils/ThemeMap";
+
+
+export const themeMap = {
+  "nxt10.optigoapps.com": {
+    page: "@/app/theme/fgstore.pro/Auth/LoginWithMobileCode/page.js",
+  },
+  "thereflections.procatalog.in": {
+    page: "@/app/theme/fgstore.pro/Auth/LoginWithMobileCode/page.js",
+  },
+};
 
 
 const page = async ({ params, searchParams }) => {
+  const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
   const theme = await getActiveTheme();
   const themeData = themeMap[theme];
-  const LoginWithMobileCode = (await import(`@/app/theme/${themeData.page}/Auth/LoginWithMobileCode/page.js`)).default;
-  return <LoginWithMobileCode params={params} searchParams={searchParams} />;
+  const LoginWithMobileCode = (await import(themeData.page)).default;
+  return <LoginWithMobileCode params={awaitedParams} searchParams={awaitedSearchParams} />;
 };
 
 export default page;

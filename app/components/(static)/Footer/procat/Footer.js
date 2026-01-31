@@ -64,7 +64,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
           <h4 className="footerTitle">Quick Links</h4>
           <div className="footerLinks">
             <Link href="/terms-and-conditions">Terms & Conditions</Link>
-            <Link href="/privacy-policy">Privacy Policy</Link>
+            <Link href="/privacyPolicy">Privacy Policy</Link>
             <Link href="/aboutUs">About Us</Link>
             <Link href="/refund-policy">Refund Policy</Link>
             <Link href="/shipping-policy">Shipping Policy</Link>

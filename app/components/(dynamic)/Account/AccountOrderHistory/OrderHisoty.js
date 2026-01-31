@@ -60,7 +60,7 @@ const OrderHistory = () => {
   
       const response = await getOrderHistory(storeinit, loginInfo, UserEmail);
 
-      if (response?.Status === "200") {
+if (response?.Status === "200" || response?.Status === 200 || response?.Status == 200) {
         if (response?.Data?.rd) {
           setOrderHistoryData(response?.Data?.rd);
           setLoaderOH(false);

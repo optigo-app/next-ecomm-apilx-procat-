@@ -31,28 +31,21 @@ export async function fetchStoreInitData(req) {
 
         try {
             domainInfo = await getDomainInfo();
-            console.log("😉 ~ fetchStoreInitData ~ domainInfo:", domainInfo)
             hostname = domainInfo.hostname;
             protocol = domainInfo.protocol;
         } catch {
-            // fallback if server action not accessible
             hostname = "";
             protocol = "";
         }
 
-        console.log("😉 ~ fetchStoreInitData ~ domainInfo", domainInfo)
-
-        // ✅ 2️⃣ If server action returns empty, fallback to client window
         if ((!hostname || hostname === "") && typeof window !== "undefined") {
             const { protocol: winProtocol, hostname: winHost } = window.location;
             hostname = winHost.replace(/^www\./, "");
             protocol = winProtocol;
         }
 
-        console.log("TCL: fetchStoreInitData -> hostname", hostname)
         if (!hostname) hostname = NEXT_APP_WEB;
 
-        // ✅ 3️⃣ Build base URL
         const localHosts = [
             "localhost",
             "nzen",
@@ -75,22 +68,18 @@ export async function fetchStoreInitData(req) {
             "hoq.web",
         ];
 
-        console.log("😉 ~ fetchStoreInitData ~ localHosts.includes(hostname)", localHosts.includes(hostname))
         if (localHosts.includes(hostname)) {
             baseUrl = `${protocol}//${NEXT_APP_WEB}`;
         } else {
             baseUrl = `${protocol}//${hostname}`;
         }
-        
-        console.log("😉 ~ fetchStoreInitData ~ baseUrl:", baseUrl)
+
         const staticPathLocal = `${baseUrl}/Website_Store/WebSiteStaticImage/${NEXT_APP_WEB}/StoreInit.json`;
         const staticPathCDN = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${NEXT_APP_WEB}/StoreInit.json`;
 
         const finalUrl = localHosts.includes(hostname)
             ? staticPathLocal
             : staticPathCDN;
-
-        console.log("😉 ~ fetchStoreInitData ~ finalUrl:", finalUrl)
 
         const response = await fetch(finalUrl);
         if (!response.ok) throw new Error(`HTTP error ${response.status}`);

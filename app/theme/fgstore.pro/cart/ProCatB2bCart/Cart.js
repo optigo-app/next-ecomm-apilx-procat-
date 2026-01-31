@@ -66,11 +66,11 @@ const CartPage = () => {
     handleMoveToDetail,
     handelMenu
   } = useCart();
-    const { islogin, setCartCountNum } = useStore();
-  
+  const { islogin, setCartCountNum } = useStore();
 
-    const Router= useRouter();
-  const navigate = (path)=>Router.push(path)
+
+  const Router = useRouter();
+  const navigate = (path) => Router.push(path)
   const [storeInit, setStoreInit] = useState();
   const [defaultAddr, setDefaultAddr] = useState();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -98,7 +98,7 @@ const CartPage = () => {
   //   window.scrollTo(0, 0);
   // };
 
-  const redirectUrl = `/loginOption/?LoginRedirect=/cartPage`;
+  const redirectUrl = `/LoginOption/?LoginRedirect=/cartPage`;
   const handlePlaceOrder = () => {
     let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
     let priceData = finalCartData?.reduce(
@@ -110,7 +110,7 @@ const CartPage = () => {
       navigate(redirectUrl);
       // navigate('/loginOption')
     } else {
-      navigate("/Delivery", { replace: true });
+      navigate("/delivery", { replace: true });
     }
     window.scrollTo(0, 0);
   };

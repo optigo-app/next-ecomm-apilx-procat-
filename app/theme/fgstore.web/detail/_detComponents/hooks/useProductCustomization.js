@@ -55,6 +55,7 @@ export const useProductCustomization = (singleProd, singleProd1, storeInit) => {
             "--background-color",
             backgroundColor
         );
+        
     };
 
     // Check text overflow for description

@@ -5,19 +5,19 @@ import { toast } from 'react-toastify';
 import { ContinueWithEmailAPI } from '@/app/(core)/utils/API/Auth/ContinueWithEmailAPI';
 import { useRouter } from 'next/navigation';
 
-export default function ContinueWithEmail({params , searchParams ,storeInit}) {
+export default function ContinueWithEmail({ params, searchParams, storeInit }) {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-       const Router = useRouter();
-       const navigation = (path)=>{
-         Router.push(path)
-       }
-       const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-       const redirectEmailUrl = `/LoginWithEmail/?LoginRedirect=${search}`;
-       const redirectSignUpUrl = `/register/?LoginRedirect=${search}`;
-       const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
-   
+    const Router = useRouter();
+    const navigation = (path) => {
+        Router.push(path)
+    }
+    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
+    const redirectEmailUrl = `/LoginWithEmail?LoginRedirect=${search}`;
+    const redirectSignUpUrl = `/register?LoginRedirect=${search}`;
+    const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}`;
+
 
     // const validateEmail = (email) => {
     //     const regex = /^[a-zA-Z][\w@$&#]*@[a-zA-Z]+\.[a-zA-Z]+(\.[a-zA-Z]+)?$/;

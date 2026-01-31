@@ -13,7 +13,8 @@ export default function ContinueWithEmail({ params, searchParams }) {
     const [emailError, setEmailError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useRouter();
-    const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
+    const paramsObj = searchParams || {};
+    const search = paramsObj.LoginRedirect || paramsObj.loginRedirect || paramsObj.search || "";
     const redirectEmailUrl = `/LoginWithEmail/?LoginRedirect=${search}`;
     const redirectSignUpUrl = `/register/?LoginRedirect=${search}`;
     const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
@@ -46,6 +47,7 @@ export default function ContinueWithEmail({ params, searchParams }) {
             "--background-color",
             backgroundColor
         );
+
     };
 
 

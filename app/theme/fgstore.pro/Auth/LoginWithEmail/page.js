@@ -16,7 +16,7 @@ import { generateToken } from '@/app/(core)/utils/Glob_Functions/Tokenizer';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
 
-export default function LoginWithEmail({ params, searchParams , storeInit }) {
+export default function LoginWithEmail({ params, searchParams, storeInit }) {
   const { islogin, setislogin, setCartCountNum, setWishCountNum } = useStore();
   const [email, setEmail] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -29,28 +29,11 @@ export default function LoginWithEmail({ params, searchParams , storeInit }) {
   const navigation = push;
   const location = useNextRouterLikeRR();
 
+  const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+  const securityKey = searchParams?.SK || searchParams?.SecurityKey || location?.state?.SecurityKey || "";
 
-  const encodedKeyFromStorage = (() => {
-    try {
-      return JSON.parse(sessionStorage.getItem("keylogs") || "null");
-    } catch {
-      return null;
-    }
-  })();
-  const getSecKey = encodedKeyFromStorage
-    ? decodeURIComponent(atob(encodedKeyFromStorage))
-    : "";
-  const search = JSON.parse(searchParams?.value)?.LoginRedirect ?? "";
-  const state = (() => {
-    try {
-      return JSON.parse(sessionStorage.getItem("SecurityKey") || "null") ?? getSecKey;
-    } catch {
-      return getSecKey;
-    }
-  })();
-  const updatedSearch = search.replace('?LoginRedirect=', '');
-  const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;
-  const cancelRedireactUrl = `/LoginOption/${search}`;
+  const redirectEmailUrl = search ? decodeURIComponent(search) : "/";
+  const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
 
   useEffect(() => {
     const storedEmail = (() => {
@@ -155,14 +138,17 @@ export default function LoginWithEmail({ params, searchParams , storeInit }) {
 
         if (redirectEmailUrl) {
           console.log("🚀 ~ handleSubmit ~ redirectEmailUrl:", redirectEmailUrl)
-          sessionStorage.removeItem('keylogs');
-          sessionStorage.setItem('Loginkey', JSON?.stringify((location?.state?.SecurityKey ?? getSecKey)))
-          sessionStorage.setItem('state', JSON.stringify(state))
-          window.location.href = redirectEmailUrl;
+
+          let finalRedirectUrl = redirectEmailUrl;
+          if (securityKey) {
+            const separator = finalRedirectUrl.includes('?') ? '&' : '?';
+            finalRedirectUrl = `${finalRedirectUrl}${separator}SK=${encodeURIComponent(securityKey)}`;
+          }
+
+          window.location.href = finalRedirectUrl;
         } else {
           console.log("🚀 ~ handleSubmit ~ else:")
-          window.location.href = '/';
-          sessionStorage.setItem('state', JSON.stringify(state))
+          window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
         }
 
       } else {
@@ -188,14 +174,12 @@ export default function LoginWithEmail({ params, searchParams , storeInit }) {
 
   const handleNavigation = () => {
     sessionStorage.setItem('LoginCodeEmail', 'true');
-    navigation('/LoginWithEmailCode');
+    navigation(`/LoginWithEmailCode?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`);
     sessionStorage.setItem('email', JSON.stringify(location.state?.email))
-    sessionStorage.setItem('SecurityKey', JSON.stringify(location.state?.SecurityKey))
   }
 
   const handleForgotPassword = async () => {
     let Domian = `${window?.location?.protocol}//${storeInit?.domain}`
-    console.log("🚀 ~ handleForgotPassword ~ Domian:", Domian)
     setIsLoading(true);
     ForgotPasswordEmailAPI(Domian, email).then((response) => {
       setIsLoading(false);
@@ -209,8 +193,7 @@ export default function LoginWithEmail({ params, searchParams , storeInit }) {
   }
 
   const HandleCancel = () => {
-    navigation('/LoginOption')
-    sessionStorage.setItem('state', JSON.stringify(state))
+    navigation(`/LoginOption?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`)
   }
 
   return (
