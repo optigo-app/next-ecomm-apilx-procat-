@@ -1,20 +1,8 @@
-import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
 import { getStoreInit } from "../(core)/utils/GlobalFunctions/GlobalFunctions";
+import ConfirmationComponent from "@/app/theme/fgstore.pro/confirmation/page.jsx";
 
-export const themeMap = {
-
-  "nxt10.optigoapps.com": {
-    page: "@/app/theme/fgstore.pro/confirmation/page.jsx",
-  },
-  "thereflections.procatalog.in": {
-    page: "@/app/theme/fgstore.pro/confirmation/page.jsx",
-  },
-};
 
 export default async function Page() {
-  const theme = await getActiveTheme();
-  const themeData = themeMap[theme];
   const storeInit = await getStoreInit();
-  const Confirmation = (await import(themeData.page)).default;
-  return <Confirmation storeInit={storeInit} />;
+  return <ConfirmationComponent storeInit={storeInit} />;
 }

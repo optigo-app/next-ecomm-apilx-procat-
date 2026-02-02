@@ -1,34 +1,34 @@
 import { NEXT_APP_WEB } from "./env";
 
 export const domainHtmlMap = {
-    "nxt10.optigoapps.com": "sonasons",
-    "thereflections.procatalog.in": "saraff",
-    "almacarino.com": "almacarino",
-    "uscreation.com": "uscreation",
+  "nxt10.optigoapps.com": "sonasons",
+  "thereflections.procatalog.in": "saraff",
+  "almacarino.procatalog.in": "almacarino",
+  "uscreation.procatalog.in": "uscreation",
+  "hemratnajewels.procatalog.in": "hemratnajewels",
+  "myras.procatalog.in": "myras",
+  "fabgold.procatalog.in": "fabgold",
+  "glossyjewel.procatalog.in": "glossyjewel",
 };
 
 const pageFileMap = {
-    aboutUs: "aboutUs.html",
-    privacy: "PrivacyPolicy.html",
-    refund: "refundpolicy.html",
-    shipping: "ShippingPolicy.html",
-    terms: "TermsPolicy.html",
+  aboutUs: "aboutUs.html",
+  privacy: "PrivacyPolicy.html",
+  refund: "refundpolicy.html",
+  shipping: "ShippingPolicy.html",
+  terms: "TermsPolicy.html",
+  styleContent: "ColorTheme.txt",
 };
 
 export function getStaticHtmlPages() {
-    const domain = NEXT_APP_WEB;
-    const folder = domainHtmlMap[domain] ?? "default";
+  const domain = NEXT_APP_WEB;
+  const folder = domainHtmlMap[domain] ?? "default";
 
-    const pages = Object.fromEntries(
-        Object.entries(pageFileMap).map(([key, file]) => [
-            key,
-            `public/WebSiteStaticImage/html/${folder}/${file}`,
-        ])
-    );
+  const pages = Object.fromEntries(Object.entries(pageFileMap).map(([key, file]) => [key, `public/WebSiteStaticImage/html/${folder}/${file}`]));
 
-    return {
-        domain,
-        folder,
-        pages,
-    };
+  return {
+    domain,
+    folder,
+    pages,
+  };
 }

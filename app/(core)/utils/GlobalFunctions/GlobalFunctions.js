@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { assetBase } from "../../lib/ServerHelper";
 import fs from "fs";
 import path from "path";
+import { getStaticHtmlPages } from "../StaticFileGetter";
 
 function safeParse(value) {
   if (!value) return {};
@@ -64,7 +65,6 @@ export const getContactUsContent = async () => {
   }
 };
 
-
 export const getExtraFlag = async () => {
   try {
     const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "ExtraFlag.txt");
@@ -76,10 +76,10 @@ export const getExtraFlag = async () => {
   }
 };
 
-
 export const getStyleContent = async () => {
   try {
-    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "ColorTheme.txt");
+    const ht = getStaticHtmlPages();
+    const filePath = path.join(process.cwd(), ht.pages.styleContent);
     const htmlContent = await fs.promises.readFile(filePath, "utf-8");
     return htmlContent;
   } catch (error) {

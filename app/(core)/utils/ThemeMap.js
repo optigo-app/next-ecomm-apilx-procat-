@@ -14,4 +14,10 @@ export const themeMap = {
   "thereflections.procatalog.in": {
     page: "fgstore.pro",
   },
+  "almacarino.procatalog.in": {
+    page: "fgstore.pro",
+  },
+    "uscreation.procatalog.in": {
+    page: "fgstore.pro",
+  },
 };

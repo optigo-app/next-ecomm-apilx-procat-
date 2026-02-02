@@ -8,7 +8,7 @@ import { ResetPasswordAPI } from "@/app/(core)/utils/API/Auth/ResetPasswordAPI";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useSearchParams } from "next/navigation";
 
-export default function ForgotPassword() {
+export default function ForgotPassword({params ,storeInit}) {
   const location = useNextRouterLikeRR();
   const navigation = location?.push;
   const [password, setPassword] = useState("");

@@ -20,17 +20,15 @@ const nextConfig = {
     ];
   },
 
-  // webpack: (config) => {
-  //   config.infrastructureLogging = { level: "error" }; // hides warnings
-  //   return config;
-  // },
-
   eslint: {
     ignoreDuringBuilds: true,
   },
 
   experimental: {
     viewTransition: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 
