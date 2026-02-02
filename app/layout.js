@@ -1,14 +1,12 @@
-import "./globals.css";
-import { Poppins } from "next/font/google";
-import { pages } from "@/app/(core)/utils/pages";
-import { generatePageMetadata } from "@/app/(core)/utils/HeadMeta";
-import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "./(core)/utils/GlobalFunctions/GlobalFunctions";
-import { getActiveTheme } from "./(core)/lib/getActiveTheme";
-import { StoreProvider } from "./(core)/contexts/StoreProvider";
-import { themeMap } from "./(core)/utils/ThemeMap";
-import { AuthProvider } from "./(core)/contexts/AuthProvider";
+import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { EmotionRegistry } from "./(core)/contexts/EmotionRegistry";
+import { generatePageMetadata } from "@/app/(core)/utils/HeadMeta";
+import { StoreProvider } from "./(core)/contexts/StoreProvider";
+import { AuthProvider } from "./(core)/contexts/AuthProvider";
+import { Poppins } from "next/font/google";
+import "./globals.css";
+import LayoutComponent from '@/app/theme/fgstore.pro/layout.jsx'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -41,10 +39,8 @@ export async function generateMetadata() {
   });
 }
 
+
 export default async function RootLayout({ children }) {
-  const theme = await getActiveTheme();
-  const themeData = themeMap[theme];
-  const Layout = (await import(`@/app/theme/${themeData.page}/layout.jsx`)).default;
   const companyInfo = await getCompanyInfoData();
   const storeInit = await getStoreInit();
   const myAccountFlags = await getMyAccountFlags();
@@ -56,7 +52,7 @@ export default async function RootLayout({ children }) {
           <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
             <StoreProvider>
               <AuthProvider storeInit={storeInit}>
-                <Layout>{children}</Layout>
+                <LayoutComponent>{children}</LayoutComponent>
               </AuthProvider>
             </StoreProvider>
           </MasterProvider>

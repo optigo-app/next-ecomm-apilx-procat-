@@ -73,14 +73,14 @@ const Usewishlist = () => {
             getDiamondData(commaSeparatedString)
           }
         }
-      }else{
+      } else {
         setIsWlLoading(false);
         setWishlistData([]);
         setDiamondWishData([]);
       }
     } catch (error) {
       console.error("Error:", error);
-    }finally{
+    } finally {
       setIsWlLoading(false);
     }
   };

@@ -85,10 +85,9 @@ const redirectEmailUrl =
         decodeError = true;
     }
 
-    if (pathname.startsWith('/p')) {
+    if (pathname === "/p" || pathname.startsWith("/p/")) {
         if (islogin !== true) {
             if (decodeError || (albumSecurityId !== null && albumSecurityId > 0)) {
-                // Restricted album and not logged in - BLOCK ACCESS
                 const redirectUrl = `/LoginOption?LoginRedirect=${encodeURIComponent(fullPath)}`;
                 router.replace(redirectUrl);
                 return;
@@ -96,20 +95,34 @@ const redirectEmailUrl =
         }
     }
 
-    if (storeInit?.IsB2BWebsite != 0) {
-        if (islogin !== true) {
-            if (pathname.startsWith('/p')
-                || pathname.startsWith('/d')
-                || pathname.startsWith('/cartPage')) {
+    const publicPages = [
+        "/",
+        "/LoginOption",
+        "/privacyPolicy",
+        "/aboutUs",
+        "/contactUs",
+        "/appointment",
+        "/bespoke-jewelry",
+        "/refund-policy",
+        "/shipping-policy",
+        "/terms-and-conditions",
+    ];
+
+    if (storeInit?.IsB2BWebsite === 1) {
+        if (islogin === false) {
+            const isShopPage = pathname === "/p" || pathname.startsWith("/p/") ||
+                               pathname === "/d" || pathname.startsWith("/d/") ||
+                               pathname === "/cartPage" || pathname.startsWith("/cartPage/");
+
+            const isPublicPage = publicPages.some(page => pathname === page || pathname.startsWith(page + "/"));
+
+            if (isShopPage) {
                 const redirectUrl = `/LoginOption?LoginRedirect=${encodeURIComponent(fullPath)}`;
                 router.replace(redirectUrl);
                 return;
-            }
-            else {
-                if(pathname !== "/" && !pathname.startsWith("/LoginOption")) {
-                     router.replace("/");
-                     return;
-                }
+            } else if (!isPublicPage) {
+                router.replace("/");
+                return;
             }
         }
     }
@@ -119,8 +132,6 @@ const redirectEmailUrl =
     return <div></div>;
   }
 
-  // Extra safety check: if we are on a protected path and not logged in, don't render children
-  // This handles the gap between router.replace calling and the actual navigation
   if (islogin !== true) {
     const pathSegments = pathname?.split("/") || [];
     const kSegment = pathSegments.find(s => s.includes("K="));
@@ -139,14 +150,16 @@ const redirectEmailUrl =
         decodeError = true;
     }
 
-    if (pathname.startsWith('/p')) {
+    if (pathname === "/p" || pathname.startsWith("/p/")) {
         if (decodeError || (albumSecurityId !== null && albumSecurityId > 0)) {
             return <div></div>;
         }
     }
 
-    if (storeInit?.IsB2BWebsite != 0) {
-        if (pathname.startsWith('/p') || pathname.startsWith('/d') || pathname.startsWith('/cartPage')) {
+    if (storeInit?.IsB2BWebsite === 1) {
+        if (pathname === "/p" || pathname.startsWith("/p/") || 
+            pathname === "/d" || pathname.startsWith("/d/") || 
+            pathname === "/cartPage" || pathname.startsWith("/cartPage/")) {
             return <div></div>;
         }
     }

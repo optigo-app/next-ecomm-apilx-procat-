@@ -1,12 +1,39 @@
-import { assetBase } from '@/app/(core)/lib/ServerHelper';
-import './TopSection.modul.scss';
+import { assetBase } from "@/app/(core)/lib/ServerHelper";
+import "./TopSection.modul.scss";
 
-const TopSection = ({ storeData }) => {
-  const imageSrc = storeData?.ProCatLogbanner || `${assetBase}/procat1.jpg`;
+async function isValidImage(url) {
+  if (!url) return false;
+
+  try {
+    const res = await fetch(url, { method: "HEAD", cache: "no-store" });
+
+    return (
+      res.ok &&
+      res.headers.get("content-type")?.startsWith("image/")
+    );
+  } catch {
+    return false;
+  }
+}
+
+const TopSection = async ({ storeData }) => {
+  const defaultImage = `${assetBase}/procat1.jpg`;
+
+  let imageSrc = defaultImage;
+
+  if (await isValidImage(storeData?.ProCatLogbanner)) {
+    imageSrc = storeData.ProCatLogbanner;
+  }
+
+  console.log("🚀 ~ TopSection ~ imageSrc:", imageSrc);
 
   return (
     <div>
-      <img src={imageSrc} className="proCatTopBannerImg" alt="Top Banner" />
+      <img
+        src={imageSrc}
+        className="proCatTopBannerImg"
+        alt="Top Banner"
+      />
     </div>
   );
 };

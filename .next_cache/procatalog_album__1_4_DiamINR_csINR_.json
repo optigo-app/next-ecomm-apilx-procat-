@@ -1,5 +1,5 @@
 {
-  "timestamp": 1769842582711,
+  "timestamp": 1770010781655,
   "meta": {
     "type": "procatalog_album_",
     "PackageId": 1,
@@ -143,6 +143,18 @@
     },
     {
       "SrNo": "12",
+      "Albumid": 43,
+      "AlbumName": "Lovent",
+      "AlbumImageName": "",
+      "AlbumImageFol": "QWxidW1fNDM=",
+      "DisplayOrder": 0,
+      "IsDynamic": 1,
+      "IsDual": 0,
+      "AlbumSecurityId": 0,
+      "AlbumDetail": "[{\"SrNo\":12,\"Albumid\":43,\"AlbumName\":\"Lovent\",\"AlbumImageName\":\"\",\"AlbumImageFol\":\"QWxidW1fNDM=\",\"DisplayOrder\":0,\"IsDynamic\":1,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"S24701E~1.webp\"}]"
+    },
+    {
+      "SrNo": "13",
       "Albumid": 5,
       "AlbumName": "Mantra Necklace And Earring",
       "AlbumImageName": "Mantra Necklace And Earring_30102025153722747.jpg",
@@ -151,10 +163,10 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":12,\"Albumid\":5,\"AlbumName\":\"Mantra Necklace And Earring\",\"AlbumImageName\":\"Mantra Necklace And Earring_30102025153722747.jpg\",\"AlbumImageFol\":\"QWxidW1fNQ==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"G34902E~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":13,\"Albumid\":5,\"AlbumName\":\"Mantra Necklace And Earring\",\"AlbumImageName\":\"Mantra Necklace And Earring_30102025153722747.jpg\",\"AlbumImageFol\":\"QWxidW1fNQ==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"G34902E~1.webp\"}]"
     },
     {
-      "SrNo": "13",
+      "SrNo": "14",
       "Albumid": 16,
       "AlbumName": "Orion Pendant",
       "AlbumImageName": "Orion Necklace_29032025124732190.jpg",
@@ -163,10 +175,10 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":13,\"Albumid\":16,\"AlbumName\":\"Orion Pendant\",\"AlbumImageName\":\"Orion Necklace_29032025124732190.jpg\",\"AlbumImageFol\":\"QWxidW1fMTY=\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"ED132003~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":14,\"Albumid\":16,\"AlbumName\":\"Orion Pendant\",\"AlbumImageName\":\"Orion Necklace_29032025124732190.jpg\",\"AlbumImageFol\":\"QWxidW1fMTY=\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"ED132003~1.webp\"}]"
     },
     {
-      "SrNo": "14",
+      "SrNo": "15",
       "Albumid": 6,
       "AlbumName": "Orion Pendant Set",
       "AlbumImageName": "Orion Pendant Set_30102025153732403.webp",
@@ -175,10 +187,10 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":14,\"Albumid\":6,\"AlbumName\":\"Orion Pendant Set\",\"AlbumImageName\":\"Orion Pendant Set_30102025153732403.webp\",\"AlbumImageFol\":\"QWxidW1fNg==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"D24702~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":15,\"Albumid\":6,\"AlbumName\":\"Orion Pendant Set\",\"AlbumImageName\":\"Orion Pendant Set_30102025153732403.webp\",\"AlbumImageFol\":\"QWxidW1fNg==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"D24702~1.webp\"}]"
     },
     {
-      "SrNo": "15",
+      "SrNo": "16",
       "Albumid": 35,
       "AlbumName": "Swirlpurl Ring",
       "AlbumImageName": "",
@@ -187,10 +199,10 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":15,\"Albumid\":35,\"AlbumName\":\"Swirlpurl Ring\",\"AlbumImageName\":\"\",\"AlbumImageFol\":\"QWxidW1fMzU=\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"A19903~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":16,\"Albumid\":35,\"AlbumName\":\"Swirlpurl Ring\",\"AlbumImageName\":\"\",\"AlbumImageFol\":\"QWxidW1fMzU=\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"A19903~1.webp\"}]"
     },
     {
-      "SrNo": "16",
+      "SrNo": "17",
       "Albumid": 4,
       "AlbumName": "Twilight Mangalsutra",
       "AlbumImageName": "Twilight Mangalsutra_30102025153750857.jpg",
@@ -199,10 +211,10 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":16,\"Albumid\":4,\"AlbumName\":\"Twilight Mangalsutra\",\"AlbumImageName\":\"Twilight Mangalsutra_30102025153750857.jpg\",\"AlbumImageFol\":\"QWxidW1fNA==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"S24701E~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":17,\"Albumid\":4,\"AlbumName\":\"Twilight Mangalsutra\",\"AlbumImageName\":\"Twilight Mangalsutra_30102025153750857.jpg\",\"AlbumImageFol\":\"QWxidW1fNA==\",\"DisplayOrder\":0,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"S24701E~1.webp\"}]"
     },
     {
-      "SrNo": "17",
+      "SrNo": "18",
       "Albumid": 7,
       "AlbumName": "Bistro Bracelet",
       "AlbumImageName": "Bistro Bracelet_29032025124526032.jpg",
@@ -211,19 +223,7 @@
       "IsDynamic": 0,
       "IsDual": 0,
       "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":17,\"Albumid\":7,\"AlbumName\":\"Bistro Bracelet\",\"AlbumImageName\":\"Bistro Bracelet_29032025124526032.jpg\",\"AlbumImageFol\":\"QWxidW1fNw==\",\"DisplayOrder\":1,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"EK128004~1.webp\"}]"
-    },
-    {
-      "SrNo": "18",
-      "Albumid": 39,
-      "AlbumName": "Jeeva",
-      "AlbumImageName": "",
-      "AlbumImageFol": "QWxidW1fMzk=",
-      "DisplayOrder": 1,
-      "IsDynamic": 1,
-      "IsDual": 0,
-      "AlbumSecurityId": 0,
-      "AlbumDetail": "[{\"SrNo\":18,\"Albumid\":39,\"AlbumName\":\"Jeeva\",\"AlbumImageName\":\"\",\"AlbumImageFol\":\"QWxidW1fMzk=\",\"DisplayOrder\":1,\"IsDynamic\":1,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"P003~1.webp\"}]"
+      "AlbumDetail": "[{\"SrNo\":18,\"Albumid\":7,\"AlbumName\":\"Bistro Bracelet\",\"AlbumImageName\":\"Bistro Bracelet_29032025124526032.jpg\",\"AlbumImageFol\":\"QWxidW1fNw==\",\"DisplayOrder\":1,\"IsDynamic\":0,\"GroupName\":\"\",\"IsDual\":0,\"AlbumSecurityId\":0,\"Image_Name\":\"EK128004~1.webp\"}]"
     }
   ]
 }

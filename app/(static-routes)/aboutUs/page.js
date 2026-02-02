@@ -1,20 +1,5 @@
-import { getActiveTheme } from "@/app/(core)/lib/getActiveTheme";
-
-export const themeMap = {
-    "nxt10.optigoapps.com": {
-        // page: "@/app/theme/fgstore.web/AboutUs/page.js",
-        page: "@/app/theme/fgstore.pro/AboutUs/page.js",
-    },
-    "thereflections.procatalog.in": {
-        page: "@/app/theme/fgstore.pro/AboutUs/page.js",
-    },
-};
+import AboutUsComponent from "@/app/theme/fgstore.pro/AboutUs/page.js";
 
 export default async function Page() {
-    const theme = await getActiveTheme();
-    const themeData = themeMap[theme];
-    const AboutUs = (await
-        import(`${themeData.page}`)).default;
-
-    return <AboutUs />;
+  return <AboutUsComponent />;
 }
