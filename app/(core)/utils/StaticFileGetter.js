@@ -9,6 +9,9 @@ export const domainHtmlMap = {
   "myras.procatalog.in": "myras",
   "fabgold.procatalog.in": "fabgold",
   "glossyjewel.procatalog.in": "glossyjewel",
+  "demo.procatalog.in": "sonasons",
+  "company.procatalog.in": "sonasons",
+  "test.procatalog.in": "sonasons",
 };
 
 const pageFileMap = {

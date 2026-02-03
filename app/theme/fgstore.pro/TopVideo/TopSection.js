@@ -24,9 +24,6 @@ const TopSection = async ({ storeData }) => {
   if (await isValidImage(storeData?.ProCatLogbanner)) {
     imageSrc = storeData.ProCatLogbanner;
   }
-
-  console.log("🚀 ~ TopSection ~ imageSrc:", imageSrc);
-
   return (
     <div>
       <img

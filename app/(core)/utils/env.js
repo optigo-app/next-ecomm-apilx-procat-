@@ -16,6 +16,9 @@ export const PROCATALOG_DOMAINS = {
   ALMACARINO: "almacarino.procatalog.in",
   SONASON: "sonasons.procatalog.in",
   NXT10: "nxt10.optigoapps.com",
+  DEMO: "demo.procatalog.in",
+  COMPANY: "company.procatalog.in",
+  TEST: "test.procatalog.in",
 };
 
 
