@@ -23,7 +23,7 @@ export async function fetchStoreInitData(req) {
       protocol = winProtocol;
     }
     // if (!hostname) hostname = NEXT_APP_WEB;
-    const localHosts = ["localhost", "fgstore.pro"];
+    const localHosts = ["localhost", "fgstore.pro","nxt26.optigoapps.com","nxt26.optigoapps","nxt26"];
     const cleanHost = hostname.split(":")[0];
     const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 
