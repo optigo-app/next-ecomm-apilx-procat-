@@ -23,9 +23,9 @@ const pageFileMap = {
   styleContent: "ColorTheme.txt",
 };
 
-export function getStaticHtmlPages() {
-  const domain = NEXT_APP_WEB;
-  const folder = domainHtmlMap[domain] ?? "default";
+export function getStaticHtmlPages(host) {
+  const domain = host || NEXT_APP_WEB;
+  const folder = domainHtmlMap[domain];
 
   const pages = Object.fromEntries(Object.entries(pageFileMap).map(([key, file]) => [key, `public/WebSiteStaticImage/html/${folder}/${file}`]));
 

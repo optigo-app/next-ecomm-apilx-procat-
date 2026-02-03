@@ -11,6 +11,8 @@ import { Poppins } from "next/font/google";
 import path from "path";
 import "./globals.css";
 import fs from "fs";
+import { getDomainInfo } from "./(core)/utils/getDomainInfo";
+
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -44,7 +46,8 @@ export default async function RootLayout({ children }) {
   const companyInfo = await getCompanyInfoData();
   const storeInit = await getStoreInit();
   const myAccountFlags = await getMyAccountFlags();
-  const ht = getStaticHtmlPages();
+  const { hostname } = await getDomainInfo();
+  const ht = getStaticHtmlPages(hostname);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
 
