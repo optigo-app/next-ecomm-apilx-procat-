@@ -88,12 +88,14 @@
     margin-inline: 60px;
 
     .smr_AlbumImageMain {
-        width: 19%;
+        width: 100% !important;
         padding: 0px;
-        margin: 5px;
+        margin: 0 0 10px 0 !important;
         cursor: pointer;
         border: 1px solid lightgray;
         height: fit-content;
+        display: inline-block;
+        break-inside: avoid;
     }
 
     .proCat_albumTitle {
@@ -103,7 +105,6 @@
         text-align: center;
         margin: 15px 0px 15px 0px;
     }
-
 
     .smr_AlbumImageMain_img {
         width: 100%;
@@ -128,9 +129,8 @@
     }
 
     .proCat_albumALL_div {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        column-count: 5;
+        column-gap: 10px;
     }
 
     .proCat_AlbumLockIcone {
@@ -156,10 +156,9 @@
     }
 
     @media screen and (max-width: 1200px) {
-        .smr_AlbumImageMain {
-            width: 24% !important;
-            margin: 3px !important;
-            cursor: pointer;
+        .proCat_albumALL_div {
+            column-count: 4;
+            column-gap: 10px;
         }
 
         .proCat_album_box_main {
@@ -171,12 +170,10 @@
         margin-inline: 10px !important;
     }
 
-
     @media screen and (max-width: 850px) {
-        .smr_AlbumImageMain {
-            width: 32% !important;
-            margin: 3px !important;
-            cursor: pointer;
+        .proCat_albumALL_div {
+            column-count: 3;
+            column-gap: 8px;
         }
     }
 
@@ -189,22 +186,26 @@
 
         .proCat_albumALL_div {
             width: 100%;
-            display: flex;
-            flex-wrap: wrap;
+            column-count: 2;
+            column-gap: 6px;
         }
 
         .smr_AlbumImageMain {
-            width: 49% !important;
-        }
-
-        .smr_AlbumImageMain {
-            margin: 2px !important;
+            margin: 0 0 8px 0 !important;
         }
     }
 
     @media screen and (max-width: 450px) {
-        .smr_AlbumImageMain {
-            width: 48% !important;
+        .proCat_albumALL_div {
+            column-count: 2;
+            column-gap: 6px;
+        }
+    }
+
+    @media screen and (max-width: 380px) {
+        .proCat_albumALL_div {
+            column-count: 1;
+            column-gap: 0px;
         }
     }
 }

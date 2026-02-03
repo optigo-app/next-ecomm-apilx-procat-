@@ -1,19 +1,18 @@
-import { getCompanyInfoData, getExtraFlag, getStoreInit, getStyleContent } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
-import Header2 from "@/app/components/(dynamic)/Header/Procat/Header2";
+import { getCompanyInfoData, getExtraFlag, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
+// import Header2 from "@/app/components/(dynamic)/Header/Procat/Header2";
 import Header1 from "@/app/components/(dynamic)/Header/Procat/Header";
 import React from "react";
 import { getLogos } from "@/app/(core)/lib/ServerHelper";
 import FooterNew from "@/app/components/(static)/Footer/procat/Footer";
 import { Box } from "@mui/material";
 import BackToTop from "@/app/components/(static)/Footer/procat/BackToTop";
-import StyleInjector from "./StyleInjector";
 
 const layout = async ({ children }) => {
+  let extraFlag = await getExtraFlag();
   const storeData = await getStoreInit();
   const companyInfoData = await getCompanyInfoData();
-  const styleContent = await getStyleContent();
   const logos = getLogos();
-  let extraFlag = await getExtraFlag();
+
   let parsedSocialLinks = [];
   try {
     const rawSocial = companyInfoData?.SocialLinkObj;
@@ -25,7 +24,6 @@ const layout = async ({ children }) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%", overflow: "hidden", position: "relative" }} className="setFullThemeBack animateThemeFill">
-      <StyleInjector styleContent={styleContent} />
       <Header1 logos={logos} storeinit={storeData} />
       <Box
         sx={{
