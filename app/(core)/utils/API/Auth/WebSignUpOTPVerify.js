@@ -15,7 +15,7 @@ export const WebSignUpOTPVerify = async (userid, mobileno, OTP) => {
         const body = {
             "con": "{\"id\":\"\",\"mode\":\"WebSignUpOTPVerify\"}",
             "f": "zen (cartcount)",
-            dp: JSON.stringify(dp)
+            p: JSON.stringify(dp)
         };
         response = await CommonAPI(body);
 

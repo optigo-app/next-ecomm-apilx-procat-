@@ -12,7 +12,7 @@ export const GetDesignStock = async (visiterId) => {
         email ?? ""
       }\"}`,
       f: "GetDesignStock",
-      dp: "{}",
+      p: "{}",
     };
 
     response = await CommonAPI(body);

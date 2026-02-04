@@ -50,7 +50,7 @@ export default async function RootLayout({ children }) {
   const ht = getStaticHtmlPages(hostname);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
-
+  
   return (
     <html lang="en">
       <EmotionRegistry>
