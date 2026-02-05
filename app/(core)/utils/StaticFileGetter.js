@@ -12,6 +12,10 @@ export const domainHtmlMap = {
   "demo.procatalog.in": "sonasons",
   "company.procatalog.in": "sonasons",
   "test.procatalog.in": "sonasons",
+  "localhost:5006" : 'sonasons',
+  "localhost:8006" : 'sonasons',
+  'procatalog.web':'sonasons'
+
 };
 
 const pageFileMap = {

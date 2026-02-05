@@ -1,51 +1,60 @@
+import { getDomainInfo } from "../../getDomainInfo";
 import { fetchAPIUrlFromStoreInit } from "../../Glob_Functions/GlobalFunction";
 import axios from "axios";
-let APIURL = '';
+let APIURL = "";
 
+// const getApi = { ApiUrl: "https://api.optigoapps.com/ReactStoreV3/ReactStore.aspx" };
+// const getApi = { ApiUrl: "https://apilx.optigoapps.com/api/report" };
 const setApiUrl = async () => {
-    try {
-        // const getApi = { ApiUrl: "https://api.optigoapps.com/ReactStoreV3/ReactStore.aspx" };
-        const getApi = { ApiUrl: "https://apilx.optigoapps.com/api/report" };
-        if (getApi?.ApiUrl) {
-            APIURL = getApi.ApiUrl;
-        } else {
-            throw new Error("API URL not found");
-        }
-    } catch (error) {
-        console.error('Failed to fetch API URL:', error);
+  try {
+    const localHosts = ["localhost", "fgstore.pro", "nxt26.optigoapps.com", "nxt26.optigoapps", "nxt26", "procatalog.web"];
+    const { hostname } = await getDomainInfo();
+    const cleanHost = hostname.split(":")[0];
+
+    if (localHosts.includes(cleanHost)) {
+      APIURL = "http://newnextjs.web//api/report";
+    } else {
+      APIURL = "https://apilx.optigoapps.com/api/report";
     }
+
+    if (APIURL) {
+      APIURL = APIURL;
+    } else {
+      throw new Error("API URL not found");
+    }
+  } catch (error) {
+    console.error("Failed to fetch API URL:", error);
+  }
 };
 
 setApiUrl();
 export const CommonAPI = async (body) => {
-    if (!APIURL) {
-        await setApiUrl();
-    }
+  if (!APIURL) {
+    await setApiUrl();
+  }
 
-    const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
+  const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
 
-    if (!storeInit) {
-        throw new Error('StoreInit data not found in sessionStorage');
-    }
-    try {
-        const YearCode = storeInit?.YearCode ?? '';
-        const version = storeInit?.version ?? '';
-        const token = storeInit?.token ?? '';
-        const sv = storeInit?.sv ?? '';
+  if (!storeInit) {
+    throw new Error("StoreInit data not found in sessionStorage");
+  }
+  try {
+    const YearCode = storeInit?.YearCode ?? "";
+    const version = storeInit?.version ?? "";
+    const token = storeInit?.token ?? "";
+    const sv = storeInit?.sv ?? "";
 
-        const header = {
-            Authorization: `Bearer ${token}`,
-            Yearcode: !!YearCode ? YearCode : "e3tsaXZlLm9wdGlnb2FwcHMuY29tfX17ezIxfX17e3NvbmFzb25zfX17e3NvbmFzb25zfX0=",
-            // Version: version,
-            Version: "NXT",
-            sp: "54",
-            sv: !!sv ? sv : 1,
-        };
-        const response = await axios.post(APIURL, body, { headers: header, });
-        return response?.data;
-
-    } catch (error) {
-        console.error('error is..', error);
-    }
+    const header = {
+      Authorization: `Bearer ${token}`,
+      Yearcode: !!YearCode ? YearCode : "e3tsaXZlLm9wdGlnb2FwcHMuY29tfX17ezIxfX17e3NvbmFzb25zfX17e3NvbmFzb25zfX0=",
+      // Version: version,
+      Version: "NXT",
+      sp: "54",
+      sv: !!sv ? 0 : 1,
+    };
+    const response = await axios.post(APIURL, body, { headers: header });
+    return response?.data;
+  } catch (error) {
+    console.error("error is..", error);
+  }
 };
-
