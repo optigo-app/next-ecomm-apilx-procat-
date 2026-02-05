@@ -7,7 +7,7 @@ let APIURL = "";
 // const getApi = { ApiUrl: "https://apilx.optigoapps.com/api/report" };
 const setApiUrl = async () => {
   try {
-    const localHosts = ["localhost", "fgstore.pro", "nxt26.optigoapps.com", "nxt26.optigoapps", "nxt26", "procatelog.web"];
+    const localHosts = ["localhost", "fgstore.pro", "nxt26.optigoapps.com", "nxt26.optigoapps", "nxt26", "procatalog.web"];
     const { hostname } = await getDomainInfo();
     const cleanHost = hostname.split(":")[0];
 

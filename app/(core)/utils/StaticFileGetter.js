@@ -14,7 +14,7 @@ export const domainHtmlMap = {
   "test.procatalog.in": "sonasons",
   "localhost:5006" : 'sonasons',
   "localhost:8006" : 'sonasons',
-  'procatelog.web':'sonasons'
+  'procatalog.web':'sonasons'
 
 };
 

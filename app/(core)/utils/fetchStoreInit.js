@@ -23,7 +23,7 @@ export async function fetchStoreInitData(req) {
       protocol = winProtocol;
     }
     // if (!hostname) hostname = NEXT_APP_WEB;
-    const localHosts = ["localhost", "fgstore.pro","nxt26.optigoapps.com","nxt26.optigoapps","nxt26","procatelog.web"];
+    const localHosts = ["localhost", "fgstore.pro","nxt26.optigoapps.com","nxt26.optigoapps","nxt26","procatalog.web"];
     const cleanHost = hostname.split(":")[0];
     const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 
@@ -32,7 +32,7 @@ export async function fetchStoreInitData(req) {
     if (localHosts.includes(cleanHost)) {
       // baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${NEXT_APP_WEB}/StoreInit.json`;
       // baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${NEXT_APP_WEB}/StoreInit.json`;
-            baseUrl = `http://nzen/R50B3/UFS/StoreInit/${"procatelog.web" || hostname}/StoreInit.json`
+            baseUrl = `http://nzen/R50B3/UFS/StoreInit/${"procatalog.web" || hostname}/StoreInit.json`
 
 
       // baseUrl = `${protocol}//${NEXT_APP_WEB}`;

@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 5006 --turbo",
+    "dev": "next dev -p 8012 --turbo",
     "build": "next build --turbo && next start",
-    "start": "next start -p 5006",
+    "start": "next start -p 8012",
     "lint": "eslint",
     "ng": "next build && next start"
   },
