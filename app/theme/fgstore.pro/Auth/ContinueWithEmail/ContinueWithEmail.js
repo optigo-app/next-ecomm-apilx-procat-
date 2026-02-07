@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 
 
 export default function ContinueWithEmail({ params, searchParams, storeInit }) {
-    console.log("🚀 ~ ContinueWithEmail ~ storeInit:", storeInit)
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [isLoading, setIsLoading] = useState(false);

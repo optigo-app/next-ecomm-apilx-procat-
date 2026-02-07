@@ -61,7 +61,6 @@ export default function LoginWithEmailCode({ params, searchParams }) {
         }
     }, [resendTimer]);
 
-    console.log('otp',otp?.length);
 
     const handleSubmit = async () => {
         const visiterId = Cookies.get('visiterId');
