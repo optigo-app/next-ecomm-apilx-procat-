@@ -35,12 +35,10 @@ export default function Register({searchParams }) {
   const confirmPasswordRef = useRef(null);
   const [open, setOpen] = useState(false); // Track dropdown open/close
 
-const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
-  console.log("🚀 ~ Register ~ search:", search);
-  // const updatedSearch = search.replace('?LoginRedirect=', '');
-  // const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;
-  const cancelRedireactUrl = `/LoginOption${location.queryString ? `?${location.queryString}` : ""}`;
-  const singupRedirectUrl = `/LoginOption${location.queryString ? `?${location.queryString}` : ""}`;
+  const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+  const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}`;
+  const singupRedirectUrl = `/LoginOption?LoginRedirect=${search}`;
+
   const handleKeyDown = (event, nextRef) => {
     if (event.key === "Enter") {
       event.preventDefault();
