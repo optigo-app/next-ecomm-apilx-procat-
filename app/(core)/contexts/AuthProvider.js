@@ -108,6 +108,23 @@ const redirectEmailUrl =
         "/terms-and-conditions",
     ];
 
+    const protectedPages = [
+        "/account",
+        "/delivery",
+        "/payment",
+        "/confirmation",
+        "/accountdwsr"
+    ];
+
+    if (islogin === false) {
+        const isProtectedPage = protectedPages.some(page => pathname === page || pathname.startsWith(page + "/"));
+        if (isProtectedPage) {
+            const redirectUrl = `/LoginOption?LoginRedirect=${encodeURIComponent(fullPath)}`;
+            router.replace(redirectUrl);
+            return;
+        }
+    }
+
     if (storeInit?.IsB2BWebsite === 1) {
         if (islogin === false) {
             const isShopPage = pathname === "/p" || pathname.startsWith("/p/") ||
