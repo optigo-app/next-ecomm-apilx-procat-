@@ -13,7 +13,6 @@ import "./globals.css";
 import fs from "fs";
 import { getDomainInfo } from "./(core)/utils/getDomainInfo";
 
-
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -50,21 +49,23 @@ export default async function RootLayout({ children }) {
   const ht = getStaticHtmlPages(hostname);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
-  
+
   return (
-    <html lang="en">
-      <EmotionRegistry>
-        <StyleInjector styleContent={styleContent} />
-        <body className={`${poppins.variable}`}>
-          <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
-            <StoreProvider>
-              <AuthProvider storeInit={storeInit}>
-                <LayoutComponent>{children}</LayoutComponent>
-              </AuthProvider>
-            </StoreProvider>
-          </MasterProvider>
-        </body>
-      </EmotionRegistry>
-    </html>
+    <>
+      <html lang="en">
+        <EmotionRegistry>
+          <StyleInjector styleContent={styleContent} />
+          <body className={`${poppins.variable}`}>
+            <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
+              <StoreProvider>
+                <AuthProvider storeInit={storeInit}>
+                  <LayoutComponent>{children}</LayoutComponent>
+                </AuthProvider>
+              </StoreProvider>
+            </MasterProvider>
+          </body>
+        </EmotionRegistry>
+      </html>
+    </>
   );
 }

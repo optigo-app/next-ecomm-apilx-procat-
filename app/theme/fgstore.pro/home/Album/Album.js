@@ -9,8 +9,8 @@ import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
-import { useSearchParams } from 'next/navigation'
-
+import { useSearchParams } from "next/navigation";
+import { GetCacheList, BookCache } from "@/app/(core)/utils/API/Cache/CacheApi";
 
 const buildAlbumCacheKey = (type, storeData, pricing, id, custom) => {
   const meta = {
@@ -19,25 +19,44 @@ const buildAlbumCacheKey = (type, storeData, pricing, id, custom) => {
     Laboursetid: pricing?.Laboursetid ?? "",
     diamondpricelistname: pricing?.diamondpricelistname ?? "",
     colorstonepricelistname: pricing?.colorstonepricelistname ?? "",
-    ACL: custom
+    SettingPriceUniqueNo: pricing?.SettingPriceUniqueNo ?? "",
+    ACL: custom,
   };
 
-  const key = [
-    type,
-    pricing?.PackageId,
-    pricing?.Laboursetid,
-    pricing?.diamondpricelistname,
-    pricing?.colorstonepricelistname,
-    custom
-  ].join("_");
+  const key = [type, pricing?.PackageId, pricing?.Laboursetid, pricing?.diamondpricelistname, pricing?.colorstonepricelistname, custom].join("_");
 
   return {
     key,
     meta,
-  }
+  };
 };
 
+// Normalize ALC: null, 0, "", undefined all become 0
+const normalizeALC = (value) => {
+  if (value === null || value === undefined || value === "" || value === 0 || value === "0") {
+    return 0;
+  }
+  return value;
+};
 
+// Find matching cache entry from server response based on pricing context
+const findMatchingCacheEntry = (serverEntries, pricingContext, eventName, alcValue) => {
+  if (!serverEntries || !Array.isArray(serverEntries)) return null;
+
+  const normalizedALC = normalizeALC(alcValue);
+
+  return serverEntries.find((entry) => {
+    const entryALC = normalizeALC(entry.ALC);
+    return (
+      entry.EventName === eventName &&
+      entry.PackageId == pricingContext?.PackageId &&
+      entry.LabourSetId == pricingContext?.Laboursetid &&
+      entry.diamondpricelistname === pricingContext?.diamondpricelistname &&
+      entry.colorstonepricelistname === pricingContext?.colorstonepricelistname &&
+      entryALC === normalizedALC
+    );
+  });
+};
 
 const Album = ({ storeinit }) => {
   const { islogin, loginUserDetail } = useStore();
@@ -52,9 +71,8 @@ const Album = ({ storeinit }) => {
   const [imagesReady, setImagesReady] = useState(false);
   const imageNotFound = "/Assets/image-not-found.jpg";
   const [mounted, setMounted] = useState(false);
-  const searchParams = useSearchParams()
-  const ALCVAL = searchParams.get('ALC')
-
+  const searchParams = useSearchParams();
+  const ALCVAL = searchParams.get("ALC") || 0;
 
   const navigation = useNextRouterLikeRR();
 
@@ -77,31 +95,21 @@ const Album = ({ storeinit }) => {
     const loginInfo = loginUserDetail;
 
     return {
-      PackageId: (loginInfo?.PackageId ?? storeinit?.PackageId) ?? "",
-      Laboursetid:
-        !islogin
-          ? storeinit?.pricemanagement_laboursetid
-          : loginInfo?.pricemanagement_laboursetid ?? "",
-      diamondpricelistname:
-        !islogin
-          ? storeinit?.diamondpricelistname
-          : loginInfo?.diamondpricelistname ?? "",
-      colorstonepricelistname:
-        !islogin
-          ? storeinit?.colorstonepricelistname
-          : loginInfo?.colorstonepricelistname ?? "",
+      PackageId: loginInfo?.PackageId ?? storeinit?.PackageId ?? "",
+      Laboursetid: !islogin ? storeinit?.pricemanagement_laboursetid : loginInfo?.pricemanagement_laboursetid ?? "",
+      diamondpricelistname: !islogin ? storeinit?.diamondpricelistname : loginInfo?.diamondpricelistname ?? "",
+      colorstonepricelistname: !islogin ? storeinit?.colorstonepricelistname : loginInfo?.colorstonepricelistname ?? "",
+      SettingPriceUniqueNo: !islogin ? storeinit?.SettingPriceUniqueNo : loginInfo?.SettingPriceUniqueNo ?? "",
     };
   }, [mounted, loginUserDetail, storeinit, islogin]);
 
   useEffect(() => {
     if (!mounted || !pricingContext) return;
 
-    const fetchAlbumData = async () => {
+    const fetchAlbumData = async (id) => {
       const visiterID = Cookies.get("visiterId");
       const userId = loginUserDetail?.id;
-      const finalID = storeinit?.IsB2BWebsite === 0
-        ? (islogin ? userId || "" : visiterID)
-        : userId || "";
+      const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
 
       if (isFetching) return;
       if (ALCVAL) {
@@ -116,18 +124,63 @@ const Album = ({ storeinit }) => {
     fetchAlbumData();
   }, [islogin, mounted, pricingContext, storeinit?.IsB2BWebsite]);
 
+  const GetAllCacheList = async (id) => {
+    try {
+      const res = await GetCacheList(id);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchAndSetAlbumData = async (value, finalID) => {
     const storeInit = storeinit;
     const { key, meta } = buildAlbumCacheKey("procatalog_album_", storeinit, pricingContext, finalID, value);
-    // const cachedRes = await fetch(`/api/cache?key=${key}`);
-    // const cached = await cachedRes.json();
+    const eventName = "procatalog_album";
 
-    // if (cached.cached && Array.isArray(cached.data)) {
-    //   setAlbumData(cached.data);
-    //   setImagesReady(true);
-    //   return cached.data;
-    // }
+    // Step 1: Get server's CacheRebuildDate entries
+    let serverCacheEntries = [];
+    try {
+      const serverRes = await GetCacheList(finalID);
+      serverCacheEntries = serverRes?.Data?.rd ?? [];
+      console.log("📋 Server cache entries:", serverCacheEntries);
+    } catch (error) {
+      console.warn("⚠️ Failed to fetch server cache list:", error);
+    }
+
+    // Step 2: Find matching server entry for current request
+    const matchingServerEntry = findMatchingCacheEntry(serverCacheEntries, pricingContext, eventName, value);
+    const serverCacheRebuildDate = matchingServerEntry?.CacheRebuildDate ?? null;
+    console.log("🔍 Matching server entry:", matchingServerEntry);
+    console.log("📅 Server CacheRebuildDate:", serverCacheRebuildDate);
+
+    // Step 3: Get local cache with metadata
+    const localCacheRes = await fetch(`/api/cache?mode=meta&key=${key}`);
+    const localCacheMeta = await localCacheRes.json();
+    const localCacheRebuildDate = localCacheMeta?.CacheRebuildDate ?? null;
+    console.log("💾 Local CacheRebuildDate:", localCacheRebuildDate);
+
+    // Step 4: Check if we should use cached data
+    // Use cache if: local cache exists AND (no server entry OR dates match)
+    if (localCacheMeta?.cached) {
+      const shouldUseCached = !serverCacheRebuildDate || localCacheRebuildDate === serverCacheRebuildDate;
+
+      if (shouldUseCached) {
+        console.log("✅ Using cached data - ", serverCacheRebuildDate ? "dates match" : "no server entry yet");
+        const cachedRes = await fetch(`/api/cache?key=${key}`);
+        const cached = await cachedRes.json();
+        if (cached.cached && Array.isArray(cached.data)) {
+          setAlbumData(cached.data);
+          setImagesReady(true);
+          return cached.data;
+        }
+      } else {
+        // Server has a different date - cache is stale, clear it
+        console.log("🔄 CacheRebuildDate MISMATCH - clearing cache and refetching");
+        console.log("   Server:", serverCacheRebuildDate, "vs Local:", localCacheRebuildDate);
+        await fetch(`/api/cache?key=${key}`, { method: "DELETE" }).catch(console.error);
+      }
+    }
 
     if (!storeInit) {
       if (!isFetching) {
@@ -147,11 +200,22 @@ const Album = ({ storeinit }) => {
         setAlbumData(albums);
         setImagesReady(true);
 
-        // fetch("/api/cache", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ key, data: albums, meta }),
-        // }).catch(console.error);
+        // Step 6: Call BookCache and extract CacheRebuildDate from response
+        const bookCacheResult = await BookCache(finalID, eventName, pricingContext, value);
+        const newCacheRebuildDate = bookCacheResult?.CacheRebuildDate ?? null;
+        console.log("📝 BookCache result - CacheRebuildDate:", newCacheRebuildDate);
+
+        // Step 7: Store data with CacheRebuildDate in metadata
+        const updatedMeta = {
+          ...meta,
+          CacheRebuildDate: newCacheRebuildDate,
+        };
+
+        fetch("/api/cache", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key, data: albums, meta: updatedMeta }),
+        }).catch(console.error);
 
         const status = {};
         const fallbackImages = {};
@@ -252,6 +316,14 @@ const Album = ({ storeinit }) => {
       loadAllImages();
     }
   }, [albumData, ImageMaking]);
+
+  useEffect(() => {
+    if (!mounted || !pricingContext) return;
+    const visiterID = Cookies.get("visiterId");
+    const userId = loginUserDetail?.id;
+    const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
+    GetAllCacheList(finalID);
+  }, [islogin, mounted, pricingContext, storeinit?.IsB2BWebsite]);
 
   useEffect(() => {
     if (albumData.length > 0 && !imagesReady) {

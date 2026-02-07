@@ -79,7 +79,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
               {socialMediaData.map((social, i) => (
                 <a
                   key={i}
-                  href={`https://${social?.SLink}`}
+                  href={social?.SLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footerSocialIcon"
@@ -96,7 +96,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
       </div>
 
       <div className="footerBottom">
-        <p style={{textTransform:'capitalize'}}>© {new Date().getFullYear()} {companyInfoData?.companyname_menu}. All rights reserved.</p>
+        <p style={{ textTransform: 'capitalize' }}>© {new Date().getFullYear()} {companyInfoData?.companyname_menu}. All rights reserved.</p>
       </div>
     </footer>
   );

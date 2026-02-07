@@ -380,7 +380,7 @@ const ManageAddress = () => {
                                                     {item?.country !== undefined && item?.country}
                                                 </Typography>
                                             </Box>
-                                            <Link href="/" style={{ textDecoration: "unset" }}>
+                                            <Link href={`tel:+${parseInt(item?.shippingmobile)}`} style={{ textDecoration: "unset" }}>
                                                 <Box sx={{ display: "flex", paddingBottom: "15px", textDecoration: "unset", marginLeft: "-4px", }}>
                                                     <StayPrimaryPortraitIcon />
                                                     <a href={`tel:+${parseInt(item?.shippingmobile)}`} style={{textDecoration:'none'}} >{item?.shippingmobile}</a>

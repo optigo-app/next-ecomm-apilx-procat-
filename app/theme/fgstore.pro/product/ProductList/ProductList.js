@@ -1352,7 +1352,16 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     );
 
     let output = FilterValueWithCheckedOnly();
-    const uniqueNmList = [...new Set(JSON.parse(productData?.ImageVideoDetail).map(item => item.Nm))];
+
+    let imageVideoDetail = [];
+    try {
+      imageVideoDetail = JSON.parse(productData?.ImageVideoDetail) || [];
+      if (!Array.isArray(imageVideoDetail)) imageVideoDetail = [];
+    } catch (e) {
+      imageVideoDetail = [];
+    }
+
+    const uniqueNmList = [...new Set(imageVideoDetail?.map(item => item?.Nm))].filter(Boolean);
 
     let obj = {
       a: productData?.autocode,
@@ -1375,7 +1384,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       in: i,
 
       i: productData?.MetalColorid,
-      l: JSON.parse(productData?.ImageVideoDetail)[0]?.Ex,
+      l: imageVideoDetail[0]?.Ex || "",
       count: uniqueNmList.length,
     };
     decodeAndDecompress();

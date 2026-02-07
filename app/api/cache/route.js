@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { getCache, setCache, getAllCachedItems, clearCache, clearAllCache } from "@/app/(core)/cache_utility/serverCache";
+import { getCache, setCache, getAllCachedItems, clearCache, clearAllCache, getCacheWithMeta } from "@/app/(core)/cache_utility/serverCache";
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const key = searchParams.get("key");
-    const mode = searchParams.get("mode"); // 'list' to get all
+    const mode = searchParams.get("mode"); // 'list' or 'meta'
 
     // 1. Dashboard Mode: Get All Keys
     if (mode === "list") {
@@ -13,7 +13,21 @@ export async function GET(req) {
       return NextResponse.json({ success: true, data: allItems });
     }
 
-    // 2. Normal Mode: Get Single Key
+    // 2. Meta Mode: Get cache metadata with CacheRebuildDate
+    if (mode === "meta" && key) {
+      const cachedMeta = await getCacheWithMeta(key);
+      if (!cachedMeta) {
+        return NextResponse.json({ cached: false, meta: null, CacheRebuildDate: null });
+      }
+      return NextResponse.json({
+        cached: true,
+        meta: cachedMeta.meta,
+        CacheRebuildDate: cachedMeta.CacheRebuildDate,
+        timestamp: cachedMeta.timestamp
+      });
+    }
+
+    // 3. Normal Mode: Get Single Key
     if (!key) {
       return NextResponse.json({ error: "Missing key" }, { status: 400 });
     }

@@ -7,12 +7,12 @@ let APIURL = "";
 // const getApi = { ApiUrl: "https://apilx.optigoapps.com/api/report" };
 const setApiUrl = async () => {
   try {
-    const localHosts = ["localhost", "fgstore.pro", "nxt26.optigoapps.com", "nxt26.optigoapps", "nxt26", "procatalog.web"];
+    const localHosts = ["localhost", "fgstore.pro","procatalog.web"];
     const { hostname } = await getDomainInfo();
     const cleanHost = hostname.split(":")[0];
 
     if (localHosts.includes(cleanHost)) {
-      APIURL = "http://newnextjs.web//api/report";
+      APIURL = "http://newnextjs.web/api/report";
     } else {
       APIURL = "https://apilx.optigoapps.com/api/report";
     }

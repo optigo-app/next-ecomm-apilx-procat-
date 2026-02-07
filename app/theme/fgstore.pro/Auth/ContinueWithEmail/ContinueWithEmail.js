@@ -65,7 +65,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                     sessionStorage.setItem("registerEmail", trimmedEmail);
                 }
             } else {
-                if (storeInit?.IsEcomOtpVerification == 0) {
+                if (storeInit?.IsEcomOtpVerification != 0) {
                     if (process.env.NODE_ENV === "development") {
                         alert(response.Data.rd[0].OTP)
                     }
@@ -93,7 +93,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                 </div>
             )}
             <div>
-                {storeInit?.IsEcomOtpVerification === 1 ? (
+                {(storeInit?.IsEcomOtpVerification && storeInit?.IsEcomOtpVerification === 1) ? (
                     <OTPContainer emailId={email.trim()} isOpen={isOpen} type='email' setIsOpen={() => setIsOpen(!isOpen)} onClose={() => setIsOpen(false)}
                         navigation={navigation}
                         location={location}

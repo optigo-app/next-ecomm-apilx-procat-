@@ -47,6 +47,34 @@ export async function getCache(key, ttlMs = defaultTTL) {
   return null;
 }
 
+// Get cache with full metadata (for CacheRebuildDate comparison)
+export async function getCacheWithMeta(key, ttlMs = defaultTTL) {
+  const now = Date.now();
+  const file = path.join(CACHE_DIR, `${safeKey(key)}.json`);
+
+  if (fs.existsSync(file)) {
+    try {
+      const cached = JSON.parse(fs.readFileSync(file, "utf8"));
+      if (now - cached.timestamp < ttlMs) {
+        console.log(`💾 [CACHE HIT WITH META] ${key}`);
+        return {
+          data: cached.data,
+          meta: cached.meta || {},
+          timestamp: cached.timestamp,
+          CacheRebuildDate: cached.meta?.CacheRebuildDate ?? null,
+        };
+      }
+      console.log(`⏰ [CACHE EXPIRED] ${key}`);
+    } catch (err) {
+      console.warn(`⚠️ Corrupt cache file for ${key}, removing`);
+      fs.unlinkSync(file);
+    }
+  }
+
+  console.log(`🚫 [CACHE MISS] ${key}`);
+  return null;
+}
+
 
 // --- NEW FUNCTIONS FOR DASHBOARD ---
 
