@@ -1,0 +1,15 @@
+{
+"rd":[
+ {
+  "Themeno": 1,
+  "Headerno": 1,
+  "Blockno": 2,
+  "Footerno": 1,
+  "IsHomeAlbum": 1,
+  "IsHomeBestSeller": 1,
+  "IsHomeTrending": 1,
+  "IsHomeDesignSet": 1,
+  "IsHomeNewArrival": 1
+ }
+]
+}

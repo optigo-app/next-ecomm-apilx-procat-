@@ -1,0 +1,37 @@
+.setFullThemeBack{
+  background-color: #e6d9ff !important;
+}
+
+.btnColorProCat{
+	background-color: #e6d9ff !important;
+  color: #2f2a3a !important;
+  border: 1px solid #e6d9ff;
+}
+
+.btnColorProCatProduct{
+  background-color: #e6d9ff !important;
+  color: #3a3450 !important;
+  border: 1px solid #e6d9ff !important;
+}
+
+.btnColorProCatProductRemoveCart {
+	 background-color: #f3edff !important;
+  color: #4a4a6a !important;
+  border: 1px solid #f3edff;
+}
+
+{
+"rd":[
+ {
+  "Themeno": 6,
+  "Headerno": 1,
+  "Blockno": 1,
+  "Footerno": 1,
+  "IsHomeAlbum": 1,
+  "IsHomeBestSeller": 1,
+  "IsHomeTrending": 1,
+  "IsHomeDesignSet": 1,
+  "IsHomeNewArrival": 1
+ }
+]
+}

@@ -1,0 +1,320 @@
+@use '../../../theme/fgstore.web/style/variable.scss' as *;
+
+
+.smr_designSetMain {
+  position: relative;
+  margin-top: 10px;
+  margin-inline: 0px;
+
+  .designSetTitle {
+    margin: 40px 0px 10px 0px;
+    color: $homePageFontColor;
+    font-family: $homePageFontFamily;
+    font-size: $fontSize5;
+    text-align: center;
+  }
+
+  .smr_desognSetTitle {
+    // color: $homePageFontColor;
+    // font-family: $homePageFontFamily;
+    // font-size: $fontSize5;
+    text-align: center;
+    color: $textColor;
+    font-size: 27px;
+    font-family: $Pratafonts !important;
+    font-weight: 500 !important;
+  }
+
+  .smr_designSetMainDiv {
+    display: flex;
+    height: 550px;
+    justify-content: center;
+  }
+
+  .smr_designSetDiv1 {
+    width: 30%;
+  }
+
+  .smr_designSetDiv2 {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    height: 510px;
+    overflow: auto;
+  }
+
+
+  .smr_designSetImageViewAll {
+    color: $homePageFontColor;
+    font-family: $homePageFontFamily;
+    font-size: $fontSize4;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: underline;
+    margin-top: 15px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .smr_designSetDiv1_img {
+    max-height: 550px;
+    margin: 0px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+
+
+
+
+  .App {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline: 6%;
+  }
+
+  .images-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+  }
+
+  .srm_designSetMain {
+    height: 280px !important;
+    width: 250px !important;
+    margin-inline: 5px !important;
+  }
+
+  .smr_designSetDiv {
+    text-align: center;
+    margin: 0px;
+    cursor: pointer;
+    height: 200px;
+    margin-inline: 5px;
+  }
+
+  .smr_designsetDiv {
+    width: 100%;
+    height: 100%;
+  }
+
+  .image {
+    max-width: 250px;
+    border-radius: 8px;
+    object-fit: contain;
+  }
+
+  .smr_designList_title {
+    color: $homePageFontColor;
+    margin: 0px 0px 5px 0px;
+    text-align: center;
+  }
+
+  .nav-btn-left,
+  .nav-btn-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .nav-btn-left {
+    left: 0;
+  }
+
+  .nav-btn-right {
+    right: 0;
+  }
+
+  .smr_designSetShowAll {
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+    color: $homePageFontColor;
+    text-align: center;
+  }
+
+  .smr_designSetViewmoreBtn{
+    color: $titleColor !important;
+    margin-left: 20px !important;
+    text-decoration-color: $titleColor !important;
+    font-size: $fontSize2 !important;
+  }
+
+  @media screen and (max-width: 1000px) {
+    margin-inline: 10px !important;
+
+  }
+
+  @media screen and (max-width: 750px) {
+    .smr_designSetMainDiv {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    .smr_designSetDiv1 {
+      width: 100%;
+    }
+
+    .smr_designSetDiv2 {
+      width: 100%;
+    }
+
+    .smr_designSetDiv {
+      width: 47% !important;
+    }
+
+    .smr_designSetDiv {
+      margin: 2px !important;
+    }
+
+    .image {
+      max-width: 100%;
+      height: 100% !important;
+      margin: 0px !important;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+  }
+}
+
+
+// .smr_designSetMain {
+
+
+
+//     .App {
+//         font-family: sans-serif;
+//         align-items: center;
+//         display: flex;
+//         justify-content: center;
+//         position: relative;
+//       }
+
+//       .images-container {
+//         display: flex;
+//         overflow: hidden;
+//         scroll-behavior: smooth;
+//         transition: scroll 0.3s ease-in-out;
+//       }
+
+//       .image {
+//       
+//       }
+
+//       .nav-btn-left {
+//         color: inherit;
+//         border: 1px solid lightgray;
+//         padding: 0;
+//         font: inherit;
+//         cursor: pointer;
+//         outline: inherit;
+//         border-radius: 35px;
+//         height: 35px;
+//         width: 35px;
+//         margin: 0px;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         position: absolute;
+//         left: 0px;
+//       }
+
+//       .nav-btn-right{
+//         color: inherit;
+//         border: 1px solid lightgray;
+//         padding: 0;
+//         font: inherit;
+//         cursor: pointer;
+//         outline: inherit;
+//         border-radius: 35px;
+//         height: 35px;
+//         width: 35px;
+//         margin: 0px;
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         position: absolute;
+//         right: 0px;
+//       }
+
+
+//     .smr_designSetShowAll {
+//         text-decoration: underline;
+//         cursor: pointer;
+//         font-weight: 500;
+//         color: $homePageFontColor;
+//         text-align: center;
+//     }
+
+//     .designsetPrice {
+//         margin: 0px;
+//         font-weight: 500;
+//     }
+
+
+
+
+//     .smr_designsetDivImg{
+//         height: 100%;
+//         width: 100%;
+//     }
+
+//     .swiper-button-prev{
+//         color: #000;
+//     }
+//     .swiper-button-next{
+//         color: #000;
+//     }
+//     .swiper-button-next-designSet,
+//     .swiper-button-prev-designSet {
+//         color: #000;
+//         /* Customize the color if needed */
+//         display: block;
+//         /* Ensure the buttons are displayed */
+//         position: absolute;
+//         /* Absolute positioning for navigation buttons */
+//         top: 50%;
+//         width: 27px;
+//         height: 44px;
+//         margin-top: -22px;
+//         z-index: 10;
+//         cursor: pointer;
+//         background-size: 27px 44px;
+//         background-position: center;
+//         background-repeat: no-repeat;
+//     }
+
+
+
+//     .swiper-button-next-designSet,
+//     .swiper-button-prev-designSet {
+//         display: block;
+//         /* Ensure the buttons are displayed */
+//         position: absolute;
+//         /* Absolute positioning for navigation buttons */
+//         top: 50%;
+//         width: 20px !important;
+//         height: 20px !important;
+//         margin-top: -22px;
+//         z-index: 10;
+//         cursor: pointer;
+//         background-size: 27px 44px;
+//         background-position: center;
+//         color: black !important;
+//         background-repeat: no-repeat;
+//     }
+
+
+
+// }

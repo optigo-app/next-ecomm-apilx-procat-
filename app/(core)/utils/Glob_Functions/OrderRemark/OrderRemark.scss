@@ -1,0 +1,88 @@
+.modalremark{
+  outline: none;
+  border: none;
+}
+.smr_OrderModalBox {
+    width: 90%;
+    max-width: 500px;
+    min-width: 300px;
+    margin: 0 auto;
+    outline: none;
+    border: none;
+
+    .smr_projectRemarkBtn-group {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap: 10px;
+  
+      .smr_remarksave-btn {
+        background-color: #7d7f85;
+        border: 1px solid #7d7f85;
+        border-radius: 6px !important;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        height: 35px;
+        transition: background-color .3s, color .3s;
+        width: 100px;
+  
+        &:hover {
+          background-color: #fff;
+          color: #7d7f85;
+        }
+      }
+  
+      .smr_remarkcancel-btn {
+        background-color: #fff;
+        border: 1px solid #7d7f85;
+        border-radius: 6px !important;
+        color: #7d7f85;
+        cursor: pointer;
+        font-size: 14px;
+        height: 35px;
+        transition: background-color .3s, color .3s;
+        width: 100px;
+  
+        &:hover {
+          background-color: #7d7f85;
+          color: #fff;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .smr_OrderModalBox {
+      width: 95%;
+      max-width: 100%;
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 474px) {
+    .smr_OrderModalBox {
+      width: 95% !important;
+    }
+    .smr_OrderModalBox {
+      padding: 20px 8px 20px 8px !important;
+
+      h2 {
+          color: #7d7f85 !important;
+          font-size: 14px !important;
+      }
+
+      .smr_projectRemarkBtn-group {
+
+          .smr_remarksave-btn,
+          .smr_remarkcancel-btn {
+              font-size: 10px !important;
+              padding: 5px 10px !important;
+          }
+      }
+      .smr_orderRemarkMoalInput textarea{
+        font-size: 12px !important;
+      }
+  }
+  }

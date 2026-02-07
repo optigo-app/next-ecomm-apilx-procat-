@@ -1,0 +1,211 @@
+@use '../../../../theme/fgstore.pro/style/variable.scss' as *;
+
+
+.proCat_AlbumImageMainPopup {
+    width: 19%;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+    box-shadow: rgba(125, 125, 125, 0.2) 0px 0px 5px;
+}
+
+.proCat_AlbumLockIcone_popup {
+    height: 25px;
+    position: absolute;
+    right: 40%;
+    top: 40%;
+}
+
+.proCat_AlbumImageMainPopup_img {
+    width: 100%;
+    object-fit: contain;
+    min-height: 200px;
+}
+
+.lock_icon {
+    background-color: #fff;
+    box-shadow: 5px 5px 10px rgba(25, 25, 25, .6);
+    display: inline-block;
+    padding: 13px;
+    width: 50px;
+    border-radius: 50%;
+    height: 50px;
+    object-fit: contain;
+}
+
+.proCat_model_overFlow {
+    scrollbar-width: none;
+}
+
+.proCat_model_overFlow::-webkit-scrollbar {
+    width: 0px !important;
+}
+
+.proCat_albumName {
+    color: $homePageFontColor;
+    font-family: $homePageFontFamily;
+    margin: 0px;
+    text-align: center;
+    word-break: break-word;
+}
+
+.proCat_album_box_main {
+    width: 70%;
+}
+
+@media screen and (max-width: 1200px) {
+    .smr_AlbumImageMain {
+        width: 24% !important;
+        margin: 3px !important;
+        cursor: pointer;
+    }
+
+    .proCat_album_box_main {
+        width: 96% !important;
+    }
+}
+
+@media screen and (max-width: 900px) {
+
+    .proCat_AlbumImageMainPopup {
+        width: 50% !important;
+        margin: 0px !important;
+    }
+
+    .pro_pressESCClose {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .proCat_albumName {
+        font-size: 12px !important;
+    }
+}
+
+.proCat_alubmMainDiv {
+
+    margin-inline: 60px;
+
+    .smr_AlbumImageMain {
+        width: 100% !important;
+        padding: 0px;
+        margin: 0 0 10px 0 !important;
+        cursor: pointer;
+        border: 1px solid lightgray;
+        height: fit-content;
+        display: inline-block;
+        break-inside: avoid;
+    }
+
+    .proCat_albumTitle {
+        color: $homePageFontColor;
+        font-family: $homePageFontFamily;
+        font-size: $fontSize5;
+        text-align: center;
+        margin: 15px 0px 15px 0px;
+    }
+
+    .smr_AlbumImageMain_img {
+        width: 100%;
+        min-height: 280px;
+        object-fit: contain;
+
+        @media (max-width: 1820px) {
+            min-height: 240px;
+        }
+
+        @media (max-width: 1580px) {
+            min-height: 200px;
+        }
+
+        @media (max-width: 1350px) {
+            min-height: 170px;
+        }
+
+        @media (max-width: 380px) {
+            min-height: 140px;
+        }
+    }
+
+    .proCat_albumALL_div {
+        column-count: 5;
+        column-gap: 10px;
+    }
+
+    .proCat_AlbumLockIcone {
+        height: 25px;
+        position: absolute;
+        right: 40%;
+        top: 40%;
+    }
+
+    .lock_icon {
+        background-color: #fff;
+        box-shadow: 5px 5px 10px rgba(25, 25, 25, .6);
+        display: inline-block;
+        padding: 13px;
+        width: 26px;
+        border-radius: 50%;
+        height: 26px;
+        object-fit: contain;
+    }
+
+    .proCat_album_box_main {
+        width: 70%;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .proCat_albumALL_div {
+            column-count: 4;
+            column-gap: 10px;
+        }
+
+        .proCat_album_box_main {
+            width: 96% !important;
+        }
+    }
+
+    @media screen and (max-width: 1000px) {
+        margin-inline: 10px !important;
+    }
+
+    @media screen and (max-width: 850px) {
+        .proCat_albumALL_div {
+            column-count: 3;
+            column-gap: 8px;
+        }
+    }
+
+    @media screen and (max-width: 650px) {
+        margin-inline: 2px !important;
+
+        .proCat_albumTitle {
+            display: none;
+        }
+
+        .proCat_albumALL_div {
+            width: 100%;
+            column-count: 2;
+            column-gap: 6px;
+        }
+
+        .smr_AlbumImageMain {
+            margin: 0 0 8px 0 !important;
+        }
+    }
+
+    @media screen and (max-width: 450px) {
+        .proCat_albumALL_div {
+            column-count: 2;
+            column-gap: 6px;
+        }
+    }
+
+    @media screen and (max-width: 380px) {
+        .proCat_albumALL_div {
+            column-count: 1;
+            column-gap: 0px;
+        }
+    }
+}

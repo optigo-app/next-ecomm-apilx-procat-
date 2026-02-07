@@ -1,0 +1,101 @@
+.MainDivPayFail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    padding: 20px;
+
+    .Failcontainer {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+        box-sizing: border-box;
+
+        .svgImageDiv svg {
+            width: 300px !important;
+            height: 300px !important;
+        }
+    }
+
+    .svg {
+        animation: zoom 2s forwards;
+    }
+
+    @keyframes zoom {
+        0% {
+            transform: scale(.5);
+        }
+
+        100% {
+            transform: scale(1.09);
+        }
+    }
+
+    .message {
+        margin-top: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .retry-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 18px;
+        color: white;
+        background-color: #7d7f85;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .retry-button:hover {
+        background-color: #4f4f4f;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .Failcontainer {
+            padding: 30px;
+            width: 90%;
+        }
+
+        .message {
+            font-size: 20px;
+        }
+
+        .retry-button {
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .Failcontainer {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: none;
+            width: 100%;
+            box-sizing: border-box;
+
+            .svgImageDiv svg {
+                width: 60% !important;
+                height: 60% !important;
+            }
+        }
+
+        .message {
+            font-size: 18px;
+        }
+
+        .retry-button {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+    }
+}

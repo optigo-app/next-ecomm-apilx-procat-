@@ -1,0 +1,21 @@
+.for_DialogBtn {
+    color: #7d7f85 !important;
+    font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+    .for_DialogBtn {
+        font-size: 0.875rem;
+    }
+
+    .DRM{
+        .css-1t1j96h-MuiPaper-root-MuiDialog-paper {
+            margin: 0px !important;
+        }
+    }
+
+    .alert-titleContent {
+       font-size: 0.875rem !important;
+    }
+
+}
