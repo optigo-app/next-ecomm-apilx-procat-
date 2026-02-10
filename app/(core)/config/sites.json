@@ -1,0 +1,72 @@
+{
+  "sites": [
+    {
+      "id": "sonasons",
+      "folder": "sonasons",
+      "keys": {
+        "SONASON": "sonasons.procatalog.in",
+        "NXT10": "nxt10.optigoapps.com",
+        "DEMO": "demo.procatalog.in",
+        "COMPANY": "company.procatalog.in",
+        "TEST": "test.procatalog.in"
+      },
+      "domains": ["sonasons.procatalog.in", "nxt10.optigoapps.com", "demo.procatalog.in", "company.procatalog.in", "test.procatalog.in", "localhost:5006", "localhost:8012", "localhost:8006", "procatalog.web", "nxt26.optigoapps.com"]
+    },
+    {
+      "id": "saraff",
+      "folder": "saraff",
+      "keys": {
+        "SARAFF": "thereflections.procatalog.in"
+      },
+      "domains": ["thereflections.procatalog.in"]
+    },
+    {
+      "id": "almacarino",
+      "folder": "almacarino",
+      "keys": {
+        "ALMACARINO": "almacarino.procatalog.in"
+      },
+      "domains": ["almacarino.procatalog.in"]
+    },
+    {
+      "id": "uscreation",
+      "folder": "uscreation",
+      "keys": {
+        "USCREATION": "uscreation.procatalog.in"
+      },
+      "domains": ["uscreation.procatalog.in"]
+    },
+    {
+      "id": "hemratnajewels",
+      "folder": "hemratnajewels",
+      "keys": {
+        "HEMRATNAJ": "hemratnajewels.procatalog.in"
+      },
+      "domains": ["hemratnajewels.procatalog.in"]
+    },
+    {
+      "id": "myras",
+      "folder": "myras",
+      "keys": {
+        "MYRAS": "myras.procatalog.in"
+      },
+      "domains": ["myras.procatalog.in"]
+    },
+    {
+      "id": "fabgold",
+      "folder": "fabgold",
+      "keys": {
+        "FABGOLD": "fabgold.procatalog.in"
+      },
+      "domains": ["fabgold.procatalog.in"]
+    },
+    {
+      "id": "glossyjewel",
+      "folder": "glossyjewel",
+      "keys": {
+        "GLOSSYJ": "glossyjewel.procatalog.in"
+      },
+      "domains": ["glossyjewel.procatalog.in"]
+    }
+  ]
+}
