@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 const StyleInjector = ({ styleContent }) => {
   const [applied, setApplied] = useState(false);
+  const pathname = usePathname();
+  const isCMSPage = pathname?.startsWith("/debug-internal-config-manager-v2");
 
   useEffect(() => {
     if (!styleContent) return;
@@ -33,7 +36,7 @@ const StyleInjector = ({ styleContent }) => {
 
   return (
     <AnimatePresence>
-      {applied && (
+      {applied && !isCMSPage && (
         <motion.div
           key="bg-reveal"
           initial={{

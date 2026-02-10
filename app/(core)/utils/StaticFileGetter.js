@@ -1,23 +1,7 @@
+import { getDomainHtmlMap } from "../config/domainLoader";
 import { NEXT_APP_WEB } from "./env";
 
-export const domainHtmlMap = {
-  "nxt10.optigoapps.com": "sonasons",
-  "thereflections.procatalog.in": "saraff",
-  "almacarino.procatalog.in": "almacarino",
-  "uscreation.procatalog.in": "uscreation",
-  "hemratnajewels.procatalog.in": "hemratnajewels",
-  "myras.procatalog.in": "myras",
-  "fabgold.procatalog.in": "fabgold",
-  "glossyjewel.procatalog.in": "glossyjewel",
-  "demo.procatalog.in": "sonasons",
-  "company.procatalog.in": "sonasons",
-  "test.procatalog.in": "sonasons",
-  "localhost:5006": 'sonasons',
-  "localhost:8012": 'sonasons',
-  "localhost:8006": 'sonasons',
-  'procatalog.web': 'sonasons',
-  'nxt26.optigoapps.com': 'sonasons'
-};
+export const domainHtmlMap = getDomainHtmlMap();
 
 const pageFileMap = {
   aboutUs: "aboutUs.html",

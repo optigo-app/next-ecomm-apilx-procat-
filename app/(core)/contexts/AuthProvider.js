@@ -106,6 +106,7 @@ const redirectEmailUrl =
         "/refund-policy",
         "/shipping-policy",
         "/terms-and-conditions",
+        "/debug-internal-config-manager-v2",
     ];
 
     const protectedPages = [
