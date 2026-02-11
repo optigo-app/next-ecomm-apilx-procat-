@@ -35,7 +35,7 @@ function CustomTabPanel(props) {
   return (
     <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 1 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -154,7 +154,7 @@ export default function Account({ Storeinit }) {
               </div>
             </div>
             <div className="smling-AccountTabMain">
-              <Box sx={{ width: "100%" }}>
+              <Box sx={{ width: "100%" ,padding:0 }}>
                 <CustomTabPanel value={value} index={0}>
                   <div>
                     <YourProfile />

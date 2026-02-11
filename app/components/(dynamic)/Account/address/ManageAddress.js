@@ -349,7 +349,7 @@ const ManageAddress = () => {
     return (
         <>
             <div className='address_Account_SMR'>
-            <p  className='savedAddress'>Saved Addresses</p>
+            <p  className='savedAddress btnColorProCat'>Saved Addresses</p>
                 <Box sx={{ paddingLeft: "15px" }}>
                     <Button className='muiSmilingRocksBtnManage savedAddressManageBtn' variant="contained" sx={{ background: "#7d7f85", padding: "6px 15px", textAlign: "end", fontSize: "0.9rem", marginBottom: "10px", marginTop: '18px', borderRadius: "0" }} onClick={() => handleOpen('', null, 'add')}>ADD NEW ADDRESS</Button></Box>
                 <RadioGroup

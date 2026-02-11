@@ -3,14 +3,15 @@ import { CommonAPI } from "../../CommonAPI/CommonAPI";
 export const Get_Procatalog = async (mode, customerID, ALCID) => {
 
     let response;
-    try {
+const ALCID_Value = ALCID > 0 ? ALCID : "";
+try {
         const storeInit = JSON.parse(sessionStorage.getItem("storeInit")) ?? ""
         let userLogin = sessionStorage.getItem('LoginUser')
         const combinedValue = JSON.stringify({
             "FrontEnd_RegNo": `${storeInit?.FrontEnd_RegNo}`,
             // "FrontEnd_RegNo": `${RegNo}`,
             "Customerid": `${customerID ?? ""}`,
-            "ALC": `${ALCID ?? ""}`,
+            "ALC": `${ALCID_Value}`,
             "DomainForNo": `${storeInit?.DomainForNo ?? ''}`
         })
         const combinedValueLogin = JSON.stringify({
@@ -18,7 +19,7 @@ export const Get_Procatalog = async (mode, customerID, ALCID) => {
             "FrontEnd_RegNo": `${storeInit?.FrontEnd_RegNo}`,
             // "FrontEnd_RegNo": `${RegNo}`,
             "Customerid": `${customerID ?? ""}`,
-            "ALC": `${ALCID ?? ""}`,
+            "ALC": `${ALCID_Value}`,
             "DomainForNo": `${storeInit?.DomainForNo ?? ''}`
         })
         const email = sessionStorage.getItem("registerEmail") ?? ""

@@ -735,6 +735,7 @@
   .proCat_prod_image_shortInfo {
     display: flex;
     flex-direction: column;
+    height: auto;
   }
 
   .proCat_prod_video {
@@ -788,6 +789,10 @@
   .proCat_prod_shortInfo_inner {
     margin: 0;
     width: 80%;
+    height: auto;
+    overflow-y: visible;
+    padding-right: 0;
+    box-sizing: border-box;
   }
 }
 

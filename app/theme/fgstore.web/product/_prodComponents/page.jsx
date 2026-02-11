@@ -811,7 +811,7 @@ const Product = ({ params, searchParams, storeinit }) => {
             return null;
         }
     };
-
+ 
     const handleMoveToDetail = (productData) => {
         let output = FilterValueWithCheckedOnly()
         const uniqueNmList = [...new Set(JSON.parse(productData?.ImageVideoDetail).map(item => item.Nm))];
@@ -824,8 +824,10 @@ const Product = ({ params, searchParams, storeinit }) => {
             c: selectedCsId,
             f: output,
             i: productData?.MetalColorid,
-            l: JSON.parse(productData?.ImageVideoDetail)[0]?.Ex,
-            count: uniqueNmList.length,
+            // l: JSON.parse(productData?.ImageVideoDetail)[0]?.Ex,
+            // count: uniqueNmList.length,
+            l: productData?.ImageExtension,
+            count: productData?.ImageCount,
         }
 
         decodeAndDecompress()

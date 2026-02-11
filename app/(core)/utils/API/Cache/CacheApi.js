@@ -24,14 +24,13 @@ export const BookCache = async (visiterId, type, pricingContext, alc) => {
       FrontEnd_RegNo: FrontEnd_RegNo ?? "",
       EventName: type,
       PackageId: PackageId,
-      LabourSetId: LabourSetId,
+      Laboursetid: LabourSetId,
       diamondpricelistname: diamondpricelistname,
       colorstonepricelistname: colorstonepricelistname,
       SettingPriceUniqueNo: SettingPriceUniqueNo,
       ALC: ACL,
       ForEvt: "CacheRebuildDateSave"
     });
-
     const body = {
       con: `{"id":"","mode":"CacheRebuildDateSave","appuserid":"${customerEmail}"}`,
       f: "Cache (CacheRebuildDateSave)",
