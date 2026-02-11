@@ -13,6 +13,8 @@ export const getDomains = () => {
     return domains;
 };
 
+export const List = getDomains();
+
 /**
  * Reconstructs the domainHtmlMap object from sites.json
  */

@@ -1,4 +1,4 @@
-import { getCompanyInfoData, getExtraFlag, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
+import { getCompanyInfoData,  getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
 import Header from "@/app/components/(dynamic)/Header/Header";
 import React from "react";
 import {  getLogos } from "@/app/(core)/lib/ServerHelper";
@@ -9,14 +9,13 @@ const layout = async ({ children }) => {
   const storeData = await getStoreInit();
   const companyInfoData = await getCompanyInfoData();
   const logos =  getLogos();
-  let extraFlag = await getExtraFlag();
 
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%", overflow: "hidden" }}>
       <Header logos={logos} storeinit={storeData} />
       {children}
-      <FooterNew companyInfoData={companyInfoData} storeData={storeData} extraFlag={extraFlag} logos={logos} />
+      <FooterNew companyInfoData={companyInfoData} storeData={storeData}  logos={logos} />
     </Box>
   );
 };

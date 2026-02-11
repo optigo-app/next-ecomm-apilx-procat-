@@ -10,7 +10,9 @@
         "COMPANY": "company.procatalog.in",
         "TEST": "test.procatalog.in"
       },
-      "domains": ["sonasons.procatalog.in", "nxt10.optigoapps.com", "demo.procatalog.in", "company.procatalog.in", "test.procatalog.in", "localhost:5006", "localhost:8012", "localhost:8006", "procatalog.web", "nxt26.optigoapps.com"]
+      "domains": ["sonasons.procatalog.in", "nxt10.optigoapps.com", "demo.procatalog.in", "company.procatalog.in", "test.procatalog.in", "localhost:5006", "localhost:8012", "localhost:8006", "procatalog.web", "nxt26.optigoapps.com",
+    "localhost:3000" ,"localhost:3001","localhost:8012","localhost:8006","localhost:5006"
+    ]
     },
     {
       "id": "saraff",

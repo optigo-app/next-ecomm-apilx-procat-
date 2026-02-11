@@ -1,8 +1,7 @@
 import Link from "next/link";
 import "./FooterNew.scss";
 
-const FooterNew = ({ companyInfoData, storeData, extraFlag, logos }) => {
-  const htmlContent = extraFlag;
+const FooterNew = ({ companyInfoData, storeData,  logos }) => {
   // const parsedSocialLinks = JSON?.parse(companyInfoData?.SocialLinkObj);
   const parsedSocialLinks = [];
 

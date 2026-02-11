@@ -27,7 +27,8 @@ const setApiUrl = async () => {
   }
 };
 
-setApiUrl();
+
+
 export const CommonAPI = async (body) => {
   if (!APIURL) {
     await setApiUrl();
