@@ -27,6 +27,7 @@ export async function generateMetadata() {
   const storeInit = await getStoreInit();
 
   return generatePageMetadata({
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
     title: storeInit?.ufcc,
     description: DEFAULT_JEWELRY_DESCRIPTION,
     keywords: DEFAULT_JEWELRY_KEYWORDS,
