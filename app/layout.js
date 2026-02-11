@@ -46,7 +46,7 @@ export default async function RootLayout({ children }) {
   const companyInfo = await getCompanyInfoData();
   const storeInit = await getStoreInit();
   const myAccountFlags = await getMyAccountFlags();
-  const { hostname } = await getDomainInfo();
+  const { hostname  } = await getDomainInfo();
   const ht = getStaticHtmlPages(hostname);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");

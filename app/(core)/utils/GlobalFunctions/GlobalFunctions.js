@@ -45,12 +45,7 @@ export const GetUserLoginCookie = async () => {
 
 export const getAboutUsContent = async () => {
   try {
-    const ht = getStaticHtmlPages();
-    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "html", ht.folder, "aboutUs.html");
-    if (!fs.existsSync(filePath)) {
-      console.warn("AboutUs HTML file not found at path:", filePath);
-      return null;
-    }
+    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "html", "sonasonsAbout.html");
     const htmlContent = await fs.promises.readFile(filePath, "utf-8");
     return htmlContent;
   } catch (error) {
@@ -61,17 +56,30 @@ export const getAboutUsContent = async () => {
 
 export const getContactUsContent = async () => {
   try {
+    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "html", "SonasonsContactPage.html");
+    const htmlContent = await fs.promises.readFile(filePath, "utf-8");
+    return htmlContent;
+  } catch (error) {
+    console.error("Error fetching contact HTML:", error);
+    return null;
+  }
+};
+
+export const getExtraFlag = async () => {
+  try {
+    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "ExtraFlag.txt");
+    const htmlContent = await fs.promises.readFile(filePath, "utf-8");
+    return htmlContent;
+  } catch (error) {
+    console.error("Error fetching contact HTML:", error);
+    return null;
+  }
+};
+
+export const getStyleContent = async () => {
+  try {
     const ht = getStaticHtmlPages();
-    // Assuming Contact Us might be in the same folder or follows a similar pattern
-    // The previous error was: open 'F:\next-ecomm(apilx-procat)\public\WebSiteStaticImage\html\SonasonsContactPage.html'
-    // We should try to find it in the site folder or provide a safer fallback
-    const filePath = path.join(process.cwd(), "public", "WebSiteStaticImage", "html", ht.folder, "ContactPage.html");
-
-    if (!fs.existsSync(filePath)) {
-      // Fallback or just return null if not mandatory
-      return null;
-    }
-
+    const filePath = path.join(process.cwd(), ht.pages.styleContent);
     const htmlContent = await fs.promises.readFile(filePath, "utf-8");
     return htmlContent;
   } catch (error) {
