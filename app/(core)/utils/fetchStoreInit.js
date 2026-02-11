@@ -1,8 +1,9 @@
 import { NEXT_APP_WEB } from "./env";
-import { getDomainInfo } from "./getDomainInfo";
+import { getDomainInfo } from "./getDomainInfo"; 
 
-// const staticPathLocal = `${baseUrl}/Website_Store/WebSiteStaticImage/${NEXT_APP_WEB}/StoreInit.json`;
+ // const staticPathLocal = `${baseUrl}/Website_Store/WebSiteStaticImage/${NEXT_APP_WEB}/StoreInit.json`;
 // const staticPathCDN = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${NEXT_APP_WEB}/StoreInit.json`;
+    
 
 export async function fetchStoreInitData(req) {
   try {
@@ -24,18 +25,16 @@ export async function fetchStoreInitData(req) {
       hostname = winHost.replace(/^www\./, "");
       protocol = winProtocol;
     }
-    const localHosts = ["localhost", "fgstore.pro", "procatalog.web", "nzen"];
+    const localHosts = ["localhost", "fgstore.pro","nxt26.optigoapps.com","nxt26.optigoapps","nxt26","procatalog.web",  "nzen"];
     const cleanHost = hostname.split(":")[0];
-
-    let effectiveHost = cleanHost;
-    if (cleanHost === "nxt26.optigoapps.com") {
-      effectiveHost = "nxt10.optigoapps.com";
-    }
+    const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 
     if (localHosts.includes(cleanHost)) {
-      baseUrl = `http://nzen/R50B3/UFS/StoreInit/procatalog.web/StoreInit.json`;
+    baseUrl = `http://192.168.1.153/R50B3/UFS/StoreInit/procatalog.web/StoreInit.json`
+    } else if (isLocalhost) {
+    baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${hostname}/StoreInit.json`;
     } else {
-      baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${effectiveHost}/StoreInit.json`;
+    baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${hostname}/StoreInit.json`;
     }
     const finalUrl = baseUrl;
     const response = await fetch(finalUrl);
@@ -47,3 +46,4 @@ export async function fetchStoreInitData(req) {
     return null;
   }
 }
+
