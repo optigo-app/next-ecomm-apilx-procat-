@@ -182,19 +182,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   const innerSwiperRef = useRef(null);
 
-  const setCSSVariable = () => {
-    const backgroundColor = storeInit?.IsPLW == 1 ? "#c4cfdb" : "#c0bbb1";
-    document.documentElement.style.setProperty(
-      "--background-color",
-      backgroundColor
-    );
-  };
 
   const maxwidth1023px = useMediaQuery('(max-width: 1023px)')
 
-  useEffect(() => {
-    setCSSVariable();
-  }, []);
 
   useEffect(() => {
     window.scroll({
@@ -766,7 +756,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let decodeobj = decodeAndDecompress(navVal);
     const { b, l, count } = decodeobj;
     const imageUrl = storeInit?.CDNDesignImageFol;
-    const urlPath = `${imageUrl}${b}~1.${l}`;
+    const urlPath = `${imageUrl}${b}~1.${!!l ? l : "jpg"}`;
 
     if (decodeobj) {
       setDecodeUrl(decodeobj);
@@ -1140,7 +1130,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         });
       }
     } else {
-      console.log("No images found, pdImgList is empty.");
+      console.warn("noimage not erro", "No images found, pdImgList is empty.");
     }
 
     if (pdImgList.length) {
@@ -1460,7 +1450,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleMoveToDetail = (productData, index) => {
-    console.log("TCL: handleMoveToDetail -> productData", productData)
     setNextIndex(index);
     const logininfoDetail = JSON.parse(
       sessionStorage.getItem("loginUserDetail")
@@ -1603,8 +1592,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const swiperMainRef = useRef(null);
 
   const handleProductDetail = (index) => {
-    console.log("TCL: handleProductDetail -> index", index)
-    console.log("TCL: handleProductDetail -> allListDataSlide[index]", allListDataSlide[index])
     handleMoveToDetail(allListDataSlide[index], index);
   };
 
@@ -1629,7 +1616,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   const handleNext = async () => {
     const nextIndex = (nextindex + 1) % allListDataSlide?.length;
-    console.log("TCL: handleNext -> nextIndex", nextIndex)
     setNextIndex(nextIndex)
     swiperMainRef?.current.swiper.slideTo(nextIndex);
 

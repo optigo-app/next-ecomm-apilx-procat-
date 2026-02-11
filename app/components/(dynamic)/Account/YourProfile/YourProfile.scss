@@ -45,8 +45,7 @@
     width: 160px;
     font-weight: 700 !important;
     opacity: 0.9;
-    background: $btnBg !important;
-    color: $btncolor !important;
+
     border: none;
   }
 
@@ -54,36 +53,27 @@
     width: 430px;
   }
 
-  .smr_SmilingAddEditAddrwess:hover {
-    background-color: #fff !important;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+  
   .SmilingAddEditAddrwess {
     height: 40px;
     width: 160px;
     opacity: 0.9;
-    background: $btnBg !important;
-    color: $btncolor !important;
     border: none;
     outline: none;
     font-weight: 500;
   }
   .smilingDeleveryformSaveBtn {
-    background: $btnBg !important;
-    color: $btncolor !important;
     border: none;
     border-radius: 5px;
     font-weight: 600;
     margin-inline: 5px;
     opacity: 0.8;
     padding: 6px 10px;
-    width: 100px;
+    width: 100%;
   }
   .smilingDeleveryformCansleBtn_SMR {
     border: none;
     border-radius: 5px;
-    background: $btnBg !important;
-    color: $btncolor !important;
     font-weight: 600;
     margin-inline: 5px;
     opacity: 0.8;

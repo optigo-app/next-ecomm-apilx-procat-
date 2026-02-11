@@ -164,7 +164,7 @@ const Plm = () => {
               />
             </Grid>
             <Grid item xs={12} sx={{display:'flex', justifyContent:'center', alignItems:'center'}}>
-                <button  className='SmilingAddEditAddrwess' style={{ backgroundColor: 'lightgray', marginTop: '15px' }}>Save</button>
+                <button  className='SmilingAddEditAddrwess btnColorProCat' style={{ backgroundColor: 'lightgray', marginTop: '15px' }}>Save</button>
             </Grid>
           </Grid>
         </form>

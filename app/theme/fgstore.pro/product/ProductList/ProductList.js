@@ -1384,8 +1384,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       in: i,
 
       i: productData?.MetalColorid,
-      l: imageVideoDetail[0]?.Ex || "",
-      count: uniqueNmList.length,
+      l: productData?.ImageExtension || "",
+      count: productData?.ImageCount
     };
     decodeAndDecompress();
     let encodeObj = compressAndEncode(JSON?.stringify(obj));

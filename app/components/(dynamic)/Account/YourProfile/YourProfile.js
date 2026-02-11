@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './YourProfile.scss';
-import { TextField, Modal,  CircularProgress } from '@mui/material';
+import { TextField, Modal, CircularProgress, Box, Grid } from '@mui/material';
 import {  toast } from 'react-toastify';
 import { saveEditProfile } from '@/app/(core)/utils/API/AccountTabs/YourProfile';
 import { getAddressData } from '@/app/(core)/utils/API/AccountTabs/manageAddress';
@@ -182,7 +182,7 @@ export default function YourProfile() {
                     )}
                 </div>}
                 {  <div>
-                    <button onClick={handleEdit} className='SmilingAddEditAddrwess' style={{marginTop: '15px' }}>Edit Profile</button>
+                    <button onClick={handleEdit} className='SmilingAddEditAddrwess btnColorProCat' style={{marginTop: '15px' }}>Edit Profile</button>
                 </div>}
             </div>
 
@@ -190,76 +190,131 @@ export default function YourProfile() {
                 open={editMode}
                 onClose={handleClose}
             >
-                <div className='smilingEditProfilePopup_SMR' style={{ position: 'absolute', backgroundColor: 'white', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 450, boxShadow: 24, p: 4 }}>
-                    <form onSubmit={(event) => handleSubmit(event)} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                        <h2 style={{ marginTop: '30px', textAlign: 'center' }}>Edit Profile</h2>
+                <Box
+                    className='smilingEditProfilePopup_SMR'
+                    sx={{
+                        position: 'absolute',
+                        backgroundColor: 'white',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: { xs: '92vw', sm: 450 },
+                        maxWidth: '92vw',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        boxShadow: "0 !important",
+                        p: 3,
+                        border:'0 !important',
+                        outline:'0 !important',
+
+                    }}
+                >
+                    <Box
+                        component="form"
+                        onSubmit={(event) => handleSubmit(event)}
+                        sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}
+                    >
+                        <Box component="h2" sx={{ mt: 1, mb: 2, textAlign: 'center' }}>
+                            Edit Profile
+                        </Box>
+
                         {editedUserData && (
-                            <>
-                                <TextField
-                                    id="firstname"
-                                    label="First Name"
-                                    variant="outlined"
-                                    style={{ margin: '15px' }}
-                                    value={editedUserData.firstname !== "undefined" ? editedUserData.firstname : ""}
-                                    onChange={handleInputChange}
-                                    error={!!errors.firstname}
-                                    helperText={errors.firstname}
-                                />
-                                <TextField
-                                    id="lastname"
-                                    label="Last Name"
-                                    variant="outlined"
-                                    style={{ margin: '15px' }}
-                                    value={editedUserData.lastname !== "undefined" ? editedUserData.lastname : ""}
-                                    onChange={handleInputChange}
-                                    error={!!errors.lastname}
-                                    helperText={errors.lastname}
-                                />
-                                <TextField
-                                    id="userid"
-                                    label="Email"
-                                    variant="outlined"
-                                    style={{ margin: '15px' }}
-                                    value={editedUserData.userid !== "undefined" ? editedUserData.userid : ""}
-                                    onChange={handleInputChange}
-                                    error={!!errors.userid}
-                                    helperText={errors.userid}
-                                    disabled
-                                />
-                                <TextField
-                                    id="mobileno"
-                                    label="Mobile No."
-                                    variant="outlined"
-                                    style={{ margin: '15px' }}
-                                    value={editedUserData.mobileno !== "undefined" ? editedUserData.mobileno : ""}
-                                    onChange={handleInputChange}
-                                    error={!!errors.mobileno}
-                                    helperText={errors.mobileno}
-                                />
-                                <TextField
-                                    id="street"
-                                    label="Address"
-                                    variant="outlined"
-                                    style={{ margin: '15px' }}
-                                    value={editedUserData.street !== "undefined" ? editedUserData.street : ""}
-                                    onChange={handleInputChange}
-                                    error={!!errors.street}
-                                    helperText={errors.street}
-                                    sx={{ "& .MuiInputBase-input.Mui-disabled" : {
-                                        WebkitTextFillColor:'black'
-                                    }}}
-                                    multiline
-                                    rows={2}
-                                />
-                            </>
+                            <Grid container spacing={2} sx={{ px: 0.5 }}>
+                                <Grid item  size={{xs:12 }}>
+                                    <TextField
+                                        id="firstname"
+                                        label="First Name"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={editedUserData.firstname !== "undefined" ? editedUserData.firstname : ""}
+                                        onChange={handleInputChange}
+                                        error={!!errors.firstname}
+                                        helperText={errors.firstname}
+                                    />
+                                </Grid>
+
+                                <Grid item  size={{xs:12 }}>
+                                    <TextField
+                                        id="lastname"
+                                        label="Last Name"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={editedUserData.lastname !== "undefined" ? editedUserData.lastname : ""}
+                                        onChange={handleInputChange}
+                                        error={!!errors.lastname}
+                                        helperText={errors.lastname}
+                                    />
+                                </Grid>
+
+                                <Grid item  size={{xs:12 }}>
+                                    <TextField
+                                        id="userid"
+                                        label="Email"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={editedUserData.userid !== "undefined" ? editedUserData.userid : ""}
+                                        onChange={handleInputChange}
+                                        error={!!errors.userid}
+                                        helperText={errors.userid}
+                                        disabled
+                                    />
+                                </Grid>
+
+                                <Grid item  size={{xs:12 }}>
+                                    <TextField
+                                        id="mobileno"
+                                        label="Mobile No."
+                                        variant="outlined"
+                                        fullWidth
+                                        value={editedUserData.mobileno !== "undefined" ? editedUserData.mobileno : ""}
+                                        onChange={handleInputChange}
+                                        error={!!errors.mobileno}
+                                        helperText={errors.mobileno}
+                                    />
+                                </Grid>
+
+                                <Grid item size={{xs:12 }}>
+                                    <TextField
+                                        id="street"
+                                        label="Address"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={editedUserData.street !== "undefined" ? editedUserData.street : ""}
+                                        onChange={handleInputChange}
+                                        error={!!errors.street}
+                                        helperText={errors.street}
+                                        sx={{ "& .MuiInputBase-input.Mui-disabled": { WebkitTextFillColor: 'black' } }}
+                                        multiline
+                                        rows={2}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={12}
+                                sx={{
+                                    width:'100%'
+                                }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            gap: 1,
+                                            mt: 1,
+                                            mb: 1.5,
+                                            flexWrap: 'wrap',
+                                            alignItems:'center',
+                                            width:'100%'
+                                        }}
+                                    >
+                                        {/* <button type='submit' className='smr_SmilingAddEditAddrwess' style={{ backgroundColor: 'lightgray', marginInline: '5px' }}>Save</button> */}
+                                        <button type='submit' className='smilingDeleveryformSaveBtn btnColorProCat' >Save</button>
+                                        <button onClick={() => handleCancel()} className='smilingDeleveryformCansleBtn_SMR' >Cancel</button>
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         )}
-                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', marginBottom: '25px' }}>
-                        {/* <button type='submit' className='smr_SmilingAddEditAddrwess' style={{ backgroundColor: 'lightgray', marginInline: '5px' }}>Save</button> */}
-                        <button type='submit' className='smilingDeleveryformSaveBtn' >Save</button>
-                        <button onClick={() => handleCancel()} className='smilingDeleveryformCansleBtn_SMR' >Cancel</button>
-                    </div>
-                    </form>
-                </div>
+                    </Box>
+                </Box>
             </Modal>
         
         </div>

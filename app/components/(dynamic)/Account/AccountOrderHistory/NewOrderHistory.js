@@ -39,7 +39,7 @@ import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 
 
 const NewOrderHistory = () => {
-  const {push} = useNextRouterLikeRR();
+  const {push ,pathname} = useNextRouterLikeRR();
   const [orderHistoryData, setOrderHistoryData] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [loaderOH, setLoaderOH] = useState(false);
@@ -156,9 +156,9 @@ if (response?.Status === "200" || response?.Status === 200 || response?.Status =
     }
   };
 
-  const handleMoveToDetail = (productData) => {
+  const handleMoveToDetail = (productData,i) => {
     let loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
-
+console.log(pathname , "pathname")
     let obj = {
       a: productData?.autocode,
       b: productData?.designno,
@@ -166,6 +166,10 @@ if (response?.Status === "200" || response?.Status === 200 || response?.Status =
       d: loginInfo?.cmboDiaQCid,
       c: loginInfo?.cmboCSQCid,
       f: {},
+       in: i,
+      i: productData?.MetalColorid,
+      l: productData?.ImageExtension || "",
+      count: productData?.ImageCount
     };
     let encodeObj = compressAndEncode(JSON.stringify(obj));
 
@@ -506,7 +510,7 @@ if (response?.Status === "200" || response?.Status === 200 || response?.Status =
                                           onError={handleOrderImageError} 
                                           alt="designimage" 
                                           style={{ maxHeight: '90px', maxWidth: '90px', marginRight: '10px' }} 
-                                          onClick={() => handleMoveToDetail(el)} 
+                                          onClick={() => handleMoveToDetail(el ,index)} 
                                           draggable={true}
                                           onContextMenu={(e) => e.preventDefault()}
                                       />
