@@ -135,10 +135,6 @@ $cartUpdateBtncolor: #b1b1b1;
 
   .proCat_noCartlistData {
     text-align: center;
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 
     .proCat_title {
       color: $titleColor;
@@ -445,7 +441,6 @@ $cartUpdateBtncolor: #b1b1b1;
 
     .proCat_cartQtyPricemainDev {
       display: flex;
-      justify-content: space-between;
     }
 
     // cart quantity scss
@@ -505,9 +500,9 @@ $cartUpdateBtncolor: #b1b1b1;
       font-size: $fontSize6;
       color: $titleColor;
       margin-bottom: 20px;
-      width: 100%;
-      display: flex;
-      justify-content: end;
+      // width: 100%;
+      // display: flex;
+      // justify-content: end;
     }
 
     .proCat_UpdateCartBtn {
@@ -586,11 +581,17 @@ $cartUpdateBtncolor: #b1b1b1;
   .proCat_cartbtngroupReRm {
     position: absolute;
     bottom: 5px;
+    @media (max-width: 1000px) {
+      right: 2px;
+    }
+     @media (max-width: 400px) {
+      right: 0px;
+    }
 
     .proCat_ItemRemarkbtn,
     .proCat_ReomoveCartbtn {
       color: #c1c1c1 !important;
-      font-size: $fontSize1;
+      font-size: $fontSize0;
     }
 
 

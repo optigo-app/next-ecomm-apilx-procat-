@@ -12,8 +12,9 @@ const CountryDropDown = ({
   handleInputChange,
   Errors,
   setErrors,
-  Countrycodestate ,
-setCountrycodestate ,
+  Countrycodestate,
+  setCountrycodestate,
+  setCountryShortName,
 
 }) => {
   const [CountryDefault, setCountryDefault] = useState();
@@ -23,39 +24,43 @@ setCountrycodestate ,
 
   useEffect(() => {
 
-        const FetchCodeList = async()=>{
-          try {
-            const response = JSON.parse(sessionStorage.getItem('CountryCodeListApi')) ?? [];
-            const phonecode = response?.filter((val) => val?.IsDefault == 1);
-            const mob = sessionStorage.getItem('Countrycodestate') ;
-            if(mob){
-              setCountrycodestate(mob);
-              return ;
-            }else{
-              setCountrycodestate(phonecode[0]?.mobileprefix);
-            }
-            setCountrycode(response);
-            setCountryDefault(phonecode[0]?.PhoneLength)
-          } catch (error) {
-            console.log(error)
+    const FetchCodeList = async () => {
+      try {
+        const response = JSON.parse(sessionStorage.getItem('CountryCodeListApi')) ?? [];
+        console.log("🚀 ~ FetchCodeList ~ response:", response)
+        setCountrycode(response);
+
+        const defaultCountry = response?.find((val) => val?.IsDefault == 1) || response[0];
+        const mob = sessionStorage.getItem('Countrycodestate');
+
+        if (mob) {
+          if (typeof setCountrycodestate === 'function') {
+            setCountrycodestate(mob);
           }
+          const currentCountry = response?.find((val) => (val?.mobileprefix == mob || val?.MobilePrefix == mob));
+          if (currentCountry) {
+            setCountryDefault(currentCountry?.PhoneLength || currentCountry?.phonelength || 10);
+            if (typeof setCountryShortName === 'function') {
+              setCountryShortName(currentCountry?.CountryShortName || currentCountry?.countryshortname || "IND");
+            }
+          } else {
+            setCountryDefault(defaultCountry?.PhoneLength || defaultCountry?.phonelength || 10);
+          }
+        } else {
+          if (typeof setCountrycodestate === 'function') {
+            setCountrycodestate(defaultCountry?.mobileprefix);
+          }
+          if (typeof setCountryShortName === 'function') {
+            setCountryShortName(defaultCountry?.CountryShortName || defaultCountry?.countryshortname || "IND");
+          }
+          setCountryDefault(defaultCountry?.PhoneLength || defaultCountry?.phonelength || 10);
         }
-    // CountryCodeListApi(finalID)
-    //   .then((res) => {
-    //     const phonecode = res?.Data?.rd?.filter((val) => val?.IsDefault == 1);
-    //     const mob = sessionStorage.getItem('Countrycodestate') ;
-    //     if(mob){
-    //       setCountrycodestate(mob);
-    //       return ;
-    //     }else{
-    //       setCountrycodestate(phonecode[0]?.mobileprefix);
-    //     }
-    //     setCountrycode(res?.Data?.rd);
-    //     setCountryDefault(phonecode[0]?.PhoneLength)
-    //   })
-    //   .catch((err) => console.log(err));
-      FetchCodeList()
-  }, []);
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    FetchCodeList()
+  }, [setCountrycodestate, setCountryShortName]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -77,21 +82,22 @@ setCountrycodestate ,
   const handleCountryChange = (event, value) => {
     if (value) {
       setCountrycodestate(value?.mobileprefix);
-      setCountryDefault(value?.PhoneLength);
+      if (typeof setCountryShortName === 'function') {
+        setCountryShortName(value?.CountryShortName || value?.countryshortname || "IND");
+      }
+      setCountryDefault(value?.PhoneLength || value?.phonelength || 10);
       setOpen(false);
       setMobileNo('')
-        // dont know working
-      setErrors({
-        ...Errors,
+      setErrors((prev) => ({
+        ...prev,
         mobileNo: ``,
-        // Mobile number must be ${value?.PhoneLength} digits.
-      });
+      }));
     }
   };
 
   const handleMobileInputChange = (e) => {
     const value = e.target.value;
-   
+
     if (value.length > CountryDefault) {
       e.preventDefault();
       return;
@@ -101,52 +107,56 @@ setCountrycodestate ,
     e.target.value = numericValue;
 
     if (numericValue.length === CountryDefault) {
-      setErrors({
-        ...Errors,
+      setErrors((prev) => ({
+        ...prev,
         mobileNo: '',
-      });
+      }));
     } else if (numericValue?.length > 0 && numericValue?.length < CountryDefault) {
-      setErrors({
-        ...Errors,
+      setErrors((prev) => ({
+        ...prev,
         mobileNo: `Mobile number must be ${CountryDefault} digits.`,
-      });
+      }));
     } else {
-      setErrors({
-        ...Errors,
+      setErrors((prev) => ({
+        ...prev,
         mobileNo: '',
-      });
+      }));
     }
     handleInputChange(e, setMobileNo, 'mobileNo');
   };
 
   return (
-    <div className="mobile-smr" ref={dropdownRef}>
+    <div className="mobile-smr" ref={dropdownRef}
+      style={{
+        gap: '0px'
+      }}
+    >
       <div className="MOBILE_CODE"
-          onClick={() =>!IsMobileThrough && setOpen(true)}
+        onClick={() => !IsMobileThrough && setOpen(true)}
       >
         <input
           type="text"
           placeholder="91"
           value={Countrycodestate}
-          onFocus={() => !IsMobileThrough && setOpen(true)} 
-          readOnly={IsMobileThrough} 
+          onFocus={() => !IsMobileThrough && setOpen(true)}
+          readOnly={IsMobileThrough}
           style={{
             cursor: 'pointer',
             pointerEvents: 'none',
           }}
         />
       </div>
-      {!IsMobileThrough && open && ( 
+      {!IsMobileThrough && open && (
         <div className="county_Dropdown_list">
           <Autocomplete
             disablePortal
             options={Countrycode}
             getOptionLabel={(option) => `${option?.mobileprefix} - ${option?.countryname}`}
-            sx={{ width: '100%' }} 
-            open={open}   
+            sx={{ width: '100%' }}
+            open={open}
             freeSolo
-            inputRef={mobileNoRef} 
-            onChange={handleCountryChange} 
+            inputRef={mobileNoRef}
+            onChange={handleCountryChange}
             renderInput={(params) => <TextField {...params} placeholder="Search Your Country" />}
           />
         </div>
@@ -158,18 +168,20 @@ setCountrycodestate ,
         variant="outlined"
         autoComplete="new-mobileNo"
         className="labgrowRegister"
-        style={{ margin: '15px' }}
         type="text"
-        inputMode="numeric" 
+        inputMode="numeric"
         inputProps={{
-          maxLength: CountryDefault, 
-          pattern: '[0-9]*', 
+          maxLength: CountryDefault,
+          pattern: '[0-9]*',
+        }}
+        sx={{
+          margin: '8px -1px 23px 27px'
         }}
         value={mobileNo}
         inputRef={mobileNoRef}
         onKeyDown={(e) => handleKeyDown(e, emailRef)}
-        onChange={handleMobileInputChange} 
-        error={!!Errors.mobileNo} 
+        onChange={handleMobileInputChange}
+        error={!!Errors.mobileNo}
         helperText={Errors.mobileNo}
       />
     </div>

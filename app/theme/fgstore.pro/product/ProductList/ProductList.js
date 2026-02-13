@@ -3868,15 +3868,31 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
+                                    flex: 1,
+                                    margin: 0,
+                                    width: "100%",
+                                    fontWeight: 600,
+                                    color: "rgba(143, 140, 139, 0.9)",
+                                    whiteSpace: "nowrap",      // keep text on a single line
+                                    overflow: "hidden",        // hide overflowing text
+                                    textOverflow: "ellipsis",  // show ...
                                   }}
                                 >
-                                  <p
-                                    style={{
-                                      margin: "0px",
+                                  <Typography
+                                    sx={{
+                                      margin: 0,
                                       width: "100%",
                                       fontWeight: 600,
-                                      color:
-                                        "rgba(143, 140, 139, 0.9019607843)",
+                                      color: "rgba(143, 140, 139, 0.9)",
+                                      whiteSpace: "nowrap",      // keep text on one line
+                                      overflow: "hidden",        // hide overflow
+                                      textOverflow: "ellipsis",  // show "..."
+                                      fontSize: {
+                                        xs: 12,  // small screens
+                                        sm: 14,  // tablets
+                                        md: 16,  // desktops
+                                        lg: 18,  // large desktops
+                                      },
                                     }}
                                   >
                                     {/* {decodeURI(extractedPart)} */}
@@ -3885,7 +3901,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                         ?.split("/p/")[1]
                                         .split("/")[0]
                                     )}
-                                  </p>
+                                  </Typography>
                                 </div>
                                 <div
                                   className={
@@ -3893,6 +3909,19 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       ? "smr_sorting_custom_NoData"
                                       : "smr_sorting_custom"
                                   }
+                                  style={{
+                                    flex: 1,
+                                    margin: 0,
+                                    width: "100%",
+                                    fontWeight: 600,
+                                    color: "rgba(143, 140, 139, 0.9)",
+                                    whiteSpace: "nowrap",      // keep text on a single line
+                                    overflow: "hidden",        // hide overflowing text
+                                    textOverflow: "ellipsis",  // show ...
+                                    display:'flex',
+                                    alignItems:'center',
+                                    justifyContent:'flex-end'
+                                  }}
                                 >
                                   <div
                                     className={

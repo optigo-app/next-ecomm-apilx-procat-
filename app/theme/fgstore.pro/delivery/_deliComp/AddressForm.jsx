@@ -1,96 +1,272 @@
 import React from 'react';
-import './Delivery.scss'
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Divider } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  TextField,
+  Divider,
+  Grid,
+  Box
+} from '@mui/material';
 
-export default function AddressForm({ open, handleClose, handleCancel, handleInputChange, handleSubmit, formData, errors, isEditMode }) {
-    return (
-        <Dialog open={open} onClose={handleClose}>
-            <form onSubmit={handleSubmit}>
-                <DialogTitle className='smr_dialogTitle'>{isEditMode ? 'Edit Shipping Address' : 'Add Shipping Address'}</DialogTitle>
-                <Divider/>
-                <DialogContent>
-                    <TextField
-                        label="First Name"
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange(e, 'firstName')}
-                        error={!!errors.firstName}
-                        helperText={errors.firstName}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="Last Name"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange(e, 'lastName')}
-                        error={!!errors.lastName}
-                        helperText={errors.lastName}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="Mobile No."
-                        value={formData.mobileNo}
-                        onChange={(e) => handleInputChange(e, 'mobileNo')}
-                        error={!!errors.mobileNo}
-                        helperText={errors.mobileNo}
-                        fullWidth
-                        type='number'
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="Address"
-                        value={formData.address}
-                        onChange={(e) => handleInputChange(e, 'address')}
-                        error={!!errors.address}
-                        helperText={errors.address}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="Country"
-                        value={formData.country}
-                        onChange={(e) => handleInputChange(e, 'country')}
-                        error={!!errors.country}
-                        helperText={errors.country}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="State"
-                        value={formData.state}
-                        onChange={(e) => handleInputChange(e, 'state')}
-                        error={!!errors.state}
-                        helperText={errors.state}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="City"
-                        value={formData.city}
-                        onChange={(e) => handleInputChange(e, 'city')}
-                        error={!!errors.city}
-                        helperText={errors.city}
-                        fullWidth
-                        className='smr_addressTextFields'
-                    />
-                    <TextField
-                        label="ZIP Code"
-                        value={formData.zipCode}
-                        onChange={(e) => handleInputChange(e, 'zipCode')}
-                        error={!!errors.zipCode}
-                        helperText={errors.zipCode}
-                        fullWidth
-                        type='number'
-                        className='smr_addressTextFields'
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <div className='smr_AddressBtnGroup'>
-                    <button type='submit' className='smr_AddNewAddrModalbtn'>{isEditMode ? 'Save Changes' : 'Add Address'}</button>
-                    <button type='button' className='smr_Cancelbtn' onClick={handleCancel}>Cancel</button>
-                    </div>
-                </DialogActions>
-            </form>
-        </Dialog>
-    );
+export default function AddressForm({
+  open,
+  handleClose,
+  handleCancel,
+  handleInputChange,
+  handleSubmit,
+  formData,
+  errors,
+  isEditMode
+}) {
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+    >
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>
+          {isEditMode ? 'Edit Shipping Address' : 'Add Shipping Address'}
+        </DialogTitle>
+
+        <Divider />
+
+        <DialogContent sx={{ mt: 2 }}>
+          <Grid container spacing={2}>
+
+            {/* First Name */}
+            <Grid item size={{xs : 12 ,  sm :6}}>
+              <TextField
+                label="First Name"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange(e, 'firstName')}
+                error={!!errors.firstName}
+                helperText={errors.firstName}
+                fullWidth
+              />
+            </Grid>
+
+            {/* Last Name */}
+            <Grid item size={{xs : 12 ,  sm :6}}>
+              <TextField
+                label="Last Name"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange(e, 'lastName')}
+                error={!!errors.lastName}
+                helperText={errors.lastName}
+                fullWidth
+              />
+            </Grid>
+
+ <Grid item size={{xs : 12 }}>
+              <TextField
+                label="Address"
+                value={formData.address}
+                onChange={(e) => handleInputChange(e, 'address')}
+                error={!!errors.address}
+                helperText={errors.address}
+                fullWidth
+                multiline
+                rows={3}
+              />
+            </Grid>
+            {/* Mobile */}
+            <Grid item size={{xs : 12 ,  sm :6}}>
+              <TextField
+                label="Mobile No."
+                value={formData.mobileNo}
+                onChange={(e) => handleInputChange(e, 'mobileNo')}
+                error={!!errors.mobileNo}
+                helperText={errors.mobileNo}
+                fullWidth
+                type="tel"
+              />
+            </Grid>
+
+            {/* Address */}
+           
+
+            {/* Country */}
+            <Grid item size={{xs : 12 ,  sm :6}} >
+              <TextField
+                label="Country"
+                value={formData.country}
+                onChange={(e) => handleInputChange(e, 'country')}
+                error={!!errors.country}
+                helperText={errors.country}
+                fullWidth
+              />
+            </Grid>
+
+            {/* State */}
+            <Grid item size={{xs : 12 ,  sm :6}} >
+              <TextField
+                label="State"
+                value={formData.state}
+                onChange={(e) => handleInputChange(e, 'state')}
+                error={!!errors.state}
+                helperText={errors.state}
+                fullWidth
+              />
+            </Grid>
+
+            {/* City */}
+            <Grid item size={{xs : 12 ,  sm :6}}>
+              <TextField
+                label="City"
+                value={formData.city}
+                onChange={(e) => handleInputChange(e, 'city')}
+                error={!!errors.city}
+                helperText={errors.city}
+                fullWidth
+              />
+            </Grid>
+
+            {/* ZIP Code */}
+            <Grid item size={{xs : 12 ,  sm :6}}>
+              <TextField
+                label="ZIP Code"
+                value={formData.zipCode}
+                onChange={(e) => handleInputChange(e, 'zipCode')}
+                error={!!errors.zipCode}
+                helperText={errors.zipCode}
+                fullWidth
+                type="text"
+              />
+            </Grid>
+
+          </Grid>
+        </DialogContent>
+
+        <Divider />
+
+        <DialogActions sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, width: '100%' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{
+                bgcolor:'black'
+              }}
+            >
+              {isEditMode ? 'Save Changes' : 'Add Address'}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
 }
+
+// import React from 'react';
+// import './Delivery.scss'
+// import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Divider } from '@mui/material';
+
+// export default function AddressForm({ open, handleClose, handleCancel, handleInputChange, handleSubmit, formData, errors, isEditMode }) {
+//     return (
+//         <Dialog open={open} onClose={handleClose}>
+//             <form onSubmit={handleSubmit}>
+//                 <DialogTitle className='smr_dialogTitle'>{isEditMode ? 'Edit Shipping Address' : 'Add Shipping Address'}</DialogTitle>
+//                 <Divider/>
+//                 <DialogContent>
+//                     <TextField
+//                         label="First Name"
+//                         value={formData.firstName}
+//                         onChange={(e) => handleInputChange(e, 'firstName')}
+//                         error={!!errors.firstName}
+//                         helperText={errors.firstName}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="Last Name"
+//                         value={formData.lastName}
+//                         onChange={(e) => handleInputChange(e, 'lastName')}
+//                         error={!!errors.lastName}
+//                         helperText={errors.lastName}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="Mobile No."
+//                         value={formData.mobileNo}
+//                         onChange={(e) => handleInputChange(e, 'mobileNo')}
+//                         error={!!errors.mobileNo}
+//                         helperText={errors.mobileNo}
+//                         fullWidth
+//                         type='number'
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="Address"
+//                         value={formData.address}
+//                         onChange={(e) => handleInputChange(e, 'address')}
+//                         error={!!errors.address}
+//                         helperText={errors.address}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="Country"
+//                         value={formData.country}
+//                         onChange={(e) => handleInputChange(e, 'country')}
+//                         error={!!errors.country}
+//                         helperText={errors.country}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="State"
+//                         value={formData.state}
+//                         onChange={(e) => handleInputChange(e, 'state')}
+//                         error={!!errors.state}
+//                         helperText={errors.state}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="City"
+//                         value={formData.city}
+//                         onChange={(e) => handleInputChange(e, 'city')}
+//                         error={!!errors.city}
+//                         helperText={errors.city}
+//                         fullWidth
+//                         className='smr_addressTextFields'
+//                     />
+//                     <TextField
+//                         label="ZIP Code"
+//                         value={formData.zipCode}
+//                         onChange={(e) => handleInputChange(e, 'zipCode')}
+//                         error={!!errors.zipCode}
+//                         helperText={errors.zipCode}
+//                         fullWidth
+//                         type='number'
+//                         className='smr_addressTextFields'
+//                     />
+//                 </DialogContent>
+//                 <DialogActions>
+//                     <div className='smr_AddressBtnGroup'>
+//                     <button type='submit' className='smr_AddNewAddrModalbtn'>{isEditMode ? 'Save Changes' : 'Add Address'}</button>
+//                     <button type='button' className='smr_Cancelbtn' onClick={handleCancel}>Cancel</button>
+//                     </div>
+//                 </DialogActions>
+//             </form>
+//         </Dialog>
+//     );
+// }

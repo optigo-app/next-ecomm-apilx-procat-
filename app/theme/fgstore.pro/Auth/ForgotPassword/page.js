@@ -1,14 +1,32 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./ForgotPass.modul.scss";
-import { Button, CircularProgress, IconButton, InputAdornment, TextField } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CryptoJS from "crypto-js";
 import { ResetPasswordAPI } from "@/app/(core)/utils/API/Auth/ResetPasswordAPI";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useSearchParams } from "next/navigation";
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Stack,
+  CircularProgress,
+  Backdrop,
+  IconButton,
+  InputAdornment,
+  useTheme,
+  useMediaQuery
+} from "@mui/material";
+import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-export default function ForgotPassword({params ,storeInit}) {
+
+export default function ForgotPassword({ params, storeInit }) {
   const location = useNextRouterLikeRR();
   const navigation = location?.push;
   const [password, setPassword] = useState("");
@@ -21,14 +39,21 @@ export default function ForgotPassword({params ,storeInit}) {
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams()
   const userid = searchParams.get('userid')
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
+    setIsLoading(true);
+    if (!userid) {
+      setIsLoading(false);
+      navigation("/");
+    }
+
     const storedEmail = sessionStorage.getItem("userEmailForPdList");
     if (storedEmail) {
       setEmail(storedEmail);
     }
-  }, []); //
+  }, [userid]); //
 
   const handleInputChange = (e, setter, fieldName) => {
     const { value } = e.target;
@@ -108,6 +133,241 @@ export default function ForgotPassword({params ,storeInit}) {
       setErrors(errors);
     }
   };
+
+  return <>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'white',
+        p: 0,
+        position: 'relative'
+      }}
+    >
+      {/* Loading Overlay */}
+      <Backdrop
+        open={isLoading}
+        sx={{
+          zIndex: theme.zIndex.modal + 1,
+          color: '#fff',
+          bgcolor: 'rgba(0,0,0,0.3)'
+        }}
+      >
+        <CircularProgress size={50} thickness={4} color="primary" />
+      </Backdrop>
+
+      <Container maxWidth="sm">
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 2, sm: 5 },
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Back Button */}
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigation("/")}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              left: 16,
+              color: 'text.secondary',
+              textTransform: 'none',
+              fontWeight: 500,
+              '&:hover': {
+                bgcolor: 'grey.100',
+                color: 'text.primary'
+              }
+            }}
+          >
+            Back
+          </Button>
+
+          <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
+            {/* Icon */}
+            <Box
+              sx={{
+                width: 64,
+                height: 64,
+                borderRadius: '50%',
+                bgcolor: 'warning.light',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 1
+              }}
+              className="btnColorProCat"
+            >
+              <LockResetOutlinedIcon
+                sx={{
+                  fontSize: 32,
+                }}
+              />
+            </Box>
+
+            {/* Title */}
+            <Box textAlign="center">
+              <Typography
+                variant="h4"
+                component="h1"
+                sx={{
+                  fontWeight: 400,
+                  color: 'text.primary',
+                  mb: 1,
+                  fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                }}
+              >
+                Forgot Your Password?
+              </Typography>
+
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{
+                  maxWidth: 400,
+                  mx: 'auto',
+                  lineHeight: 1.6,
+                  fontSize: '1rem'
+                }}
+              >
+                Enter your new password below to reset your account
+              </Typography>
+            </Box>
+
+            {/* Form */}
+            <Stack
+              spacing={2.5}
+              width="100%"
+              component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
+            >
+              <TextField
+                autoFocus
+                id="password"
+                label="New Password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                fullWidth
+                value={password}
+                onChange={handlePasswordChange}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    handleSubmit();
+                  }
+                }}
+                error={!!passwordError}
+                helperText={passwordError}
+                disabled={isLoading}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => handleTogglePasswordVisibility("password")}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+
+                }}
+              />
+
+              <TextField
+                id="confirmPassword"
+                label="Confirm New Password"
+                type={showConfirmPassword ? "text" : "password"}
+                autoComplete="new-password"
+                fullWidth
+                value={confirmPassword}
+                onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword}
+                disabled={isLoading}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => handleTogglePasswordVisibility("confirmPassword")}
+                        onMouseDown={handleMouseDownConfirmPassword}
+                        edge="end"
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+
+                }}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                size="large"
+                variant="contained"
+                color="warning"
+                disabled={isLoading || !password || !confirmPassword}
+                sx={{
+                  mt: 1,
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  boxShadow: 'none',
+                  transition: 'all 0.2s ease-in-out',
+
+                  '&:disabled': {
+                    bgcolor: 'grey.300',
+                    color: 'grey.500'
+                  }
+                }}
+                className="btnColorProCat"
+              >
+                {isLoading ? 'Updating...' : 'Change Password'}
+              </Button>
+
+              <Button
+                fullWidth
+                size="large"
+                variant="text"
+                onClick={() => navigation("/")}
+                disabled={isLoading}
+                sx={{
+                  py: 1.5,
+                  textTransform: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  color: 'text.secondary',
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                    color: 'text.primary'
+                  }
+                }}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </Stack>
+        </Paper>
+      </Container>
+    </Box>
+  </>
 
   return (
     <div className="smr_forgotMain">
@@ -206,12 +466,6 @@ export default function ForgotPassword({params ,storeInit}) {
           {/* <Footer /> */}
         </div>
       </div>
-      {/* <div style={{ display: 'flex', justifyContent: 'center', paddingBlock: '30px' }}>
-                <p 
-          className="backtotop_Smr"
-                
-                style={{ margin: '0px', fontWeight: 500, width: '100px', color: 'white', cursor: 'pointer' }} onClick={() => window.scrollTo(0, 0)}>BACK TO TOP</p>
-            </div> */}
     </div>
   );
 }

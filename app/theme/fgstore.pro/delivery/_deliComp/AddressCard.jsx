@@ -1,72 +1,192 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Grid, Card, CardContent, Typography, Button, CardActions } from '@mui/material';
-import { MdModeEditOutline } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
+import React from "react";
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Box,
+  Chip,
+  Stack
+} from "@mui/material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-const AddressCard = ({ address, index, handleOpen, handleDeleteClick, handleDefaultSelection }) => {
-    const {
-        shippingfirstname,
-        shippinglastname,
-        street,
-        city,
-        state,
-        country,
-        zip,
-        shippingmobile,
-        isdefault
-    } = address;
+const AddressCard = ({
+  address,
+  handleOpen,
+  handleDeleteClick,
+  handleDefaultSelection
+}) => {
+  const {
+    shippingfirstname,
+    shippinglastname,
+    street,
+    city,
+    state,
+    country,
+    zip,
+    shippingmobile,
+    isdefault
+  } = address;
 
+  return (
+    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+      <Card
+        onClick={() => handleDefaultSelection(address)}
+        sx={{
+          height: "100%",
+          position: "relative",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          border: isdefault === 1 ? "2px solid" : "1px solid",
+          borderColor: isdefault === 1 ? "black" : "grey.300",
+        }}
+      >
+        {/* Default Chip */}
+        {isdefault === 1 && (
+          <Chip
+            label="Default"
+            color="primary"
+            size="small"
+            sx={{
+              position: "absolute",
+              top: 12,
+              right: 12 ,
+              bgcolor:"black"
+            }}
+          />
+        )}
 
-    const [showButtons, setShowButtons] = useState(false);
+        <CardContent>
+          <Stack spacing={1}>
+            <Typography variant="h6" fontWeight={600}>
+              {shippingfirstname} {shippinglastname}
+            </Typography>
 
-    const handleMouseEnter = () => {
-        setShowButtons(true);
-    };
+            <Typography variant="body2" color="text.secondary">
+              {street}
+            </Typography>
 
-    const handleMouseLeave = () => {
-        setShowButtons(false);
-    };
+            <Typography variant="body2" color="text.secondary">
+              {city} - {zip}
+            </Typography>
 
-    return (
-        <Grid item size={{ xs: 12, sm: 6, md: 4, lg: 3 }} style={{ marginBottom: '20px' }}>
-            <Card
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={isdefault == 1 ? 'smr_ActiveAddrCard' : 'smr_AddrCard'}
-                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="body2" color="text.secondary">
+              {state}, {country}
+            </Typography>
 
-                <CardContent onClick={() => handleDefaultSelection(address)} style={{ flex: '1 0 auto' }}>
-                    <Typography className='smr_addrTypoTitle' variant="h5" component="h2">
-                        {shippingfirstname} {shippinglastname}
-                    </Typography>
-                    <Typography className='smr_addrTypo'>{street}</Typography>
-                    <Typography className='smr_addrTypo'>{city}-{zip}</Typography>
-                    <Typography className='smr_addrTypo'>{state}</Typography>
-                    <Typography className='smr_addrTypo'>{country}</Typography>
-                    <Typography className='smr_addrTypo'>
-                        Mobile No: {shippingmobile}
-                    </Typography>
-                    <button type='button' className={isdefault == 1 ? 'smr_defualt_addrSelected' : 'smr_defualt_addrSelectedHide'}>Selected</button>
-                </CardContent>
+            <Typography variant="body2" color="text.secondary">
+                Mobile No : {shippingmobile}
+            </Typography>
+          </Stack>
+        </CardContent>
 
-                {/* {showButtons && ( */}
-                <div className='smr_editDeleteBtngroup' >
-                    <Button type='button' color='primary' onClick={() => handleOpen(address?.id)}>
-                        <MdModeEditOutline className='smr_editIcon' />
-                    </Button>
-                    {isdefault != 1 &&
-                        <Button type='button' color='secondary' onClick={() => handleDeleteClick(address?.id)}>
-                            <MdDelete className='smr_DeleteIcon' />
-                        </Button>
-                    }
-                </div>
-                {/* )} */}
-            </Card>
-        </Grid>
-    );
+        {/* Action Buttons */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+            px: 2,
+            pb: 2
+          }}
+          onClick={(e) => e.stopPropagation()} // prevent card click
+        >
+          <IconButton
+            color="primary"
+            onClick={() => handleOpen(address?.id)}
+          >
+            <EditOutlinedIcon />
+          </IconButton>
+
+          {isdefault !== 1 && (
+            <IconButton
+              color="error"
+              onClick={() => handleDeleteClick(address?.id)}
+            >
+              <DeleteOutlineIcon />
+            </IconButton>
+          )}
+        </Box>
+      </Card>
+    </Grid>
+  );
 };
 
 export default AddressCard;
+
+// "use client";
+
+// import React, { useState } from 'react';
+// import { Grid, Card, CardContent, Typography, Button, CardActions } from '@mui/material';
+// import { MdModeEditOutline } from "react-icons/md";
+// import { MdDelete } from "react-icons/md";
+
+// const AddressCard = ({ address, index, handleOpen, handleDeleteClick, handleDefaultSelection }) => {
+//     const {
+//         shippingfirstname,
+//         shippinglastname,
+//         street,
+//         city,
+//         state,
+//         country,
+//         zip,
+//         shippingmobile,
+//         isdefault
+//     } = address;
+
+
+//     const [showButtons, setShowButtons] = useState(false);
+
+//     const handleMouseEnter = () => {
+//         setShowButtons(true);
+//     };
+
+//     const handleMouseLeave = () => {
+//         setShowButtons(false);
+//     };
+
+//     return (
+//         <Grid item size={{ xs: 12, sm: 6, md: 4, lg: 3 }} style={{ marginBottom: '20px' }}>
+//             <Card
+//                 onMouseEnter={handleMouseEnter}
+//                 onMouseLeave={handleMouseLeave}
+//                 className={isdefault == 1 ? 'smr_ActiveAddrCard' : 'smr_AddrCard'}
+//                 style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+
+//                 <CardContent onClick={() => handleDefaultSelection(address)} style={{ flex: '1 0 auto' }}>
+//                     <Typography className='smr_addrTypoTitle' variant="h5" component="h2">
+//                         {shippingfirstname} {shippinglastname}
+//                     </Typography>
+//                     <Typography className='smr_addrTypo'>{street}</Typography>
+//                     <Typography className='smr_addrTypo'>{city}-{zip}</Typography>
+//                     <Typography className='smr_addrTypo'>{state}</Typography>
+//                     <Typography className='smr_addrTypo'>{country}</Typography>
+//                     <Typography className='smr_addrTypo'>
+//                         Mobile No: {shippingmobile}
+//                     </Typography>
+//                     <button type='button' className={isdefault == 1 ? 'smr_defualt_addrSelected' : 'smr_defualt_addrSelectedHide'}>Selected</button>
+//                 </CardContent>
+
+//                 {/* {showButtons && ( */}
+//                 <div className='smr_editDeleteBtngroup' >
+//                     <Button type='button' color='primary' onClick={() => handleOpen(address?.id)}>
+//                         <MdModeEditOutline className='smr_editIcon' />
+//                     </Button>
+//                     {isdefault != 1 &&
+//                         <Button type='button' color='secondary' onClick={() => handleDeleteClick(address?.id)}>
+//                             <MdDelete className='smr_DeleteIcon' />
+//                         </Button>
+//                     }
+//                 </div>
+//                 {/* )} */}
+//             </Card>
+//         </Grid>
+//     );
+// };
+
+// export default AddressCard;
 

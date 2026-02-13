@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import './ContinueWithEmail.modul.scss';
-import { Button, CircularProgress, TextField } from '@mui/material';
 import { toast } from 'react-toastify';
 import { ContinueWithEmailAPI } from '@/app/(core)/utils/API/Auth/ContinueWithEmailAPI';
 import OTPContainer from '@/app/(core)/utils/Glob_Functions/Otpflow/App';
 import { useRouter } from 'next/navigation';
+
+import {
+    Box,
+    Container,
+    Typography,
+    TextField,
+    Button,
+    Paper,
+    Stack,
+    CircularProgress,
+    Backdrop,
+    useTheme,
+    useMediaQuery
+} from "@mui/material";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 
 export default function ContinueWithEmail({ params, searchParams, storeInit }) {
@@ -83,7 +98,216 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
         sessionStorage.removeItem("Countrycodestate")
     }, [])
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    return (
+        <Box
+            sx={{
+                minHeight: '70vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'white',
+                p: { xs: 0, sm: 0 },
+                position: 'relative'
+            }}
+        >
+            {/* Loading Overlay */}
+            <Backdrop
+                open={isLoading}
+                sx={{
+                    zIndex: theme.zIndex.modal + 1,
+                    color: '#fff',
+                    bgcolor: 'rgba(0,0,0,0.3)'
+                }}
+            >
+                <CircularProgress size={50} thickness={4} color="primary" />
+            </Backdrop>
+
+            {/* OTP Modal Container */}
+            {storeInit?.IsEcomOtpVerification === 1 && (
+                <OTPContainer
+                    emailId={email.trim()}
+                    isOpen={isOpen}
+                    type='email'
+                    setIsOpen={() => setIsOpen(!isOpen)}
+                    onClose={() => setIsOpen(false)}
+                    navigation={navigation}
+                    location={location}
+                    onResend={handleSubmit}
+                    isLoading={isLoading}
+                />
+            )}
+
+            <Container maxWidth="sm">
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: { xs: 2, sm: 5 },
+                        borderRadius: 3,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}
+                >
+                    {/* Back Button */}
+                    <Button
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigation(cancelRedireactUrl)}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            left: 16,
+                            color: 'text.secondary',
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            '&:hover': {
+                                bgcolor: 'grey.100',
+                                color: 'text.primary'
+                            }
+                        }}
+                    >
+                        Back
+                    </Button>
+
+                    <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
+                        {/* Icon */}
+                        <Box
+                            sx={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                bgcolor: 'primary.light',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mb: 1
+                            }}
+                            className="btnColorProCat"
+                        >
+                            <EmailOutlinedIcon
+                                sx={{
+                                    fontSize: 32,
+                                }}
+                            />
+                        </Box>
+
+                        {/* Title */}
+                        <Box textAlign="center">
+                            <Typography
+                                variant="h4"
+                                component="h1"
+                                sx={{
+                                    fontWeight: 400,
+                                    color: 'text.primary',
+                                    mb: 1.5,
+                                    fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                                }}
+                            >
+                                Continue with Email
+                            </Typography>
+
+                            <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                sx={{
+                                    maxWidth: 400,
+                                    mx: 'auto',
+                                    lineHeight: 1.3,
+                                    fontSize: '1rem'
+                                }}
+                            >
+                               We'll check if you have an account, and help create one if you don't.
+                            </Typography>
+                        </Box>
+
+                        {/* Form */}
+                        <Stack
+                            spacing={2}
+                            width="100%"
+                            component="form"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSubmit();
+                            }}
+                            sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
+                        >
+                            <TextField
+                                autoFocus
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                type="email"
+                                variant="outlined"
+                                value={email}
+                                onChange={handleEmailChange}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSubmit();
+                                }}
+                                error={!!emailError}
+                                helperText={emailError}
+                                disabled={isLoading}
+                                InputProps={{
+                                    sx: {
+                                        bgcolor: 'background.paper'
+                                    }
+                                }}
+                                FormHelperTextProps={{
+                                    sx: {
+                                        ml: 0,
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500
+                                    }
+                                }}
+                            />
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                size="large"
+                                variant="contained"
+                                disabled={isLoading || !email.trim()}
+                                sx={{
+                                    py: 1.5,
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    fontWeight: 600,
+                                    boxShadow: 'none',
+                                    transition: 'all 0.2s ease-in-out',
+                                }}
+                                className='btnColorProCat'
+                            >
+                                {isLoading ? 'Processing...' : 'Continue'}
+                            </Button>
+
+                            <Button
+                                fullWidth
+                                size="large"
+                                variant="text"
+                                onClick={() => navigation(cancelRedireactUrl)}
+                                disabled={isLoading}
+                                sx={{
+                                    py: 1.5,
+                                    textTransform: 'none',
+                                    fontSize: '0.95rem',
+                                    fontWeight: 500,
+                                    color: 'text.secondary',
+                                    '&:hover': {
+                                        bgcolor: 'grey.100',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Paper>
+            </Container>
+        </Box>
+    )
     return (
         <div className='proCat_continuemail'>
             {isLoading && (
@@ -141,17 +365,6 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                             error={!!emailError}
                             helperText={emailError}
                         />
-
-                        {/* <button
-                            className={`submitBtnForgot ${buttonFocused ? 'focused' : ''}`}
-                            onClick={handleSubmit}
-                            onFocus={() => setButtonFocused(true)}
-                            onBlur={() => setButtonFocused(false)}
-                            style={{borderColor: 'red'}}
-                        >
-
-                        </button> */}
-
                         <button type='submit' className='submitBtnForgot btnColorProCat' onClick={handleSubmit}>SUBMIT</button>
                         <Button className='pro_cancleForgot' style={{ marginTop: '10px', color: 'gray' }} onClick={() => navigation(cancelRedireactUrl)}>CANCEL</Button>
                     </div>

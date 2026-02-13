@@ -53,7 +53,8 @@ const App = ({ isLoading=false , onResend =()=>{} , btncolor, iconcolor, bgcolor
   },[isOpen])
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ }}>
+       {/* padding: "20px" */}
       <OTPVerificationModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
