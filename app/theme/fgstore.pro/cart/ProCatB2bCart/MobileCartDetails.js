@@ -33,7 +33,8 @@ const MobileCartDetails = ({
   decodeEntities,
   handleMoveToDetail,
   open,
-  handleClose
+  handleClose ,
+  storeinit
 }) => {
   const noImageFound = "/image-not-found.jpg";
   const [imageSrc, setImageSrc] = useState(noImageFound);
@@ -41,12 +42,10 @@ const MobileCartDetails = ({
   const [metalColorCombo, setMetalColorCombo] = useState([]);
   const [ColorStoneCombo, setColorStoneCombo] = useState([]);
   const [diamondQualityColorCombo, setDiamondQualityColorCombo] = useState([]);
-  const [storeInitData, setStoreInitData] = useState();
   const loginInfo = JSON.parse(sessionStorage.getItem('loginUserDetail'))
 
   useEffect(() => {
-    const storeinitData = JSON.parse(sessionStorage.getItem('storeInit'));
-    setStoreInitData(storeinitData)
+
     const metalTypeData = JSON.parse(sessionStorage.getItem('metalTypeCombo'));
     const metalColorData = JSON.parse(sessionStorage.getItem('MetalColorCombo'));
     const diamondQtyColorData = JSON.parse(sessionStorage.getItem('diamondQualityColorCombo'));
@@ -64,9 +63,9 @@ const MobileCartDetails = ({
     }
   }
 
-  const CDNDesignImageFolThumb = storeInitData?.CDNDesignImageFolThumb;
+  const CDNDesignImageFolThumb = storeinit?.CDNDesignImageFolThumb;
   const fullImagePath = `${CDNDesignImageFolThumb}${selectedItem?.designno}~1.jpg`;
-  const CDNDesignImageFol = storeInitData?.CDNDesignImageFol;
+  const CDNDesignImageFol = storeinit?.CDNDesignImageFol;
   const fullImagePath1 = `${CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
 
   const isLoading = selectedItem?.loading;
@@ -92,8 +91,8 @@ const MobileCartDetails = ({
     let imageURL = selectedItem?.images
       ? finalSelectedUrl
       : selectedItem?.ImageCount > 1
-        ? `${storeInitData?.CDNDesignImageFol}${selectedItem?.designno}~1~${selectedItem?.metalcolorname}.${selectedItem?.ImageExtension}`
-        : `${storeInitData?.CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
+        ? `${storeinit?.CDNDesignImageFol}${selectedItem?.designno}~1~${selectedItem?.metalcolorname}.${selectedItem?.ImageExtension}`
+        : `${storeinit?.CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
 
     const img = new Image();
     img.onload = () => setImgSrc(imageURL);
@@ -105,7 +104,7 @@ const MobileCartDetails = ({
       }
     };
     img.src = imageURL;
-  }, [selectedItem, storeInitData, finalSelectedUrl]);
+  }, [selectedItem, storeinit, finalSelectedUrl]);
 
 
   return (
@@ -145,9 +144,9 @@ const MobileCartDetails = ({
             <div className="proCatMo_Cart_R-details">
               <p className='proCatMo_cart-Titleline'>{selectedItem?.TitleLine}</p>
               <Divider />
-              {storeInitData?.IsProductWebCustomization == 1 &&
+              {storeinit?.IsProductWebCustomization == 1 &&
                 <div className="proCatMo_Cart-options">
-                  {storeInitData?.IsMetalCustomization == 1 &&
+                  {storeinit?.IsMetalCustomization == 1 &&
                     <div className="option">
                       <label htmlFor="metal-type">Metal Type:</label>
                       <select id="metal-type" name={selectedItem?.id} value={selectedItem?.metaltypename} onChange={handleMetalTypeChange}>
@@ -163,7 +162,7 @@ const MobileCartDetails = ({
                       </select>
                     </div>
                   }
-                  {storeInitData?.IsMetalCustomization == 1 &&
+                  {storeinit?.IsMetalCustomization == 1 &&
                     <div className="option">
                       <label htmlFor="metal-color">Metal Color:</label>
                       <select id="metal-color" name={selectedItem?.id} value={selectedItem?.metalcolorname} onChange={handleMetalColorChange}>
@@ -181,7 +180,7 @@ const MobileCartDetails = ({
                       </select>
                     </div>
                   }
-                  {storeInitData?.IsDiamondCustomization == 1 &&
+                  {storeinit?.IsDiamondCustomization == 1 &&
                     <>
                       {(selectedItem?.Dwt != "0" || selectedItem?.Dpcs != "0") &&
                         <div className="option">
@@ -201,7 +200,7 @@ const MobileCartDetails = ({
                       }
                     </>
                   }
-                  {storeInitData?.IsCsCustomization == 1 &&
+                  {storeinit?.IsCsCustomization == 1 &&
                     <>
                       {(selectedItem?.CSwt != "0" || selectedItem?.CSpcs != "0") &&
                         <div className="option">
@@ -241,12 +240,12 @@ const MobileCartDetails = ({
               }
               <div className='proCatMo_cartQtyPricemainDev'>
                 <QuantitySelector selectedItem={selectedItem} handleIncrement={handleIncrement} handleDecrement={handleDecrement} qtyCount={qtyCount} />
-                {storeInitData?.IsPriceShow == 1 &&
+                {storeinit?.IsPriceShow == 1 &&
                   <div className="product-price">
                     {!ispriceloding ? (
                       <span>
                         {loginInfo?.CurrencyCode ??
-                          storeInitData?.CurrencyCode}{" "}
+                          storeinit?.CurrencyCode}{" "}
                         &nbsp; {formatter(selectedItem?.FinalCost)}
                       </span>
                     ) : (
@@ -304,12 +303,12 @@ const MobileCartDetails = ({
                   <span>{selectedItem?.Quantity}</span>
                 </div>
                 <div className=''>
-                  {storeInitData?.IsPriceShow == 1 &&
+                  {storeinit?.IsPriceShow == 1 &&
                     <div className="proCatMo_Stockproduct-price">
                       {!ispriceloding ? (
                         <span>
                           {loginInfo?.CurrencyCode ??
-                            storeInitData?.CurrencyCode}{" "}
+                            storeinit?.CurrencyCode}{" "}
                           &nbsp; {formatter(selectedItem?.FinalCost)}
                         </span>
                       ) :

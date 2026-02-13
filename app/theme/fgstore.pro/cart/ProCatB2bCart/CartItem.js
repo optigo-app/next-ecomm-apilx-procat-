@@ -33,14 +33,14 @@ const CartItem = ({
   handleRemarkChange,
   handleSave,
   handleCancel,
-  openHandleUpdateCartModal
+  openHandleUpdateCartModal ,
+  storeinit
 }) => {
   const { islogin, setCartCountNum } = useStore();
   const [imageSrc, setImageSrc] = useState();
   const [open, setOpen] = useState(false);
   const [remark, setRemark] = useState(item.Remarks || '');
   const [isSelectedItems, setIsSelectedItems] = useState();
-  const [storeInitData, setStoreInitData] = useState();
   const visiterId = Cookies.get('visiterId');
 
   const isLargeScreen = useMediaQuery('(min-width: 1600px)');
@@ -50,16 +50,21 @@ const CartItem = ({
 
   const loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 
-  useEffect(() => {
-    const storeinitData = JSON.parse(sessionStorage.getItem('storeInit'));
-    setStoreInitData(storeinitData)
-  }, [])
 
-  const handleOpen = () => setOpen(true);
+
+  useEffect(() => {
+    if (open) return;
+    setRemark(item?.Remarks || '');
+  }, [item?.Remarks, open]);
+
+  const handleOpen = () => {
+    setRemark(item?.Remarks || '');
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
 
-  const CDNDesignImageFolThumb = storeInitData?.CDNDesignImageFolThumb;
+  const CDNDesignImageFolThumb = storeinit?.CDNDesignImageFolThumb;
   const fullImagePath = `${CDNDesignImageFolThumb}${item?.designno}~1.jpg`;
 
   const isLoading = item?.loading;
@@ -155,15 +160,8 @@ const CartItem = ({
         key={item?.id}
         sx={{
           boxShadow: !multiSelect && !isMobileScreen && selectedItem?.id == item?.id && 'rgb(175 130 56 / 68%) 1px 1px 1px 0px, rgb(175 130 56 / 68%) 0px 0px 0px 1px !important',
-          // border: selectedItem?.id == item?.id && '1px solid #af8238',
         }}
-      // onDoubleClick={openHandleUpdateCartModal}
-
-      // onMouseDown={handlePress('start')}
-      // onMouseUp={cancelPress}
-      // onMouseLeave={cancelPress}
-      // onTouchStart={handlePress('start')}
-      // onTouchEnd={cancelPress}
+      
       >
         <Box className="proCat_mui_CartBox" sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', position: 'relative' }}>
           {isLoading === true ? (
@@ -214,12 +212,12 @@ const CartItem = ({
               </Typography>
               <div className='proCat_cartlistdetails' style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                 <div>
-                  {storeInitData?.IsGrossWeight == 1 &&
+                  {storeinit?.IsGrossWeight == 1 &&
                     <Typography variant="body2" className='proCat_card-ContentsData'>
                       GWT: {(item?.Gwt || 0).toFixed(3)}
                     </Typography>
                   }
-                  {storeInitData?.IsMetalWeight == 1 &&
+                  {storeinit?.IsMetalWeight == 1 &&
                     <>
                       {Number(item?.Nwt) !== 0 && (
                         <Typography variant="body2" className='proCat_card-ContentsData'>
@@ -231,7 +229,7 @@ const CartItem = ({
 
                 </div>
                 <div>
-                  {storeInitData?.IsDiamondWeight == 1 &&
+                  {storeinit?.IsDiamondWeight == 1 &&
                     <>
                       {(item?.Dwt != "0" || item?.Dpcs != "0") &&
                         <>
@@ -242,7 +240,7 @@ const CartItem = ({
                       }
                     </>
                   }
-                  {storeInitData?.IsStoneWeight == 1 &&
+                  {storeinit?.IsStoneWeight == 1 &&
                     <>
                       {(item?.CSwt != "0" || item?.CSpcs != "0") &&
                         <>
@@ -257,9 +255,9 @@ const CartItem = ({
               </div>
               <Box className="proCat_PriceBox">
                 <>
-                  {storeInitData?.IsPriceShow == 1 &&
+                  {storeinit?.IsPriceShow == 1 &&
                     <span className='proCat_currencyFontPrice'>
-                      <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeInitData?.CurrencyCode}</span>&nbsp;
+                      <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeinit?.CurrencyCode}</span>&nbsp;
                       {/* <span
                         className="proCat_currencyFont"
                         dangerouslySetInnerHTML={{

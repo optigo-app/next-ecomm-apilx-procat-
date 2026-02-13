@@ -35,14 +35,7 @@ const buildAlbumCacheKey = (type, storeData, pricing, id, custom) => {
     ACL: normalizeALC(custom),
   };
 
-  const key = [
-    type,
-    normalizeStr(pricing?.PackageId),
-    normalizeStr(pricing?.Laboursetid),
-    normalizePriceListName(pricing?.diamondpricelistname),
-    normalizePriceListName(pricing?.colorstonepricelistname),
-    normalizeALC(custom),
-  ].join("_");
+  const key = [type, normalizeStr(pricing?.PackageId), normalizeStr(pricing?.Laboursetid), normalizePriceListName(pricing?.diamondpricelistname), normalizePriceListName(pricing?.colorstonepricelistname), normalizeALC(custom)].join("_");
 
   return {
     key,
@@ -62,14 +55,7 @@ const findMatchingCacheEntry = (serverEntries, pricingContext, eventName, alcVal
     const entryALC = normalizeALC(entry.ALC);
     const entryDiamond = normalizePriceListName(entry.diamondpricelistname);
     const entryColor = normalizePriceListName(entry.colorstonepricelistname);
-    return (
-      entry.EventName === eventName &&
-      entry.PackageId == pricingContext?.PackageId &&
-      entry.LabourSetId == pricingContext?.Laboursetid &&
-      entryDiamond === normalizedDiamond &&
-      entryColor === normalizedColor &&
-      entryALC === normalizedALC
-    );
+    return entry.EventName === eventName && entry.PackageId == pricingContext?.PackageId && entry.LabourSetId == pricingContext?.Laboursetid && entryDiamond === normalizedDiamond && entryColor === normalizedColor && entryALC === normalizedALC;
   });
 };
 
@@ -162,7 +148,7 @@ const Album = ({ storeinit }) => {
       try {
         const serverRes = await GetCacheList(finalID);
         serverCacheEntries = serverRes?.Data?.rd ?? [];
-        console.log("🚀 ~ fetchAndSetAlbumData ~ serverCacheEntries:", serverCacheEntries)
+        console.log("🚀 ~ fetchAndSetAlbumData ~ serverCacheEntries:", serverCacheEntries);
         console.log("📋 Server cache entries: key 2", serverCacheEntries);
       } catch (error) {
         console.warn("⚠️ Failed to fetch server cache list:", error);
@@ -170,7 +156,7 @@ const Album = ({ storeinit }) => {
 
       // Step 2: Find matching server entry for current request
       const matchingServerEntry = findMatchingCacheEntry(serverCacheEntries, pricingContext, eventName, apiALC);
-      console.log("🚀 ~ fetchAndSetAlbumData ~ matchingServerEntry: key 2", matchingServerEntry)
+      console.log("🚀 ~ fetchAndSetAlbumData ~ matchingServerEntry: key 2", matchingServerEntry);
       const serverCacheRebuildDate = matchingServerEntry?.CacheRebuildDate ?? null;
       console.log("🔍 Matching server entry:", matchingServerEntry);
       console.log("📅 Server CacheRebuildDate:", serverCacheRebuildDate);
@@ -352,77 +338,44 @@ const Album = ({ storeinit }) => {
   return (
     <div className="proCat_alubmMainDiv">
       <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            height: "650px",
-            display: "flex",
-            border: "none",
-            outline: "none",
-            flexDirection: "column",
-            p: 4,
-          }}
-          className="proCat_album_box_main"
-        >
-          <IconButton
-            onClick={handleClose}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              zIndex: 1,
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <Box className="proCat_album_box_main">
+          <div className="proCat_modalHeader">
+            <p className="proCat_modalTitle">{openAlbumName}</p>
+            <IconButton onClick={handleClose} className="proCat_modalCloseBtn">
+              <CloseIcon />
+            </IconButton>
+          </div>
 
-          <p
-            style={{
-              position: "absolute",
-              bottom: 8,
-              right: 8,
-              zIndex: 1,
-              margin: "0px",
-              fontWeight: 500,
-            }}
-            className="pro_pressESCClose"
-          >
-            Press ESC To Close
-          </p>
-          <div>
-            <p style={{ fontWeight: 500, textDecoration: "underline", textAlign: "center" }}>{openAlbumName}</p>
-          </div>
-          <div className="proCat_model_overFlow" style={{ display: "flex", flexWrap: "wrap", overflow: "scroll" }}>
-            {designSubData?.map((data, index) => {
-              return (
-                <div key={index} className="proCat_AlbumImageMainPopup" onClick={() => handleNavigateSub(data)}>
-                  <div style={{ position: "relative" }}>
-                    <img
-                      src={data?.imageKey}
-                      className="proCat_AlbumImageMainPopup_img"
-                      alt={openAlbumName}
-                      onError={(e) => {
-                        e.target.src = imageNotFound;
-                      }}
-                    />
-                    {islogin || data?.AlbumSecurityId === 0 ? (
-                      ""
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" className="proCat_AlbumLockIcone_popup lock_icon">
-                        <path d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z" fill="#000000"></path>
-                      </svg>
-                    )}
+          <div className="proCat_model_overFlow">
+            <div className="proCat_modalMasonry">
+              {designSubData?.map((data, index) => {
+                return (
+                  <div key={index} className="proCat_modalCard" onClick={() => handleNavigateSub(data)}>
+                    <div className="proCat_modalCardMedia">
+                      <img
+                        src={data?.imageKey}
+                        className="proCat_modalCardImg"
+                        alt={openAlbumName}
+                        onError={(e) => {
+                          e.target.src = imageNotFound;
+                        }}
+                      />
+                      {islogin || data?.AlbumSecurityId === 0 ? (
+                        ""
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" className="proCat_AlbumLockIcone_popup lock_icon">
+                          <path d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z" fill="#000000"></path>
+                        </svg>
+                      )}
+                    </div>
+                    <p className="proCat_modalCardTitle">{data?.AlbumName}</p>
                   </div>
-                  <p className="proCat_albumName">{data?.AlbumName}</p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
+
+          <p className="pro_pressESCClose">Press ESC To Close</p>
         </Box>
       </Modal>
       {albumData?.length !== 0 && (
@@ -431,6 +384,7 @@ const Album = ({ storeinit }) => {
           <div className="proCat_albumALL_div">
             {albumData.map((data, index) => {
               const isLoading = loadedProducts[index]?.id !== index;
+              const Newdata = data?.AlbumDetail ? JSON.parse(data?.AlbumDetail) : [];
 
               return (
                 <div key={index} className="smr_AlbumImageMain" onClick={() => handleNavigate(data)}>
@@ -451,6 +405,7 @@ const Album = ({ storeinit }) => {
                         }}
                       />
                     )}
+                    {data?.IsDual === 1 && Newdata?.length > 1 && <GridIcon />}
                     {islogin || data?.AlbumSecurityId === 0 ? (
                       ""
                     ) : (
@@ -473,3 +428,21 @@ const Album = ({ storeinit }) => {
 };
 Album.displayName = "Album";
 export default React.memo(Album);
+
+const GridIcon = () => {
+  return (
+    <IconButton
+      sx={{
+        position: 'absolute',
+        top: 5,
+        left: 5,
+        bgcolor: '#e6e6e6ed'
+
+      }}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 24 24">
+        <path fill="#4b4b4b" d="M5 11h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m0 10h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m8-16v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2m2 16h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"></path>
+      </svg>
+    </IconButton>
+  );
+};

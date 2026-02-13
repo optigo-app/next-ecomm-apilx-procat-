@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './proCat_cartPage.scss';
-import { Divider, Skeleton } from '@mui/material';
+import { Box, Divider, Skeleton } from '@mui/material';
 import QuantitySelector from './QuantitySelector';
 import { toast } from 'react-toastify';
 import { formatter, formatTitleLine } from '@/app/(core)/utils/Glob_Functions/GlobalFunction';
@@ -20,22 +20,21 @@ const Customization = ({
   handleColorStoneChange,
   handleSizeChange,
   decodeEntities,
-  onUpdateCart
+  onUpdateCart ,
+  storeinit
 }) => {
 
   const [metalTypeCombo, setMetalTypeCombo] = useState([]);
   const [metalColorCombo, setMetalColorCombo] = useState([]);
   const [ColorStoneCombo, setColorStoneCombo] = useState([]);
   const [diamondQualityColorCombo, setDiamondQualityColorCombo] = useState([]);
-  const [storeInitData, setStoreInitData] = useState();
-
+ 
 
   const loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 
 
   useEffect(() => {
-    const storeinitData = JSON.parse(sessionStorage.getItem('storeInit'));
-    setStoreInitData(storeinitData)
+
     const metalTypeData = JSON.parse(sessionStorage.getItem('metalTypeCombo'));
     const metalColorData = JSON.parse(sessionStorage.getItem('MetalColorCombo'));
     const diamondQtyColorData = JSON.parse(sessionStorage.getItem('diamondQualityColorCombo'));
@@ -75,9 +74,9 @@ const Customization = ({
         <div className="proCat_CartCusto_R-details">
           <p className='proCat_cart-Titleline'>{formatTitleLine(selectedItem?.TitleLine) && selectedItem?.TitleLine}</p>
           <Divider />
-          {storeInitData?.IsProductWebCustomization == 1 &&
+          {storeinit?.IsProductWebCustomization == 1 &&
             <div className="proCat_Cart-options">
-              {storeInitData?.IsMetalCustomization == 1 &&
+              {storeinit?.IsMetalCustomization == 1 &&
                 <div className="option">
                   <label htmlFor="metal-type">Metal Type:</label>
                   <select id="metal-type" name={selectedItem?.id} value={selectedItem?.metaltypename} onChange={handleMetalTypeChange}>
@@ -93,7 +92,7 @@ const Customization = ({
                   </select>
                 </div>
               }
-              {storeInitData?.IsMetalCustomization == 1 &&
+              {storeinit?.IsMetalCustomization == 1 &&
                 <div className="option">
                   <label htmlFor="metal-color">Metal Color:</label>
                   <select id="metal-color" name={selectedItem?.id} value={selectedItem?.metalcolorname} onChange={handleMetalColorChange}>
@@ -111,7 +110,7 @@ const Customization = ({
                   </select>
                 </div>
               }
-              {storeInitData?.IsDiamondCustomization == 1 &&
+              {storeinit?.IsDiamondCustomization == 1 &&
                 <>
                   {(selectedItem?.Dwt != "0" || selectedItem?.Dpcs != "0") &&
                     <div className="option">
@@ -131,7 +130,7 @@ const Customization = ({
                   }
                 </>
               }
-              {storeInitData?.IsCsCustomization == 1 &&
+              {storeinit?.IsCsCustomization == 1 &&
                 <>
                   {(selectedItem?.CSwt != "0" || selectedItem?.CSpcs != "0") &&
                     <div className="option">
@@ -171,7 +170,18 @@ const Customization = ({
           }
           <div className='proCat_cartQtyPricemainDev'>
             <QuantitySelector selectedItem={selectedItem} handleIncrement={handleIncrement} handleDecrement={handleDecrement} qtyCount={qtyCount} />
-            {storeInitData?.IsPriceShow == 1 &&
+
+          </div>
+          <Box
+          sx={{
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'space-between' ,
+            marginTop:2 ,
+            flexDirection:'row-reverse'
+          }}
+          >
+            {storeinit?.IsPriceShow == 1 &&
               <div className="product-price">
                 {!ispriceloding ? (
                   <span>
@@ -183,7 +193,7 @@ const Customization = ({
                         ),
                       }}
                     /> */}
-                    <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeInitData?.CurrencyCode}</span>&nbsp;
+                    <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeinit?.CurrencyCode}</span>&nbsp;
                     {formatter(selectedItem?.FinalCost)}
                   </span>
                 ) :
@@ -191,10 +201,10 @@ const Customization = ({
                 }
               </div>
             }
-          </div>
-          <div className='proCat_UpdateCartBtn'>
-            <button className="proCat_cartUpdate-button btnColorProCatProduct" onClick={() => handleUpdateCart(selectedItem)}>Save</button>
-          </div>
+            <div className='proCat_UpdateCartBtn'>
+              <button className="proCat_cartUpdate-button btnColorProCatProduct" onClick={() => handleUpdateCart(selectedItem)}>Save</button>
+            </div>
+          </Box>
         </div>
       ) :
         <div className="proCat_CartCusto_R-details">
@@ -241,11 +251,11 @@ const Customization = ({
               <span>{selectedItem?.Quantity}</span>
             </div>
             <div className=''>
-              {storeInitData?.IsPriceShow == 1 &&
+              {storeinit?.IsPriceShow == 1 &&
                 <div className="proCat_Stockproduct-price">
                   {!ispriceloding ? (
                     <span>
-                      <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeInitData?.CurrencyCode}</span>&nbsp;
+                      <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeinit?.CurrencyCode}</span>&nbsp;
                       {formatter(selectedItem?.FinalCost)}
                     </span>
                   ) :

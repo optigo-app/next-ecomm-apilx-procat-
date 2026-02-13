@@ -27,15 +27,15 @@ const CartDetails = ({
   handleSizeChange,
   onUpdateCart,
   decodeEntities,
-  handleMoveToDetail
+  handleMoveToDetail ,
+      storeinit
 }) => {
 
   const [imageSrc, setImageSrc] = useState();
   const noImageFound = "/image-not-found.jpg";
-  const storeinitData = JSON.parse(sessionStorage.getItem('storeInit'));
-  const CDNDesignImageFolThumb = storeinitData?.CDNDesignImageFolThumb;
+  const CDNDesignImageFolThumb = storeinit?.CDNDesignImageFolThumb;
   const fullImagePath = `${CDNDesignImageFolThumb}${selectedItem?.designno}~1.jpg`;
-  const CDNDesignImageFol = storeinitData?.CDNDesignImageFol;
+  const CDNDesignImageFol = storeinit?.CDNDesignImageFol;
   const fullImagePath1 = `${CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
 
   const isLoading = selectedItem?.loading;
@@ -61,8 +61,8 @@ const CartDetails = ({
     let imageURL = selectedItem?.images
       ? finalSelectedUrl
       : selectedItem?.ImageCount > 1
-        ? `${storeinitData?.CDNDesignImageFol}${selectedItem?.designno}~1~${selectedItem?.metalcolorname}.${selectedItem?.ImageExtension}`
-        : `${storeinitData?.CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
+        ? `${storeinit?.CDNDesignImageFol}${selectedItem?.designno}~1~${selectedItem?.metalcolorname}.${selectedItem?.ImageExtension}`
+        : `${storeinit?.CDNDesignImageFol}${selectedItem?.designno}~1.${selectedItem?.ImageExtension}`;
 
     const img = new Image();
     img.onload = () => setImgSrc(imageURL);
@@ -74,7 +74,7 @@ const CartDetails = ({
       }
     };
     img.src = imageURL;
-  }, [selectedItem, storeinitData, finalSelectedUrl]);
+  }, [selectedItem, storeinit, finalSelectedUrl]);
 
   return (
     <div className="proCat_cart-container">
@@ -146,6 +146,7 @@ const CartDetails = ({
         handleSizeChange={handleSizeChange}
         decodeEntities={decodeEntities}
         onUpdateCart={onUpdateCart}
+        storeinit={storeinit}
       />
     </div>
   );

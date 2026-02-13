@@ -1,13 +1,28 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, CircularProgress, Box } from '@mui/material';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { LoginWithEmailCodeAPI } from '@/app/(core)/utils/API/Auth/LoginWithEmailCodeAPI';
 import { LoginWithEmailAPI } from '@/app/(core)/utils/API/Auth/LoginWithEmailAPI';
 import Cookies from 'js-cookie';
 import OTP from './OTP'; // Make sure the path is correct
 import './LoginWithEmailCode.modul.scss'
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import {
+    Box,
+    Container,
+    Typography,
+    Button,
+    Paper,
+    Stack,
+    CircularProgress,
+    Backdrop,
+    useTheme,
+    useMediaQuery,
+    Link as MuiLink
+} from "@mui/material";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 
 export default function LoginWithEmailCode({ params, searchParams }) {
     const location = useNextRouterLikeRR();
@@ -19,6 +34,8 @@ export default function LoginWithEmailCode({ params, searchParams }) {
     const navigation = location.push;
     const [isLoginState, setIsLoginState] = useState(false);
     const inputsRef = useRef([]);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
     const updatedSearch = search?.replace('?LoginRedirect=', '');
@@ -112,8 +129,262 @@ export default function LoginWithEmailCode({ params, searchParams }) {
         }).catch((err) => console.log(err));
     };
 
+
+    // Format timer as MM:SS
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+    };
+
+
+    return <>
+
+        <Box
+            sx={{
+                minHeight: '70vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'grey.50',
+                p: { xs: 0, sm: 0 },
+                position: 'relative'
+            }}
+        >
+            {/* Loading Overlay */}
+            <Backdrop
+                open={isLoading}
+                sx={{
+                    zIndex: theme.zIndex.modal + 1,
+                    color: '#fff',
+                    bgcolor: 'rgba(0,0,0,0.3)'
+                }}
+            >
+                <CircularProgress size={50} thickness={4} color="primary" />
+            </Backdrop>
+
+            <Container maxWidth="sm">
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: { xs: 1.5, sm: 5 },
+                        borderRadius: 3,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}
+                >
+                    {/* Back Button */}
+                    <Button
+                        startIcon={<ArrowBackIcon />}
+                        onClick={() => navigation(cancelRedireactUrl)}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            left: 16,
+                            color: 'text.secondary',
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            '&:hover': {
+                                bgcolor: 'grey.100',
+                                color: 'text.primary'
+                            }
+                        }}
+                    >
+                        Back
+                    </Button>
+
+                    <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
+                        {/* Icon */}
+                        <Box
+                            sx={{
+                                width: 64,
+                                height: 64,
+                                borderRadius: '50%',
+                                bgcolor: 'primary.light',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mb: 1
+                            }}
+                            className="btnColorProCat"
+                        >
+                            <EmailOutlinedIcon
+                                sx={{
+                                    fontSize: 32,
+                                }}
+                            />
+                        </Box>
+
+                        {/* Title */}
+                        <Box textAlign="center">
+                            <Typography
+                                variant="h4"
+                                component="h1"
+                                sx={{
+                                    fontWeight: 400,
+                                    color: 'text.primary',
+                                    mb: 1.5,
+                                    fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                                }}
+                            >
+                                Login with Code
+                            </Typography>
+
+                            <Typography
+                                variant="body1"
+                                color="text.secondary"
+                                sx={{
+                                    maxWidth: 400,
+                                    mx: 'auto',
+                                    lineHeight: 1.6,
+                                    fontSize: '1rem'
+                                }}
+                            >
+                                Last step! To secure your account, enter the code we just sent to{' '}
+                                <Box
+                                    component="span"
+                                    sx={{
+                                        fontWeight: 600,
+                                        color: 'text.primary',
+                                        wordBreak: 'break-all'
+                                    }}
+                                >
+                                    {email}
+                                </Box>
+                            </Typography>
+                        </Box>
+
+                        {/* OTP Input Section */}
+                        <Stack
+                            spacing={3}
+                            width="100%"
+                            alignItems="center"
+                            component="form"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSubmit();
+                            }}
+                            sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
+                        >
+                            {/* OTP Component */}
+                            <Box sx={{ width: '100%' }}>
+                                <OTP
+                                    separator={<span> </span>}
+                                    value={otp}
+                                    onChange={setOtp}
+                                    length={6}
+                                    onSubmit={handleSubmit}
+                                />
+
+                                {errors.otp && (
+                                    <Typography
+                                        variant="caption"
+                                        color="error"
+                                        sx={{
+                                            display: 'block',
+                                            textAlign: 'center',
+                                            mt: 1,
+                                            fontWeight: 500
+                                        }}
+                                    >
+                                        {errors.otp}
+                                    </Typography>
+                                )}
+                            </Box>
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                size="large"
+                                variant="contained"
+                                disabled={isLoading || otp.length !== 6}
+                                className="btnColorProCat"
+                                sx={{
+                                    py: 1.5,
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                    fontWeight: 600,
+                                    boxShadow: 'none',
+                                    transition: 'all 0.2s ease-in-out',
+                                    '&:hover': {
+                                        boxShadow: 2,
+                                        transform: 'translateY(-1px)'
+                                    },
+                                    '&:disabled': {
+                                        bgcolor: 'grey.300',
+                                        color: 'grey.500'
+                                    }
+                                }}
+                            >
+                                {isLoading ? 'Verifying...' : 'Verify & Login'}
+                            </Button>
+
+                            {/* Resend Code Section */}
+                            <Box textAlign="center" sx={{ mt: 2 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                    Didn't get the code?{' '}
+                                    {resendTimer === 0 ? (
+                                        <MuiLink
+                                            component="button"
+                                            type="button"
+                                            onClick={handleResendCode}
+                                            sx={{
+                                                fontWeight: 600,
+                                                color: 'primary.main',
+                                                textDecoration: 'none',
+                                                cursor: 'pointer',
+                                                background: 'none',
+                                                border: 'none',
+                                                padding: 0,
+                                                fontSize: 'inherit',
+                                                fontFamily: 'inherit',
+                                                '&:hover': {
+                                                    textDecoration: 'underline'
+                                                }
+                                            }}
+                                        >
+                                            Resend Code
+                                        </MuiLink>
+                                    ) : (
+                                        <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                                            Resend in {formatTime(resendTimer)}
+                                        </Box>
+                                    )}
+                                </Typography>
+                            </Box>
+
+                            <Button
+                                fullWidth
+                                size="large"
+                                variant="text"
+                                onClick={() => navigation(cancelRedireactUrl)}
+                                disabled={isLoading}
+                                sx={{
+                                    py: 1.5,
+                                    textTransform: 'none',
+                                    fontSize: '0.95rem',
+                                    fontWeight: 500,
+                                    color: 'text.secondary',
+                                    mt: 1,
+                                    '&:hover': {
+                                        bgcolor: 'grey.100',
+                                        color: 'text.primary'
+                                    }
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Paper>
+            </Container>
+        </Box>
+    </>
+
     return (
-        <div className='smr_loginwithemailCode' style={{  paddingTop: '10px' }}>
+        <div className='smr_loginwithemailCode' style={{ paddingTop: '10px' }}>
             {isLoading && (
                 <div className="loader-overlay">
                     <CircularProgress className='loadingBarManage' />
@@ -128,7 +399,7 @@ export default function LoginWithEmailCode({ params, searchParams }) {
                         fontSize: '40px',
                         color: '#7d7f85',
                         marginBottom: '15px',
-                        
+
                     }}
                         className='AuthScreenMainTitle'
                     >Login With Code</p>
@@ -137,209 +408,26 @@ export default function LoginWithEmailCode({ params, searchParams }) {
                         marginTop: '-70px',
                         fontSize: '15px',
                         color: '#7d7f85',
-                        
+
                     }}
                         className='AuthScreenSubTitle'
                     >Last step! To secure your account, enter the code we just sent to {email}.</p>
 
-                    <div className='fg_opt_div' style={{ display: 'flex',  flexDirection: 'column', alignItems: 'center',marginTop: '20px' }}>
-                        <OTP  separator={<span> </span>} value={otp} onChange={setOtp} length={6} onSubmit={handleSubmit}/>
+                    <div className='fg_opt_div' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+                        <OTP separator={<span> </span>} value={otp} onChange={setOtp} length={6} onSubmit={handleSubmit} />
                         {errors.otp && (
                             <p style={{ color: 'red', marginTop: '5px' }}>{errors.otp}</p>
                         )}
                         <button className='submitBtnForgot btnColorProCat' style={{
-                            marginTop:'20px'
+                            marginTop: '20px'
                         }} onClick={handleSubmit}>Login</button>
                         <p className='fg_resnd_msg' style={{ marginTop: '10px' }}>Didn't get the code? {resendTimer === 0 ? <span style={{ fontWeight: 500, color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={handleResendCode}>Resend Code</span> : <span>Resend in {Math.floor(resendTimer / 60).toString().padStart(2, '0')}:{(resendTimer % 60).toString().padStart(2, '0')}</span>}</p>
                         <Button style={{ marginTop: '10px', color: 'gray' }} onClick={() => navigation(cancelRedireactUrl)}>CANCEL</Button>
                     </div>
-                    {/* <Footer /> */}
                 </div>
             </div>
-            {/* <div style={{ display: 'flex', justifyContent: 'center', paddingBlock: '30px' }}>
-                <p 
-          className="backtotop_Smr"
-                
-                style={{ margin: '0px', fontWeight: 500, width: '100px', color: 'white', cursor: 'pointer' }} onClick={() => window.scrollTo(0, 0)}>BACK TO TOP</p>
-            </div> */}
         </div>
     );
 }
 
 
-
-// import React, { useEffect, useState } from 'react';
-// import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
-// import { useLocation, useNavigate } from 'react-router-dom';
-// import './LoginWithEmailCode.modul.scss';
-// import CryptoJS from 'crypto-js';
-// import { LoginWithEmailCodeAPI } from '@/utils/API/Auth/LoginWithEmailCodeAPI';
-// import Footer from '../../Home/Footer/Footer';
-// import { LoginWithEmailAPI } from '@/utils/API/Auth/LoginWithEmailAPI';
-// import { useSetRecoilState } from 'recoil';
-// import { loginState } from '../../../Recoil/atom';
-// import Cookies from 'js-cookie';
-
-// export default function LoginWithEmailCode() {
-//     const [email, setEmail] = useState('');
-//     const [errors, setErrors] = useState({});
-//     const [isLoading, setIsLoading] = useState(false);
-//     const navigation = useNavigate();
-//     const [mobileNo, setMobileNo] = useState('');
-//     const [resendTimer, setResendTimer] = useState(120);
-//     const setIsLoginState = useSetRecoilState(loginState)
-//     const location = useLocation();
-
-//     const search = location?.search
-//     const updatedSearch = search.replace('?LoginRedirect=', '');
-//     const redirectEmailUrl = `${decodeURIComponent(updatedSearch)}`;
-//     const cancelRedireactUrl = `/LoginOption/${search}`;
-
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             const storedEmail = sessionStorage.getItem('registerEmail');
-//             if (storedEmail) {
-//                 setEmail(storedEmail);
-//                 const value = sessionStorage.getItem('LoginCodeEmail');
-//                 if (value === 'true') {
-//                     sessionStorage.setItem('LoginCodeEmail', 'false');
-//                     LoginWithEmailCodeAPI(storedEmail).then((response) => {
-//                         if (response.Data.rd[0].stat === '1') {
-//                             toast.success('OTP send Sucssessfully');
-//                         } else {
-//                             toast.error('OTP send Error');
-//                         }
-//                     }).catch((err) => console.log(err))
-//                 }
-//             }
-//         };
-//         fetchData();
-//     }, []);
-
-
-//     useEffect(() => {
-//         if (resendTimer > 0) {
-//             const interval = setInterval(() => {
-//                 setResendTimer(prevTimer => {
-//                     if (prevTimer === 0) {
-//                         clearInterval(interval);
-//                         return 0;
-//                     }
-//                     return prevTimer - 1;
-//                 });
-//             }, 1000);
-//             return () => clearInterval(interval);
-//         }
-//     }, [resendTimer]);
-    
-//     const handleInputChange = (e, setter, fieldName) => {
-//         const { value } = e.target;
-//         setter(value);
-//         if (fieldName === 'mobileNo') {
-//             if (!value.trim()) {
-//                 setErrors(prevErrors => ({ ...prevErrors, mobileNo: 'Code is required' }));
-//             } else {
-//                 setErrors(prevErrors => ({ ...prevErrors, mobileNo: '' }));
-//             }
-//         }
-//     };
-
-//     const handleSubmit = async () => {
-//         const visiterId = Cookies.get('visiterId');
-//         if (!mobileNo.trim()) {
-//             errors.mobileNo = 'Code is required';
-//             return;
-//         }
-//         setIsLoading(true);
-//         LoginWithEmailAPI(email, '', mobileNo, 'otp_email_login', '', visiterId).then((response) => {
-//             setIsLoading(false);
-//             if (response?.Data?.rd[0]?.stat === 1) {
-//                 setIsLoginState(true)
-//                 sessionStorage.setItem('LoginUser', true)
-//                 sessionStorage.setItem('loginUserDetail', JSON.stringify(response.Data.rd[0]));
-
-//                 if (redirectEmailUrl) {
-//                     navigation(redirectEmailUrl);
-//                 } else {
-//                     navigation('/')
-//                 }
-//             } else {
-//                 errors.mobileNo = 'Code is Invalid'
-//             }
-//         }).catch((err) => console.log(err))
-//     };
-
-
-//     const handleResendCode = async () => {
-//         setResendTimer(120);
-//         LoginWithEmailCodeAPI(email).then((response) => {
-//             if (response.Data.rd[0].stat === '1') {
-//                 sessionStorage.setItem('LoginCodeEmail', 'false');
-//                 toast.success('OTP send Sucssessfully');
-//             } else {
-//                 toast.error('OTP send Error');
-//             }
-//         }).catch((err) => console.log(err))
-//     };
-
-//     return (
-//         <div className='smr_loginwithemailCode' style={{ backgroundColor: '#c0bbb1', paddingTop: '10px' }}>
-//             {isLoading && (
-//                 <div className="loader-overlay">
-//                     <CircularProgress className='loadingBarManage' />
-//                 </div>
-//             )}
-//             <div style={{ backgroundColor: '#c0bbb1' }}>
-//                 <div className='smling-forgot-main'>
-//                     <p style={{
-//                         textAlign: 'center',
-//                         paddingBlock: '60px',
-//                         marginTop: '15px',
-//                         fontSize: '40px',
-//                         color: '#7d7f85',
-//                         fontFamily: 'FreightDispProBook-Regular,Times New Roman,serif'
-//                     }}
-//                         className='AuthScreenMainTitle'
-//                     >Login With Code</p>
-//                     <p style={{
-//                         textAlign: 'center',
-//                         marginTop: '-80px',
-//                         fontSize: '15px',
-//                         color: '#7d7f85',
-//                         fontFamily: 'FreightDispProBook-Regular,Times New Roman,serif'
-//                     }}
-//                         className='AuthScreenSubTitle'
-//                     >Last step! To secure your account, enter the code we just sent to {email}.</p>
-
-//                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
-//                         <TextField
-//                             autoFocus
-//                             id="outlined-basic"
-//                             label="Enter Code"
-//                             variant="outlined"
-//                             className='labgrowRegister'
-//                             style={{ margin: '15px' }}
-//                             onKeyDown={(event) => {
-//                                 if (event.key === 'Enter') {
-//                                     handleSubmit();
-//                                 }
-//                             }}
-//                             value={mobileNo}
-//                             onChange={(e) => handleInputChange(e, setMobileNo, 'mobileNo')}
-//                             error={!!errors.mobileNo}
-//                             helperText={errors.mobileNo}
-//                         />
-
-//                         <button className='submitBtnForgot' onClick={handleSubmit}>Login</button>
-//                         <p style={{ marginTop: '10px' }}>Didn't get the code ? {resendTimer === 0 ? <span style={{ fontWeight: 500, color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={handleResendCode}>Resend Code</span> : <span>Resend in {Math.floor(resendTimer / 60).toString().padStart(2, '0')}:{(resendTimer % 60).toString().padStart(2, '0')}</span>}</p>
-//                         <Button style={{ marginTop: '10px', color: 'gray' }} onClick={() => navigation(cancelRedireactUrl)}>CANCEL</Button>
-//                     </div>
-//                     <Footer />
-//                 </div>
-//             </div>
-//             <div style={{ display: 'flex', justifyContent: 'center', paddingBlock: '30px' }}>
-//                 <p style={{ margin: '0px', fontWeight: 500, width: '100px', color: 'white', cursor: 'pointer' }} onClick={() => window.scrollTo(0, 0)}>BACK TO TOP</p>
-//             </div>
-//         </div>
-//     );
-// }

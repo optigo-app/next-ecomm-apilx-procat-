@@ -654,6 +654,16 @@
     margin-top: -20px !important;
   }
 
+
+  .swiper .swiper-button-prev.swiper-button-disabled,
+.swiper .swiper-button-next.swiper-button-disabled {
+  opacity: 0.35 !important;
+  cursor: auto !important;
+  pointer-events: all !important;
+  background-color: #ababab;
+}
+
+
   @media (max-width: 900px) {
 
     .swiper-button-prev,

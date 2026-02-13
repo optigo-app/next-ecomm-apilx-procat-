@@ -21,6 +21,7 @@ const CartList = ({
   handleRemarkChange,
   handleSave,
   handleCancel,
+  storeinit
 }) => {
 
   return (
@@ -50,6 +51,7 @@ const CartList = ({
             handleSave={handleSave}
             handleCancel={handleCancel}
             openHandleUpdateCartModal={openHandleUpdateCartModal}
+            storeinit={storeinit}
           />
         ))}
       </Grid>

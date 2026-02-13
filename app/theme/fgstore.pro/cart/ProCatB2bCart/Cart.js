@@ -5,7 +5,7 @@ import CartDetails from './CartDetails';
 import CartList from './CartList';
 import SelectedItemsModal from './SelectedModal';
 import './proCat_cartPage.scss';
-import { Checkbox, FormControlLabel, Link, useMediaQuery } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Link, useMediaQuery } from '@mui/material';
 import CartPageSkeleton from './CartSkelton';
 import { GetCountAPI } from '@/app/(core)/utils/API/GetCount/GetCountAPI';
 import MobileCartDetails from "./MobileCartDetails"
@@ -18,7 +18,7 @@ import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useRouter } from 'next/navigation';
 
 
-const CartPage = () => {
+const CartPage = ({storeinit}) => {
   const addressData = useAddress();
 
   const {
@@ -71,7 +71,6 @@ const CartPage = () => {
 
   const Router = useRouter();
   const navigate = (path) => Router.push(path)
-  const [storeInit, setStoreInit] = useState();
   const [defaultAddr, setDefaultAddr] = useState();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [countstatus, setCountStatus] = useState();
@@ -100,13 +99,12 @@ const CartPage = () => {
 
   const redirectUrl = `/LoginOption/?LoginRedirect=/cartPage`;
   const handlePlaceOrder = () => {
-    let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
     let priceData = finalCartData?.reduce(
       (total, item) => total + item?.FinalCost,
       0
     );
     sessionStorage.setItem("TotalPriceData", priceData);
-    if (storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null) {
+    if (storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null) {
       navigate(redirectUrl);
       // navigate('/loginOption')
     } else {
@@ -149,9 +147,8 @@ const CartPage = () => {
   };
 
   useEffect(() => {
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    setStoreInit(storeInit);
-    if (storeInit?.IsPLW == 1) {
+
+    if (storeinit?.IsPLW == 1) {
       if (addressData && addressData.addressData) {
         const defaultAddress = addressData.addressData.find(addr => addr?.isdefault === 1);
 
@@ -292,6 +289,7 @@ const CartPage = () => {
                     finalCartData={finalCartData}
                     handleCancel={handleCancel}
                     openHandleUpdateCartModal={handleOpenModal}
+                    storeinit={storeinit}
                   />
                 </div>
                 <div className="proCat_cart-right-side">
@@ -318,6 +316,7 @@ const CartPage = () => {
                           decodeEntities={decodeEntities}
                           onUpdateCart={handleUpdateCart}
                           handleMoveToDetail={handleMoveToDetail}
+                          storeinit={storeinit}
                         />
                       )}
                     </div>
@@ -344,6 +343,7 @@ const CartPage = () => {
                         decodeEntities={decodeEntities}
                         onUpdateCart={handleUpdateCart}
                         handleMoveToDetail={handleMoveToDetail}
+                        storeinit={storeinit}
                       />
                     </div>
                   }
@@ -358,11 +358,20 @@ const CartPage = () => {
                 />
               </div>
             ) :
-              <div className='proCat_noCartlistData'>
+              <Box
+              sx={{
+                display:'flex' ,
+                height:'50vh',
+                alignItems:'center',
+                justifyContent:'center'
+              }}
+              >
+                <div className='proCat_noCartlistData'>
                 <p className='proCat_title'>No Data Found!</p>
                 <p className='proCat_desc'>Please First Add Product in Cart</p>
                 <button className='proCat_browseOurCollectionbtn' onClick={handelMenu}>Browse our collection</button>
               </div>
+              </Box>
             }
           </>
         ) :
