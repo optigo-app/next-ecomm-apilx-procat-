@@ -259,7 +259,7 @@ export default function ForgotPassword({ params, storeInit }) {
               component="form"
               onSubmit={(e) => {
                 e.preventDefault();
-                handleSubmit();
+                handleSubmit(e);
               }}
               sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
             >
@@ -274,7 +274,7 @@ export default function ForgotPassword({ params, storeInit }) {
                 onChange={handlePasswordChange}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
-                    handleSubmit();
+                    handleSubmit(event);
                   }
                 }}
                 error={!!passwordError}

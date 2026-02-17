@@ -182,7 +182,7 @@ export default function YourProfile() {
                     )}
                 </div>}
                 {  <div>
-                    <button onClick={handleEdit} className='SmilingAddEditAddrwess btnColorProCat' style={{marginTop: '15px' }}>Edit Profile</button>
+                    <button onClick={handleEdit} className='SmilingAddEditAddrwess btnColorProCatProduct' style={{marginTop: '15px' }}>Edit Profile</button>
                 </div>}
             </div>
 

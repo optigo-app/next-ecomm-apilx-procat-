@@ -4298,16 +4298,16 @@ const Product_Card = ({
               <LocalMallOutlinedIcon
                 sx={{
                   fontSize: "22px",
-                  color: "#594646",
                 }}
+                className="btnColorSvg"
               />
             }
             checkedIcon={
               <LocalMallIcon
                 sx={{
                   fontSize: "22px",
-                  color: "#474747d1",
                 }}
+                className="btnColorRemoveSvg"
               />
               // <LocalMallIcon
               //   sx={{
@@ -4337,11 +4337,11 @@ const Product_Card = ({
             productData?.IsInCart === 1
             ? true
             : false) ? (
-            <span className="btnColorProCatProduct">
+            <span className="">
               Add To Cart
             </span>
           ) : (
-            <span className="btnColorProCatProductRemoveCart">
+            <span className="">
               Remove From Cart
             </span>
           )

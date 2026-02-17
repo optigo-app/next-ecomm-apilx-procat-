@@ -98,6 +98,7 @@ const redirectEmailUrl =
     const publicPages = [
         "/",
         "/LoginOption",
+        "/forgotPass",
         "/privacyPolicy",
         "/aboutUs",
         "/contactUs",
