@@ -137,6 +137,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                     location={location}
                     onResend={handleSubmit}
                     isLoading={isLoading}
+                    searchParams={searchParams}
                 />
             )}
 

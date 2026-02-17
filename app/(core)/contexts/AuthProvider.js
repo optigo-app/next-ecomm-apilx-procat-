@@ -190,6 +190,7 @@ const redirectEmailUrl =
       "/ContinueWithMobile",
       "/LoginWithEmailCode",
       "/LoginWithMobileCode",
+      "/forgotPass",
       "/ForgotPass",
       "/LoginWithEmail",
       "/register",

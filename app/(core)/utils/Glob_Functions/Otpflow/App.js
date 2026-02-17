@@ -4,11 +4,19 @@ import { OTPVerificationModal } from "./OTPModal"
 import { WebSignUpOTPVerify } from "../../API/Auth/WebSignUpOTPVerify"
 
 
-const App = ({ isLoading=false , onResend =()=>{} , btncolor, iconcolor, bgcolor, iconbgcolor, isOpen, setIsOpen = false, type = "email", mobileNo = '', emailId = '', onClose = () => { }, navigation, location }) => {
+const App = ({searchParams , isLoading=false , onResend =()=>{} , btncolor, iconcolor, bgcolor, iconbgcolor, isOpen, setIsOpen = false, type = "email", mobileNo = '', emailId = '', onClose = () => { }, navigation, location }) => {
   const otpLength = 4;
   const [otp, setOtp] = useState(new Array(otpLength).fill(""));
   const [message, setmessage] = useState("");
   const [loading, setloading] = useState(false);
+  const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
+    const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
+
+    const updatedSearch = search?.replace('?LoginRedirect=', '');
+    const redirectMobileUrl = `/LoginWithMobileCode?${updatedSearch}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const redirectSignUpUrl = `/register?${updatedSearch}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const cancelRedireactUrl = `/LoginOption?${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+
 
   const handleVerify = async (otp) => {
     setloading(true)
@@ -16,8 +24,6 @@ const App = ({ isLoading=false , onResend =()=>{} , btncolor, iconcolor, bgcolor
     const userid = type === "email" ? emailId : '';
     const mobileno = type === "mobile" ? mobileNo : '';
     const mobilenoCode = sessionStorage?.getItem('Countrycodestate');
-    const search = location;
-    const redirectSignUpUrl = `/register/${search}`;
 
     try {
       const response = await WebSignUpOTPVerify(userid, mobileno, otp);
