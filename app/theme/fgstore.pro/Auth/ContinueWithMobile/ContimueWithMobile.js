@@ -169,6 +169,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                     location={search}
                     onResend={handleSubmit}
                     isLoading={isLoading}
+                    searchParams={searchParams}
                 />
             )}
 

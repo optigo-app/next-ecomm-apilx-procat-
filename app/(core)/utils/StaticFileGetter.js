@@ -2,6 +2,7 @@ import { NEXT_APP_WEB } from "./env";
 
 export const domainHtmlMap = {
   "nxt10.optigoapps.com": "sonasons",
+  "nxt26.optigoapps.com": "sonasons",
   "thereflections.procatalog.in": "saraff",
   "almacarino.procatalog.in": "almacarino",
   "uscreation.procatalog.in": "uscreation",

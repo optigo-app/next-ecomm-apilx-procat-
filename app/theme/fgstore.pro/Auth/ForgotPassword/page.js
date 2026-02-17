@@ -37,23 +37,34 @@ export default function ForgotPassword({ params, storeInit }) {
   const [errors, setErrors] = useState({});
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams()
-  const userid = searchParams.get('userid')
+  const [userId, setUserId] = useState(null);
+  const searchParams = useSearchParams();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    setIsLoading(true);
-    if (!userid) {
-      setIsLoading(false);
+    const idFromUrl = searchParams.get("userid");
+
+    if (!idFromUrl) {
       navigation("/");
+      return;
     }
+
+    // store in state
+    setUserId(idFromUrl);
+
+    // remove userid from URL (security + clean URL)
+    window.history.replaceState({}, "", window.location.pathname);
 
     const storedEmail = sessionStorage.getItem("userEmailForPdList");
     if (storedEmail) {
       setEmail(storedEmail);
     }
-  }, [userid]); //
+
+  }, []);
+
+
 
   const handleInputChange = (e, setter, fieldName) => {
     const { value } = e.target;
@@ -119,7 +130,7 @@ export default function ForgotPassword({ params, storeInit }) {
     if (Object.keys(errors).length === 0) {
       const hashedPassword = hashPasswordSHA1(password);
       setIsLoading(true);
-      ResetPasswordAPI(userid, hashedPassword)
+      ResetPasswordAPI(userId, hashedPassword)
         .then((response) => {
           if (response.Data.rd[0].stat === 1) {
             navigation("/ContinueWithEmail");
