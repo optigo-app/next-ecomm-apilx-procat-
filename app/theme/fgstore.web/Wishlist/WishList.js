@@ -69,7 +69,7 @@ const {setCartCountNum ,  setWishCountNum} = useStore()
   }
 
   useEffect(() => {
-    setCSSVariable();
+    // setCSSVariable();
   }, [])
 
   const setCSSVariable = () => {

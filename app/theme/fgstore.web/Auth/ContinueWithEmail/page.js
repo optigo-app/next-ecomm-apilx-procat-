@@ -20,7 +20,7 @@ export default function ContinueWithEmail({ params, searchParams }) {
     const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
 
     useEffect(() => {
-        setCSSVariable();
+        // setCSSVariable();
     }, [])
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

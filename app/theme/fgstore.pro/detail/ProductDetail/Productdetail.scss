@@ -15,6 +15,7 @@
 .proCat_prodDetail_whiteInnerContain {
   background-color: #fff;
   width: 100%;
+  margin-bottom: 6rem;
 }
 
 .proCat_prod_detail_main {
@@ -24,7 +25,7 @@
 .proCat_prod_image_shortInfo {
   width: 95%;
   display: flex;
-  height: 100vh;
+  min-height: 60vh;
   margin-inline: auto;
 
   // @media (max-width: 1550px) {
@@ -114,7 +115,7 @@
 .proCat_prod_shortInfo_inner {
   margin: 0px 100px 0px;
   width: 60%;
-  height: 100vh;
+  // height: 100vh;
   padding-right: 10px;
   box-sizing: content-box;
 
@@ -339,8 +340,6 @@
   align-items: center;
   width: 100%;
   flex-direction: column;
-  margin-bottom: 110px;
-  margin-top: 70px;
 }
 
 .proCat_stockItem_div {

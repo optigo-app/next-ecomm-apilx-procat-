@@ -105,7 +105,7 @@ const Product = ({ params, searchParams, storeinit }) => {
     };
 
     useEffect(() => {
-        setCSSVariable();
+        // setCSSVariable();
         const storeInitInside = storeinit;
         const loginUserDetailInside = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 

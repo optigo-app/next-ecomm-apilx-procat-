@@ -156,7 +156,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const isEditablePage = 1;
 
   useEffect(() => {
-    setCSSVariable();
+    // setCSSVariable();
 
     let mtid = loginUserDetail?.MetalId ?? storeInit?.MetalId;
     setSelectedMetalId(mtid);
@@ -3918,9 +3918,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     whiteSpace: "nowrap",      // keep text on a single line
                                     overflow: "hidden",        // hide overflowing text
                                     textOverflow: "ellipsis",  // show ...
-                                    display:'flex',
-                                    alignItems:'center',
-                                    justifyContent:'flex-end'
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'flex-end'
                                   }}
                                 >
                                   <div
@@ -3990,7 +3990,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                               className="smr_outer_portion"
                               id="smr_outer_portion"
                             >
-                              <div className="smr_inner_portion">
+                              <div className="smr_inner_portion"
+                                style={{
+                                  marginBottom: Math.ceil(afterFilterCount / storeInit.PageSize) <= 1
+                                    ? '45px'
+                                    : '0px'
+                                }}
+
+                              >
                                 {finalProductListData?.map((productData, i) => {
                                   return (
                                     <Product_Card
@@ -4029,7 +4036,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     width: '100%',
-                                    mb: 2
+                                    mb: 3
                                   }} >
                                     <EditablePagination
                                       currentPage={currPage}
