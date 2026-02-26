@@ -14,7 +14,7 @@ const toastStyle = {
   borderLeft: `8px solid teal`,
   fontSize: "18px",
 };
-export function StoreProvider({ children }) {
+export function StoreProvider({ children, storeinit }) {
   const [user, setUser] = useState(null);
   const [cartCountNum, setCartCountNum] = useState(0);
   const [wishCountNum, setWishCountNum] = useState(0);
@@ -47,7 +47,8 @@ export function StoreProvider({ children }) {
     cartOpenStateB2C,
     setCartOpenStateB2C,
     SoketData,
-    setSoketData
+    setSoketData,
+    storeinit
   };
 
   return (
