@@ -1,35 +1,35 @@
-import { assetBase } from "@/app/(core)/lib/ServerHelper";
+"use client";
+import { useState, useEffect } from "react";
+import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import "./TopSection.modul.scss";
 
-async function isValidImage(url) {
-  if (!url) return false;
-
-  try {
-    const res = await fetch(url, { method: "HEAD", cache: "no-store" });
-
-    return (
-      res.ok &&
-      res.headers.get("content-type")?.startsWith("image/")
-    );
-  } catch {
-    return false;
-  }
-}
-
-const TopSection = async ({ storeData }) => {
+const TopSection = ({ assetBase }) => {
+  const { storeinit } = useStore();
   const defaultImage = `${assetBase}/procat1.jpg`;
+  const [imageSrc, setImageSrc] = useState(defaultImage);
 
-  let imageSrc = defaultImage;
+  useEffect(() => {
+    if (storeinit?.ProCatLogbanner) {
+      setImageSrc(storeinit.ProCatLogbanner);
+    } else {
+      setImageSrc(defaultImage);
+    }
+  }, [storeinit?.ProCatLogbanner, defaultImage]);
 
-  if (await isValidImage(storeData?.ProCatLogbanner)) {
-    imageSrc = storeData.ProCatLogbanner;
-  }
+  const handleImageError = () => {
+    if (imageSrc !== defaultImage) {
+      setImageSrc(defaultImage);
+    }
+  };
+
   return (
     <div>
       <img
         src={imageSrc}
         className="proCatTopBannerImg"
         alt="Top Banner"
+        onError={handleImageError}
+        loading="eager"
       />
     </div>
   );

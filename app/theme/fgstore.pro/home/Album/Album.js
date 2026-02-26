@@ -11,64 +11,14 @@ import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import { useSearchParams } from "next/navigation";
 import { GetCacheList, BookCache } from "@/app/(core)/utils/API/Cache/CacheApi";
+import { normalizeALC, buildAlbumCacheKey, findMatchingCacheEntry, getPricingContext, processAlbumImages } from "./CacheBuilder";
 
-const normalizeStr = (v) => (v === null || v === undefined ? "" : String(v).trim());
-
-const normalizePriceListName = (v) => normalizeStr(v).toLowerCase();
-
-const normalizeALC = (value) => {
-  if (value === null || value === undefined || value === "" || value === 0 || value === "0") {
-    return "";
-  }
-  return value;
-};
-
-const buildAlbumCacheKey = (type, storeData, pricing, id, custom) => {
-  const meta = {
-    type,
-    PackageId: pricing?.PackageId ?? "",
-    Laboursetid: pricing?.Laboursetid ?? "",
-    // Laboursetid:0,
-    diamondpricelistname: normalizePriceListName(pricing?.diamondpricelistname ?? ""),
-    colorstonepricelistname: normalizePriceListName(pricing?.colorstonepricelistname ?? ""),
-    SettingPriceUniqueNo: pricing?.SettingPriceUniqueNo ?? "",
-    ACL: normalizeALC(custom),
-  };
-
-  const key = [type, normalizeStr(pricing?.PackageId), normalizeStr(pricing?.Laboursetid), normalizePriceListName(pricing?.diamondpricelistname), normalizePriceListName(pricing?.colorstonepricelistname), normalizeALC(custom)].join("_");
-
-  return {
-    key,
-    meta,
-  };
-};
-
-// Find matching cache entry from server response based on pricing context
-const findMatchingCacheEntry = (serverEntries, pricingContext, eventName, alcValue) => {
-  if (!serverEntries || !Array.isArray(serverEntries)) return null;
-
-  const normalizedALC = normalizeALC(alcValue);
-  const normalizedDiamond = normalizePriceListName(pricingContext?.diamondpricelistname);
-  const normalizedColor = normalizePriceListName(pricingContext?.colorstonepricelistname);
-
-  return serverEntries.find((entry) => {
-    const entryALC = normalizeALC(entry.ALC);
-    const entryDiamond = normalizePriceListName(entry.diamondpricelistname);
-    const entryColor = normalizePriceListName(entry.colorstonepricelistname);
-    return entry.EventName === eventName && entry.PackageId == pricingContext?.PackageId && entry.LabourSetId == pricingContext?.Laboursetid && entryDiamond === normalizedDiamond && entryColor === normalizedColor && entryALC === normalizedALC;
-  });
-};
-
-const Album = ({ storeinit }) => {
-  const { islogin, loginUserDetail } = useStore();
+const Album = () => {
+  const { islogin, loginUserDetail, storeinit } = useStore();
   const [albumData, setAlbumData] = useState([]);
-  const [imageUrl, setImageUrl] = useState("");
-  const [imageStatus, setImageStatus] = useState({});
-  const [imageStatusModel, setImageStatusModel] = useState({});
   const [fallbackImages, setFallbackImages] = useState({});
   const [designSubData, setDesignSubData] = useState([]);
   const [openAlbumName, setOpenAlbumName] = useState("");
-  const [isLoding, setIsLoding] = useState(true);
   const [imagesReady, setImagesReady] = useState(false);
   const imageNotFound = "/Assets/image-not-found.jpg";
   const [mounted, setMounted] = useState(false);
@@ -83,28 +33,107 @@ const Album = ({ storeinit }) => {
 
   const [securityKey, setSecurityKey] = useState(false);
   const [open, setOpen] = useState(false);
-  const [loadedProducts, setLoadedProducts] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const isFetchingRef = useRef(false);
   const lastRequestKeyRef = useRef("");
 
   useEffect(() => {
     setMounted(true);
-    setImageUrl(storeinit?.AlbumImageFol || "");
   }, []);
 
-  const pricingContext = useMemo(() => {
-    if (!mounted) return null;
-    const loginInfo = loginUserDetail;
+  const pricingContext = useMemo(() => getPricingContext(loginUserDetail, storeinit, islogin, mounted), [loginUserDetail, storeinit, islogin, mounted]);
 
-    return {
-      PackageId: loginInfo?.PackageId ?? storeinit?.PackageId ?? "",
-      Laboursetid: !islogin ? storeinit?.pricemanagement_laboursetid : loginInfo?.pricemanagement_laboursetid ?? "",
-      diamondpricelistname: !islogin ? storeinit?.diamondpricelistname : loginInfo?.diamondpricelistname ?? "",
-      colorstonepricelistname: !islogin ? storeinit?.colorstonepricelistname : loginInfo?.colorstonepricelistname ?? "",
-      SettingPriceUniqueNo: !islogin ? storeinit?.SettingPriceUniqueNo : loginInfo?.SettingPriceUniqueNo ?? "",
-    };
-  }, [mounted, loginUserDetail, storeinit, islogin]);
+  const fetchAndSetAlbumData = useCallback(
+    async (value, finalID, precomputedKey) => {
+      if (!pricingContext || isFetchingRef.current) return;
+
+      const storeInit = storeinit;
+      const apiALC = value;
+      const keyALC = normalizeALC(value);
+
+      const { key, meta } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
+      const effectiveKey = precomputedKey || key;
+      const eventName = "procatalog_album";
+
+      isFetchingRef.current = true;
+      setIsFetching(true);
+
+      try {
+        const [serverRes, localCacheRes] = await Promise.all([
+          GetCacheList(finalID).catch(() => null),
+          fetch(`/api/cache?mode=meta&key=${effectiveKey}`)
+            .then((res) => res.json())
+            .catch(() => ({ cached: false })),
+        ]);
+
+        const serverCacheEntries = serverRes?.Data?.rd ?? [];
+        const matchingServerEntry = findMatchingCacheEntry(serverCacheEntries, pricingContext, eventName, apiALC);
+        const serverCacheRebuildDate = matchingServerEntry?.CacheRebuildDate ?? null;
+
+        const localCacheMeta = localCacheRes;
+        const localCacheRebuildDate = localCacheMeta?.CacheRebuildDate ?? null;
+
+        if (localCacheMeta?.cached) {
+          const canValidate = Boolean(matchingServerEntry && serverCacheRebuildDate);
+          const datesMatch = localCacheRebuildDate === serverCacheRebuildDate;
+
+          if (canValidate && datesMatch) {
+            const cachedRes = await fetch(`/api/cache?key=${effectiveKey}`);
+            const cached = await cachedRes.json();
+            if (cached.cached && Array.isArray(cached.data)) {
+              setAlbumData(cached.data);
+              setFallbackImages(processAlbumImages(cached.data, storeinit));
+              setImagesReady(true);
+              setIsFetching(false);
+              isFetchingRef.current = false;
+              return cached.data;
+            }
+          }
+          fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(() => { });
+        }
+
+        if (!storeInit) {
+          setTimeout(() => {
+            isFetchingRef.current = false;
+            setIsFetching(false);
+            fetchAndSetAlbumData(value, finalID, effectiveKey);
+          }, 500);
+          return;
+        }
+        const response = await Get_Procatalog("GET_Procatalog", finalID, apiALC);
+        if (response?.Data?.rd) {
+          const albums = response.Data.rd;
+          setAlbumData(albums);
+
+          const fallbacks = processAlbumImages(albums, storeinit);
+          setFallbackImages(fallbacks);
+          setImagesReady(true);
+          setIsFetching(false);
+          isFetchingRef.current = false;
+          try {
+            const bookCacheResult = await BookCache(finalID, eventName, pricingContext, apiALC);
+            const newCacheRebuildDate = bookCacheResult?.CacheRebuildDate ?? null;
+
+            const updatedMeta = { ...meta, CacheRebuildDate: newCacheRebuildDate };
+            fetch("/api/cache", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ key: effectiveKey, data: albums, meta: updatedMeta }),
+            }).catch(console.error);
+          } catch (cacheErr) {
+            console.error("Cache update failed:", cacheErr);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        setIsFetching(false);
+        isFetchingRef.current = false;
+      } finally {
+        setImagesReady(true);
+      }
+    },
+    [pricingContext, storeinit],
+  );
 
   useEffect(() => {
     if (!mounted || !pricingContext) return;
@@ -114,141 +143,20 @@ const Album = ({ storeinit }) => {
       const userId = loginUserDetail?.id;
       const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
 
-      const rawALC = ALCVAL ? ALCVAL : sessionStorage.getItem("ALCVALUE") ?? "";
+      const rawALC = ALCVAL ? ALCVAL : (sessionStorage.getItem("ALCVALUE") ?? "");
       const keyALC = normalizeALC(rawALC);
       sessionStorage.setItem("ALCVALUE", String(rawALC));
 
-      const { key } = buildAlbumCacheKey("procatalog_album_", storeinit, pricingContext, finalID, keyALC);
+      const { key } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
 
-      if (isFetchingRef.current) return;
-      if (lastRequestKeyRef.current === key) return;
+      if (isFetchingRef.current || lastRequestKeyRef.current === key) return;
       lastRequestKeyRef.current = key;
 
       await fetchAndSetAlbumData(rawALC, finalID, key);
     };
 
     fetchAlbumData();
-  }, [islogin, mounted, pricingContext, storeinit?.IsB2BWebsite]);
-
-  const fetchAndSetAlbumData = async (value, finalID, precomputedKey) => {
-    const storeInit = storeinit;
-    const apiALC = value;
-    const keyALC = normalizeALC(value);
-    const { key, meta } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
-    const effectiveKey = precomputedKey || key;
-    const eventName = "procatalog_album";
-
-    if (isFetchingRef.current) return;
-    isFetchingRef.current = true;
-    setIsFetching(true);
-
-    try {
-      // Step 1: Get server's CacheRebuildDate entries
-      let serverCacheEntries = [];
-      try {
-        const serverRes = await GetCacheList(finalID);
-        serverCacheEntries = serverRes?.Data?.rd ?? [];
-        console.log("🚀 ~ fetchAndSetAlbumData ~ serverCacheEntries:", serverCacheEntries);
-        console.log("📋 Server cache entries: key 2", serverCacheEntries);
-      } catch (error) {
-        console.warn("⚠️ Failed to fetch server cache list:", error);
-      }
-
-      // Step 2: Find matching server entry for current request
-      const matchingServerEntry = findMatchingCacheEntry(serverCacheEntries, pricingContext, eventName, apiALC);
-      console.log("🚀 ~ fetchAndSetAlbumData ~ matchingServerEntry: key 2", matchingServerEntry);
-      const serverCacheRebuildDate = matchingServerEntry?.CacheRebuildDate ?? null;
-      console.log("🔍 Matching server entry:", matchingServerEntry);
-      console.log("📅 Server CacheRebuildDate:", serverCacheRebuildDate);
-
-      // Step 3: Get local cache with metadata
-      const localCacheRes = await fetch(`/api/cache?mode=meta&key=${effectiveKey}`);
-      const localCacheMeta = await localCacheRes.json();
-      const localCacheRebuildDate = localCacheMeta?.CacheRebuildDate ?? null;
-      console.log("💾 Local CacheRebuildDate:", localCacheRebuildDate);
-
-      // Step 4: Check if we should use cached data
-      // Only use cache when we can validate against a matching server entry and dates match.
-      if (localCacheMeta?.cached) {
-        const canValidate = Boolean(matchingServerEntry && serverCacheRebuildDate);
-        const datesMatch = localCacheRebuildDate === serverCacheRebuildDate;
-
-        if (canValidate && datesMatch) {
-          console.log("✅ Using cached data - dates match");
-          const cachedRes = await fetch(`/api/cache?key=${effectiveKey}`);
-          const cached = await cachedRes.json();
-          if (cached.cached && Array.isArray(cached.data)) {
-            setAlbumData(cached.data);
-            setImagesReady(true);
-            return cached.data;
-          }
-        }
-
-        console.log("🧹 Cache not trusted (no matching server entry or date mismatch) - clearing local cache");
-        console.log("   Server:", serverCacheRebuildDate, "vs Local:", localCacheRebuildDate);
-        await fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(console.error);
-      }
-
-      if (!storeInit) {
-        if (!isFetching) {
-          setIsFetching(true);
-          setTimeout(() => {
-            setIsFetching(false);
-            isFetchingRef.current = false;
-            fetchAndSetAlbumData(value, finalID, effectiveKey);
-          }, 500);
-        }
-        return;
-      }
-
-      const response = await Get_Procatalog("GET_Procatalog", finalID, apiALC);
-      if (response?.Data?.rd) {
-        const albums = response.Data.rd;
-        setAlbumData(albums);
-        setImagesReady(true);
-
-        // Step 6: Call BookCache and extract CacheRebuildDate from response
-        const bookCacheResult = await BookCache(finalID, eventName, pricingContext, apiALC);
-        const newCacheRebuildDate = bookCacheResult?.CacheRebuildDate ?? null;
-        console.log("📝 BookCache result - CacheRebuildDate:", newCacheRebuildDate);
-
-        // Step 7: Store data with CacheRebuildDate in metadata
-        const updatedMeta = {
-          ...meta,
-          CacheRebuildDate: newCacheRebuildDate,
-        };
-
-        fetch("/api/cache", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ key: effectiveKey, data: albums, meta: updatedMeta }),
-        }).catch(console.error);
-
-        const status = {};
-        const fallbackImages = {};
-        for (const data of albums) {
-          const fullImageUrl = `${storeInit?.AlbumImageFol}${data?.AlbumImageFol}/${data?.AlbumImageName}`;
-
-          if (![storeInit?.AlbumImageFol, data?.AlbumImageFol, data?.AlbumImageName].every(Boolean) && data?.AlbumDetail) {
-            const albumDetails = JSON.parse(data.AlbumDetail);
-            if (albumDetails?.length > 0) {
-              const fallbackImage = `${storeInit?.CDNDesignImageFol}${albumDetails?.[0]?.Image_Name}`;
-              fallbackImages[fullImageUrl] = fallbackImage;
-            }
-          }
-          status[fullImageUrl] = fullImageUrl;
-        }
-
-        setImageStatus(status);
-        setFallbackImages(fallbackImages);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsFetching(false);
-      isFetchingRef.current = false;
-    }
-  };
+  }, [islogin, mounted, pricingContext, storeinit, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
 
   const handleNavigate = (data) => {
     const albumName = data?.AlbumName;
@@ -286,43 +194,30 @@ const Album = ({ storeinit }) => {
   const handleClose = () => setOpen(false);
 
   const ImageMaking = useCallback(
-    async (data) => {
+    (data) => {
       if (data.AlbumImageName && data.AlbumImageFol) {
-        const imgSrc = `${storeinit?.AlbumImageFol}${data?.AlbumImageFol}/${data?.AlbumImageName}`;
-        return imgSrc;
+        return `${storeinit?.AlbumImageFol}${data?.AlbumImageFol}/${data?.AlbumImageName}`;
       }
-
-      if (![storeinit?.AlbumImageFol, data?.AlbumImageFol, data?.AlbumImageName].every(Boolean) && data?.AlbumDetail) {
-        const albumDetails = JSON.parse(data.AlbumDetail);
+      const fullImageUrl = `${storeinit?.AlbumImageFol}${data?.AlbumImageFol}/${data?.AlbumImageName}`;
+      if (fallbackImages[fullImageUrl]) {
+        return fallbackImages[fullImageUrl];
+      }
+      if (data?.AlbumDetail) {
+        const albumDetails = typeof data.AlbumDetail === "string" ? JSON.parse(data.AlbumDetail) : data.AlbumDetail;
         if (albumDetails?.length > 0) {
-          const fallbackImage = `${storeinit?.CDNDesignImageFol}${albumDetails?.[0]?.Image_Name}`;
-          return fallbackImage;
+          return `${storeinit?.CDNDesignImageFol}${albumDetails?.[0]?.Image_Name}`;
         }
       }
-
       return imageNotFound;
     },
-    [storeinit]
+    [storeinit, fallbackImages],
   );
 
-  useEffect(() => {
-    const loadAllImages = async () => {
-      const images = [];
-
-      for (let index = 0; index < albumData.length; index++) {
-        const data = albumData[index];
-        const imgSrc = await ImageMaking(data);
-        images.push({ id: index, src: imgSrc });
-      }
-
-      if (images.length > 0 && loadedProducts.length !== images.length) {
-        setLoadedProducts(images);
-      }
-    };
-
-    if (albumData.length > 0) {
-      loadAllImages();
-    }
+  const loadedProducts = useMemo(() => {
+    return albumData.map((data, index) => ({
+      id: index,
+      src: ImageMaking(data),
+    }));
   }, [albumData, ImageMaking]);
 
   useEffect(() => {
@@ -433,11 +328,10 @@ const GridIcon = () => {
   return (
     <IconButton
       sx={{
-        position: 'absolute',
+        position: "absolute",
         top: 5,
         left: 5,
-        bgcolor: '#e6e6e6ed'
-
+        bgcolor: "#e6e6e6ed",
       }}
     >
       <svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 24 24">
