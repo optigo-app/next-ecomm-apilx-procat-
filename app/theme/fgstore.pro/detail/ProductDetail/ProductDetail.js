@@ -2176,10 +2176,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                               </div>
                             )}
 
-                          {storeInit?.IsPriceShow == 1 &&
-                            storeInit?.IsPriceBreakUp == 1 &&
-                            singleProd1?.IsMrpBase !== 1 &&
-                            singleProd?.IsMrpBase !== 1 && (
+                          {(storeInit?.IsPriceShow == 1 && storeInit?.IsPriceBreakUp == 1) && (singleProd ?? singleProd1)?.IsMrpBase != 1 &&
+                            (
                               <Accordion
                                 elevation={0}
                                 sx={{
@@ -2229,9 +2227,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                     padding: "0 0 16px 0",
                                   }}
                                 >
-                                  {(singleProd1?.Metal_Cost
-                                    ? singleProd1?.Metal_Cost
-                                    : singleProd?.Metal_Cost) !== 0 ? (
+                                  {(singleProd1?.Metal_Cost ?? singleProd?.Metal_Cost) !== 0  ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2270,19 +2266,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                           className="proCat_PriceBreakup_Price"
                                         >
                                           {formatter.format(
-                                            (singleProd1?.Metal_Cost
-                                              ? singleProd1?.Metal_Cost
-                                              : singleProd?.Metal_Cost
-                                            )?.toFixed(2)
+                                           (singleProd1?.Metal_Cost ?? singleProd?.Metal_Cost)?.toFixed(2)
                                           )}
                                         </Typography>
                                       </span>
                                     </div>
                                   ) : null}
 
-                                  {(singleProd1?.Diamond_Cost
-                                    ? singleProd1?.Diamond_Cost
-                                    : singleProd?.Diamond_Cost) !== 0 ? (
+                                  {(singleProd1?.Diamond_Cost ?? singleProd?.Diamond_Cost) !== 0 ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2322,19 +2313,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                           }}
                                         >
                                           {formatter.format(
-                                            (singleProd1?.Diamond_Cost
-                                              ? singleProd1?.Diamond_Cost
-                                              : singleProd?.Diamond_Cost
-                                            )?.toFixed(2)
+                                            (singleProd1?.Diamond_Cost ?? singleProd?.Diamond_Cost)?.toFixed(2)
                                           )}
                                         </Typography>
                                       </span>
                                     </div>
                                   ) : null}
 
-                                  {(singleProd1?.ColorStone_Cost
-                                    ? singleProd1?.ColorStone_Cost
-                                    : singleProd?.ColorStone_Cost) !== 0 ? (
+                                  {(singleProd1?.ColorStone_Cost ?? singleProd?.ColorStone_Cost) !== 0 ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2374,19 +2360,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                           }}
                                         >
                                           {formatter.format(
-                                            (singleProd1?.ColorStone_Cost
-                                              ? singleProd1?.ColorStone_Cost
-                                              : singleProd?.ColorStone_Cost
-                                            )?.toFixed(2)
+                                            (singleProd1?.ColorStone_Cost ?? singleProd?.ColorStone_Cost)?.toFixed(2)
                                           )}
                                         </Typography>
                                       </span>
                                     </div>
                                   ) : null}
 
-                                  {(singleProd1?.Misc_Cost
-                                    ? singleProd1?.Misc_Cost
-                                    : singleProd?.Misc_Cost) !== 0 ? (
+                                  {(singleProd1?.Misc_Cost ?? singleProd?.Misc_Cost) !== 0 ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2426,19 +2407,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                           }}
                                         >
                                           {formatter.format(
-                                            (singleProd1?.Misc_Cost
-                                              ? singleProd1?.Misc_Cost
-                                              : singleProd?.Misc_Cost
-                                            )?.toFixed(2)
+                                            ((singleProd1?.Misc_Cost ?? singleProd?.Misc_Cost)?.toFixed(2))
                                           )}
                                         </Typography>
                                       </span>
                                     </div>
                                   ) : null}
 
-                                  {(singleProd1?.Labour_Cost
-                                    ? singleProd1?.Labour_Cost
-                                    : singleProd?.Labour_Cost) !== 0 ? (
+                                  {formatter.format((singleProd1?.Labour_Cost ?? singleProd?.Labour_Cost)?.toFixed(2))!== 0 ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2478,35 +2454,20 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                           }}
                                         >
                                           {formatter.format(
-                                            (singleProd1?.Labour_Cost
-                                              ? singleProd1?.Labour_Cost
-                                              : singleProd?.Labour_Cost
-                                            )?.toFixed(2)
+                                           (singleProd1?.Labour_Cost ?? singleProd?.Labour_Cost)?.toFixed(2)
                                           )}
                                         </Typography>
                                       </span>
                                     </div>
                                   ) : null}
 
-                                  {(singleProd1?.Other_Cost
-                                    ? singleProd1?.Other_Cost
-                                    : singleProd?.Other_Cost) +
-                                    (singleProd1?.Size_MarkUp
-                                      ? singleProd1?.Size_MarkUp
-                                      : singleProd?.Size_MarkUp) +
-                                    (singleProd1?.DesignMarkUpAmount
-                                      ? singleProd1?.DesignMarkUpAmount
-                                      : singleProd?.DesignMarkUpAmount) +
-                                    (singleProd1?.ColorStone_SettingCost
-                                      ? singleProd1?.ColorStone_SettingCost
-                                      : singleProd?.ColorStone_SettingCost) +
-                                    (singleProd1?.Diamond_SettingCost
-                                      ? singleProd1?.Diamond_SettingCost
-                                      : singleProd?.Diamond_SettingCost) +
-                                    (singleProd1?.Misc_SettingCost
-                                      ? singleProd1?.Misc_SettingCost
-                                      : singleProd?.Misc_SettingCost) !==
-                                    0 ? (
+                                  {((singleProd1?.Other_Cost ?? singleProd?.Other_Cost) +
+                                (singleProd1?.Size_MarkUp ?? singleProd?.Size_MarkUp) +
+                                (singleProd1?.DesignMarkUpAmount ?? singleProd?.DesignMarkUpAmount) +
+                                (singleProd1?.ColorStone_SettingCost ?? singleProd?.ColorStone_SettingCost) +
+                                (singleProd1?.Diamond_SettingCost ?? singleProd?.Diamond_SettingCost) +
+                                (singleProd1?.Misc_SettingCost ?? singleProd?.Misc_SettingCost)
+                            ) !== 0  ? (
                                     <div
                                       style={{
                                         display: "flex",
@@ -2547,24 +2508,12 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                                         >
                                           {formatter.format(
                                             (
-                                              (singleProd1?.Other_Cost
-                                                ? singleProd1?.Other_Cost
-                                                : singleProd?.Other_Cost) +
-                                              (singleProd1?.Size_MarkUp
-                                                ? singleProd1?.Size_MarkUp
-                                                : singleProd?.Size_MarkUp) +
-                                              (singleProd1?.DesignMarkUpAmount
-                                                ? singleProd1?.DesignMarkUpAmount
-                                                : singleProd?.DesignMarkUpAmount) +
-                                              (singleProd1?.ColorStone_SettingCost
-                                                ? singleProd1?.ColorStone_SettingCost
-                                                : singleProd?.ColorStone_SettingCost) +
-                                              (singleProd1?.Diamond_SettingCost
-                                                ? singleProd1?.Diamond_SettingCost
-                                                : singleProd?.Diamond_SettingCost) +
-                                              (singleProd1?.Misc_SettingCost
-                                                ? singleProd1?.Misc_SettingCost
-                                                : singleProd?.Misc_SettingCost)
+                                              (singleProd1?.Other_Cost ?? singleProd?.Other_Cost) +
+                                                        (singleProd1?.Size_MarkUp ?? singleProd?.Size_MarkUp) +
+                                                        (singleProd1?.DesignMarkUpAmount ?? singleProd?.DesignMarkUpAmount) +
+                                                        (singleProd1?.ColorStone_SettingCost ?? singleProd?.ColorStone_SettingCost) +
+                                                        (singleProd1?.Diamond_SettingCost ?? singleProd?.Diamond_SettingCost) +
+                                                        (singleProd1?.Misc_SettingCost ?? singleProd?.Misc_SettingCost)
                                             )?.toFixed(2)
                                           )}
                                         </Typography>
@@ -2858,101 +2807,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   )}
                 </div>
 
-                {imageData?.length > 0 && (
-                  <>
-                    {(imageData?.length <= 5 && !maxwidth1023px) ? (
-                      <div className="proCat_moreProduct_cardContainer">
-                        <p className="proCat_details_title">More Products</p>
-                        <div className="proCat_swiper_container">
-                          {imageData?.map((ele, index) => {
-                            return (
-                              <div
-                                key={ele?.autocode}
-                                className="procat_design_slide_detailpage_card"
-                                onClick={() => handleMoveToDetail(ele, index)}
-                                style={{
-                                  border: singleProd?.designno === ele?.designno ? "1px solid #d8a4a4" : "",
-                                }}
-                              >
-                                <img src={ele?.imageSrc} alt={ele?.TitleLine} loading="eager" onError={(e) => e.target.src = imageNotFound} />
-                                {/* <div className="procat_design_details_div procat_cart_btn "> */}
-                                <div className="procat_design_details_div ">
-                                  <span>{ele?.designno}</span>
-                                  {/* remove for all pro user by priyank bhai */}
-                                  {/* <span>{ele?.TitleLine}</span> */}
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="proCat_moreProduct_swiperMainDiv">
-                        <p className="proCat_details_title">More Products</p>
-                        <div className="proCat_swiper_container">
-                          <Swiper
-                            ref={innerSwiperRef}
-                            style={{
-                              width: "100%",
-                            }}
-                            spaceBetween={10}
-                            lazy={true}
-                            navigation={imageData?.length > 3}
-                            breakpoints={{
-                              1440: {
-                                slidesPerView: imageData?.length >= 6 ? 6 : imageData?.length,
-                              },
-                              1024: {
-                                slidesPerView: imageData?.length >= 4 ? 4 : imageData?.length,
-                              },
-                              768: {
-                                slidesPerView: imageData?.length >= 2 ? 2 : imageData?.length,
-                              },
-                              0: {
-                                slidesPerView: imageData?.length >= 2 ? 2 : imageData?.length,
-                              },
-                            }}
-                            modules={[Keyboard, FreeMode, Navigation]}
-                            keyboard={{ enabled: true }}
-                            pagination={false}
-                          >
-                            {imageData?.map((ele, index) => (
-                              <SwiperSlide
-                                style={{
-                                  width: "100%",
-                                }}
-                                key={ele?.autocode}
-                                className="proCat_Swiper_slide_custom"
-                                onClick={() => handleMoveToDetail(ele, index)}
-                              >
-                                <div
-                                  className="procat_design_slide_detailpage"
-                                  style={{
-                                    border: singleProd?.designno === ele?.designno ? "1px solid #d8a4a4" : "",
-                                  }}
-                                >
-                                  <img
-                                    src={ele?.imageSrc}
-                                    alt={ele?.TitleLine}
-                                    loading="eager"
-                                    onError={(e) => e.target.src = imageNotFound}
-                                  />
-                                  <div className="procat_design_details_div">
-                                    <span>{ele?.designno}</span>
-                                  </div>
-                                </div>
-                              </SwiperSlide>
-                            ))}
-                          </Swiper>
-
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-
-
-                {stockItemArr?.length > 0 && stockItemArr?.[0]?.stat_code != 1005 &&
+   {stockItemArr?.length > 0 && stockItemArr?.[0]?.stat_code != 1005 &&
                   storeInit?.IsStockWebsite === 1 && (
                     <div className="proCat_stockItem_div">
                       <p className="proCat_details_title"> Stock Items </p>
@@ -3351,6 +3206,102 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                       </div>
                     </div>
                   )}
+                  
+                {imageData?.length > 0 && (
+                  <>
+                    {(imageData?.length <= 5 && !maxwidth1023px) ? (
+                      <div className="proCat_moreProduct_cardContainer">
+                        <p className="proCat_details_title">More Products</p>
+                        <div className="proCat_swiper_container">
+                          {imageData?.map((ele, index) => {
+                            return (
+                              <div
+                                key={ele?.autocode}
+                                className="procat_design_slide_detailpage_card"
+                                onClick={() => handleMoveToDetail(ele, index)}
+                                style={{
+                                  border: singleProd?.designno === ele?.designno ? "1px solid #d8a4a4" : "",
+                                }}
+                              >
+                                <img src={ele?.imageSrc} alt={ele?.TitleLine} loading="eager" onError={(e) => e.target.src = imageNotFound} />
+                                {/* <div className="procat_design_details_div procat_cart_btn "> */}
+                                <div className="procat_design_details_div ">
+                                  <span>{ele?.designno}</span>
+                                  {/* remove for all pro user by priyank bhai */}
+                                  {/* <span>{ele?.TitleLine}</span> */}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="proCat_moreProduct_swiperMainDiv">
+                        <p className="proCat_details_title">More Products</p>
+                        <div className="proCat_swiper_container">
+                          <Swiper
+                            ref={innerSwiperRef}
+                            style={{
+                              width: "100%",
+                            }}
+                            spaceBetween={10}
+                            lazy={true}
+                            navigation={imageData?.length > 3}
+                            breakpoints={{
+                              1440: {
+                                slidesPerView: imageData?.length >= 6 ? 6 : imageData?.length,
+                              },
+                              1024: {
+                                slidesPerView: imageData?.length >= 4 ? 4 : imageData?.length,
+                              },
+                              768: {
+                                slidesPerView: imageData?.length >= 2 ? 2 : imageData?.length,
+                              },
+                              0: {
+                                slidesPerView: imageData?.length >= 2 ? 2 : imageData?.length,
+                              },
+                            }}
+                            modules={[Keyboard, FreeMode, Navigation]}
+                            keyboard={{ enabled: true }}
+                            pagination={false}
+                          >
+                            {imageData?.map((ele, index) => (
+                              <SwiperSlide
+                                style={{
+                                  width: "100%",
+                                }}
+                                key={ele?.autocode}
+                                className="proCat_Swiper_slide_custom"
+                                onClick={() => handleMoveToDetail(ele, index)}
+                              >
+                                <div
+                                  className="procat_design_slide_detailpage"
+                                  style={{
+                                    border: singleProd?.designno === ele?.designno ? "1px solid #d8a4a4" : "",
+                                  }}
+                                >
+                                  <img
+                                    src={ele?.imageSrc}
+                                    alt={ele?.TitleLine}
+                                    loading="eager"
+                                    onError={(e) => e.target.src = imageNotFound}
+                                  />
+                                  <div className="procat_design_details_div">
+                                    <span>{ele?.designno}</span>
+                                  </div>
+                                </div>
+                              </SwiperSlide>
+                            ))}
+                          </Swiper>
+
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+
+             
 
                 {storeInit?.IsProductDetailSimilarDesign == 1 &&
                   SimilarBrandArr?.length > 0 && SimilarBrandArr?.[0]?.stat_code != 1005 && (

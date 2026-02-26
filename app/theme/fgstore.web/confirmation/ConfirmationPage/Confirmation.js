@@ -45,7 +45,7 @@ const Confirmation = ({ storeinit }) => {
     };
 
     useEffect(() => {
-        setCSSVariable();
+        // setCSSVariable();
         let orderNo = sessionStorage.getItem('orderNumber')
         setOrderNo(orderNo)
     }, [])
