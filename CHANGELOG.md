@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [2026-02-27]
+
+### Added
+
+- Implemented default video fallback logic in `ProductDetail.js`.
+- Automatically switches to video if product images are missing or fail to load.
+
 ## [2026-02-26]
 
 ### Added
