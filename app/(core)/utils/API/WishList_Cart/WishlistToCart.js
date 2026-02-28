@@ -1,13 +1,14 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const handleWishlistToCartAPI = async (param, item, visiterId) => {
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
+    const storeInit = getSession("storeInit");
+    const storedData = getSession("loginUserDetail");
+    const islogin = getSession("LoginUser")
     const { FrontEnd_RegNo } = storeInit;
-    const data = JSON.parse(storedData);
-    const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data.id ?? 0;
-    const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data.userid ?? "";
+    const data =storedData ;
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data.id ?? 0;
+    const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data.userid ?? "";
     try {
         let combinedValue;
         if (param == 'isSelectAll') {

@@ -1,3 +1,4 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 
@@ -8,9 +9,9 @@ export const DiamondQualityColorComboAPI = async (finalID) => {
 
     try {
 
-        const storedEmail = sessionStorage.getItem('registerEmail') || '';
-        const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
-        const loginUserDetail = JSON.parse(sessionStorage.getItem('loginUserDetail')) || '0';
+        const storedEmail = getSession('registerEmail') || '';
+        const storeInit = getSession('storeInit');
+        const loginUserDetail = getSession('loginUserDetail') || '0';
         const { FrontEnd_RegNo } = storeInit;
         const combinedValue = JSON.stringify({
             FrontEnd_RegNo: `${FrontEnd_RegNo}`, diamondpricelistname: `${loginUserDetail?.diamondpricelistname ?? storeInit?.diamondpricelistname}`

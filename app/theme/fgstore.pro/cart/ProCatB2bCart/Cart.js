@@ -104,7 +104,7 @@ const CartPage = ({storeinit}) => {
       0
     );
     sessionStorage.setItem("TotalPriceData", priceData);
-    if (storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null) {
+    if ((storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null) {
       navigate(redirectUrl);
       // navigate('/loginOption')
     } else {

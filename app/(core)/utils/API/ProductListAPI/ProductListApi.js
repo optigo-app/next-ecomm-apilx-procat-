@@ -1,3 +1,4 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 
@@ -43,16 +44,16 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
   }
 
 
-  let storeinit = JSON.parse(sessionStorage.getItem("storeInit"));
-  let loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
-  let menuparam = JSON.parse(sessionStorage.getItem("menuparams"));
+  let storeinit = getSession("storeInit");
+  let loginInfo = getSession("loginUserDetail");
+  let menuparam = getSession("menuparams");
 
   const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
 
 
 
-  const customerId = storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginInfo?.id ?? 0;
-  const customerEmail = storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginInfo?.userid ?? "";
+  const customerId = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.id ?? 0;
+  const customerEmail = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.userid ?? "";
 
   // let diaQc = findDiaQcId(obj?.dia ?? loginInfo?.cmboDiaQCid)[0]
   // let csQc = findCsQcId(obj?.cs ?? loginInfo?.cmboCSQCid)[0]

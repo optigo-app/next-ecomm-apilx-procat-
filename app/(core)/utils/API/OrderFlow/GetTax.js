@@ -1,10 +1,11 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const fetchEstimateTax = async () => {
     try {
-        const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-        const storedData = JSON.parse(sessionStorage.getItem('loginUserDetail'));
-        const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
+        const islogin = getSession("LoginUser");
+        const storedData = getSession('loginUserDetail');
+        const storeInit = getSession('storeInit');
         const { FrontEnd_RegNo } = storeInit;
         const estimatedTaxId = storedData?.TaxId ?? 0
 

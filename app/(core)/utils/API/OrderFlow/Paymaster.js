@@ -1,10 +1,11 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 
 export const fetchPayMaster = async () => {
-    let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const data = JSON.parse(storedData);
+    let storeInit = getSession("storeInit");
+    const storedData = getSession("loginUserDetail");
+    const data = storedData;
     const customerId = data?.id ?? "";
     const customerEmail = data?.userid ?? "";
 

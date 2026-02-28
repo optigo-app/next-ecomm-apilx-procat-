@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getSession } from "../../FetchSessionData";
 
 function getApiUrl() {
   // only safe in browser
@@ -42,7 +43,7 @@ export async function CommonAPIForRazorPay(body) {
   let storeInit = null;
   if (typeof window !== "undefined") {
     try {
-      storeInit = JSON.parse(sessionStorage.getItem("storeInit") || "{}");
+      storeInit = getSession("storeInit") ?? {};
     } catch {
       storeInit = {};
     }

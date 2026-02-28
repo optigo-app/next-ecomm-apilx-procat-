@@ -1,25 +1,26 @@
+import { getSession } from "../../FetchSessionData";
 import { wesbiteDomainName } from "../../Glob_Functions/GlobalFunction";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const handlePaymentAPI = async (visiterId, islogin, mode) => {
     const domainname = wesbiteDomainName;
     try {
-        const selectedAddressId = sessionStorage.getItem('selectedAddressId');
-        let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-        const storedData = sessionStorage.getItem("loginUserDetail");
-        const selctedid = JSON.parse(selectedAddressId);
-        const data = JSON.parse(storedData);
+        const selectedAddressId = getSession('selectedAddressId');
+        let storeInit = getSession("storeInit")
+        const storedData = getSession("loginUserDetail");
+        const selctedid = selectedAddressId
+        const data = storedData;
         const currencyId = data?.CurrencyCodeid
-        const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data.id ?? 0;
-        const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data?.userid ?? "";
+        const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data.id ?? 0;
+        const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data?.userid ?? "";
 
         const { FrontEnd_RegNo } = storeInit;
 
-        let packageId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.PackageId : data?.PackageId ?? 0
-        let laboursetid = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.pricemanagement_laboursetid : data?.pricemanagement_laboursetid ?? 0
-        let diamondpricelistname = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.diamondpricelistname : data?.diamondpricelistname ?? ""
-        let colorstonepricelistname = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.colorstonepricelistname : data?.colorstonepricelistname ?? ""
-        let SettingPriceUniqueNo = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.SettingPriceUniqueNo : data?.SettingPriceUniqueNo ?? ""
+        let packageId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.PackageId : data?.PackageId ?? 0
+        let laboursetid = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.pricemanagement_laboursetid : data?.pricemanagement_laboursetid ?? 0
+        let diamondpricelistname = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.diamondpricelistname : data?.diamondpricelistname ?? ""
+        let colorstonepricelistname = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.colorstonepricelistname : data?.colorstonepricelistname ?? ""
+        let SettingPriceUniqueNo = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.SettingPriceUniqueNo : data?.SettingPriceUniqueNo ?? ""
 
         let estimatedTaxId = data?.TaxId
 

@@ -1,9 +1,12 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const SearchProductPrice = async ({ searchVar, autocodeList }) => {
 
-  const storeInit = JSON.parse(sessionStorage.getItem("storeInit"))
-  const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+
+  const storeInit = getSession("storeInit");
+  const loginUserDetail = getSession("loginUserDetail");
+  const islogin = getSession("LoginUser") ?? false;
 
   let data = {
     CurrencyRate: `${loginUserDetail?.CurrencyRate}`,

@@ -1,14 +1,15 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const updateQuantity = async (num, lastEnteredQuantity, visiterId) => {
   try {
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
+    const storeInit = getSession("storeInit");
     const { FrontEnd_RegNo } = storeInit;
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-    const data = JSON.parse(storedData);
-    const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data?.id ?? 0;
-    const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data?.userid ?? "";
+    const storedData = getSession("loginUserDetail");
+    const islogin = getSession("LoginUser");
+    const data = storedData;
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data?.id ?? 0;
+    const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data?.userid ?? "";
 
     const combinedValue = JSON.stringify({
       CartId: `${num}`,

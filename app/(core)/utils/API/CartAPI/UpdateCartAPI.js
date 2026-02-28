@@ -1,12 +1,13 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const updateCartAPI = async (updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup) => {
     try {
-        const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-        const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
+        const islogin = getSession("LoginUser");
+        const storeInit = getSession("storeInit");
         const { FrontEnd_RegNo } = storeInit;
-        const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"))
-        const UserEmail = sessionStorage.getItem("registerEmail")
+        const loginUserDetail = getSession("loginUserDetail");
+        const UserEmail = getSession("registerEmail")
 
         // console.log('jbjasd--', updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup);
 

@@ -1,11 +1,12 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const GetSinglePriceListApi = async (item) => {
 
-  const storeInit = JSON.parse(sessionStorage.getItem("storeInit"))
-  const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"))
-  const islogin = JSON.parse(sessionStorage.getItem("LoginUser"))
-  const customerEmail = data?.userid ?? "";
+  const storeInit = getSession("storeInit");
+  const loginUserDetail = getSession("loginUserDetail");
+  const islogin = getSession("LoginUser");
+  const customerEmail = loginUserDetail?.userid ?? "";
 
 
   

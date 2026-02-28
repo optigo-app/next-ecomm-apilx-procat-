@@ -1,3 +1,4 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 // export const DiamondListData = async (
@@ -7,7 +8,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 //   finalArray
 // ) => {
 //   console.log("diamondListApi", finalArray);
-//   let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
+//   let storeInit = getSession("storeInit"));
 //   const storedData = sessionStorage.getItem("loginUserDetail");
 //   const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
 //   const data = JSON.parse(storedData);
@@ -88,10 +89,10 @@ export const DiamondListData = async (
   finalArray,
   sortbyK
 ) => {
-  let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-  const storedData = sessionStorage.getItem("loginUserDetail");
-  const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-  const data = JSON.parse(storedData);
+  let storeInit = getSession("storeInit");
+  const storedData = getSession("loginUserDetail");
+  const islogin = getSession("LoginUser");
+  const data = storedData;
   const customerId = data?.id ?? 0;
   const customerEmail = data?.userid ?? "";
   const { FrontEnd_RegNo } = storeInit ?? '';

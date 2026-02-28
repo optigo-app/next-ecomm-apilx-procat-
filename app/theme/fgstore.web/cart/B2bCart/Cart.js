@@ -79,7 +79,7 @@ const CartPage = ({ storeinit, visiterId, islogin, setCartCountNum }) => {
         0
       );
       sessionStorage.setItem("TotalPriceData", priceData);
-      if (storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null) {
+      if ((storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null) {
         navigate(redirectUrl);
       } else {
         navigate("/delivery", { replace: true });

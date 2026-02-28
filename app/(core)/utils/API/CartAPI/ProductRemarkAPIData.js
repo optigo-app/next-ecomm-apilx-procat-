@@ -1,15 +1,16 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const handleProductRemark = async (data, remarks, visiterId) => {
     try {
-        const storeInit = JSON.parse(sessionStorage.getItem("storeInit")) || {};
+        const storeInit = getSession("storeInit") || {};
         const { FrontEnd_RegNo } = storeInit;
-        const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-        const storedData = sessionStorage.getItem("loginUserDetail");
-        const loginUserDetail = JSON.parse(storedData);
+        const islogin = getSession("LoginUser");
+        const storedData = getSession("loginUserDetail");
+        const loginUserDetail = storedData;
 
-        const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginUserDetail?.id ?? 0;
-        const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginUserDetail?.userid ?? 0;
+        const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.id ?? 0;
+        const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.userid ?? 0;
 
         const combinedValue = {
             CartId: `${data?.id}`,

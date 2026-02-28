@@ -1,9 +1,10 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 
 export const SearchProduct = async (searchVar) => {
-  let storeinit = JSON.parse(sessionStorage.getItem("storeInit"));
-  let loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+  let storeinit = getSession("storeInit");
+  let loginInfo = getSession("loginUserDetail");
 
   const data = {
     PackageId: `${loginInfo?.PackageId ?? storeinit?.PackageId}`,

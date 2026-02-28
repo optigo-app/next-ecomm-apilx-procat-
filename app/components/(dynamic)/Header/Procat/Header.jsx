@@ -163,6 +163,7 @@ const Header = ({ storeinit, logos }) => {
     setislogin(false);
     Cookies.remove("userLoginCookie");
     Cookies.remove("visitorId");
+    Cookies.remove("visiterId");
     sessionStorage.setItem("LoginUser", false);
     sessionStorage.removeItem("loginUserDetail");
     sessionStorage.removeItem("remarks");

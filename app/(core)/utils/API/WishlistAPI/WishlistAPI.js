@@ -1,19 +1,20 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const fetchWishlistDetails = async (visiterId) => {
-    let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-    const data = JSON.parse(storedData);
-    const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data.id ?? 0;
-    const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : data.userid ?? "";
+    let storeInit = getSession("storeInit");
+    const storedData = getSession("loginUserDetail");
+    const islogin = getSession("LoginUser");
+    const data = storedData;
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data.id ?? 0;
+    const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : data.userid ?? "";
     const { FrontEnd_RegNo } = storeInit;
 
-    let packageId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.PackageId : data?.PackageId ?? 0
-    let laboursetid = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.pricemanagement_laboursetid : data?.pricemanagement_laboursetid ?? 0
-    let diamondpricelistname = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.diamondpricelistname : data?.diamondpricelistname ?? ""
-    let colorstonepricelistname = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.colorstonepricelistname : data?.colorstonepricelistname ?? ""
-    let SettingPriceUniqueNo = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? storeInit?.SettingPriceUniqueNo : data?.SettingPriceUniqueNo ?? ""
+    let packageId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.PackageId : data?.PackageId ?? 0
+    let laboursetid = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.pricemanagement_laboursetid : data?.pricemanagement_laboursetid ?? 0
+    let diamondpricelistname = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.diamondpricelistname : data?.diamondpricelistname ?? ""
+    let colorstonepricelistname = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.colorstonepricelistname : data?.colorstonepricelistname ?? ""
+    let SettingPriceUniqueNo = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? storeInit?.SettingPriceUniqueNo : data?.SettingPriceUniqueNo ?? ""
 
     try {
         const combinedValue = JSON.stringify({
