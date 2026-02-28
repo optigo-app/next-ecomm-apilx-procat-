@@ -1,11 +1,12 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPIForRazorPay } from "./commonApiForRazorPay";
 
 
 export const fetchRazorPayData = async (razorpayData) => {
-    let storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-    const data = JSON.parse(storedData);
+    let storeInit = getSession("storeInit");
+    const storedData = getSession("loginUserDetail");
+    const islogin = getSession("LoginUser");
+    const data = storedData;
     const customerId = data?.id ?? "";
     const customerEmail = data?.userid ?? "";
 

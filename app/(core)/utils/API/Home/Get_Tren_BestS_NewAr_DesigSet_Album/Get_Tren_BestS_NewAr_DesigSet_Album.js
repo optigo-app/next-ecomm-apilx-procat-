@@ -1,12 +1,13 @@
+import { getSession } from "../../../FetchSessionData";
 import { CommonAPI } from "../../CommonAPI/CommonAPI";
 
 export const Get_Tren_BestS_NewAr_DesigSet_Album = async (storeData ,mode, customerID, filterObj = {}, currentPage = 1, itemsPerPage = 20) => {
     try {
         // Fetch data from session storage
         const storeInit = storeData ?? {};
-        const userData = JSON.parse(sessionStorage.getItem("loginUserDetail")) ?? {};
-        const userLogin = sessionStorage.getItem('LoginUser');
-        const email = sessionStorage.getItem("registerEmail") ?? "";
+        const userData = getSession("loginUserDetail") ?? {};
+        const userLogin = getSession('LoginUser') ?? false;
+        const email = getSession("registerEmail") ?? "";
 
         // Choose source based on userLogin status
         // const dataSource = userLogin ? userData : storeInit;

@@ -1,16 +1,17 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const getSizeData = async (item, visiterId) => {
     try {
-      const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
+      const storeInit = getSession("storeInit");
       const { FrontEnd_RegNo } = storeInit;
-      const storedData = sessionStorage.getItem("loginUserDetail") || "0";
-      const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-      const data = JSON.parse(storedData);
+      const storedData = getSession("loginUserDetail") || "0";
+      const islogin = getSession("LoginUser");
+      const data = storedData ;
       // const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
 
-      const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null  ? visiterId : data.id ?? 0;
-      const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null  ? visiterId : data?.userid ?? "";
+      const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null  ? visiterId : data.id ?? 0;
+      const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null  ? visiterId : data?.userid ?? "";
 
       const combinedValue = JSON.stringify({
         autocode: `${item?.autocode}`,

@@ -86,7 +86,7 @@ const TrendingView1 = ({ data, storeInit }) => {
 
     const finalID = useMemo(() => {
         if (!mounted) return null;
-        const visitorId = cookies.get("visitorId") ?? "0";
+        const visitorId = cookies.get("visiterId") ?? "0";
         const IsB2BWebsite = storeInit?.IsB2BWebsite ?? 0;
         const uid = loginUserDetail?.id || "0";
         if (IsB2BWebsite == 0) {

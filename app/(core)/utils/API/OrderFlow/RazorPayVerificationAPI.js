@@ -1,9 +1,10 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPIForRazorPay } from "./commonApiForRazorPay";
 
 
 export const handleVerifySignature = async (razorpayData) => {
-    const storedData = sessionStorage.getItem("loginUserDetail");
-    const data = JSON.parse(storedData);
+    const storedData = getSession("loginUserDetail");
+    const data = storedData;
     const customerEmail = data?.userid ?? "";
 
     console.log("razorpayData", razorpayData)

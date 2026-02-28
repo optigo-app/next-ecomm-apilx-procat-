@@ -1,3 +1,4 @@
+import { getSession } from "../../FetchSessionData";
 import { wesbiteDomainName } from "../../Glob_Functions/GlobalFunction";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
@@ -6,7 +7,7 @@ export const ForgotPasswordEmailAPI = async (Domian, email) => {
 
     let response
     const domainname = wesbiteDomainName;
-    const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
+    const storeInit = getSession('storeInit');
     const { FrontEnd_RegNo } = storeInit;
 
     try {

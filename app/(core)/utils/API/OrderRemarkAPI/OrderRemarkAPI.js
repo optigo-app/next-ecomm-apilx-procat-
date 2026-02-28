@@ -1,9 +1,10 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const handleOrderRemark = async (orderRemark) => {
     try {
-        const storeInit = JSON.parse(sessionStorage.getItem("storeInit")) || {};
-        const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail")) || {};
+        const storeInit = getSession("storeInit") || {};
+        const loginUserDetail = getSession("loginUserDetail") || {};
         const { FrontEnd_RegNo } = storeInit;
 
         let customerEmail = loginUserDetail?.userid

@@ -69,10 +69,10 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         if (CompanyinfoData) {
             const visitorId = CompanyinfoData?.VisitorId;
             const cookieStore = Cookies
-            const existingVisitorId = cookieStore.get("visitorId") ?? "";
+            const existingVisitorId = cookieStore.get("visiterId") ?? "";
 
             if (!existingVisitorId) {
-                cookieStore.set("visitorId", visitorId, {
+                cookieStore.set("visiterId", visitorId, {
                     path: "/",
                     expires: 60 * 60 * 24 * 30,
                 });
@@ -85,12 +85,12 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
 
                     if (expirationDate && expirationDate <= new Date()) {
                         // remove expired cookie
-                        cookieStore.delete("visitorId");
+                        cookieStore.delete("visiterId");
                     }
                 } catch (e) {
                     console.error("Error parsing visitorId cookie:", e);
                     // fallback → clear invalid cookie
-                    cookieStore.delete("visitorId");
+                    cookieStore.delete("visiterId");
                 }
             }
         }

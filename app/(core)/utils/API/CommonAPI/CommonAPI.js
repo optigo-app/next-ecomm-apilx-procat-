@@ -1,3 +1,4 @@
+import { getSession } from "../../FetchSessionData";
 import { getDomainInfo } from "../../getDomainInfo";
 import { fetchAPIUrlFromStoreInit } from "../../Glob_Functions/GlobalFunction";
 import axios from "axios";
@@ -33,7 +34,7 @@ export const CommonAPI = async (body) => {
     await setApiUrl();
   }
 
-  const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
+  const storeInit = getSession("storeInit");
 
   if (!storeInit) {
     throw new Error("StoreInit data not found in sessionStorage");

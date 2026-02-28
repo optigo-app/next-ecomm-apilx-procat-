@@ -1,11 +1,12 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const SingleFullProdPriceAPI = async (obj, autocode) => {
-  const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-  const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
-  const param = JSON.parse(sessionStorage.getItem("menuparams"));
-  const islogin = JSON.parse(sessionStorage.getItem("LoginUser"));
-  const UserEmail = sessionStorage.getItem("registerEmail");
+  const storeInit = getSession("storeInit");
+  const loginUserDetail = getSession("loginUserDetail");
+  const param = getSession("menuparams");
+  const islogin = getSession("LoginUser");
+  const UserEmail = getSession("registerEmail");
 
   const GetPriceReq = {
     CurrencyRate: `${storeInit?.CurrencyRate}`,

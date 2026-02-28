@@ -1,16 +1,18 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const CartAndWishListAPI = async (type, obj, visiterId, type2 = "", stockno, isPair) => {
     // console.log('stockno in api: ', stockno);
     // console.log("type2", type2, obj)
 
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
-    const UserEmail = sessionStorage.getItem("registerEmail");
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const loginUserDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+    const islogin = getSession("LoginUser", false);
 
-    const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginUserDetail.id ?? 0;
-    const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginUserDetail?.userid ?? "";
+    const UserEmail = getSession("registerEmail");
+    const storeInit = getSession("storeInit");
+    const loginUserDetail = getSession("loginUserDetail");
+
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail.id ?? 0;
+    const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.userid ?? "";
 
 
     let FinalObj = {

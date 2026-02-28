@@ -1,13 +1,14 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const MetalColorCombo = async (visiterId) => {
     let response;
 
-    const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
+    const storeInit = getSession('storeInit');
     const FrontEnd_RegNo = storeInit?.FrontEnd_RegNo;
-    const storedEmail = sessionStorage.getItem('registerEmail') || '';
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail")) || {};
-    const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
+    const storedEmail = getSession('registerEmail') || '';
+    const loginInfo = getSession("loginUserDetail") || {};
+    const islogin = getSession("LoginUser") ?? false;
 
     const isB2B = storeInit?.IsB2BWebsite === 0;
     const isGuest = !islogin;

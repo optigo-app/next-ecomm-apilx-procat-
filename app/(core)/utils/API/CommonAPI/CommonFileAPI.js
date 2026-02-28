@@ -1,6 +1,7 @@
 
 import axios from "axios";
 import { fetchAPIUrlFromStoreInit } from "../../Glob_Functions/GlobalFunction";
+import { getSession } from "../../FetchSessionData";
 // const APIURL = 'https://api.optigoapps.com/storev26/store.aspx';
 // const APIURL = 'http://zen/api/ReactStore.aspx'
 // const APIURL = (window.location.hostname === 'localhost' || window.location.hostname === 'zen') ? 'http://zen/api/ReactStore.aspx' : 'https://api.optigoapps.com/storev26/ReactStore.aspx';
@@ -60,7 +61,7 @@ export const CommonFileAPI = async (body, isUpload = false) => {
         await setApiUrl();
     }
 
-    const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
+    const storeInit = getSession('storeInit');
 
     if (!storeInit) {
         throw new Error('StoreInit data not found in sessionStorage');

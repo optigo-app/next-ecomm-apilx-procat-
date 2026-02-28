@@ -1,17 +1,18 @@
+import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI"
 
 
 export const FilterListAPI = async (mainData, visiterId) => {
 
-  let storeinit = JSON.parse(sessionStorage.getItem("storeInit"))
-  let loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"))
-  let menuparams = JSON.parse(sessionStorage.getItem("menuparams"))
-  let userEmail = sessionStorage.getItem("registerEmail")
+  let storeinit = getSession("storeInit")
+  let loginInfo = getSession("loginUserDetail")
+  let menuparams = getSession("menuparams")
+  let userEmail = getSession("registerEmail")
 
-  const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
+  const islogin = getSession("LoginUser") ?? false;
 
-  const customerId = storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginInfo?.id ?? 0;
-  const customerEmail = storeinit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterId : loginInfo?.userid ?? "";
+  const customerId = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.id ?? 0;
+  const customerEmail = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.userid ?? "";
 
   let MenuParams = {};
 
