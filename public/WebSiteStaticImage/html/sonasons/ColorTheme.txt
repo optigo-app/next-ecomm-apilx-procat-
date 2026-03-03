@@ -1,23 +1,23 @@
 .setFullThemeBack{
-background-color: #fff!important;
+background-color: #97b8da!important;
 }
 
 .btnColorProCat{
-	background-color: #fff!important;
+	background-color: #97b8da!important;
 	color : #323030 !important;
-	border: 1px solid gray;
+	border: 1px solid #97b8da;
 }
 
 .btnColorProCatProduct{
-	background-color: black!important;
+	background-color: #97b8da!important;
 	color : #fff !important;
-	border: 1px solid gray !important;
+	border: 1px solid #97b8da!important;
 }
 
 .btnColorProCatProductRemoveCart {
 	background-color:  #fff!important;
 	color: black !important;
-	border: 1px solid  gray;
+	border: 1px solid  #97b8da;
 }
 
 .btnColorSvg{

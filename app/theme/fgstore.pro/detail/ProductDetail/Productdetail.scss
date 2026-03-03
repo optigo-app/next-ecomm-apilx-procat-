@@ -1,5 +1,6 @@
 @use "../../../scss/variable" as *;
 
+
 .proCat_prodDetail_bodyContain {
   background-color: $backgroundColor;
   height: 100%;
@@ -348,7 +349,7 @@
   align-items: center;
   width: 100%;
   flex-direction: column;
-  margin-bottom: 130px;
+  margin-bottom: 20px;
   margin-top: 50px;
 }
 
@@ -357,6 +358,7 @@
   text-align: center;
   font-family: $homePageFontFamily;
   color: $primaryfontcolor2;
+  margin-bottom: 40px;
 }
 
 .proCat_app_productDetail_label {

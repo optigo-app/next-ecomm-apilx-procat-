@@ -105,12 +105,11 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                     navigation(redirectSignUpUrl);
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
-                } else if (Countrycodestate == "91" && storeInit?.IsEcomOtpVerification == 1) {
+                } else if (Countrycodestate == "91" && storeInit?.IsEcomOtpVerification == 0) {
                     navigation(redirectSignUpUrl);
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
                 } else {
-                    console.log("else part ")
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
                     setIsOpen(true)
@@ -158,7 +157,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
             </Backdrop>
 
             {/* OTP Modal Container */}
-            {storeInit?.IsEcomOtpVerification === 0 && Countrycodestate === "91" && (
+            {((storeInit?.IsEcomOtpVerification && storeInit?.IsEcomOtpVerification === 1) && Countrycodestate == "91") && (
                 <OTPContainer
                     mobileNo={mobileNo.trim()}
                     isOpen={isOpen}
