@@ -81,7 +81,8 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
             } else {
                 if (storeInit?.IsEcomOtpVerification != 0) {
                     if (process.env.NODE_ENV === "development") {
-                        alert(response.Data.rd[0].OTP)
+                        const otp = Number(response.Data.rd[0].OTP) ? response.Data.rd[0].OTP : 123456 ;
+                        alert(otp)
                     }
                     setIsOpen(true)
                 } else {
@@ -126,7 +127,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
             </Backdrop>
 
             {/* OTP Modal Container */}
-            {storeInit?.IsEcomOtpVerification === 1 && (
+            {(storeInit?.IsEcomOtpVerification && storeInit?.IsEcomOtpVerification === 1) ? (
                 <OTPContainer
                     emailId={email.trim()}
                     isOpen={isOpen}
@@ -139,7 +140,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                     isLoading={isLoading}
                     searchParams={searchParams}
                 />
-            )}
+            ) : null}
 
             <Container maxWidth="sm">
                 <Paper
