@@ -103,7 +103,7 @@ export default function LoginWithMobileCode({ params, searchParams }) {
                 }
 
             } else {
-                setErrors(prevErrors => ({ ...prevErrors, otp: 'Invalid Code' }));
+                setErrors(prevErrors => ({ ...prevErrors, otp: response?.Data?.rd[0]?.stat_msg }));
             }
         }).catch((err) => console.log(err))
     };

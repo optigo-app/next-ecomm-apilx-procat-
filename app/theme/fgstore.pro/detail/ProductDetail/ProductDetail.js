@@ -1309,6 +1309,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let encodeObj = compressAndEncode(JSON.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
     setProdLoading(true);
+    setImagePromise(true);
     // setIsImageLoad(true)
     setPdThumbImg([]);
   };
@@ -1532,7 +1533,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
               </div>
             ) : (
               <>
-            
+
                 <DetailBlock
                   swiperMainRef={swiperMainRef}
                   onSlideChange={onSlideChange}
@@ -1547,6 +1548,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   imageNotFound={imageNotFound}
                   isImageload={isImageload}
                   imagePromise={imagePromise}
+                  setImagePromise={setImagePromise}
                   setSelectedThumbImg={setSelectedThumbImg}
                   setThumbImgIndex={setThumbImgIndex}
 

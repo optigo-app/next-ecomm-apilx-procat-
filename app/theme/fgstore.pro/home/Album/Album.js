@@ -41,7 +41,7 @@ const Album = () => {
     setMounted(true);
   }, []);
 
-  const pricingContext = useMemo(() => getPricingContext(loginUserDetail, storeinit, islogin, mounted), [loginUserDetail, storeinit, islogin, mounted]);
+  const pricingContext = useMemo(() => getPricingContext(loginUserDetail, storeinit, islogin), [loginUserDetail, storeinit, islogin]);
 
   const fetchAndSetAlbumData = useCallback(
     async (value, finalID, precomputedKey) => {
@@ -136,8 +136,7 @@ const Album = () => {
   );
 
   useEffect(() => {
-    if (!mounted || !pricingContext) return;
-
+    if (!pricingContext || !storeinit) return;
     const fetchAlbumData = async () => {
       const visiterID = Cookies.get("visiterId");
       const userId = loginUserDetail?.id;
@@ -156,7 +155,14 @@ const Album = () => {
     };
 
     fetchAlbumData();
-  }, [islogin, mounted, pricingContext, storeinit, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
+
+    console.log("mounted:", mounted);
+    console.log("pricingContext:", pricingContext);
+    console.log("storeinit:", storeinit);
+    console.log("isFetchingRef:", isFetchingRef.current);
+    console.log("lastKey:", lastRequestKeyRef.current);
+
+  }, [islogin,  pricingContext, storeinit, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
 
   const handleNavigate = (data) => {
     const albumName = data?.AlbumName;
@@ -322,7 +328,7 @@ const Album = () => {
   );
 };
 Album.displayName = "Album";
-export default React.memo(Album);
+export default Album;
 
 const GridIcon = () => {
   return (

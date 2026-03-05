@@ -46,8 +46,8 @@ const findMatchingCacheEntry = (serverEntries, pricingContext, eventName, alcVal
   });
 };
 
-const getPricingContext = (loginUserDetail, storeinit, islogin, mounted) => {
-  if (!mounted) return null;
+const getPricingContext = (loginUserDetail, storeinit, islogin) => {
+  if (!storeinit) return null;
   const loginInfo = loginUserDetail;
   return {
     PackageId: loginInfo?.PackageId ?? storeinit?.PackageId ?? "",
