@@ -278,7 +278,8 @@ const DetailBlock = ({
                                 </div>
                                 <div className="db-info-row">
                                     <span>Metal Color :</span>
-                                    <span className="db-info-val">{metalColorName()}</span>
+                                    <span className="db-info-val">{metalColorName() || selectMtColor}</span>
+                                    
                                 </div>
                                 {storeInit?.IsDiamondCustomization === 1 && diaQcCombo?.length > 0 && diaList?.length ? (
                                     <div className="db-info-row">

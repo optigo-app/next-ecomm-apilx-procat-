@@ -49,6 +49,7 @@ import MoreProducts from "./Blocks/MoreProducts";
 import StockBlock from "./Blocks/StockBlock";
 import ProductDetailsSection from "./Blocks/ProductDetailsSection";
 import DetailBlock from "./Blocks/DetailBlock";
+import { getSession } from "@/app/(core)/utils/FetchSessionData";
 
 const imageNotFound = "/image-not-found.jpg";
 
@@ -1031,7 +1032,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let mtColorLocal = null;
 
     try {
-      mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
+      // JSON.parse(sessionStorage.getItem("MetalColorCombo"))
+      mtColorLocal = getSession("MetalColorCombo");
     } catch (e) {
       mtColorLocal = null;
     }
