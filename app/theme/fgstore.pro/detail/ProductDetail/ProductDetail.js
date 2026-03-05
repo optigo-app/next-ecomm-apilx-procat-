@@ -49,6 +49,7 @@ import MoreProducts from "./Blocks/MoreProducts";
 import StockBlock from "./Blocks/StockBlock";
 import ProductDetailsSection from "./Blocks/ProductDetailsSection";
 import DetailBlock from "./Blocks/DetailBlock";
+import { getSession } from "@/app/(core)/utils/FetchSessionData";
 
 const imageNotFound = "/image-not-found.jpg";
 
@@ -1031,7 +1032,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let mtColorLocal = null;
 
     try {
-      mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
+      // JSON.parse(sessionStorage.getItem("MetalColorCombo"))
+      mtColorLocal = getSession("MetalColorCombo");
     } catch (e) {
       mtColorLocal = null;
     }
@@ -1309,6 +1311,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let encodeObj = compressAndEncode(JSON.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
     setProdLoading(true);
+    setImagePromise(true);
     // setIsImageLoad(true)
     setPdThumbImg([]);
   };
@@ -1532,7 +1535,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
               </div>
             ) : (
               <>
-            
+
                 <DetailBlock
                   swiperMainRef={swiperMainRef}
                   onSlideChange={onSlideChange}
@@ -1547,6 +1550,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   imageNotFound={imageNotFound}
                   isImageload={isImageload}
                   imagePromise={imagePromise}
+                  setImagePromise={setImagePromise}
                   setSelectedThumbImg={setSelectedThumbImg}
                   setThumbImgIndex={setThumbImgIndex}
 

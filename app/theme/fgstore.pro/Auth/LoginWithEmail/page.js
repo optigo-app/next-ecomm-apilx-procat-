@@ -176,15 +176,7 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
         }
 
       } else {
-        if (response.Data.rd[0].stat_msg == "User Time Off") {
-          errors.confirmPassword = 'User Time Off'
-        } else if (response.Data.rd[0].stat_msg == 'User Login Off') {
-          errors.confirmPassword = 'User Login Off'
-        } else if (response.Data.rd[0].stat_msg == 'User Not Active') {
-          errors.confirmPassword = 'User Not Active'
-        } else {
-          errors.confirmPassword = 'Password is Invalid'
-        }
+          errors.confirmPassword = response.Data.rd[0].stat_msg;
       }
     }).catch((err) => console.log(err))
 

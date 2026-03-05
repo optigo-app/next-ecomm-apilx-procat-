@@ -6,7 +6,7 @@ import { assetBase } from "@/app/(core)/lib/ServerHelper";
 
 export const metadata = generatePageMetadata(pages["/"], "Procatalog");
 
-const ProcatalogHome = async () => {
+const ProcatalogHome =() => {
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <TopSection assetBase={assetBase} />

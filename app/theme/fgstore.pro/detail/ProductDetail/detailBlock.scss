@@ -447,16 +447,22 @@
     @media (max-width: 860px) {
       top: 35%;
       background-color: #ddd;
+      width: 40px;
+      height: 40px;
+    }
+
+    @media (max-width: 468px) {
+      top: 25%;
     }
   }
   .db-nav-chevron svg {
-    width: 60px;    
+    width: 60px;
     height: 60px;
   }
   .db-nav-prev {
     left: -15px;
     @media (max-width: 860px) {
-        left: 5px;
+      left: 5px;
     }
   }
   .db-nav-next {

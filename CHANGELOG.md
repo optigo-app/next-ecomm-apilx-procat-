@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2026-03-05]
+
+### Fixed
+
+- **ProductDetail.js**: Fixed broken "no-image-found" showing during chevron product navigation.
+  - **Old behavior**: Clicking chevrons showed broken image icon because `imagePromise` was never re-set to `true`, so the skeleton overlay didn't appear.
+  - **New behavior**: `imagePromise` is set to `true` in `handleMoveToDetail` (showing skeleton), and set to `false` at end of `ProdCardImageFunc` (hiding skeleton once images are ready).
+  - **Reason**: Match old Backup.jsx image loading flow — skeleton covers image area during navigation transition.
+
 ## [2026-02-27]
 
 ### Added

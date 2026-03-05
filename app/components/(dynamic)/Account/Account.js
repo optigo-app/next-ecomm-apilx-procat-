@@ -25,6 +25,7 @@ import Calllog from "./CallLog/Calllog";
 import useGlobalPreventSave from "@/app/(core)/utils/Glob_Functions/useGlobalPreventSave";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import ReusableConfirmModal from "../../ui/Modal";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -64,6 +65,7 @@ export default function Account({ Storeinit }) {
   const { push } = useNextRouterLikeRR();
   const [value, setValue] = useState(0);
   const [value1, setValue1] = useState(0);
+  const [openLogoutModal, setopenLogoutModal] = useState(false);
 
   const navigation = push;
   const [accountInner, setAccountInner] = useState(accountDetailPages());
@@ -100,146 +102,155 @@ export default function Account({ Storeinit }) {
     window.location.href = "/"
   };
 
+  const OpenLogoutModal = () => setopenLogoutModal(true);
+  const CloseLogoutMode = () => setopenLogoutModal(false);
+
   return (
-    <div
-      className="account_AccountTab_SMR"
-      onContextMenu={(e) => {
-        e.preventDefault();
-      }}
-    >
-      <div className=" accountPagTabSection">
-        <div>
-          <div className="Smiling-AccountMain">
-            <div className="sticky-header_web_sm">
-              <p className="SmilingAccountTitle youraccountpagesecSMR ">Your Account</p>
-              <div className="smlingAccountTabWebView_SMR yourAccount_SMR d_none_acc_smr">
-                <Box sx={{ display: "flex", justifyContent: "center", borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs value={value} onChange={handleChange} onClick={handleScrollTop} aria-label="basic tabs example">
-                    {" "}
-                    {/*  orientation="vertical" indicatorColor="#7d7f85" */}
-                    <Tab label="Your Profile" {...a11yProps(0)} />
-                    <Tab label="ORDER HISTORY" {...a11yProps(1)} />
-                    <Tab label="MANAGE ADDRESSES" {...a11yProps(2)} />
-                    {accountValidation() &&
-                     <Tab label="ACCOUNT" {...a11yProps(3)} />
-                    }
-                    <Tab label="CHANGE PASSWORD" {...a11yProps(accountValidation() ? 4 : 3)} />
-                    {/* <Tab label="TICKET SYSTEM" {...a11yProps(5)} /> */}
-                    {/* <Tab label="CALL LOG" {...a11yProps(6)} /> */}
-                    {/* <Tab label="PLM" {...a11yProps(7)} /> */}
-                    {loginUserDetail?.IsPLWOn && <Tab label="PLM" {...a11yProps(1)} />}
-                    <Tab label="Log Out" onClick={handleLogout} />
-                  </Tabs>
-                  {/* <p className='smilingAccountLogout' onClick={handleLogout}>LOG OUT</p> */}
-                </Box>
+    <>
+      <ReusableConfirmModal
+        open={openLogoutModal}
+        onConfirm={handleLogout}
+        onClose={CloseLogoutMode}
+      />
+      <div
+        className="account_AccountTab_SMR"
+        onContextMenu={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <div className=" accountPagTabSection">
+          <div>
+            <div className="Smiling-AccountMain">
+              <div className="sticky-header_web_sm">
+                <p className="SmilingAccountTitle youraccountpagesecSMR ">Your Account</p>
+                <div className="smlingAccountTabWebView_SMR yourAccount_SMR d_none_acc_smr">
+                  <Box sx={{ display: "flex", justifyContent: "center", borderBottom: 1, borderColor: "divider" }}>
+                    <Tabs value={value} onChange={handleChange} onClick={handleScrollTop} aria-label="basic tabs example">
+                      {" "}
+                      {/*  orientation="vertical" indicatorColor="#7d7f85" */}
+                      <Tab label="Your Profile" {...a11yProps(0)} />
+                      <Tab label="ORDER HISTORY" {...a11yProps(1)} />
+                      <Tab label="MANAGE ADDRESSES" {...a11yProps(2)} />
+                      {accountValidation() &&
+                        <Tab label="ACCOUNT" {...a11yProps(3)} />
+                      }
+                      <Tab label="CHANGE PASSWORD" {...a11yProps(accountValidation() ? 4 : 3)} />
+                      {/* <Tab label="TICKET SYSTEM" {...a11yProps(5)} /> */}
+                      {/* <Tab label="CALL LOG" {...a11yProps(6)} /> */}
+                      {/* <Tab label="PLM" {...a11yProps(7)} /> */}
+                      {loginUserDetail?.IsPLWOn && <Tab label="PLM" {...a11yProps(1)} />}
+                      <Tab label="Log Out" onClick={OpenLogoutModal} />
+                    </Tabs>
+                    {/* <p className='smilingAccountLogout' onClick={OpenLogoutModal}>LOG OUT</p> */}
+                  </Box>
+                </div>
+                <div className="smlingAccountTabMobileView YourAccountPageTabs yourAccount_SMR">
+                  <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+                    <Tabs value={value} orientation="vertical" onClick={handleScrollTop} onChange={handleChange} sx={{ width: "100%" }}>
+                      {" "}
+                      {/*  indicatorColor="#7d7f85" */}
+                      <Tab label="Your Profile" {...a11yProps(0)} sx={{ textAlign: "start", width: "90%", borderColor: "divider" }} />
+                      <Tab label="ORDER HISTORY" {...a11yProps(1)} sx={{ padding: "0px", minHeight: "auto", display: "flex", alignItems: "flex-start" }} />
+                      <Tab label="MANAGE ADDRESSES" {...a11yProps(2)} />
+                      {accountValidation() && <Tab label="ACCOUNT" {...a11yProps(3)} />}
+                      <Tab label="CHANGE PASSWORD" {...a11yProps(accountValidation() ? 4 : 3)} />
+                      {/* <Tab label="TICKET SYSTEM" {...a11yProps(5)} /> */}
+                      {/* <Tab label="CALL LOG" {...a11yProps(6)} /> */}
+                      {/* <Tab label="PLM" {...a11yProps(7)} /> */}
+                      {loginUserDetail?.IsPLWOn && <Tab label="PLM" {...a11yProps(1)} />}
+                      0 <Tab label="Log Out" onClick={OpenLogoutModal} />
+                    </Tabs>
+                    {/* <p className='smilingAccountLogout' onClick={OpenLogoutModal}>LOG OUT</p> */}
+                  </Box>
+                </div>
               </div>
-              <div className="smlingAccountTabMobileView YourAccountPageTabs yourAccount_SMR">
-                <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-                  <Tabs value={value} orientation="vertical" onClick={handleScrollTop} onChange={handleChange} sx={{ width: "100%" }}>
-                    {" "}
-                    {/*  indicatorColor="#7d7f85" */}
-                    <Tab label="Your Profile" {...a11yProps(0)} sx={{ textAlign: "start", width: "90%", borderColor: "divider" }} />
-                    <Tab label="ORDER HISTORY" {...a11yProps(1)} sx={{ padding: "0px", minHeight: "auto", display: "flex", alignItems: "flex-start" }} />
-                    <Tab label="MANAGE ADDRESSES" {...a11yProps(2)} />
-                    {accountValidation() && <Tab label="ACCOUNT" {...a11yProps(3)} />}
-                    <Tab label="CHANGE PASSWORD" {...a11yProps(accountValidation() ? 4 : 3)} />
-                    {/* <Tab label="TICKET SYSTEM" {...a11yProps(5)} /> */}
-                    {/* <Tab label="CALL LOG" {...a11yProps(6)} /> */}
-                    {/* <Tab label="PLM" {...a11yProps(7)} /> */}
-                    {loginUserDetail?.IsPLWOn && <Tab label="PLM" {...a11yProps(1)} />}
-                    0 <Tab label="Log Out" onClick={handleLogout} />
-                  </Tabs>
-                  {/* <p className='smilingAccountLogout' onClick={handleLogout}>LOG OUT</p> */}
-                </Box>
-              </div>
-            </div>
-            <div className="smling-AccountTabMain">
-              <Box sx={{ width: "100%" ,padding:0 }}>
-                <CustomTabPanel value={value} index={0}>
-                  <div>
-                    <YourProfile />
-                  </div>
-                </CustomTabPanel>
-
-                <CustomTabPanel value={value} index={1}>
-                  <div>
-                    {/* <OrderHistory /> */}
-                    {/* <OrderHistoryGroup /> */}
-                    <NewOrderHistory />
-                  </div>
-                </CustomTabPanel>
-                <CustomTabPanel value={value} index={2} className="manageAddressSec">
-                  <ManageAddress />
-                </CustomTabPanel>
-
-                {accountValidation() && (
-                  <CustomTabPanel value={value} index={3} className="accountSalesPage">
-                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                      <Tabs value={value1} className="accountTabSection" variant="scrollable" onChange={handleChangeSub} aria-label="basic tabs example" sx={{ background: "#7d7f8529", ...tabIndicator }} scrollButtons="auto">
-                        {accountInner?.map((e, i) => {
-                          if (Storeinit?.IsPriceShow == 0 && e.tabComp === "AccountLedger") {
-                            return (
-                              <Tab
-                                sx={{
-                                  display: "none",
-                                }}
-                              />
-                            );
-                          }
-                          return <Tab label={e?.tabLabel} {...a11yProps(i)} sx={{ color: "#7d7f85" }} key={i} />;
-                        })}
-                      </Tabs>
-                    </Box>
-                    {accountInner?.map((e, i) => {
-                      return (
-                        <React.Fragment key={i}>
-                          {e?.id === 1163 && (
-                            <CustomTabPanel value={value1} index={i} className="AcountSales">
-                              <QuotationQuote />
-                            </CustomTabPanel>
-                          )}
-                          {e?.id === 1164 && (
-                            <CustomTabPanel value={value1} index={i} className="quotationFilters">
-                              <QuotationJob />
-                            </CustomTabPanel>
-                          )}
-                          {e?.id === 1157 && (
-                            <CustomTabPanel value={value1} index={i} className="salesPage">
-                              <Sales />
-                            </CustomTabPanel>
-                          )}
-                          {e?.id === 1314 && (
-                            <CustomTabPanel value={value1} index={i} className="salesReport">
-                              <SalesReport />
-                            </CustomTabPanel>
-                          )}
-                          {e?.id === 18129 && (
-                            <CustomTabPanel value={value1} index={i}>
-                              <PendingMemo />
-                            </CustomTabPanel>
-                          )}
-                          {e?.id === 17020 && (
-                            <CustomTabPanel value={value1} index={i} className="DesignWiseSalesReport">
-                              <DesignWiseSalesReport />
-                            </CustomTabPanel>
-                          )}
-                          {Storeinit?.IsPriceShow == 1 && e?.id === 1159 && (
-                            <CustomTabPanel value={value1} index={i}>
-                              <AccountLedger />
-                            </CustomTabPanel>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
+              <div className="smling-AccountTabMain">
+                <Box sx={{ width: "100%", padding: 0 }}>
+                  <CustomTabPanel value={value} index={0}>
+                    <div>
+                      <YourProfile />
+                    </div>
                   </CustomTabPanel>
-                )}
 
-                <CustomTabPanel value={value} index={accountValidation() ? 4 : 3}>
-                  <div>
-                    <ChangePassword />
-                  </div>
-                </CustomTabPanel>
-                {/* {
+                  <CustomTabPanel value={value} index={1}>
+                    <div>
+                      {/* <OrderHistory /> */}
+                      {/* <OrderHistoryGroup /> */}
+                      <NewOrderHistory />
+                    </div>
+                  </CustomTabPanel>
+                  <CustomTabPanel value={value} index={2} className="manageAddressSec">
+                    <ManageAddress />
+                  </CustomTabPanel>
+
+                  {accountValidation() && (
+                    <CustomTabPanel value={value} index={3} className="accountSalesPage">
+                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <Tabs value={value1} className="accountTabSection" variant="scrollable" onChange={handleChangeSub} aria-label="basic tabs example" sx={{ background: "#7d7f8529", ...tabIndicator }} scrollButtons="auto">
+                          {accountInner?.map((e, i) => {
+                            if (Storeinit?.IsPriceShow == 0 && e.tabComp === "AccountLedger") {
+                              return (
+                                <Tab
+                                  sx={{
+                                    display: "none",
+                                  }}
+                                />
+                              );
+                            }
+                            return <Tab label={e?.tabLabel} {...a11yProps(i)} sx={{ color: "#7d7f85" }} key={i} />;
+                          })}
+                        </Tabs>
+                      </Box>
+                      {accountInner?.map((e, i) => {
+                        return (
+                          <React.Fragment key={i}>
+                            {e?.id === 1163 && (
+                              <CustomTabPanel value={value1} index={i} className="AcountSales">
+                                <QuotationQuote />
+                              </CustomTabPanel>
+                            )}
+                            {e?.id === 1164 && (
+                              <CustomTabPanel value={value1} index={i} className="quotationFilters">
+                                <QuotationJob />
+                              </CustomTabPanel>
+                            )}
+                            {e?.id === 1157 && (
+                              <CustomTabPanel value={value1} index={i} className="salesPage">
+                                <Sales />
+                              </CustomTabPanel>
+                            )}
+                            {e?.id === 1314 && (
+                              <CustomTabPanel value={value1} index={i} className="salesReport">
+                                <SalesReport />
+                              </CustomTabPanel>
+                            )}
+                            {e?.id === 18129 && (
+                              <CustomTabPanel value={value1} index={i}>
+                                <PendingMemo />
+                              </CustomTabPanel>
+                            )}
+                            {e?.id === 17020 && (
+                              <CustomTabPanel value={value1} index={i} className="DesignWiseSalesReport">
+                                <DesignWiseSalesReport />
+                              </CustomTabPanel>
+                            )}
+                            {Storeinit?.IsPriceShow == 1 && e?.id === 1159 && (
+                              <CustomTabPanel value={value1} index={i}>
+                                <AccountLedger />
+                              </CustomTabPanel>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </CustomTabPanel>
+                  )}
+
+                  <CustomTabPanel value={value} index={accountValidation() ? 4 : 3}>
+                    <div>
+                      <ChangePassword />
+                    </div>
+                  </CustomTabPanel>
+                  {/* {
                   <CustomTabPanel value={value} index={5}>
                     <div>
                       <TicketSystem />
@@ -253,19 +264,20 @@ export default function Account({ Storeinit }) {
                     </div>
                   </CustomTabPanel>
                 } */}
-                {
-                  <CustomTabPanel value={value} index={7}>
-                    <div>
-                      <Plm />
-                    </div>
-                  </CustomTabPanel>
-                }
-              </Box>
+                  {
+                    <CustomTabPanel value={value} index={7}>
+                      <div>
+                        <Plm />
+                      </div>
+                    </CustomTabPanel>
+                  }
+                </Box>
+              </div>
             </div>
           </div>
+          {/* <Footer /> */}
         </div>
-        {/* <Footer /> */}
       </div>
-    </div>
+    </>
   );
 }

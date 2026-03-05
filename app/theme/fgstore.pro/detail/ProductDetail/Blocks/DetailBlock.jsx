@@ -29,6 +29,7 @@ const DetailBlock = ({
     filteredVideos,
     isImageload,
     imagePromise,
+    setImagePromise,
     setSelectedThumbImg,
     setThumbImgIndex,
 
@@ -148,8 +149,10 @@ const DetailBlock = ({
                                                 onError={(e) => {
                                                     e.target.src = imageNotFound;
                                                     e.target.alt = "no-image-found";
+                                                    setImagePromise(false);
                                                 }}
                                                 onLoad={() => {
+                                                    setImagePromise(false);
                                                     if (nextindex > 0) {
                                                         setTimeout(() => setProdLoading(false), 500);
                                                     } else {
@@ -177,11 +180,11 @@ const DetailBlock = ({
                                 {/* Thumbnail strip with scroll chevrons */}
                                 {(pdThumbImg?.length > 1 || pdVideoArr?.length > 0) && (
                                     <div className="db-thumb-strip-outer">
-                                        {totalThumbs > 4 && (
+                                        {/* {totalThumbs > 4 && (
                                             <button className="db-thumb-chevron" onClick={() => scrollThumbs(-1)} disabled={!canScrollLeft} aria-label="Scroll thumbnails left">
                                                 <HiOutlineChevronLeft />
                                             </button>
-                                        )}
+                                        )} */}
 
                                         <div className="db-thumb-strip" ref={thumbScrollRef}>
                                             {pdThumbImg?.map((ele, i) => {
@@ -249,11 +252,11 @@ const DetailBlock = ({
                                             ))}
                                         </div>
 
-                                        {totalThumbs > 4 && (
+                                        {/* {totalThumbs > 4 && (
                                             <button className="db-thumb-chevron" onClick={() => scrollThumbs(1)} disabled={!canScrollRight} aria-label="Scroll thumbnails right">
                                                 <HiOutlineChevronRight />
                                             </button>
-                                        )}
+                                        )} */}
                                     </div>
                                 )}
                             </Box>
@@ -275,7 +278,8 @@ const DetailBlock = ({
                                 </div>
                                 <div className="db-info-row">
                                     <span>Metal Color :</span>
-                                    <span className="db-info-val">{metalColorName()}</span>
+                                    <span className="db-info-val">{metalColorName() || selectMtColor}</span>
+                                    
                                 </div>
                                 {storeInit?.IsDiamondCustomization === 1 && diaQcCombo?.length > 0 && diaList?.length ? (
                                     <div className="db-info-row">
