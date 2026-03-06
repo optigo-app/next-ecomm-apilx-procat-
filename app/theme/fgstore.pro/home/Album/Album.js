@@ -12,6 +12,7 @@ import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import { useSearchParams } from "next/navigation";
 import { GetCacheList, BookCache } from "@/app/(core)/utils/API/Cache/CacheApi";
 import { normalizeALC, buildAlbumCacheKey, findMatchingCacheEntry, getPricingContext, processAlbumImages } from "./CacheBuilder";
+import { getSession } from "@/app/(core)/utils/FetchSessionData";
 
 const Album = () => {
   const { islogin, loginUserDetail, storeinit } = useStore();
@@ -47,9 +48,9 @@ const Album = () => {
     async (value, finalID, precomputedKey) => {
       if (!pricingContext || isFetchingRef.current) return;
 
-      const storeInit = storeinit;
       const apiALC = value;
       const keyALC = normalizeALC(value);
+      console.log("Starting fetch for ALC:", apiALC);
 
       const { key, meta } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
       const effectiveKey = precomputedKey || key;
@@ -73,6 +74,8 @@ const Album = () => {
         const localCacheMeta = localCacheRes;
         const localCacheRebuildDate = localCacheMeta?.CacheRebuildDate ?? null;
 
+        console.log("Cache meta checked: localCacheMeta.cached =", localCacheMeta?.cached, "server entries count =", serverCacheEntries?.length);
+
         if (localCacheMeta?.cached) {
           const canValidate = Boolean(matchingServerEntry && serverCacheRebuildDate);
           const datesMatch = localCacheRebuildDate === serverCacheRebuildDate;
@@ -80,7 +83,9 @@ const Album = () => {
           if (canValidate && datesMatch) {
             const cachedRes = await fetch(`/api/cache?key=${effectiveKey}`);
             const cached = await cachedRes.json();
+            console.log("Using cache, skipping API");
             if (cached.cached && Array.isArray(cached.data)) {
+              console.log("Setting album data from cache");
               setAlbumData(cached.data);
               setFallbackImages(processAlbumImages(cached.data, storeinit));
               setImagesReady(true);
@@ -92,7 +97,7 @@ const Album = () => {
           fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(() => { });
         }
 
-        if (!storeInit) {
+        if (!storeinit) {
           setTimeout(() => {
             isFetchingRef.current = false;
             setIsFetching(false);
@@ -100,9 +105,12 @@ const Album = () => {
           }, 500);
           return;
         }
+        console.log("Making API call for finalID:", finalID, "apiALC:", apiALC);
         const response = await Get_Procatalog("GET_Procatalog", finalID, apiALC);
+        console.log("API response received:", response);
         if (response?.Data?.rd) {
           const albums = response.Data.rd;
+          console.log("Setting album data from API, albums length:", albums.length);
           setAlbumData(albums);
 
           const fallbacks = processAlbumImages(albums, storeinit);
@@ -123,8 +131,11 @@ const Album = () => {
           } catch (cacheErr) {
             console.error("Cache update failed:", cacheErr);
           }
+        } else {
+          console.log("No Data.rd in response");
         }
       } catch (err) {
+        console.log("Error in fetch:", err);
         console.error(err);
         setIsFetching(false);
         isFetchingRef.current = false;
@@ -136,21 +147,29 @@ const Album = () => {
   );
 
   useEffect(() => {
-    if (!pricingContext || !storeinit) return;
+    console.log("useEffect triggered with pricingContext:", !!pricingContext, "storeinit:", !!storeinit, "ALCVAL:", ALCVAL);
+    if (!pricingContext || !storeinit) {
+      console.log("Guards not met, skipping fetch");
+      return;
+    }
+
     const fetchAlbumData = async () => {
+      console.log("fetchAlbumData called");
       const visiterID = Cookies.get("visiterId");
       const userId = loginUserDetail?.id;
       const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
 
-      const rawALC = ALCVAL ? ALCVAL : (sessionStorage.getItem("ALCVALUE") ?? "");
+      const rawALC = ALCVAL ? ALCVAL : (getSession("ALCVALUE") ?? "");
       const keyALC = normalizeALC(rawALC);
       sessionStorage.setItem("ALCVALUE", String(rawALC));
 
       const { key } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
 
+      console.log("Checking fetch conditions: isFetching =", isFetchingRef.current, "lastKey =", lastRequestKeyRef.current, "current key =", key);
       if (isFetchingRef.current || lastRequestKeyRef.current === key) return;
       lastRequestKeyRef.current = key;
 
+      console.log("Calling fetchAndSetAlbumData");
       await fetchAndSetAlbumData(rawALC, finalID, key);
     };
 
@@ -233,6 +252,7 @@ const Album = () => {
   }, [albumData]);
 
   if (!imagesReady) {
+    console.log("Component render: albumData.length =", albumData.length, "imagesReady =", imagesReady);
     return <AlbumSkeleton />;
   }
 
@@ -281,6 +301,7 @@ const Album = () => {
       </Modal>
       {albumData?.length !== 0 && (
         <>
+          {console.log("Rendering albums, count:", albumData.length)}
           <p className="proCat_albumTitle">ALBUMS</p>
           <div className="proCat_albumALL_div">
             {albumData.map((data, index) => {

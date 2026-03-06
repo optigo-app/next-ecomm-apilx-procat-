@@ -93,11 +93,17 @@ const CountryDropDown = ({
     const requiredLength = phonecode?.PhoneLength || phonecode?.phonelength || 10;
     const isValid = new RegExp(`^\\d{${requiredLength}}$`).test(value.trim());
 
-    if (value.length > 0 && !isValid) {
-      setErrors({ ...Errors, mobileNo: `Mobile number must be ${requiredLength} digits.` });
-    } else {
-      setErrors({ ...Errors, mobileNo: "" });
-    }
+    // if (value.length > 0 && !isValid) {
+    //   setErrors({ ...Errors, mobileNo: `Mobile number must be ${requiredLength} digits.` });
+    // }
+    //  else {
+    //   setErrors({ ...Errors, mobileNo: "" });
+    // }
+
+     // Clear mobile error when user starts typing
+  if (Errors?.mobileNo) {
+    setErrors((prev) => ({ ...prev, mobileNo: "" }));
+  }
 
     // Re-construct event for the parent handler
     const fakeEvent = { ...e, target: { ...e.target, value: value, name: 'mobileNo' } };
@@ -205,6 +211,10 @@ const CountryDropDown = ({
 };
 
 export default CountryDropDown;
+
+
+
+
 // "use client";
 
 // import "./CountryDropDown.scss";

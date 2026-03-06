@@ -89,6 +89,8 @@ const DetailBlock = ({
         setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
     };
 
+
+
     useEffect(() => {
         checkScrollability();
         const el = thumbScrollRef.current;
@@ -186,7 +188,7 @@ const DetailBlock = ({
                                             </button>
                                         )} */}
 
-                                        <div className="db-thumb-strip" ref={thumbScrollRef}>
+                                       {(!isImageload || !imagePromise) &&  <div className="db-thumb-strip" ref={thumbScrollRef}>
                                             {pdThumbImg?.map((ele, i) => {
                                                 const firstHalf = ele?.thumbImageUrl?.split("/Design_Thumb")[0];
                                                 const secondhalf = ele?.thumbImageUrl?.split("/Design_Thumb")[1]?.split(".")[0];
@@ -251,7 +253,7 @@ const DetailBlock = ({
                                                 </div>
                                             ))}
                                         </div>
-
+}
                                         {/* {totalThumbs > 4 && (
                                             <button className="db-thumb-chevron" onClick={() => scrollThumbs(1)} disabled={!canScrollRight} aria-label="Scroll thumbnails right">
                                                 <HiOutlineChevronRight />
@@ -278,7 +280,7 @@ const DetailBlock = ({
                                 </div>
                                 <div className="db-info-row">
                                     <span>Metal Color :</span>
-                                    <span className="db-info-val">{metalColorName() || selectMtColor}</span>
+                                    <span className="db-info-val">{selectMtColor}</span>
                                     
                                 </div>
                                 {storeInit?.IsDiamondCustomization === 1 && diaQcCombo?.length > 0 && diaList?.length ? (

@@ -12,6 +12,7 @@ import { fetchPayMaster } from "@/app/(core)/utils/API/OrderFlow/Paymaster";
 import Cookies from 'js-cookie'
 
 import { NEXT_APP_WEB } from "@/app/(core)/utils/env";
+import { getSession } from "../utils/FetchSessionData";
 
 // Detect theme based on REACT_APP_WEB value
 const detectThemeNumber = () => {
@@ -110,7 +111,7 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const storedPayMaster = sessionStorage.getItem("payMaster");
+                const storedPayMaster = getSession("payMaster");
                 if (!storedPayMaster) {
                     const payMaster = await fetchPayMaster();
                     const res = payMaster?.Data?.rd;
@@ -145,8 +146,8 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
 
     const callAllApi = async () => {
         const storeInit = getStoreInit;
-        const loginUserDetail = JSON?.parse(sessionStorage.getItem("loginUserDetail"));
-        const LoginUser = JSON?.parse(sessionStorage.getItem("LoginUser"));
+        const loginUserDetail = getSession("loginUserDetail");
+        const LoginUser = getSession("LoginUser");
         const visiterID = Cookies.get("visiterId");
 
         const finalID = storeInit?.IsB2BWebsite === 0 ? (LoginUser === false ? visiterID : loginUserDetail?.id || "0") : loginUserDetail?.id || "0";
