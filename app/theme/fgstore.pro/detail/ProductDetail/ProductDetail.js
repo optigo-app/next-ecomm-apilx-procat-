@@ -540,15 +540,24 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   }, [singleProd]);
 
   useEffect(() => {
-    let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
-    let mcArr;
+    const mtColorLocal = getSession("MetalColorCombo");
 
-    if (mtColorLocal?.length) {
-      mcArr = mtColorLocal?.filter((ele) => ele?.id == (singleProd?.MetalColorid ?? singleProd1?.MetalColorid))[0];
+    if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
+      setSelectMtColor(null);
+      return;
     }
 
-    setSelectMtColor(mcArr?.colorname);
+    const metalColorId = singleProd?.MetalColorid ?? singleProd1?.MetalColorid;
+
+    const matchedColor = mtColorLocal.find(
+      (ele) => String(ele?.id) === String(metalColorId)
+    );
+
+    const finalColor = matchedColor || mtColorLocal[0];
+
+    setSelectMtColor(finalColor?.colorname ?? null);
   }, [singleProd]);
+
 
   const callAllApi = () => {
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
@@ -1026,24 +1035,23 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const metalColorName = () => {
-    if (typeof window === "undefined") return null; // <--- IMPORTANT FIX
-
-    let mcArr;
-    let mtColorLocal = null;
+    if (typeof window === "undefined") return null;
 
     try {
-      // JSON.parse(sessionStorage.getItem("MetalColorCombo"))
-      mtColorLocal = getSession("MetalColorCombo");
-    } catch (e) {
-      mtColorLocal = null;
-    }
+      const mtColorLocal = getSession("MetalColorCombo");
+      if (!Array.isArray(mtColorLocal) || !selectMtColor) return null;
 
-    if (mtColorLocal?.length) {
-      mcArr = mtColorLocal?.filter((ele) => ele?.colorcode == selectMtColor)[0];
-    }
+      const selectedColor = mtColorLocal.find(
+        (item) => String(item?.colorcode) === String(selectMtColor)
+      );
 
-    return mcArr?.metalcolorname;
+      return selectedColor?.metalcolorname ?? null;
+    } catch (error) {
+      console.error("metalColorName error:", error);
+      return null;
+    }
   };
+
 
   useEffect(() => {
     try {

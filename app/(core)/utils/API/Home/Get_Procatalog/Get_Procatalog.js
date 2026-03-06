@@ -4,9 +4,9 @@ import { CommonAPI } from "../../CommonAPI/CommonAPI";
 export const Get_Procatalog = async (mode, customerID, ALCID) => {
 
     let response;
-const ALCID_Value = ALCID > 0 ? ALCID : "";
-try {
-        const storeInit = getSession("storeInit") ?? ""
+    const ALCID_Value = ALCID > 0 ? ALCID : "";
+    try {
+        const storeInit = getSession("storeInit") ?? "";
         let userLogin = getSession('LoginUser')
         const combinedValue = JSON.stringify({
             "FrontEnd_RegNo": `${storeInit?.FrontEnd_RegNo}`,
