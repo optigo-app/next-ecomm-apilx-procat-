@@ -555,7 +555,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     const finalColor = matchedColor || mtColorLocal[0];
 
-    setSelectMtColor(finalColor?.colorname ?? null);
+    setSelectMtColor(finalColor?.colorcode ?? null);
   }, [singleProd]);
 
 
