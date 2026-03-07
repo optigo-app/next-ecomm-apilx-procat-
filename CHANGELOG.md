@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2026-03-07]
+
+### Fixed
+
+- **ProductDetail.js**: Fixed metal color dropdown not reflecting the product's color on initial load.
+  - **Old behavior**: `selectMtColor` was initialized with the color name (e.g., "ROSE"), which didn't match the dropdown option values (color codes like "RG").
+  - **New behavior**: `selectMtColor` is initialized with the color code, ensuring the dropdown correctly reflects the current metal color.
+  - **Reason**: Dropdown options in `DetailBlock.jsx` use `colorcode` as values; if the state doesn't match, the dropdown shows the first entry by default.
+
 ## [2026-03-05]
 
 ### Fixed
