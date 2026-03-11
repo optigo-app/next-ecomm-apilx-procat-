@@ -145,6 +145,9 @@ const CartItem = ({
   // const isLoading = imageSrc === '' || imageSrc === undefined || imageSrc === null;
   // const isLoading = item && item?.loading === true;
 
+
+  console.log(item, "item")
+
   return (
     <Grid
       item
@@ -253,6 +256,11 @@ const CartItem = ({
                   }
                 </div>
               </div>
+                <Box variant="body2" className='proCat_card-ContentsData' sx={{
+                  fontWeight:'bold' ,
+                }}>
+                    Qty : {item?.Quantity ?? 1}
+                </Box>
               <Box className="proCat_PriceBox">
                 <>
                   {storeinit?.IsPriceShow == 1 &&

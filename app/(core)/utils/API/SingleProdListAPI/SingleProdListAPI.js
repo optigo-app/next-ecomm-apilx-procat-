@@ -2,8 +2,6 @@ import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId, AlbumName = '') => {
-console.log("🚀 ~ SingleProdListAPI ~ obj:", obj)
-
   let storeinit = getSession("storeInit");
   let loginInfo = getSession("loginUserDetail");
   const islogin = getSession("LoginUser") ?? false;

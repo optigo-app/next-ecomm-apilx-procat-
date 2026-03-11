@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Skeleton, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Skeleton, Typography, TextField } from "@mui/material";
 import { IoIosPlayCircle } from "react-icons/io";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Navigation, FreeMode, Keyboard } from "swiper/modules";
@@ -80,12 +80,20 @@ const DetailBlock = ({
     // cart
     addToCartFlag,
     handleCart,
+
+    quantity,
+    handleCartQuantity,
+    isQtyLoading,
+
+    remarks,
+    handleRemarkChange,
+    isRemarkLoading,
 }) => {
     const thumbScrollRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 1;
-
+    const IsRemarkOnProductDetail = storeInit?.IsRemarkOnProductDetail == 1;
 
     const checkScrollability = () => {
         const el = thumbScrollRef.current;
@@ -360,7 +368,10 @@ const DetailBlock = ({
                                                                 {singleProd?.IsMrpBase === 1 ? (
                                                                     <span className="db-field-value">{metalColorCombo?.find((e) => e?.id === singleProd?.MetalColorid)?.metalcolorname}</span>
                                                                 ) : (
-                                                                    <select className="db-classy-select" value={selectMtColor} onChange={(e) => handleMetalWiseColorImg(e)}>
+                                                                    <select className="db-classy-select" value={selectMtColor} onChange={(e) => {
+                                                                        handleMetalWiseColorImg(e);
+                                                                        handleCustomChange(e, "mtc");
+                                                                    }}>
                                                                         {metalColorCombo.map((ele) => (
                                                                             <option key={ele?.id} value={ele?.colorcode}>
                                                                                 {ele?.metalcolorname}
@@ -540,8 +551,39 @@ const DetailBlock = ({
                                                         ? "GO TO CART"
                                                         : "REMOVE FROM CART"}
                                             </button>
-                                            <QuantityInput />
+                                            {IsMultiVariantCart && (<>   <QuantityInput
+                                                singleProd={singleProd}
+                                                defaultValue={quantity}
+                                                onChange={handleCartQuantity}
+                                                disabled={isQtyLoading}
+                                                isLoading={prodLoading || isQtyLoading}
+                                            />
+                                            </>)}
                                         </Box>
+
+                                        {IsRemarkOnProductDetail && (
+                                            <Box sx={{ mt: 2, width: '100%' }}>
+                                                {prodLoading || isRemarkLoading ? (
+                                                    <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: '4px' }} />
+                                                ) : (
+                                                    <TextField
+                                                        fullWidth
+                                                        label="Remarks"
+                                                        variant="outlined"
+                                                        multiline
+                                                        rows={2}
+                                                        value={remarks}
+                                                        onChange={(e) => handleRemarkChange(e.target.value)}
+                                                        placeholder="Add a remark to this item..."
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                borderRadius: '8px',
+                                                            },
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        )}
 
 
                                         {singleProd?.InStockDays !== 0 && <p className="db-delivery-txt">Express Shipping · In Stock — {singleProd?.InStockDays} Days Delivery</p>}
