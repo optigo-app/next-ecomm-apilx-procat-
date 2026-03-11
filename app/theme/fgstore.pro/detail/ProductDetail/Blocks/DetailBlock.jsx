@@ -9,6 +9,8 @@ import { HiOutlineChevronRight } from "react-icons/hi2";
 import { HiOutlineChevronLeft } from "react-icons/hi2";
 import { formatTitleLine } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import "../detailBlock.scss";
+import QuantityInput from "../QuantityInput";
+
 
 const imageNotFound = "/image-not-found.jpg";
 
@@ -44,6 +46,7 @@ const DetailBlock = ({
     storeInit,
 
     // customization
+    selectMtColorName,
     metalTypeCombo,
     metalColorCombo,
     diaQcCombo,
@@ -81,6 +84,8 @@ const DetailBlock = ({
     const thumbScrollRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 1;
+
 
     const checkScrollability = () => {
         const el = thumbScrollRef.current;
@@ -188,7 +193,7 @@ const DetailBlock = ({
                                             </button>
                                         )} */}
 
-                                       {(!isImageload || !imagePromise) &&  <div className="db-thumb-strip" ref={thumbScrollRef}>
+                                        {(!isImageload || !imagePromise) && <div className="db-thumb-strip" ref={thumbScrollRef}>
                                             {pdThumbImg?.map((ele, i) => {
                                                 const firstHalf = ele?.thumbImageUrl?.split("/Design_Thumb")[0];
                                                 const secondhalf = ele?.thumbImageUrl?.split("/Design_Thumb")[1]?.split(".")[0];
@@ -253,7 +258,7 @@ const DetailBlock = ({
                                                 </div>
                                             ))}
                                         </div>
-}
+                                        }
                                         {/* {totalThumbs > 4 && (
                                             <button className="db-thumb-chevron" onClick={() => scrollThumbs(1)} disabled={!canScrollRight} aria-label="Scroll thumbnails right">
                                                 <HiOutlineChevronRight />
@@ -280,8 +285,8 @@ const DetailBlock = ({
                                 </div>
                                 <div className="db-info-row">
                                     <span>Metal Color :</span>
-                                    <span className="db-info-val">{selectMtColor}</span>
-                                    
+                                    <span className="db-info-val">{selectMtColorName}</span>
+
                                 </div>
                                 {storeInit?.IsDiamondCustomization === 1 && diaQcCombo?.length > 0 && diaList?.length ? (
                                     <div className="db-info-row">
@@ -505,9 +510,39 @@ const DetailBlock = ({
                                 {/* ── Cart + Delivery ── */}
                                 {prodLoading ? null : (
                                     <div>
-                                        <button className={` bhtn proCat_AddToCart_btn ${!addToCartFlag ? "btnColorProCatProduct" : "proCat_AddToCart_btn"}`} onClick={() => handleCart(!addToCartFlag)}>
+                                        {/* <button className={` bhtn proCat_AddToCart_btn ${!addToCartFlag ? "btnColorProCatProduct" : "proCat_AddToCart_btn"}`} onClick={() => handleCart(!addToCartFlag)}>
                                             {!addToCartFlag ? "ADD TO CART" : "REMOVE FROM CART"}
-                                        </button>
+                                        </button> */}
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                                width: '100%',
+                                                height: '100%',
+                                                marginTop: '16px'
+                                            }}
+                                        >
+                                            <button
+                                                className={`bhtn proCat_AddToCart_btn ${!addToCartFlag ? "btnColorProCatProduct" : "proCat_AddToCart_btn"
+                                                    }`}
+                                                onClick={() => {
+                                                    if (addToCartFlag && IsMultiVariantCart) {
+                                                        navigate.push("/cartPage");
+                                                    } else {
+                                                        handleCart(!addToCartFlag);
+                                                    }
+                                                }}
+                                            >
+                                                {!addToCartFlag
+                                                    ? "ADD TO CART"
+                                                    : IsMultiVariantCart
+                                                        ? "GO TO CART"
+                                                        : "REMOVE FROM CART"}
+                                            </button>
+                                            <QuantityInput />
+                                        </Box>
+
 
                                         {singleProd?.InStockDays !== 0 && <p className="db-delivery-txt">Express Shipping · In Stock — {singleProd?.InStockDays} Days Delivery</p>}
                                         {singleProd?.MakeOrderDays !== 0 && <p className="db-delivery-txt">Make To Order · {singleProd?.MakeOrderDays} Days Delivery</p>}
