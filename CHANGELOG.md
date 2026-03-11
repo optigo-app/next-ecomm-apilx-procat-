@@ -9,7 +9,24 @@
   - **New behavior**: `selectMtColor` is initialized with the color code, ensuring the dropdown correctly reflects the current metal color.
   - **Reason**: Dropdown options in `DetailBlock.jsx` use `colorcode` as values; if the state doesn't match, the dropdown shows the first entry by default.
 
-## [2026-03-05]
+## [2026-03-11]
+
+### Changed
+
+- **ProductDetail.js**: Implemented multi-variant cart logic and fixed metal color passing.
+  - **Multi-variant Cart**: Added `quantity` state and updated `handleCart` to pass `Quantity` to the API.
+  - **Cart Flag Fix**: Updated `handleCustomChange` to refresh `addToCartFlag` based on the `IsInCart` value from the variant API response.
+  - **Metal Color Fix**: Ensured `handleCart` prioritizes `mcArr?.id` (derived from selected color) over the base product ID.
+  - **Autocode Fix**: Prioritized variant-specific `autocode` in cart/wishlist operations for correct multi-variant support.
+  - **Criteria Binding Fix**: Refactored mount effects to correctly bind Metal, Diamond, Stone criteria and Size from URL parameters when navigating from the cart [2026-03-11].
+  - **Debounced Quantity Updater**: Implemented 500ms debouncing for quantity updates on the detail page, including loading states and header cart count synchronization. Optimized to only call API if item is already in cart [2026-03-11].
+  - **Product Remarks**: Added a debounced remarks input field to the product detail page, allowing users to save custom notes for specific variants once they are in the cart [2026-03-11].
+  - **Crash Fix**: Added optional chaining to `split()` calls in `handleCart` and `handleWishList` to prevent crashes if user interacts before criteria are fully initialized [2026-03-11].
+- **DetailBlock.jsx**: Passed `quantity` and its setter to `QuantityInput` component.
+- **Cart.js (hook)**: 
+  - Updated `handleMoveToDetail` to pass all item-specific criteria and size to the product detail page [2026-03-11].
+  - Implemented silent cart refresh in `getCartData` to support multi-variant item merging without full UI blocking.
+  - Added intelligent item re-selection after refresh to maintain user context based on `IsMultiVariantCart` flag [2026-03-11].
 
 ### Fixed
 

@@ -50,6 +50,8 @@ import StockBlock from "./Blocks/StockBlock";
 import ProductDetailsSection from "./Blocks/ProductDetailsSection";
 import DetailBlock from "./Blocks/DetailBlock";
 import { getSession } from "@/app/(core)/utils/FetchSessionData";
+import { updateQuantity } from "@/app/(core)/utils/API/CartAPI/QuantityAPI";
+import { handleProductRemark } from "@/app/(core)/utils/API/CartAPI/ProductRemarkAPIData";
 
 const imageNotFound = "/image-not-found.jpg";
 
@@ -96,7 +98,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const [imageStates, setImageStates] = useState({});
   const [imageSrc, setImageSrc] = useState();
   const [selectedMetalColor, setSelectedMetalColor] = useState();
+  const [remarks, setRemarks] = useState("");
+  const [isRemarkLoading, setIsRemarkLoading] = useState(false);
 
+  const [quantity, setQuantity] = useState(1);
+  const [isQtyLoading, setIsQtyLoading] = useState(false);
   const [stockItemArr, setStockItemArr] = useState([]);
   const [SimilarBrandArr, setSimilarBrandArr] = useState([]);
   const [cartArr, setCartArr] = useState({});
@@ -341,6 +347,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       // Update cart status based on singleProd
       const isInCart = singleProd?.IsInCart !== 0; // Simplified check
+      const qty = singleProd?.CartQuantity;
+      setQuantity(qty && qty > 0 ? qty : 1);
       setAddToCartFlag(isInCart);
     };
 
@@ -365,10 +373,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let metal = metalTypeCombo?.filter((ele) => ele?.metaltype == selectMtType)[0];
     // ??
     // metalTypeCombo[0];
-    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc.split(",")[0] && ele?.color == selectDiaQc.split(",")[1]);
+    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc?.split(",")[0] && ele?.color == selectDiaQc?.split(",")[1]);
     // ??
     // diaQcCombo[0];
-    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc.split(",")[0] && ele?.color == selectCsQc.split(",")[1]);
+    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1]);
     // ??
     // csQcCombo[0];
 
@@ -383,20 +391,20 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         return ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid);
       }
     })[0];
-    console.log("🚀 ~ handleCart ~ mcArr:", mcArr)
 
     let prodObj = {
-      autocode: singleProd?.autocode,
+      autocode: singleProd1?.autocode ?? singleProd?.autocode,
       Metalid: metal?.Metalid ? metal?.Metalid : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
       MetalColorId: mcArr?.id ?? singleProd?.MetalColorid,
       DiaQCid: dia?.length ? `${dia[0]?.QualityId},${dia[0]?.ColorId}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
       CsQCid: cs?.length ? `${cs[0]?.QualityId},${cs[0]?.ColorId}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
-      Size: sizeData ?? singleProd?.DefaultSize,
+      Size: sizeData ?? singleProd1?.DefaultSize ?? singleProd?.DefaultSize,
       Unitcost: singleProd1?.UnitCost ?? singleProd?.UnitCost,
       markup: singleProd1?.DesignMarkUp ?? singleProd?.DesignMarkUp,
       UnitCostWithmarkup: singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
       Remark: "",
       AlbumName: decodeUrl?.n ?? "",
+      Quantity: quantity,
     };
 
     if (cartflag) {
@@ -432,8 +440,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     setWishListFlag(e?.target?.checked);
 
     let metal = metalTypeCombo?.filter((ele) => ele?.metaltype == selectMtType)[0] ?? metalTypeCombo[0];
-    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc.split(",")[0] && ele?.color == selectDiaQc.split(",")[1])[0] ?? diaQcCombo[0];
-    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc.split(",")[0] && ele?.color == selectCsQc.split(",")[1])[0] ?? csQcCombo[0];
+    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc?.split(",")[0] && ele?.color == selectDiaQc?.split(",")[1])[0] ?? diaQcCombo[0];
+    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1])[0] ?? csQcCombo[0];
     let mcArr = metalColorCombo?.filter((ele) => ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid))[0];
 
     let prodObj = {
@@ -510,33 +518,24 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         let logininfoInside = loginUserDetail;
 
         if (mtTypeLocal?.length) {
-          metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == (decodeobj?.m ? decodeobj?.m : (logininfoInside?.MetalId ?? storeinitInside?.MetalId)))[0];
+          metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == (decodeUrl?.m ? decodeUrl?.m : (logininfoInside?.MetalId ?? storeinitInside?.MetalId)))[0];
         }
 
         if (diaQcLocal?.length) {
-          diaArr = diaQcLocal?.filter((ele) => ele?.QualityId == (decodeobj?.d ? decodeobj?.d?.split(",")[0] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[0]) && ele?.ColorId == (decodeobj?.d ? decodeobj?.d?.split(",")[1] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[1]))[0];
+          diaArr = diaQcLocal?.filter((ele) => ele?.QualityId == (decodeUrl?.d ? decodeUrl?.d?.split(",")[0] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[0]) && ele?.ColorId == (decodeUrl?.d ? decodeUrl?.d?.split(",")[1] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[1]))[0];
         }
 
         if (csQcLocal?.length) {
-          csArr = csQcLocal?.filter((ele) => ele?.QualityId == (decodeobj?.c ? decodeobj?.c?.split(",")[0] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[0]) && ele?.ColorId == (decodeobj?.c ? decodeobj?.c?.split(",")[1] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[1]))[0];
+          csArr = csQcLocal?.filter((ele) => ele?.QualityId == (decodeUrl?.c ? decodeUrl?.c?.split(",")[0] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[0]) && ele?.ColorId == (decodeUrl?.c ? decodeUrl?.c?.split(",")[1] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[1]))[0];
         }
 
-        setSelectMtType(metalArr?.metaltype);
+        if (metalArr) setSelectMtType(metalArr?.metaltype);
+        if (diaArr) setSelectDiaQc(`${diaArr?.Quality},${diaArr?.color}`);
+        if (csArr) setSelectCsQc(`${csArr?.Quality},${csArr?.color}`);
 
-        setSelectDiaQc(`${diaArr?.Quality},${diaArr?.color}`);
-
-        setSelectCsQc(`${csArr?.Quality},${csArr?.color}`);
-
-        // let InitialSize = (singleProd && singleProd.DefaultSize !== "")
-        //                       ? singleProd?.DefaultSize
-        //                       : (SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)?.sizename === undefined ? SizeCombo?.rd[0]?.sizename : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)?.sizename)
-        // if(InitialSize){
-        //   setSizeData(InitialSize)
-        // }
-
-        // if(metalArr || diaArr || csArr || InitialSize){
-        //   setCustomObj({metalArr, diaArr, csArr ,InitialSize})
-        // }
+        if (decodeUrl?.s) {
+          setSizeData(decodeUrl?.s);
+        }
       }
     }, 500);
   }, [singleProd]);
@@ -712,7 +711,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setDecodeUrl(decodeobj);
       alName = decodeobj?.n;
     }
-    
+
+
     let mtTypeLocal = getSession("metalTypeCombo");
 
     let diaQcLocal = getSession("diamondQualityColorCombo");
@@ -739,7 +739,13 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     }
 
     if (MetalColorLocal) {
+      console.log(decodeobj, "decodeobj")
       MetalColorArr = MetalColorLocal?.filter((ele) => ele?.id == decodeobj?.i)[0];
+      console.log(MetalColorArr, "MetalColorArr")
+    }
+
+    if (decodeobj?.s) {
+      setSizeData(decodeobj?.s);
     }
 
     const FetchProductData = async () => {
@@ -759,20 +765,24 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         mt: metalArr ? metalArr : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
         diaQc: diaArr ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
         csQc: csArr ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
-        MetalColorId : MetalColorArr ? MetalColorArr?.id : ''
+        MetalColorId: MetalColorArr ? MetalColorArr?.id : ''
       };
 
       setProdLoading(true);
 
       setisPriceLoading(true);
+      setQuantity(1);
 
-      await SingleProdListAPI(decodeobj, sizeData, obj, cookie, alName)
+      await SingleProdListAPI(decodeobj, decodeobj?.s ?? sizeData, obj, cookie, alName)
         .then(async (res) => {
           if (res) {
             setSingleProd(res?.pdList[0]);
 
             if (res?.pdList?.length > 0) {
               setisPriceLoading(false);
+              const qty = res?.pdList[0]?.CartQuantity;
+              setQuantity(qty && qty > 0 ? qty : 1);
+              setRemarks(res?.pdList[0]?.Remarks ?? "");
               // setIsImageLoad(false)
               // setSelectedThumbImg({
               //   link: "",
@@ -809,6 +819,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             await getSizeData(resp?.pdList[0], cookie)
               .then((res) => {
                 // console.log("Sizeres",res)
+                console.log(res?.Data, "res?.Data")
                 setSizeCombo(res?.Data);
               })
               .catch((err) => console.log("SizeErr", err));
@@ -1342,12 +1353,15 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let diaArr;
     let csArr;
     let size;
+    let mtColor;
 
-    let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
+    let mtTypeLocal = getSession("metalTypeCombo");
 
-    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
+    let diaQcLocal = getSession("diamondQualityColorCombo");
 
-    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let csQcLocal = getSession("ColorStoneQualityColorCombo");
+
+    let MetalColorLocal = getSession("MetalColorCombo");
 
     if (type === "mt") {
       metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == e.target.value)[0]?.Metalid;
@@ -1365,6 +1379,13 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setSizeData(e.target.value);
       size = e.target.value;
     }
+    if (type === "mtc") {
+      const Value = e.target.value;
+      mtColor = MetalColorLocal?.filter((ele) => {
+        return ele?.colorcode == Value;
+      })
+    }
+
 
     if (metalArr == undefined) {
       metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == selectMtType)[0]?.Metalid;
@@ -1377,11 +1398,17 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (csArr == undefined) {
       csArr = csQcLocal?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1])[0];
     }
+    if (mtColor == undefined) {
+      mtColor = MetalColorLocal?.filter((ele) => {
+        return ele?.colorcode?.toLowerCase() == selectMtColor?.toLowerCase();
+      })
+    }
 
     let obj = {
       mt: metalArr ?? 0,
       diaQc: `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}`,
       csQc: `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}`,
+      MetalColorId: mtColor?.[0]?.id ?? singleProd?.MetalColorid,
     };
 
     let prod = {
@@ -1396,7 +1423,12 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         setSingleProd1(res?.pdList[0]);
 
         if (res?.pdList?.length > 0) {
+          console.log(res, "res")
           setisPriceLoading(false);
+          setAddToCartFlag(res?.pdList[0]?.IsInCart !== 0);
+          const qty = res?.pdList?.[0]?.CartQuantity;
+          setQuantity(qty && qty > 0 ? qty : 1);
+
         }
         setDiaList(res?.pdResp?.rd3);
         setCsList(res?.pdResp?.rd4);
@@ -1405,6 +1437,55 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       .catch((err) => {
         console.log("customProdDetailErr", err);
       });
+  };
+
+  const debounceTimeoutRef = useRef(null);
+
+  const handleCartQuantity = async (id, value) => {
+    setQuantity(value);
+
+    if (addToCartFlag) {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = setTimeout(async () => {
+        setIsQtyLoading(true);
+        try {
+          const response = await updateQuantity(id, value, cookie);
+          console.log("🚀 ~ handleCartQuantity ~ response:", response)
+        } catch (error) {
+          console.error("Error updating quantity:", error);
+        } finally {
+          setIsQtyLoading(false);
+        }
+      }, 500);
+    }
+  };
+
+  const handleRemarkChange = async (value) => {
+    setRemarks(value);
+
+    // if (addToCartFlag) {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    debounceTimeoutRef.current = setTimeout(async () => {
+      setIsRemarkLoading(true);
+      try {
+        const prodObj = {
+          id: singleProd?.CartId,
+          autocode: singleProd?.autocode
+        }
+        const response = await handleProductRemark(prodObj, value, cookie);
+        console.log("🚀 ~ handleRemarkChange ~ response:", response)
+      } catch (error) {
+        console.error("Error updating remarks:", error);
+      } finally {
+        setIsRemarkLoading(false);
+      }
+    }, 500);
+    // }
   };
 
   const formatter = new Intl.NumberFormat("en-IN");
@@ -1575,7 +1656,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   setSelectedThumbImg={setSelectedThumbImg}
                   setThumbImgIndex={setThumbImgIndex}
 
-                  prodLoading={prodLoading}
                   setProdLoading={setProdLoading}
                   nextindex={nextindex}
 
@@ -1612,11 +1692,18 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   isPriceloading={isPriceloading}
                   loginInfo={loginInfo}
 
+                  quantity={quantity}
+                  handleCartQuantity={handleCartQuantity}
+                  isQtyLoading={isQtyLoading}
+                  prodLoading={prodLoading}
+
+                  remarks={remarks}
+                  handleRemarkChange={handleRemarkChange}
+                  isRemarkLoading={isRemarkLoading}
+
                   addToCartFlag={addToCartFlag}
                   handleCart={handleCart}
                 />
-
-
 
                 <ProductDetailsSection
                   diaList={diaList}

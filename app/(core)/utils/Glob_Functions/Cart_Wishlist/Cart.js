@@ -11,8 +11,10 @@ import Cookies from "js-cookie";
 import { fetchSingleProdDT } from '@/app/(core)/utils/API/CartAPI/SingleProdDtAPI';
 import { formatRedirectTitleLine } from '@/app/(core)/utils/Glob_Functions/GlobalFunction';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import { useStore } from '@/app/(core)/contexts/StoreProvider';
 
 const useCart = () => {
+  const { storeinit, loginUserDetail } = useStore();
   const location = useNextRouterLikeRR();
   const navigate = location.push;
   const [isloding, setIsLoading] = useState(false);
@@ -69,15 +71,14 @@ const useCart = () => {
   useEffect(() => {
     const visiterIdVal = Cookies.get('visiterId');
     setVisiterId(visiterIdVal)
-    const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
-    const storedData = JSON.parse(sessionStorage.getItem("loginUserDetail"));
-    setStoreInit(storeInit)
-    if (storeInit?.IsB2BWebsite != 0) {
+    const storedData = loginUserDetail
+    setStoreInit(storeinit)
+    if (storeinit?.IsB2BWebsite != 0) {
       setCurrencyData(storedData)
       const cartStatus = sessionStorage.getItem('isCartDrawer')
       setCartDrawer(cartStatus)
     } else {
-      setCurrencyData(storeInit)
+      setCurrencyData(storeinit)
     }
   }, [])
 
@@ -93,24 +94,48 @@ const useCart = () => {
     setColorStoneCombo(CSQtyColorData);
   }, [])
 
-  const getCartData = async () => {
-    setIsLoading(true);
+  const getCartData = async (isSilent = false) => {
+    if (!isSilent) {
+      setIsLoading(true);
+    }
     const visiterId = Cookies.get('visiterId');
     try {
       const response = await fetchCartDetails(visiterId);
 
       if (response?.Data?.rd[0]?.stat != 0) {
-        setCartData(response?.Data?.rd);
-        setFinalCartData(response.Data?.rd);
-        if (response?.Data?.rd?.length > 0) {
-          setSelectedItem(response?.Data?.rd[0]);
-          let item = response?.Data?.rd[0]
-          setQtyCount(item?.Quantity)
-          handleCategorySize(item);
-          setMetalID(response?.Data?.rd[0]?.metaltypeid)
-          setMetalCOLORID(response?.Data?.rd[0]?.metalcolorid)
-          setdiaID(response?.Data?.rd[0]?.diamondqualityid + ',' + response?.Data?.rd[0]?.diamondcolorid)
-          setColorStoneID(response?.Data?.rd[0]?.colorstonequalityid + ',' + response?.Data?.rd[0]?.colorstonecolorid)
+        const newData = response?.Data?.rd;
+        setCartData(newData);
+        setFinalCartData(newData);
+
+        if (newData?.length > 0) {
+          let itemToSelect = newData[0];
+
+          if (selectedItem) {
+            const foundItem = newData.find(item => {
+              if (storeinit?.IsMultiVariantCart == 1) {
+                return item?.designno === selectedItem?.designno &&
+                  item?.metaltypeid === selectedItem?.metaltypeid &&
+                  item?.diamondqualityid === selectedItem?.diamondqualityid &&
+                  item?.diamondcolorid === selectedItem?.diamondcolorid &&
+                  item?.colorstonequalityid === selectedItem?.colorstonequalityid &&
+                  item?.colorstonecolorid === selectedItem?.colorstonecolorid &&
+                  item?.Size === selectedItem?.Size;
+              }
+              return item?.id === selectedItem?.id;
+            });
+
+            if (foundItem) {
+              itemToSelect = foundItem;
+            }
+          }
+
+          setSelectedItem(itemToSelect);
+          setQtyCount(itemToSelect?.Quantity);
+          handleCategorySize(itemToSelect);
+          setMetalID(itemToSelect?.metaltypeid);
+          setMetalCOLORID(itemToSelect?.metalcolorid);
+          setdiaID(itemToSelect?.diamondqualityid + ',' + itemToSelect?.diamondcolorid);
+          setColorStoneID(itemToSelect?.colorstonequalityid + ',' + itemToSelect?.colorstonecolorid);
         }
       }
     } catch (error) {
@@ -229,6 +254,7 @@ const useCart = () => {
     } catch (error) {
       console.error("Error:", error);
     } finally {
+
     }
   };
 
@@ -239,6 +265,7 @@ const useCart = () => {
     try {
       const response = await getSizeData(item, visiterId);
       if (response) {
+        console.log(response?.Data, "getSizeData?.Data")
         setSizeCombo(response?.Data)
         setSizeId(item?.Size)
 
@@ -297,6 +324,7 @@ const useCart = () => {
           if (resStatus?.msg == "success") {
             setOpenMobileModal(false);
             setHandleUpdate(resStatus)
+            getCartData(true);
             // toast.success('Cart Updated Successfully')
             let updatedCartData;
 
@@ -335,6 +363,7 @@ const useCart = () => {
         if (resStatus?.msg == "success") {
           setOpenMobileModal(false);
           setHandleUpdate(resStatus)
+          getCartData(true);
           // toast.success('Cart Updated Successfully')
 
           const Price = updatedItems?.UnitCostWithMarkUp * qtyCount;
@@ -442,6 +471,7 @@ const useCart = () => {
     if (storeInit?.Themeno != 3) {
       try {
         const response = await updateQuantity(item.id, newQuantity, visiterId);
+        getCartData(true);
         // console.log("Quantity updated successfully:", response);
       } catch (error) {
         console.error("Failed to update quantity:", error);
@@ -460,6 +490,7 @@ const useCart = () => {
       if (storeInit?.Themeno != 3) {
         try {
           const response = await updateQuantity(item.id, newQuantity, visiterId);
+          getCartData(true);
           // console.log("Quantity updated successfully:", response);
         } catch (error) {
           console.error("Failed to update quantity:", error);
@@ -742,6 +773,23 @@ const useCart = () => {
       navigate(`/d/${formatRedirectTitleLine(cartData?.TitleLine)}${cartData?.designno}?p=${encodedObj}`);
     }
 
+    if (storeinit?.IsMultiVariantCart == 1) {
+      let obj = {
+        a: cartData?.autocode,
+        b: cartData?.designno,
+        m: cartData?.metaltypeid,
+        d: cartData?.diamondqualityid,
+        c: cartData?.colorstonequalityid,
+        f: {},
+        g: [["", ""], ["", "", ""]],
+        i: cartData?.metalcolorid,
+        l: cartData?.ImageExtension,
+        count: cartData?.ImageCount,
+        s: cartData?.Size,
+      };
+      createAndNavigate(obj);
+    }
+
     if (cartData?.StockNo !== "") {
       let obj = {
         a: cartData?.autocode,
@@ -751,9 +799,10 @@ const useCart = () => {
         c: logindata?.cmboCSQCid,
         f: {},
         g: [["", ""], ["", "", ""]],
-        i: cartData?.MetalColorid,
+        i: cartData?.metalcolorid,
         l: cartData?.ImageExtension,
         count: cartData?.ImageCount,
+        s: cartData?.Size,
       };
       createAndNavigate(obj);
     } else {
@@ -761,17 +810,20 @@ const useCart = () => {
         a: cartData?.autocode,
         b: cartData?.designno,
         m: cartData?.metaltypeid,
-        d: diaIDData,
-        c: colorStoneID,
+        d: `${cartData?.diamondqualityid},${cartData?.diamondcolorid}`,
+        c: `${cartData?.colorstonequalityid},${cartData?.colorstonecolorid}`,
         f: {},
         g: [["", ""], ["", "", ""]],
-        i: cartData?.MetalColorid,
+        i: cartData?.metalcolorid,
         l: cartData?.ImageExtension,
         count: cartData?.ImageCount,
+        s: cartData?.Size,
       };
       createAndNavigate(obj);
     }
+
   };
+
 
 
   // browse our collection
