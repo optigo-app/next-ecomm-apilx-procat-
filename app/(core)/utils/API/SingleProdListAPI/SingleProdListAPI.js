@@ -2,6 +2,7 @@ import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId, AlbumName = '') => {
+console.log("🚀 ~ SingleProdListAPI ~ obj:", obj)
 
   let storeinit = getSession("storeInit");
   let loginInfo = getSession("loginUserDetail");
@@ -36,6 +37,7 @@ export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId
     // PageSize:`${storeinit?.PageSize}`,
     CurrencyRate: `${loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate}`,
     Metalid: `${obj?.mt == undefined ? (loginInfo?.MetalId ?? storeinit?.MetalId) : obj?.mt}`,
+    MetalColorId: `${obj?.MetalColorId == undefined ? '' : obj?.MetalColorId}`,
     DiaQCid: `${obj?.diaQc == undefined ? (loginInfo?.cmboDiaQCid ?? storeinit?.cmboDiaQCid) : obj?.diaQc}`,
     CsQCid: `${obj?.csQc == undefined ? (loginInfo?.cmboCSQCid ?? storeinit?.cmboCSQCid) : obj?.csQc ?? "0,0"}`,
     // Collectionid: `${filterObj?.collection ?? ""}`,

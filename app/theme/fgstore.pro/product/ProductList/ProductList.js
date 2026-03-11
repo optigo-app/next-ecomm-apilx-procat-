@@ -4132,6 +4132,8 @@ const Product_Card = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isHover, setIsHover] = useState(false);
 
+  const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 0;
+
   useEffect(() => {
     const delay = (i + 1) * 150;
 
@@ -4298,7 +4300,7 @@ const Product_Card = ({
           )}
         </p>
       </div>
-      <FormControlLabel
+    {IsMultiVariantCart && <FormControlLabel
         control={
           <Checkbox
             icon={
@@ -4362,7 +4364,7 @@ const Product_Card = ({
             ? "procat_cart_btn btnColorProCatProduct"
             : "procat_cart_btn_alter btnColorProCatProductRemoveCart"
         }
-      />
+      />}
     </div>
   )
 }

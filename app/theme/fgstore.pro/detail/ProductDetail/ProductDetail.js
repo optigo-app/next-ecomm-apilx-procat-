@@ -69,6 +69,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const [selectDiaQc, setSelectDiaQc] = useState();
   const [selectCsQc, setSelectCsQc] = useState();
   const [selectMtColor, setSelectMtColor] = useState();
+  const [selectMtColorName, setSelectMtColorName] = useState();
   const [pdThumbImg, setPdThumbImg] = useState([]);
   const [isImageload, setIsImageLoad] = useState(true);
   const [selectedThumbImg, setSelectedThumbImg] = useState({});
@@ -382,6 +383,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         return ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid);
       }
     })[0];
+    console.log("🚀 ~ handleCart ~ mcArr:", mcArr)
 
     let prodObj = {
       autocode: singleProd?.autocode,
@@ -544,6 +546,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
       setSelectMtColor(null);
+      setSelectMtColorName(null)
       return;
     }
 
@@ -556,6 +559,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     const finalColor = matchedColor || mtColorLocal[0];
 
     setSelectMtColor(finalColor?.colorcode ?? null);
+    setSelectMtColorName(finalColor?.colorname ?? null);
   }, [singleProd]);
 
 
@@ -708,16 +712,19 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setDecodeUrl(decodeobj);
       alName = decodeobj?.n;
     }
+    
+    let mtTypeLocal = getSession("metalTypeCombo");
 
-    let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
+    let diaQcLocal = getSession("diamondQualityColorCombo");
 
-    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
+    let csQcLocal = getSession("ColorStoneQualityColorCombo");
 
-    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let MetalColorLocal = getSession("MetalColorCombo");
 
     let metalArr;
     let diaArr;
     let csArr;
+    let MetalColorArr;
 
     if (mtTypeLocal?.length) {
       metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == decodeobj?.m)[0]?.Metalid;
@@ -729,6 +736,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     if (csQcLocal) {
       csArr = csQcLocal?.filter((ele) => ele?.QualityId == decodeobj?.c?.split(",")[0] && ele?.ColorId == decodeobj?.c?.split(",")[1])[0];
+    }
+
+    if (MetalColorLocal) {
+      MetalColorArr = MetalColorLocal?.filter((ele) => ele?.id == decodeobj?.i)[0];
     }
 
     const FetchProductData = async () => {
@@ -748,6 +759,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         mt: metalArr ? metalArr : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
         diaQc: diaArr ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
         csQc: csArr ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
+        MetalColorId : MetalColorArr ? MetalColorArr?.id : ''
       };
 
       setProdLoading(true);
@@ -1082,6 +1094,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     setSelectedMetalColor(mcArr?.colorcode);
     setSelectMtColor(selectedColorCode);
+    setSelectMtColorName(mcArr?.colorname);
 
     // Parse image/video data
     let parsedData = [];
@@ -1570,6 +1583,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   singleProd1={singleProd1}
                   storeInit={storeInit}
 
+                  selectMtColorName={selectMtColorName}
                   metalTypeCombo={metalTypeCombo}
                   metalColorCombo={metalColorCombo}
                   diaQcCombo={diaQcCombo}
