@@ -786,6 +786,7 @@ const useCart = () => {
         l: cartData?.ImageExtension,
         count: cartData?.ImageCount,
         s: cartData?.Size,
+        type: "IsMultiVariant"
       };
       createAndNavigate(obj);
     }

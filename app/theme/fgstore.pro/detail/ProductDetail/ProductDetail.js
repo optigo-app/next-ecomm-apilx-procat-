@@ -541,20 +541,21 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   }, [singleProd]);
 
   useEffect(() => {
+    const result = parseSearchParams();
+    let navVal = result[0]?.split("=")[1];
     const mtColorLocal = getSession("MetalColorCombo");
-
+    let decodeobj = decodeAndDecompress(navVal);
     if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
       setSelectMtColor(null);
       setSelectMtColorName(null)
       return;
     }
 
-    const metalColorId = singleProd?.MetalColorid ?? singleProd1?.MetalColorid;
+    const metalColorId = decodeobj?.i || singleProd?.MetalColorid || singleProd1?.MetalColorid;
 
     const matchedColor = mtColorLocal.find(
       (ele) => String(ele?.id) === String(metalColorId)
     );
-
     const finalColor = matchedColor || mtColorLocal[0];
 
     setSelectMtColor(finalColor?.colorcode ?? null);
