@@ -9,6 +9,15 @@
   - **New behavior**: `selectMtColor` is initialized with the color code, ensuring the dropdown correctly reflects the current metal color.
   - **Reason**: Dropdown options in `DetailBlock.jsx` use `colorcode` as values; if the state doesn't match, the dropdown shows the first entry by default.
 
+## [2026-03-12]
+
+### Fixed
+
+- **DetailBlock.jsx**: Fixed laggy typing and flickering effect in the product remark box.
+  - **Old behavior**: The `TextField` was replaced by a `Skeleton` during auto-saves (`isRemarkLoading`), causing loss of focus and flickering.
+  - **New behavior**: The `TextField` remains mounted during saving. The skeleton is only shown during initial product loading.
+  - **Reason**: To ensure a smooth, uninterrupted typing experience.
+
 ## [2026-03-11]
 
 ### Changed
