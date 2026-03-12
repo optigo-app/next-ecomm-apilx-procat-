@@ -518,6 +518,30 @@ const DetailBlock = ({
                                     </div>
                                 )}
 
+                                {IsRemarkOnProductDetail && (
+                                    <Box sx={{ mt: 2, width: '100%' }}>
+                                        {prodLoading ? (
+                                            <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: '4px' }} />
+                                        ) : (
+                                            <TextField
+                                                fullWidth
+                                                label="Remarks"
+                                                variant="outlined"
+                                                multiline
+                                                rows={2}
+                                                value={remarks}
+                                                onChange={(e) => handleRemarkChange(e.target.value)}
+                                                placeholder="Add a remark to this item..."
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        borderRadius: '0px',
+                                                    },
+                                                }}
+                                            />
+                                        )}
+                                    </Box>
+                                )}
+
                                 {/* ── Cart + Delivery ── */}
                                 {prodLoading ? null : (
                                     <div>
@@ -561,29 +585,7 @@ const DetailBlock = ({
                                             </>)}
                                         </Box>
 
-                                        {IsRemarkOnProductDetail && (
-                                            <Box sx={{ mt: 2, width: '100%' }}>
-                                                {prodLoading || isRemarkLoading ? (
-                                                    <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: '4px' }} />
-                                                ) : (
-                                                    <TextField
-                                                        fullWidth
-                                                        label="Remarks"
-                                                        variant="outlined"
-                                                        multiline
-                                                        rows={2}
-                                                        value={remarks}
-                                                        onChange={(e) => handleRemarkChange(e.target.value)}
-                                                        placeholder="Add a remark to this item..."
-                                                        sx={{
-                                                            '& .MuiOutlinedInput-root': {
-                                                                borderRadius: '8px',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            </Box>
-                                        )}
+
 
 
                                         {singleProd?.InStockDays !== 0 && <p className="db-delivery-txt">Express Shipping · In Stock — {singleProd?.InStockDays} Days Delivery</p>}

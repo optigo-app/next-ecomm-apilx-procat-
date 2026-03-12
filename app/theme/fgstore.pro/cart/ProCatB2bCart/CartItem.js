@@ -4,14 +4,14 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Checkbox,  Grid,  Skeleton, useMediaQuery } from '@mui/material';
-import Link  from 'next/link';
+import { Checkbox, Grid, Skeleton, useMediaQuery } from '@mui/material';
+import Link from 'next/link';
 import RemarkModal from './RemarkModal';
 import { GetCountAPI } from '@/app/(core)/utils/API/GetCount/GetCountAPI';
 import Cookies from "js-cookie";
 import { formatter } from '@/app/(core)/utils/Glob_Functions/GlobalFunction';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
-  const noImageFound = "/image-not-found.jpg";
+const noImageFound = "/image-not-found.jpg";
 
 const CartItem = ({
   item,
@@ -33,7 +33,7 @@ const CartItem = ({
   handleRemarkChange,
   handleSave,
   handleCancel,
-  openHandleUpdateCartModal ,
+  openHandleUpdateCartModal,
   storeinit
 }) => {
   const { islogin, setCartCountNum } = useStore();
@@ -164,7 +164,7 @@ const CartItem = ({
         sx={{
           boxShadow: !multiSelect && !isMobileScreen && selectedItem?.id == item?.id && 'rgb(175 130 56 / 68%) 1px 1px 1px 0px, rgb(175 130 56 / 68%) 0px 0px 0px 1px !important',
         }}
-      
+
       >
         <Box className="proCat_mui_CartBox" sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', position: 'relative' }}>
           {isLoading === true ? (
@@ -256,11 +256,11 @@ const CartItem = ({
                   }
                 </div>
               </div>
-                <Box variant="body2" className='proCat_card-ContentsData' sx={{
-                  fontWeight:'bold' ,
-                }}>
-                    Qty : {item?.Quantity ?? 1}
-                </Box>
+              <Box variant="body2" className='proCat_card-ContentsData' sx={{
+                fontWeight: 'bold',
+              }}>
+                Qty : {item?.Quantity ?? 1}
+              </Box>
               <Box className="proCat_PriceBox">
                 <>
                   {storeinit?.IsPriceShow == 1 &&

@@ -402,7 +402,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       Unitcost: singleProd1?.UnitCost ?? singleProd?.UnitCost,
       markup: singleProd1?.DesignMarkUp ?? singleProd?.DesignMarkUp,
       UnitCostWithmarkup: singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
-      Remark: "",
+      Remark: remarks,
       AlbumName: decodeUrl?.n ?? "",
       Quantity: quantity,
     };
@@ -1466,27 +1466,26 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   const handleRemarkChange = async (value) => {
     setRemarks(value);
-
-    // if (addToCartFlag) {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    debounceTimeoutRef.current = setTimeout(async () => {
-      setIsRemarkLoading(true);
-      try {
-        const prodObj = {
-          id: singleProd?.CartId,
-          autocode: singleProd?.autocode
-        }
-        const response = await handleProductRemark(prodObj, value, cookie);
-        console.log("🚀 ~ handleRemarkChange ~ response:", response)
-      } catch (error) {
-        console.error("Error updating remarks:", error);
-      } finally {
-        setIsRemarkLoading(false);
+    if (addToCartFlag) {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
       }
-    }, 500);
-    // }
+      debounceTimeoutRef.current = setTimeout(async () => {
+        setIsRemarkLoading(true);
+        try {
+          const prodObj = {
+            id: singleProd?.CartId,
+            autocode: singleProd?.autocode
+          }
+          const response = await handleProductRemark(prodObj, value, cookie);
+          console.log("🚀 ~ handleRemarkChange ~ response:", response)
+        } catch (error) {
+          console.error("Error updating remarks:", error);
+        } finally {
+          setIsRemarkLoading(false);
+        }
+      }, 500);
+    }
   };
 
   const formatter = new Intl.NumberFormat("en-IN");
