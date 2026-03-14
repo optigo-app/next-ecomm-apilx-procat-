@@ -1,15 +1,14 @@
 # CHANGELOG
 
-## [2026-03-07]
+## [2026-03-14]
 
 ### Fixed
 
-- **ProductDetail.js**: Fixed metal color dropdown not reflecting the product's color on initial load.
-  - **Old behavior**: `selectMtColor` was initialized with the color name (e.g., "ROSE"), which didn't match the dropdown option values (color codes like "RG").
-  - **New behavior**: `selectMtColor` is initialized with the color code, ensuring the dropdown correctly reflects the current metal color.
-  - **Reason**: Dropdown options in `DetailBlock.jsx` use `colorcode` as values; if the state doesn't match, the dropdown shows the first entry by default.
+- **ProductDetail.js**: Fixed `addToCartFlag` synchronization and `CartId` management.
+  - **New behavior**: `IsInCart` and `CartId` are now explicitly updated in the `singleProd` and `singleProd1` states after adding or removing items from the cart. This prevents side effects from resetting the "Add to Cart" button state.
+  - **Reason**: To ensure the UI accurately reflects the cart status immediately after user interaction and maintains consistency across variant changes.
 
-## [2026-03-12]
+## [2026-03-13]
 
 ### Fixed
 
@@ -32,7 +31,7 @@
   - **Product Remarks**: Added a debounced remarks input field to the product detail page, allowing users to save custom notes for specific variants once they are in the cart [2026-03-11].
   - **Crash Fix**: Added optional chaining to `split()` calls in `handleCart` and `handleWishList` to prevent crashes if user interacts before criteria are fully initialized [2026-03-11].
 - **DetailBlock.jsx**: Passed `quantity` and its setter to `QuantityInput` component.
-- **Cart.js (hook)**: 
+- **Cart.js (hook)**:
   - Updated `handleMoveToDetail` to pass all item-specific criteria and size to the product detail page [2026-03-11].
   - Implemented silent cart refresh in `getCartData` to support multi-variant item merging without full UI blocking.
   - Added intelligent item re-selection after refresh to maintain user context based on `IsMultiVariantCart` flag [2026-03-11].

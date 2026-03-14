@@ -410,10 +410,16 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (cartflag) {
       CartAndWishListAPI("Cart", prodObj, cookie)
         .then((res) => {
+          console.log(res, "res")
           let cartC = res?.Data?.rd[0]?.Cartlistcount;
           let wishC = res?.Data?.rd[0]?.Wishlistcount;
+          let cartId = res?.Data?.rd[0]?.CartId;
           setWishCountNum(wishC);
           setCartCountNum(cartC);
+          if (cartId) {
+            setSingleProd(prev => ({ ...prev, CartId: cartId, IsInCart: 1 }));
+            setSingleProd1(prev => ({ ...prev, CartId: cartId, IsInCart: 1 }));
+          }
         })
         .catch((err) => console.log("err", err))
         .finally(() => {
@@ -427,6 +433,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
           let wishC = res?.Data?.rd[0]?.Wishlistcount;
           setWishCountNum(wishC);
           setCartCountNum(cartC);
+          setSingleProd(prev => ({ ...prev, IsInCart: 0, CartId: null }));
+          setSingleProd1(prev => ({ ...prev, IsInCart: 0, CartId: null }));
         })
         .catch((err) => console.log("err", err))
         .finally(() => {
@@ -1428,7 +1436,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
           setisPriceLoading(false);
           setAddToCartFlag(res?.pdList[0]?.IsInCart !== 0);
           const qty = res?.pdList?.[0]?.CartQuantity;
+          const remarks = res?.pdList?.[0]?.Remarks;
           setQuantity(qty && qty > 0 ? qty : 1);
+          setRemarks(remarks ?? "");
 
         }
         setDiaList(res?.pdResp?.rd3);
@@ -1474,8 +1484,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         setIsRemarkLoading(true);
         try {
           const prodObj = {
-            id: singleProd?.CartId,
-            autocode: singleProd?.autocode
+            id: singleProd1?.CartId ?? singleProd?.CartId,
+            autocode: singleProd1?.autocode ?? singleProd?.autocode
           }
           const response = await handleProductRemark(prodObj, value, cookie);
           console.log("🚀 ~ handleRemarkChange ~ response:", response)
@@ -1659,7 +1669,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                   setProdLoading={setProdLoading}
                   nextindex={nextindex}
 
-                  singleProd={singleProd}
+                  singleProd={singleProd1?.autocode ? singleProd1 : singleProd}
                   singleProd1={singleProd1}
                   storeInit={storeInit}
 
