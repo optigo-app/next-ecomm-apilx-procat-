@@ -34,19 +34,13 @@ const QuantityInput = ({ defaultValue = 1, onChange, singleProd, disabled, isLoa
         justifyContent: "center",
       }}
     >
-      {isLoading ? (
-        <Skeleton variant="rectangular" width={120} height={40} sx={{ borderRadius: '4px' }} />
-      ) : (
-        <>
-          <IconButton onClick={handleDecrease} disabled={disabled || value <= 1}>
-            <RemoveIcon />
-          </IconButton>
-          <Typography variant="body1">{value}</Typography>
-          <IconButton onClick={handleIncrease} disabled={disabled}>
-            <AddIcon />
-          </IconButton>
-        </>
-      )}
+      <IconButton onClick={handleDecrease} disabled={disabled || isLoading || value <= 1}>
+        <RemoveIcon />
+      </IconButton>
+      <Typography variant="body1">{value}</Typography>
+      <IconButton onClick={handleIncrease} disabled={disabled || isLoading}>
+        <AddIcon />
+      </IconButton>
     </Box>
   );
 };
