@@ -354,7 +354,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     // Call the fetchData function within useEffect
     fetchData();
-  }, [singleProd]);
+  }, [singleProd?.autocode]);
 
   useEffect(() => {
     // Check if the `singleProd?.designno` matches any slide's designno
@@ -364,7 +364,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (matchingIndex !== -1 && innerSwiperRef.current) {
       innerSwiperRef.current.swiper.slideTo(matchingIndex, 0); // 0 delay for instant navigation
     }
-  }, [singleProd, imageData]);
+  }, [singleProd?.designno, imageData]);
 
   const handleCart = (cartflag) => {
     let storeinitInside = storeInit;
@@ -546,7 +546,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         }
       }
     }, 500);
-  }, [singleProd]);
+  }, [singleProd?.autocode]);
 
   useEffect(() => {
     const result = parseSearchParams();
@@ -568,7 +568,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     setSelectMtColor(finalColor?.colorcode ?? null);
     setSelectMtColorName(finalColor?.colorname ?? null);
-  }, [singleProd]);
+    console.log("finalColor", finalColor);
+  }, [singleProd?.autocode]);
 
 
   const callAllApi = () => {
@@ -1050,7 +1051,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     ProdCardImageFunc();
-  }, [singleProd, singleProd1]);
+  }, [singleProd?.autocode, singleProd1?.autocode]);
 
   // useEffect(() => {
   //   if (isImageload === false) {

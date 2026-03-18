@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Skeleton, Typography, TextField } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Grid, Skeleton, Typography, TextField, ButtonBase, Button } from "@mui/material";
 import { IoIosPlayCircle } from "react-icons/io";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Navigation, FreeMode, Keyboard } from "swiper/modules";
@@ -523,6 +523,7 @@ const DetailBlock = ({
                                         {prodLoading ? (
                                             <Skeleton variant="rectangular" width="100%" height={56} sx={{ borderRadius: '4px' }} />
                                         ) : (
+
                                             <TextField
                                                 fullWidth
                                                 label="Remarks"
@@ -535,9 +536,11 @@ const DetailBlock = ({
                                                 sx={{
                                                     '& .MuiOutlinedInput-root': {
                                                         borderRadius: '0px',
+                                                        paddingBottom: '40px'
                                                     },
                                                 }}
                                             />
+
                                         )}
                                     </Box>
                                 )}

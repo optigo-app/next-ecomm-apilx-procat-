@@ -18,7 +18,7 @@ import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useRouter } from 'next/navigation';
 
 
-const CartPage = ({storeinit}) => {
+const CartPage = ({ storeinit }) => {
   const addressData = useAddress();
 
   const {
@@ -359,18 +359,18 @@ const CartPage = ({storeinit}) => {
               </div>
             ) :
               <Box
-              sx={{
-                display:'flex' ,
-                height:'50vh',
-                alignItems:'center',
-                justifyContent:'center'
-              }}
+                sx={{
+                  display: 'flex',
+                  height: '50vh',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
                 <div className='proCat_noCartlistData'>
-                <p className='proCat_title'>No Data Found!</p>
-                <p className='proCat_desc'>Please First Add Product in Cart</p>
-                <button className='proCat_browseOurCollectionbtn' onClick={handelMenu}>Browse our collection</button>
-              </div>
+                  <p className='proCat_title'>No Data Found!</p>
+                  <p className='proCat_desc'>Please First Add Product in Cart</p>
+                  <button className='proCat_browseOurCollectionbtn' onClick={handelMenu}>Browse our collection</button>
+                </div>
               </Box>
             }
           </>

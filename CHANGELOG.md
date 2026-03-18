@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [2026-03-18]
+
+### Fixed
+
+- **ProductDetail.js**: Fixed an issue where the user-selected metal color would visually reset on the screen when adding an item to the cart.
+  - **Old behavior**: The dependency array for the `useEffect` handling initial state selection included the full `singleProd` object. When adding to cart, `singleProd.IsInCart` updated, causing the effect to re-run and reset the UI's selected metal color (and other criteria) back to the original API response values. 
+  - **New behavior**: The `useEffect` dependencies were narrowed down from `[singleProd]` to `[singleProd?.autocode]` (and similar specific primitives).
+  - **Reason**: To prevent local UI states (`selectMtColor`, `selectMtType`, etc.) from being overwritten whenever cart-related properties of the product are updated.
+
+## [2026-03-16]
+
+### Changed
+
+- **ProductDetail.js & DetailBlock.jsx**: Refactored product remark saving logic.
+  - **Old behavior**: Remarks were automatically saved using a debounced 500ms timer on every keystroke.
+  - **New behavior**: Remarks are now only saved manually when the user clicks the "Save" button. The "Save" button is only visible when the item is already in the cart.
+  - **Reason**: To give users more control over when remarks are saved and to improve performance by reducing unnecessary API calls.
+
 ## [2026-03-14]
 
 ### Fixed
