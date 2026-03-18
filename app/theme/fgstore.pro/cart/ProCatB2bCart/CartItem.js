@@ -196,10 +196,15 @@ const CartItem = ({
               className='proCat_cartListImage'
               onClick={() => onSelect(item)}
               onError={(e) => {
-                if (item?.ImageCount > 0) {
-                  e.target.src = fullImagePath ? fullImagePath : noImageFound
-                } else {
-                  e.target.src = noImageFound;
+                const imgEl = e.target;
+
+                // Prevent infinite loop
+                if (!imgEl.dataset.triedFullImage && fullImagePath) {
+                  imgEl.src = fullImagePath;
+                  imgEl.dataset.triedFullImage = "true";
+                } else if (!imgEl.dataset.triedNoImage) {
+                  imgEl.src = noImageFound;
+                  imgEl.dataset.triedNoImage = "true";
                 }
               }}
               loading="lazy"
