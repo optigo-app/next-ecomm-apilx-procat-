@@ -9,6 +9,11 @@
   - **New behavior**: The `useEffect` dependencies were narrowed down from `[singleProd]` to `[singleProd?.autocode]` (and similar specific primitives).
   - **Reason**: To prevent local UI states (`selectMtColor`, `selectMtType`, etc.) from being overwritten whenever cart-related properties of the product are updated.
 
+- **QuantityInput.jsx**: Removed flickering loading skeleton during quantity updates.
+  - **Old behavior**: The quantity controls were replaced by a `Skeleton` component during the debounced API update (`isQtyLoading`), causing a flickering effect.
+  - **New behavior**: The quantity controls remain visible during updates. Buttons are disabled while the update is in progress, but the local value is updated immediately for a smooth experience.
+  - **Reason**: To provide a "smooth update" without flickering as requested by the user.
+
 ## [2026-03-16]
 
 ### Changed
