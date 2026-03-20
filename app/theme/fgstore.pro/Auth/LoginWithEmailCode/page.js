@@ -51,7 +51,7 @@ export default function LoginWithEmailCode({ params, searchParams }) {
                 if (value === 'true') {
                     sessionStorage.setItem('LoginCodeEmail', 'false');
                     LoginWithEmailCodeAPI(storedEmail).then((response) => {
-                        if (response.Data.rd[0].stat === '1') {
+                        if (response.Data.rd[0].stat == 1) {
                             toast.success('OTP sent successfully');
                         } else {
                             toast.error('OTP send error');
