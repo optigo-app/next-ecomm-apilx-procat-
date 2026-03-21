@@ -8,6 +8,9 @@ import Cookies from "js-cookie";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children, storeInit }) {
+   if (typeof window !== "undefined") {
+    window.__STORE_INIT__ = storeInit;
+  }
   const { islogin, setislogin } = useStore();
   const router = useRouter();
   const pathname = usePathname(); 

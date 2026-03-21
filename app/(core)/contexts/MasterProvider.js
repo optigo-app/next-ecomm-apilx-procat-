@@ -34,6 +34,9 @@ const detectThemeNumber = () => {
 const masterContext = createContext(null);
 
 export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, getMyAccountFlags }) => {
+    if (typeof window !== "undefined") {
+        window.__STORE_INIT__ = getStoreInit;
+    }
     const [title, setTitle] = useState("Loading...");
     const [htmlContent, setHtmlContent] = useState(null);
     const [storeInitData, setStoreInitData] = useState(null);

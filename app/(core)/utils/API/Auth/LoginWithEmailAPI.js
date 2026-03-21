@@ -7,7 +7,7 @@ export const LoginWithEmailAPI = async (email, mobileNo, hashedPassword, ismobil
     let response
     const domainname = wesbiteDomainName;
     try {
-        const storeInit = getSession('storeInit');
+        const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
         const combinedValue = JSON.stringify({
             userid: `${email}` ?? '', mobileno: mobileNo ?? '', pass: `${hashedPassword}` ?? '', mobiletoken: ismobiletoke ?? '', FrontEnd_RegNo: `${storeInit?.FrontEnd_RegNo ?? ''}`, Token: `${userCookie ?? ''}`,
             IsPLW: `${storeInit?.IsPLW ?? ''}`, ...(storeInit?.IsB2BWebsite === 0 && { Customerid: visiterId }), DomainForNo: `${storeInit?.DomainForNo ?? ""}`, domainname: domainname

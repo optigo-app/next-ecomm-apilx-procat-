@@ -7,8 +7,8 @@ export const CountryCodeListApi = async (finalID) => {
     let response;
     const domainname = wesbiteDomainName;
     try {
-        const storeInit = getSession('storeInit');
-        const loginUserDetail = (getSession('loginUserDetail')) || '0';
+        const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
+        const loginUserDetail = getSession('loginUserDetail') || '0';
 
         const islogin = (getSession("LoginUser")) ?? false;
 
