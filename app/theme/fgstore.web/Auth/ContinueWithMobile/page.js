@@ -79,6 +79,7 @@ export default function ContinueWithMobile({ params, searchParams }) {
           toast.success("OTP send Sucssessfully");
           navigation(redirectMobileUrl);
           sessionStorage.setItem("registerMobile", mobileNo);
+          sessionStorage.removeItem("registerEmail");
         } else {
           // setIsOpen(true)
           // WebSignUpOTPVerify('', mobileNo).then((res) => {
@@ -87,6 +88,7 @@ export default function ContinueWithMobile({ params, searchParams }) {
           setIsLoading(false);
           navigation(redirectSignUpUrl);
           sessionStorage.setItem("registerMobile", mobileNo);
+          sessionStorage.removeItem("registerEmail");
         }
       })
       .catch((err) => console.log(err));

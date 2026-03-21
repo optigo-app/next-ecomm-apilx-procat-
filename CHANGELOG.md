@@ -4,6 +4,11 @@
 
 ### Fixed
 
+- **ContinueWithEmail.js & ContinueWithMobile.js (web & pro themes)**: Implemented targeted clearing of session authentication data.
+  - **Old behavior**: `registerEmail` and `registerMobile` were stored in `sessionStorage` but were not cleared when switching between Email and Mobile flows. This caused the previously entered email to be displayed on the Registration page even when the user was attempting to register with a mobile number.
+  - **New behavior**: `ContinueWithEmail` now explicitly removes `registerMobile` from `sessionStorage` on success, and `ContinueWithMobile` explicitly removes `registerEmail`.
+  - **Reason**: To prevent cross-flow data contamination and ensure the registration page only shows relevant data for the current flow.
+
 - **ProductDetail.js & Blocks/MoreProducts.jsx**: Fixed product navigation "Next/Previous" desync and swiper synchronization.
   - **Old behavior**: The `nextindex` state (tracking current position in the product list) was being reset to `0` by the main `DetailBlock` Swiper initialization. Additionally, the index was not correctly synchronized when the page loaded without an explicit `in` parameter, and the "More Products" swiper did not follow the current selection.
   - **New behavior**: Removed the incorrect index reset in `DetailBlock`. Added an effect in `ProductDetail.js` to automatically find and set the correct `nextindex` based on the current `designno`. Attached `innerSwiperRef` to the `MoreProducts` component to enable automatic scrolling to the active product.
