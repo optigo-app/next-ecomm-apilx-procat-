@@ -7,7 +7,7 @@ export const LoginWithEmailCodeAPI = async (storedEmail) => {
     let response
     const domainname = wesbiteDomainName;
     try {
-        const storeInit = getSession('storeInit');
+        const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
         const { FrontEnd_RegNo } = storeInit;
 
         const combinedValue = JSON.stringify({
