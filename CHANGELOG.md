@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2026-03-21]
+
+### Fixed
+
+- **ProductDetail.js & Blocks/MoreProducts.jsx**: Fixed product navigation "Next/Previous" desync and swiper synchronization.
+  - **Old behavior**: The `nextindex` state (tracking current position in the product list) was being reset to `0` by the main `DetailBlock` Swiper initialization. Additionally, the index was not correctly synchronized when the page loaded without an explicit `in` parameter, and the "More Products" swiper did not follow the current selection.
+  - **New behavior**: Removed the incorrect index reset in `DetailBlock`. Added an effect in `ProductDetail.js` to automatically find and set the correct `nextindex` based on the current `designno`. Attached `innerSwiperRef` to the `MoreProducts` component to enable automatic scrolling to the active product.
+  - **Reason**: To fix the user-reported issue where the "Next" button pointed to an incorrect "demo" design instead of the actual next product in the list.
+
 ## [2026-03-18]
 
 ### Fixed
