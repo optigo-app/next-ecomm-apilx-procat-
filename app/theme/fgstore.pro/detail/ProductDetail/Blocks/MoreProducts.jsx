@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Box, Typography, Card, CardActionArea, CardMedia, CardContent } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Keyboard } from "swiper/modules";
@@ -9,11 +9,15 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const MoreProducts = ({ imageData, handleMoveToDetail, singleProd, imageNotFound }) => {
+const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, imageNotFound }, ref) => {
   if (!imageData?.length) return null;
 
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useImperativeHandle(ref, () => ({
+    swiper: swiperRef.current
+  }));
 
   // 1. Condition to check if we should show the left/right arrows
   const showArrows = imageData.length > 5;
@@ -131,7 +135,7 @@ const MoreProducts = ({ imageData, handleMoveToDetail, singleProd, imageNotFound
       </Box>
     </>
   );
-};
+});
 
 export default MoreProducts;
 // import React, { useRef, useState } from "react";

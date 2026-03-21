@@ -330,9 +330,13 @@
     font-weight: 500;
     padding: 10px 14px;
     background: #f7f5f2;
-    border-radius: 8px;
-    display: inline-block;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
     width: 100%;
+    min-height: 44.4px; // Match standard select height
+    box-sizing: border-box;
+    border: 1.5px solid transparent; // Consistent with select's spacing
   }
   .db-classy-select {
     width: 100%;

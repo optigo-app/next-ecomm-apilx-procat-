@@ -361,8 +361,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     const matchingIndex = imageData.findIndex((ele) => ele?.designno === singleProd?.designno);
 
     // If there's a match, programmatically slide to that slide
-    if (matchingIndex !== -1 && innerSwiperRef.current) {
-      innerSwiperRef.current.swiper.slideTo(matchingIndex, 0); // 0 delay for instant navigation
+    if (matchingIndex !== -1) {
+      setNextIndex(matchingIndex);
+      if (innerSwiperRef.current?.swiper) {
+        innerSwiperRef.current.swiper.slideTo(matchingIndex, 0); // 0 delay for instant navigation
+      }
     }
   }, [singleProd?.designno, imageData]);
 
@@ -1519,7 +1522,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const onSlideChange = (swiper) => {
-    setNextIndex(swiper.activeIndex);
+    // setNextIndex(swiper.activeIndex);
     // handleProductDetail(swiper.activeIndex);
   };
 
@@ -1734,6 +1737,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                 />
 
                 <MoreProducts
+                  ref={innerSwiperRef}
                   imageData={imageData}
                   handleMoveToDetail={handleMoveToDetail}
                   singleProd={singleProd}
