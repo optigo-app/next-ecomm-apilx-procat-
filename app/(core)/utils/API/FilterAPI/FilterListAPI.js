@@ -4,7 +4,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI"
 
 export const FilterListAPI = async (mainData, visiterId) => {
 
-  let storeinit = getSession("storeInit")
+  let storeinit = window.__STORE_INIT__ || getSession("storeInit")
   let loginInfo = getSession("loginUserDetail")
   let menuparams = getSession("menuparams")
   let userEmail = getSession("registerEmail")
@@ -76,22 +76,36 @@ export const FilterListAPI = async (mainData, visiterId) => {
     }
   }
 
-
   const data = {
-    "PackageId": `${loginInfo?.PackageId ?? storeinit?.PackageId}`,
+    "PackageId": loginInfo?.PackageId ?? storeinit?.PackageId ?? "",
     "autocode": "",
-    "FrontEnd_RegNo": `${storeinit?.FrontEnd_RegNo}`,
-    "Customerid": `${customerId ?? 0}`,
-    "FilterKey": `${MenuParams?.FilterKey ?? ""}`,
-    "FilterVal": `${MenuParams?.FilterVal ?? ""}`,
-    "FilterKey1": `${MenuParams?.FilterKey1 ?? ""}`,
-    "FilterVal1": `${MenuParams?.FilterVal1 ?? ""}`,
-    "FilterKey2": `${MenuParams?.FilterKey2 ?? ""}`,
-    "FilterVal2": `${MenuParams?.FilterVal2 ?? ""}`,
-    SearchKey: `${serachVar?.b ?? ""}`,
-    CurrencyRate: `${loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate}`,
-    DomainForNo: `${storeinit?.DomainForNo ?? ""}`
+    "FrontEnd_RegNo": storeinit?.FrontEnd_RegNo ?? "",
+    "Customerid": customerId ?? 0,
+    "FilterKey": MenuParams?.FilterKey ?? "",
+    "FilterVal": MenuParams?.FilterVal ?? "",
+    "FilterKey1": MenuParams?.FilterKey1 ?? "",
+    "FilterVal1": MenuParams?.FilterVal1 ?? "",
+    "FilterKey2": MenuParams?.FilterKey2 ?? "",
+    "FilterVal2": MenuParams?.FilterVal2 ?? "",
+    SearchKey: serachVar?.b ?? "",
+    CurrencyRate: loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate ?? "",
+    DomainForNo: storeinit?.DomainForNo ?? ""
   }
+  // const data = {
+  //   "PackageId": `${loginInfo?.PackageId ?? storeinit?.PackageId}`,
+  //   "autocode": "",
+  //   "FrontEnd_RegNo": `${storeinit?.FrontEnd_RegNo}`,
+  //   "Customerid": `${customerId ?? 0}`,
+  //   "FilterKey": `${MenuParams?.FilterKey ?? ""}`,
+  //   "FilterVal": `${MenuParams?.FilterVal ?? ""}`,
+  //   "FilterKey1": `${MenuParams?.FilterKey1 ?? ""}`,
+  //   "FilterVal1": `${MenuParams?.FilterVal1 ?? ""}`,
+  //   "FilterKey2": `${MenuParams?.FilterKey2 ?? ""}`,
+  //   "FilterVal2": `${MenuParams?.FilterVal2 ?? ""}`,
+  //   SearchKey: `${serachVar?.b ?? ""}`,
+  //   CurrencyRate: `${loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate}`,
+  //   DomainForNo: `${storeinit?.DomainForNo ?? ""}`
+  // }
   let encData = btoa(JSON.stringify(data))
 
   let body = {
