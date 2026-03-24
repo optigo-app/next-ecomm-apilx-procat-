@@ -11,7 +11,7 @@ export const CartAndWishListAPI = async (type, obj, visiterId, type2 = "", stock
     const storeInit = getSession("storeInit");
     const loginUserDetail = getSession("loginUserDetail");
 
-    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail.id ?? 0;
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.id ?? 0;
     const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.userid ?? "";
 
 

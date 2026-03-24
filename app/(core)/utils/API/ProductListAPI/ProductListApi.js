@@ -22,20 +22,31 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
   } else {
     if (mainData !== "") {
 
+      const safeAtob = (str) => {
+        if (!str || str === "undefined" || str === "null") return "";
+        try {
+          return atob(str);
+        } catch (e) {
+          console.error("Error decoding base64:", str, e);
+          return "";
+        }
+      };
+
       if (mainData?.split("=")[0] == "S") {
-        serachVar = JSON.parse(atob(mainData?.split("=")[1]))
+        serachVar = JSON.parse(safeAtob(mainData?.split("=")[1]) || "{}")
       } else {
-        MenuParams.FilterKey = atob(mainData)
-        MenuParams.FilterVal = atob(mainData)
+        MenuParams.FilterKey = safeAtob(mainData)
+        MenuParams.FilterVal = safeAtob(mainData)
       }
 
       if (mainData?.split("=")[0] !== "S") {
-        if (atob(mainData)?.split("=")[0] == "AlbumName") {
-          MenuParams.FilterKey = atob(mainData)?.split("=")[0]
-          MenuParams.FilterVal = atob(mainData)?.split("=")[1]
+        const decoded = safeAtob(mainData);
+        if (decoded?.split("=")[0] == "AlbumName") {
+          MenuParams.FilterKey = decoded?.split("=")[0]
+          MenuParams.FilterVal = decoded?.split("=")[1]
         } else {
-          MenuParams.FilterKey = atob(mainData)
-          MenuParams.FilterVal = atob(mainData)
+          MenuParams.FilterKey = decoded
+          MenuParams.FilterVal = decoded
         }
       }
 
@@ -44,11 +55,12 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
   }
 
 
-  let storeinit = getSession("storeInit");
+  let storeinit = window.__STORE_INIT__ || getSession("storeInit");
+  console.log(window.__STORE_INIT__, "storeinit")
   let loginInfo = getSession("loginUserDetail");
   let menuparam = getSession("menuparams");
 
-  const islogin = JSON.parse(sessionStorage.getItem("LoginUser")) ?? false;
+  const islogin = getSession("LoginUser") ?? false;
 
 
 

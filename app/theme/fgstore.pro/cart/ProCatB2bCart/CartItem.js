@@ -218,8 +218,9 @@ const CartItem = ({
                   <span className='proCat_DesignNoTExt'>({item?.StockNo})</span>
                 }
               </Typography>
-              <div className='proCat_cartlistdetails' style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                <div>
+
+              <div className='proCat_cartlistdetails' style={{ display: 'flex', justifyContent: isMobileImage ? 'center' : 'space-between', flexWrap: 'wrap', gap: isMobileImage ? '10px' : '0' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobileImage ? 'center' : 'flex-start', gap: '5px' }}>
                   {storeinit?.IsGrossWeight == 1 &&
                     <Typography variant="body2" className='proCat_card-ContentsData'>
                       GWT: {(item?.Gwt || 0).toFixed(3)}
@@ -236,7 +237,7 @@ const CartItem = ({
                   }
 
                 </div>
-                <div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobileImage ? 'center' : 'flex-start', gap: '5px' }}>
                   {storeinit?.IsDiamondWeight == 1 &&
                     <>
                       {(item?.Dwt != "0" || item?.Dpcs != "0") &&
@@ -261,8 +262,29 @@ const CartItem = ({
                   }
                 </div>
               </div>
+              <Box className='proCat_card-ContentsData' style={{ marginBottom: '4px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: isMobileImage ? 'center' : 'flex-start' }}>
+                {storeinit?.IsMetalCustomization == 1 &&
+                  <span>
+                    {item?.metaltypename} {item?.metalcolorname && `(${item?.metalcolorname})`}
+                  </span>
+                }
+                {(storeinit?.IsDiamondCustomization == 1 || storeinit?.IsCsCustomization == 1) && (
+                  <span>
+                    {(storeinit?.IsMetalCustomization == 1 && (item?.metaltypename || item?.metalcolorname)) ? ' | ' : ''}
+                    {storeinit?.IsDiamondCustomization == 1 && item?.diamondquality}
+                    {storeinit?.IsDiamondCustomization == 1 && storeinit?.IsCsCustomization == 1 && item?.colorstonequality && ', '}
+                    {storeinit?.IsCsCustomization == 1 && item?.colorstonequality}
+                  </span>
+                )}
+              </Box>
+              {item?.Size && (
+                <Typography variant="body2" className='proCat_card-ContentsData' style={{ marginBottom: '4px', display: 'flex', justifyContent: isMobileImage ? 'center' : 'flex-start' }}>
+                  Size: {item?.Size}
+                </Typography>
+              )}
               <Box variant="body2" className='proCat_card-ContentsData' sx={{
                 fontWeight: 'bold',
+                justifyContent: isMobileImage ? 'center' : 'flex-start',
               }}>
                 Qty : {item?.Quantity ?? 1}
               </Box>

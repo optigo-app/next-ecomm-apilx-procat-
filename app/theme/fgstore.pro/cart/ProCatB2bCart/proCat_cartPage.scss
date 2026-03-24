@@ -1,4 +1,4 @@
-@use '../../../../theme/fgstore.pro/style/variable.scss' as *;
+@use "../../../../theme/fgstore.pro/style/variable.scss" as *;
 
 $cartUpdateBtncolor: #b1b1b1;
 
@@ -57,7 +57,6 @@ $cartUpdateBtncolor: #b1b1b1;
     }
 
     .proCat_cartButton-groups {
-
       .proCat_ReomoveAllCartbtn {
         text-transform: capitalize !important;
         color: $titleColor !important;
@@ -78,7 +77,9 @@ $cartUpdateBtncolor: #b1b1b1;
         background-color: $btn1bgColor;
         border: 1px solid $btn1FontColor;
         cursor: pointer;
-        transition: background-color 0.3s, color 0.3s;
+        transition:
+          background-color 0.3s,
+          color 0.3s;
 
         &.proCat_cartActivebtn {
           background-color: $btn1ActivebgColor;
@@ -236,14 +237,16 @@ $cartUpdateBtncolor: #b1b1b1;
 
       .proCat_card-ContentsData {
         padding: 2px 0px 2px 0px !important;
-        font-size: $fontSize0 !important;
+        font-size: $fontSize0;
       }
     }
 
     .proCat_cartListCard1 {
       width: 390px;
       position: relative;
-      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+      box-shadow:
+        rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 
       .proCat_card-ContentsData {
         padding: 2px 0px 2px 0px !important;
@@ -318,7 +321,6 @@ $cartUpdateBtncolor: #b1b1b1;
       // text-overflow: ellipsis;
     }
 
-
     .proCat_Cart-options {
       display: flex;
       flex-wrap: wrap;
@@ -372,7 +374,6 @@ $cartUpdateBtncolor: #b1b1b1;
           color: $titleColor;
           font-size: $fontSize2;
           font-family: $primaryFontFamily !important;
-
         }
 
         span {
@@ -380,11 +381,10 @@ $cartUpdateBtncolor: #b1b1b1;
           color: $titleColor;
           font-size: $fontSize2;
           font-family: $primaryFontFamily !important;
-
         }
       }
 
-      @media(max-width: 1560px) {
+      @media (max-width: 1560px) {
         .option {
           width: 48%;
 
@@ -395,7 +395,7 @@ $cartUpdateBtncolor: #b1b1b1;
         }
       }
 
-      @media(max-width: 1490px) {
+      @media (max-width: 1490px) {
         .option {
           width: 47%;
 
@@ -490,8 +490,8 @@ $cartUpdateBtncolor: #b1b1b1;
       }
     }
 
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
@@ -532,7 +532,9 @@ $cartUpdateBtncolor: #b1b1b1;
   // cart list item css(left side)
 
   .proCat_cartListCard {
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    box-shadow:
+      rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
     display: flex !important;
     justify-content: space-between !important;
     flex-direction: column !important;
@@ -584,7 +586,7 @@ $cartUpdateBtncolor: #b1b1b1;
     @media (max-width: 1000px) {
       right: 2px;
     }
-     @media (max-width: 400px) {
+    @media (max-width: 400px) {
       right: 0px;
     }
 
@@ -594,12 +596,10 @@ $cartUpdateBtncolor: #b1b1b1;
       font-size: $fontSize0;
     }
 
-
     .proCat_ItemRemarkbtn {
       margin-right: 20px;
     }
   }
-
 
   // update cart modal
 
@@ -631,7 +631,6 @@ $cartUpdateBtncolor: #b1b1b1;
     border-radius: 8px;
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16) !important;
     padding: 16px 32px;
-
   }
 
   .proCat_Modal_Title {
@@ -656,11 +655,15 @@ $cartUpdateBtncolor: #b1b1b1;
   }
 
   .proCat_cart-Accordian {
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important;
+    box-shadow:
+      rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important;
   }
 
   .proCat_Cart-prCard {
-    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important;
+    box-shadow:
+      rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+      rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important;
   }
 
   .proCat_ShortCutCombo-section {
@@ -804,7 +807,6 @@ $cartUpdateBtncolor: #b1b1b1;
     background-color: #f6f6f6 !important;
   }
 
-
   .proCat_remarkModalBox {
     width: 90%;
     max-width: 500px;
@@ -812,7 +814,7 @@ $cartUpdateBtncolor: #b1b1b1;
     margin: 0 auto;
   }
 
-  @media(max-width:1200px) {
+  @media (max-width: 1200px) {
     .proCat_cartMainPageDiv {
       margin-inline: 1%;
     }
@@ -839,7 +841,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 770px) {
+  @media (max-width: 770px) {
     .proCat_cartmainRowDiv {
       margin-bottom: 30px;
     }
@@ -852,7 +854,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 474px) {
+  @media (max-width: 474px) {
     .proCat_place-order-btn {
       width: 120px;
       font-size: $fontSize2;
@@ -870,7 +872,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 1500px) and (min-width:1440px) {
+  @media (max-width: 1500px) and (min-width: 1440px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -897,7 +899,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 1439px) and (min-width:1360px) {
+  @media (max-width: 1439px) and (min-width: 1360px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -930,7 +932,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 1359px) and (min-width:1000px) {
+  @media (max-width: 1359px) and (min-width: 1000px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -963,7 +965,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 999px) {
+  @media (max-width: 999px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -994,7 +996,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 849px) {
+  @media (max-width: 849px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -1016,7 +1018,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media(max-width: 570px) {
+  @media (max-width: 570px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         padding: 0;
@@ -1158,5 +1160,4 @@ $cartUpdateBtncolor: #b1b1b1;
   //     }
   //   }
   // }
-
 }

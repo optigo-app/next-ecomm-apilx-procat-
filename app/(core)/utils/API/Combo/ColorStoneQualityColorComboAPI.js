@@ -9,9 +9,10 @@ export const ColorStoneQualityColorComboAPI = async () => {
     let response;
     try {
         const storedEmail = getSession('registerEmail') || '';
-        const storeInit = getSession('storeInit');
+        const storeInit = window.__STORE_INIT__ || getSession('storeInit');
+        console.log(window.__STORE_INIT__, "window.__STORE_INIT__", "colorstone")
         const loginUserDetail = getSession('loginUserDetail') || '0';
-        
+
         const { FrontEnd_RegNo } = storeInit;
         const combinedValue = JSON.stringify({
             FrontEnd_RegNo: `${FrontEnd_RegNo}`, colorstonepricelistname: `${loginUserDetail?.colorstonepricelistname ?? storeInit?.colorstonepricelistname}`

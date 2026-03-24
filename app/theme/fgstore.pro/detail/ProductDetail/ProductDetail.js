@@ -147,23 +147,26 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         return result;
       }
       if (!parsed || typeof parsed !== "object") return result;
-      result = Object.entries(parsed).map(([key, rawValue]) => {
-        try {
-          let fixed = rawValue.replace(/ /g, "+");
-          fixed = decodeURIComponent(fixed);
-          fixed = fixed.replace(/-/g, "+").replace(/_/g, "/");
-          const paddingNeeded = fixed.length % 4;
-          if (paddingNeeded !== 0) {
-            fixed = fixed.padEnd(fixed.length + (4 - paddingNeeded), "=");
+      result = Object.entries(parsed)
+        .filter(([key, value]) => value !== undefined && value !== null && value !== "undefined" && value !== "null")
+        .map(([key, rawValue]) => {
+          try {
+            let fixed = String(rawValue).replace(/ /g, "+");
+            fixed = decodeURIComponent(fixed);
+            fixed = fixed.replace(/-/g, "+").replace(/_/g, "/");
+            const paddingNeeded = fixed.length % 4;
+            if (paddingNeeded !== 0) {
+              fixed = fixed.padEnd(fixed.length + (4 - paddingNeeded), "=");
+            }
+            const decoded = atob(fixed);
+            const reEncoded = btoa(decoded);
+            return `${key}=${reEncoded}`;
+          } catch (err) {
+            console.error(`❌ Error decoding key "${key}" with value "${rawValue}":`, err);
+            return null; // Return null instead of "key=null" to allow filtering
           }
-          const decoded = atob(fixed);
-          const reEncoded = btoa(decoded);
-          return `${key}=${reEncoded}`;
-        } catch (err) {
-          console.error(`❌ Error decoding key "${key}" with value "${rawValue}":`, err);
-          return `${key}=null`;
-        }
-      });
+        })
+        .filter(item => item !== null);
     } catch (err) {
       console.error("❌ parseSearchParams failed:", err);
     }
@@ -1478,7 +1481,16 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     }
   };
 
+  const countWords = (str) => {
+    if (!str || typeof str !== 'string') return 0;
+    return str.match(/\S+/g)?.length || 0;
+  };
+
   const handleRemarkChange = async (value) => {
+    if (value.length > 250 && value.length > (remarks?.length || 0)) {
+      return;
+    }
+
     setRemarks(value);
     if (addToCartFlag) {
       if (debounceTimeoutRef.current) {

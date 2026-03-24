@@ -4,7 +4,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const MetalColorCombo = async (visiterId) => {
     let response;
 
-    const storeInit = getSession('storeInit');
+    const storeInit = window.__STORE_INIT__ || getSession('storeInit');
     const FrontEnd_RegNo = storeInit?.FrontEnd_RegNo;
     const storedEmail = getSession('registerEmail') || '';
     const loginInfo = getSession("loginUserDetail") || {};
