@@ -10,7 +10,7 @@ export const CurrencyComboAPI = async (finalID) => {
     let response;
     try {
         const storedEmail = getSession('registerEmail') || '';
-        const storeInit = getSession('storeInit');
+        const storeInit = window.__STORE_INIT__ || getSession('storeInit');
         const loginUserDetail = getSession('loginUserDetail') || '0';
         const { FrontEnd_RegNo } = storeInit;
         const combinedValue = JSON.stringify({
@@ -21,12 +21,12 @@ export const CurrencyComboAPI = async (finalID) => {
         let body = {
             "con": `{\"id\":\"Store\",\"mode\":\"CURRENCYCOMBO\",\"appuserid\":\"${storedEmail}\"}`,
             "f": "on-index(home)-call (CURRENCYCOMBO)",
-            "p": combinedValue, 
+            "p": combinedValue,
             // "p": encodedCombinedValue,
             // "dp": combinedValue,
 
         }
-        
+
         response = await CommonAPI(body);
 
     } catch (error) {

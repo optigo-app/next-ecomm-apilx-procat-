@@ -301,23 +301,31 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     try {
       if (searchParams?.value) {
-        const parsed = JSON.parse(searchParams.value);
+        let parsed = null;
+        try {
+          parsed = JSON.parse(searchParams.value);
+        } catch (e) {
+          console.error("Invalid JSON in searchParams.value:", searchParams.value, e);
+        }
 
         if (parsed && typeof parsed === "object") {
-          result = Object.entries(parsed).map(([key, value]) => {
-            // Only atob keys that are known to be base64 (A for Album, S for Search)
-            if (key === "A" || key === "S" || key === "M") {
-              try {
-                const decoded = atob(value);
-                const reEncoded = btoa(decoded);
-                return `${key}=${reEncoded}`;
-              } catch (e) {
-                console.warn(`Failed to decode base64 for key ${key}:`, value);
-                return `${key}=${value}`;
+          result = Object.entries(parsed)
+            .filter(([key, value]) => value !== undefined && value !== null && value !== "undefined" && value !== "null")
+            .map(([key, value]) => {
+              // Only atob keys that are known to be base64 (A for Album, S for Search, M for Menu)
+              if (key === "A" || key === "S" || key === "M") {
+                try {
+                  const decoded = atob(value);
+                  const reEncoded = btoa(decoded);
+                  return `${key}=${reEncoded}`;
+                } catch (e) {
+                  // If it's not valid base64, just return it as is or handle it
+                  console.warn(`Value for key ${key} is not valid base64:`, value);
+                  return `${key}=${value}`;
+                }
               }
-            }
-            return `${key}=${value}`;
-          });
+              return `${key}=${value}`;
+            });
           console.log(result, "hii")
         }
       }
@@ -405,16 +413,26 @@ const ProductList = ({ params, searchParams, storeinit }) => {
             return "";
         }
       });
-
       if (MenuVal?.length > 0) {
-        let menuDecode = atob(MenuVal?.split("=")[1]);
-        let key = menuDecode?.split("/")[1].split(",");
-        let val = menuDecode?.split("/")[0].split(",");
+        let menuDecode = "";
+        try {
+          const valPart = MenuVal?.split("=")[1];
+          if (valPart && valPart !== "undefined" && valPart !== "null") {
+            menuDecode = atob(valPart);
+          }
+        } catch (e) {
+          console.error("Error decoding MenuVal:", MenuVal, e);
+        }
 
-        setIsBreadcumShow(true);
-        setMenuDecode(menuDecode?.split("/"));
+        if (menuDecode) {
+          let key = menuDecode?.split("/")[1]?.split(",");
+          let val = menuDecode?.split("/")[0]?.split(",");
 
-        productlisttype = [key, val];
+          setIsBreadcumShow(true);
+          setMenuDecode(menuDecode?.split("/"));
+
+          productlisttype = [key, val];
+        }
       }
 
       if (SearchVar) {
@@ -4300,7 +4318,7 @@ const Product_Card = ({
           )}
         </p>
       </div>
-    {IsMultiVariantCart && <FormControlLabel
+      {IsMultiVariantCart && <FormControlLabel
         control={
           <Checkbox
             icon={

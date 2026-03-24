@@ -7,7 +7,7 @@ export const removeFromCartList = async (data, param, visiterId, isdiamond) => {
     const loginUserDetail = getSession("loginUserDetail") || {};
     const islogin = getSession("LoginUser") ?? false;
     const { FrontEnd_RegNo } = storeInit;
-    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail.id ?? 0;
+    const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.id ?? 0;
     const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.userid ?? "";
     let combinedValue;
 

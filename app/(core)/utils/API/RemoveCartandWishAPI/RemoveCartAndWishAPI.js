@@ -9,7 +9,7 @@ export const RemoveCartAndWishAPI = async (type, autocode, visiterId, isFromStoc
 
   const islogin = getSession("LoginUser") ?? false;
 
-  const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail.id ?? 0;
+  const customerId = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.id ?? 0;
   const customerEmail = (storeInit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginUserDetail?.userid ?? "";
 
   let removeApiObj = {

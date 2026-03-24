@@ -530,14 +530,21 @@ const DetailBlock = ({
                                                 variant="outlined"
                                                 multiline
                                                 rows={2}
-                                                value={remarks}
+                                                value={remarks || ""}
                                                 onChange={(e) => handleRemarkChange(e.target.value)}
                                                 placeholder="Add a remark to this item..."
+                                                inputProps={{ maxLength: 250 }}
+                                                error={(remarks || "").length > 250}
+                                                helperText={`${(remarks || "").length} / 250 characters`}
                                                 sx={{
                                                     '& .MuiOutlinedInput-root': {
                                                         borderRadius: '0px',
                                                         paddingBottom: '40px'
                                                     },
+                                                    '& .MuiFormHelperText-root': {
+                                                        textAlign: 'right',
+                                                        color: (remarks || "").length >= 250 ? 'error.main' : 'text.secondary'
+                                                    }
                                                 }}
                                             />
 

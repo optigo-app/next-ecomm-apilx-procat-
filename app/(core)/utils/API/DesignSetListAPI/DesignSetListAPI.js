@@ -8,7 +8,7 @@ export const DesignSetListAPI = async (obj, dno, visiterId) => {
 
   const islogin = getSession("LoginUser") ?? false;
 
-  const customerId = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo.id ?? 0;
+  const customerId = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.id ?? 0;
   const customerEmail = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo.userid ?? "";
 
   let data = {

@@ -59,7 +59,7 @@ export const GetCacheList = async (visiterId) => {
   const isB2B = storeInit?.IsB2BWebsite === 0;
   const isGuest = !islogin;
 
-  const customerId = isB2B && isGuest ? visiterId ?? "" : loginInfo.id ?? 0;
+  const customerId = isB2B && isGuest ? visiterId ?? "" : loginInfo?.id ?? 0;
   const customerEmail = isB2B && isGuest ? visiterId ?? "" : loginInfo?.userid ?? "";
 
   try {
