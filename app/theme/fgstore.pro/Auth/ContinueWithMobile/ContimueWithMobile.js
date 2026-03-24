@@ -98,6 +98,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                 navigation(redirectMobileUrl);
                 sessionStorage.setItem('registerMobile', mobileNo)
                 sessionStorage.setItem('Countrycodestate', Countrycodestate)
+                sessionStorage.removeItem("registerEmail");
                 setIsSubmitting(false);
             } else {
                 // navigation(redirectSignUpUrl, { state: { mobileNo: mobileNo } });
@@ -105,13 +106,16 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                     navigation(redirectSignUpUrl);
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
+                    sessionStorage.removeItem("registerEmail");
                 } else if (Countrycodestate == "91" && storeInit?.IsEcomOtpVerification == 0) {
                     navigation(redirectSignUpUrl);
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
+                    sessionStorage.removeItem("registerEmail");
                 } else {
                     sessionStorage.setItem('Countrycodestate', Countrycodestate)
                     sessionStorage.setItem('registerMobile', mobileNo)
+                    sessionStorage.removeItem("registerEmail");
                     setIsOpen(true)
                     setIsSubmitting(false);
                 }

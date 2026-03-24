@@ -73,6 +73,7 @@ export default function ContinueWithEmail({ params, searchParams }) {
                 navigation.push(redirectEmailUrl);
                 if (trimmedEmail) {
                     sessionStorage?.setItem("registerEmail", trimmedEmail);
+                    sessionStorage?.removeItem("registerMobile");
                 }
             } else {
                 // setIsOpen(true)
@@ -83,6 +84,7 @@ export default function ContinueWithEmail({ params, searchParams }) {
                 navigation.push(redirectSignUpUrl);
                 if (trimmedEmail) {
                     sessionStorage?.setItem("registerEmail", trimmedEmail);
+                    sessionStorage?.removeItem("registerMobile");
                 }
             }
         }).catch((err) => console.log(err))

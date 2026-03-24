@@ -3,7 +3,7 @@ import { findCsQcId, findDiaQcId, findMetal } from "../../Glob_Functions/GlobalF
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const GetPriceListApi = async (page = 1, obj = {}, filterObj = {}, autocodeList, obje, mainData = "") => {
-  const storeInit = getSession("storeInit");
+  const storeInit = window.__STORE_INIT__ || getSession("storeInit");
   const loginUserDetail = getSession("loginUserDetail");
   const param = getSession("menuparams");
   const islogin = getSession("LoginUser");
@@ -100,20 +100,20 @@ export const GetPriceListApi = async (page = 1, obj = {}, filterObj = {}, autoco
     // "SettingPriceUniqueNo": `${loginUserDetail?.SettingPriceUniqueNo}`,
     Customerid: `${loginUserDetail?.id ?? 0}`,
     Laboursetid: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.pricemanagement_laboursetid
-        : loginUserDetail?.pricemanagement_laboursetid
+      ? storeInit?.pricemanagement_laboursetid
+      : loginUserDetail?.pricemanagement_laboursetid
       }`,
     diamondpricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.diamondpricelistname
-        : loginUserDetail?.diamondpricelistname
+      ? storeInit?.diamondpricelistname
+      : loginUserDetail?.diamondpricelistname
       }`,
     colorstonepricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.colorstonepricelistname
-        : loginUserDetail?.colorstonepricelistname
+      ? storeInit?.colorstonepricelistname
+      : loginUserDetail?.colorstonepricelistname
       }`,
     SettingPriceUniqueNo: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.SettingPriceUniqueNo
-        : loginUserDetail?.SettingPriceUniqueNo
+      ? storeInit?.SettingPriceUniqueNo
+      : loginUserDetail?.SettingPriceUniqueNo
       }`,
     designno: "",
     FilterKey: `${MenuParams?.FilterKey ?? ""}`,

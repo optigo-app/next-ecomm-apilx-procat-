@@ -77,6 +77,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                 navigation(redirectEmailUrl);
                 if (trimmedEmail) {
                     sessionStorage.setItem("registerEmail", trimmedEmail);
+                    sessionStorage.removeItem("registerMobile");
                 }
             } else {
                 if (storeInit?.IsEcomOtpVerification != 0) {
@@ -89,6 +90,7 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                     navigation(redirectSignUpUrl);
                     if (trimmedEmail) {
                         sessionStorage.setItem("registerEmail", trimmedEmail);
+                        sessionStorage.removeItem("registerMobile");
                     }
                 }
             }
