@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [2026-03-25]
+
+### Fixed
+
+- **Product Detail Remark field**: Added `onKeyDown` event propagation stop to the Remark `TextField`.
+  - **Old behavior**: Pressing arrow keys (Left/Right) while typing in the Remarks field would trigger the parent `Swiper` component to change slides, making it impossible to navigate within the text.
+  - **New behavior**: Keyboard events are now stopped from bubbling up to the `Swiper` component, allowing normal text navigation within the `TextField`.
+  - **Reason**: To prevent conflicting keyboard navigation between the text input and the product image slider.
+
+
 ## [2026-03-24]
 
 ### Fixed

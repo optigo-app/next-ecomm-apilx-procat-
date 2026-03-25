@@ -531,7 +531,8 @@ const DetailBlock = ({
                                                 multiline
                                                 rows={2}
                                                 value={remarks || ""}
-                                                onChange={(e) => handleRemarkChange(e.target.value)}
+                                                onKeyDown={(e) => e.stopPropagation()}
+                                                onChange={(e) => handleRemarkChange(e.target.value, e)}
                                                 placeholder="Add a remark to this item..."
                                                 inputProps={{ maxLength: 250 }}
                                                 error={(remarks || "").length > 250}

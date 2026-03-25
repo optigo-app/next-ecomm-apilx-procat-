@@ -1365,6 +1365,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const handleMoveToDetail = (productData, i) => {
+    console.log(productData, "productData")
     const logininfoDetail = JSON.parse(
       sessionStorage.getItem("loginUserDetail")
     );
@@ -1403,7 +1404,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       i: productData?.MetalColorid,
       l: productData?.ImageExtension || "",
-      count: productData?.ImageCount
+      count: productData?.ImageCount,
+      s: productData?.DefaultSize || ""
     };
     decodeAndDecompress();
     let encodeObj = compressAndEncode(JSON?.stringify(obj));
