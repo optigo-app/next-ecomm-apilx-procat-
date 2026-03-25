@@ -754,11 +754,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       csArr = csQcLocal?.filter((ele) => ele?.QualityId == decodeobj?.c?.split(",")[0] && ele?.ColorId == decodeobj?.c?.split(",")[1])[0];
     }
 
+
     if (MetalColorLocal) {
-      console.log(decodeobj, "decodeobj")
       MetalColorArr = MetalColorLocal?.filter((ele) => ele?.id == decodeobj?.i)[0];
-      console.log(MetalColorArr, "MetalColorArr")
     }
+    // console.log(JSON.stringify(decodeobj, null, 2));
 
     if (decodeobj?.s) {
       setSizeData(decodeobj?.s);

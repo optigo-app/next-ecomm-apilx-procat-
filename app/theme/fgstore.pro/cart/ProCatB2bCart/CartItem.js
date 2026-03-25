@@ -307,7 +307,9 @@ const CartItem = ({
                 </>
               </Box>
               {item?.Remarks !== "" && (
-                <Typography variant="body2" className='proCat_remarktext'>
+                <Typography
+                  title={item?.Remarks || productRemark}
+                  variant="body2" className='proCat_remarktext'>
                   <span>Remark:</span> {truncateText(item?.Remarks || productRemark, 40)}
                 </Typography>
               )}
