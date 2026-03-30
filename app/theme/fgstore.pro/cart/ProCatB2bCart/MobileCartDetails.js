@@ -33,7 +33,7 @@ const MobileCartDetails = ({
   decodeEntities,
   handleMoveToDetail,
   open,
-  handleClose ,
+  handleClose,
   storeinit
 }) => {
   const noImageFound = "/image-not-found.jpg";
@@ -263,8 +263,8 @@ const MobileCartDetails = ({
             </div>
           ) :
             <div className="proCatMo_CartCusto_R-details">
-              <p className='proCatMo_cart-Titleline'>{selectedItem?.TitleLine}</p>
               <Divider />
+              <p className='proCatMo_cart-Titleline'>{selectedItem?.TitleLine}</p>
               <div className="proCatMo_StockCart-options">
                 {selectedItem?.metaltypename != "" &&
                   <div className="option">

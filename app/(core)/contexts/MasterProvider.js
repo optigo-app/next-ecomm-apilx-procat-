@@ -110,6 +110,22 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         fetchVisitorId();
     }, [])
 
+    // Heartbeat mechanism for Service Worker
+    useEffect(() => {
+        const HEARTBEAT_INTERVAL = 30000; // 30 seconds
+        const heartbeat = setInterval(() => {
+            if (typeof window !== 'undefined' && navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'HEARTBEAT',
+                    status: 'alive',
+                    timestamp: Date.now()
+                });
+            }
+        }, HEARTBEAT_INTERVAL);
+
+        return () => clearInterval(heartbeat);
+    }, []);
+
     // Paymaster fetch
     useEffect(() => {
         const fetchData = async () => {
