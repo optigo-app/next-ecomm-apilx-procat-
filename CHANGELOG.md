@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [2026-03-30]
+
+### Added
+
+- **B2B and B2C constants**: Created a consolidated flag to manage store-wide B2B and B2C behavior.
+  - **Files**: `app/(core)/constants/data.js`
+  - **Old behavior**: No flags existed in the constants file.
+  - **New behavior**: `b2b_b2c_flag` is now exported (1 for B2C, 0 for B2B).
+  - **Reason**: To provide a single source of truth for component adaptations based on the business model.
+
+- **ActiveMode Theme Switching**: Implemented a scalable theme-switching pattern using dynamic versioning.
+  - **Files**: `app/(core)/constants/data.js`
+  - **Old behavior**: Boolean-based `BetaMode`/`LiveMode`.
+  - **New behavior**: String-based `ACTIVE_THEME` with a `THEME_VERSIONS` object, supporting `PRO`, `BETA`, `V1`, etc.
+  - **Reason**: To allow adding any number of release versions (v1, v2) without changing route logic.
+
 ## [2026-03-27]
 
 ### Fixed

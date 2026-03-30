@@ -1,5 +1,7 @@
-import TermsAndConditionsComponent from "@/app/theme/fgstore.pro/TermsAndConditions/page.js";
+import { ACTIVE_THEME } from "@/app/(core)/constants/data";
 
 export default async function Page() {
+  const { default: TermsAndConditionsComponent } = await import(`@/app/theme/${ACTIVE_THEME}/TermsAndConditions/page.js`);
   return <TermsAndConditionsComponent />;
 }
+

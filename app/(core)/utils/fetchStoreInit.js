@@ -25,15 +25,11 @@ export async function fetchStoreInitData(req) {
       hostname = winHost.replace(/^www\./, "");
       protocol = winProtocol;
     }
-   
+
     const localHosts = ["localhost", "fgstore.pro", "procatalog.web", "nzen"];
     const cleanHost = hostname.split(":")[0];
     const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 
-     if (cleanHost == 'nxt26.optigoapps.com') {
-      hostname = `nxt10.optigoapps.com`
-    }
-    
     if (localHosts.includes(cleanHost)) {
       baseUrl = `http://192.168.1.153/R50B3/UFS/StoreInit/procatalog.web/StoreInit.json`
     } else if (isLocalhost) {
