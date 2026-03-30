@@ -7,6 +7,7 @@ import LayoutComponent from "@/app/theme/fgstore.pro/layout.jsx";
 import { StoreProvider } from "./(core)/contexts/StoreProvider";
 import { AuthProvider } from "./(core)/contexts/AuthProvider";
 import StyleInjector from "./theme/fgstore.pro/StyleInjector";
+import SWRegistration from "./components/SWRegistration";
 import { Poppins } from "next/font/google";
 import path from "path";
 import "./globals.css";
@@ -27,7 +28,7 @@ export async function generateMetadata() {
   const storeInit = await getStoreInit();
 
   return generatePageMetadata({
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+    metadataBase: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     title: storeInit?.ufcc,
     description: DEFAULT_JEWELRY_DESCRIPTION,
     keywords: DEFAULT_JEWELRY_KEYWORDS,
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }) {
   return (
     <>
       <html lang="en">
+        <SWRegistration />
         <EmotionRegistry>
           <StyleInjector styleContent={styleContent} />
           <body className={`${poppins.variable}`}>

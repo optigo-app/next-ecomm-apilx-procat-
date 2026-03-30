@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [2026-03-27]
+
+### Fixed
+
+- **Cart Customization & Modal UI**: Unified 2x2 grid layout and aesthetics for all item types.
+  - **Files**: `proCat_cartPage.scss`
+  - **Layout**: Implemented a consistent CSS Grid (`1fr 1fr`) with optimized spacing for both customizable items and stock designs.
+  - **Aesthetics**: Added light background boxes with padding and subtle borders to ensure options are "properly spaced" and visually integrated into the sidebar.
+  - **Reason**: To improve visual organization, resolve vertical stacking issues, and fulfill the user request for a professional 2x2 layout.
+
+- **Service Worker & Heartbeat Mechanism**: Implemented PWA-like service worker and periodic heartbeat.
+  - **Files**: `public/service-worker.js`, `app/components/SWRegistration.js`, `app/layout.js`, `app/(core)/contexts/MasterProvider.js`
+  - **Old behavior**: No service worker or client-side keep-alive mechanism existed.
+  - **New behavior**: 
+    - A Service Worker (`sw.js`) is now registered to cache static assets while bypassing dynamic API/Cart routes.
+    - `MasterProvider.js` sends a `HEARTBEAT` message to the Service Worker every 30 seconds to signal the application is alive.
+  - **Reason**: To enhance site performance via caching and establish a local heartbeat mechanism as requested.
+
+
 ## [2026-03-25]
 
 ### Fixed

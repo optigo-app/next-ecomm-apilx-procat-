@@ -263,6 +263,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
         try {
           const res = await ProductListApi(decodeobj?.f, 1, obj, decodeobj?.pl, cookie, decodeobj?.sb, decodeobj?.di, decodeobj?.ne, decodeobj?.gr);
+          console.log(res, "266 detail alldata")
           let data = sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
           if (data) {
             allListData = sessionStorage.getItem("deatilSliderData");
@@ -275,6 +276,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       if (allListData) {
         try {
           allListData = JSON.parse(allListData);
+          console.log(allListData, "266 detail alldata")
 
           if (Array.isArray(allListData) && allListData.length > 0) {
             // console.log("Valid array data:", allListData);
@@ -1333,6 +1335,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleMoveToDetail = (productData, index) => {
+    console.log(productData , "mian obj for router")
     setNextIndex(index);
     const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 
@@ -1355,6 +1358,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       i: productData?.MetalColorid,
       l: productData?.ImageExtension,
       count: productData?.ImageCount,
+      s: productData?.DefaultSize || ""
     };
     let encodeObj = compressAndEncode(JSON.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
@@ -1553,6 +1557,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleNext = async () => {
+    console.log(allListDataSlide, "allListDataSlide")
     const nextIndex = (nextindex + 1) % allListDataSlide?.length;
     setNextIndex(nextIndex);
     swiperMainRef?.current.swiper.slideTo(nextIndex);
