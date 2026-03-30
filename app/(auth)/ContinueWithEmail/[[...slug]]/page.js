@@ -1,11 +1,15 @@
 import React from "react";
-import ContinueWithEmailComponent from "@/app/theme/fgstore.pro/Auth/ContinueWithEmail/page.js";
 import { getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
+import { ACTIVE_THEME } from "@/app/(core)/constants/data";
 
 const page = async ({ params, searchParams }) => {
   const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
   const storeInit = await getStoreInit();
-  return <ContinueWithEmailComponent storeInit={storeInit} params={awaitedParams} searchParams={awaitedSearchParams} />;
+  const { default: PageComponent } = await import(`@/app/theme/${ACTIVE_THEME}/Auth/ContinueWithEmail/page.js`);
+
+  return <PageComponent storeInit={storeInit} params={awaitedParams} searchParams={awaitedSearchParams} />;
 };
 
 export default page;
+
+

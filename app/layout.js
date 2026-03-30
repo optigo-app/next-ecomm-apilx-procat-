@@ -3,16 +3,15 @@ import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { getStaticHtmlPages } from "./(core)/utils/StaticFileGetter";
 import { EmotionRegistry } from "./(core)/contexts/EmotionRegistry";
 import { generatePageMetadata } from "@/app/(core)/utils/HeadMeta";
-import LayoutComponent from "@/app/theme/fgstore.pro/layout.jsx";
 import { StoreProvider } from "./(core)/contexts/StoreProvider";
 import { AuthProvider } from "./(core)/contexts/AuthProvider";
-import StyleInjector from "./theme/fgstore.pro/StyleInjector";
 import SWRegistration from "./components/SWRegistration";
 import { Poppins } from "next/font/google";
 import path from "path";
 import "./globals.css";
 import fs from "fs";
 import { getDomainInfo } from "./(core)/utils/getDomainInfo";
+import { ACTIVE_THEME } from "./(core)/constants/data";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -51,6 +50,12 @@ export default async function RootLayout({ children }) {
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
 
+  // Dynamically load theme-specific components
+  const [{ default: LayoutComponent }, { default: StyleInjector }] = await Promise.all([
+    import(`@/app/theme/${ACTIVE_THEME}/layout.jsx`),
+    import(`@/app/theme/${ACTIVE_THEME}/StyleInjector.jsx`),
+  ]);
+
   return (
     <>
       <html lang="en">
@@ -71,3 +76,4 @@ export default async function RootLayout({ children }) {
     </>
   );
 }
+

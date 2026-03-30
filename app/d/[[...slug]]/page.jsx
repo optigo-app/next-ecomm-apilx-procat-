@@ -1,5 +1,8 @@
-import DetailComponent from "@/app/theme/fgstore.pro/detail/page.jsx";
+import { ACTIVE_THEME } from "@/app/(core)/constants/data";
 
 export default async function Page({ params, searchParams }) {
-  return <DetailComponent params={params} searchParams={searchParams} />;
+  const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
+  const { default: DetailComponent } = await import(`@/app/theme/${ACTIVE_THEME}/detail/page.jsx`);
+  return <DetailComponent params={awaitedParams} searchParams={awaitedSearchParams} />;
 }
+
