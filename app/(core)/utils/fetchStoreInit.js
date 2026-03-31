@@ -26,7 +26,7 @@ export async function fetchStoreInitData(req) {
       protocol = winProtocol;
     }
 
-    const localHosts = ["localhost", "fgstore.pro", "procatalog.web", "nzen"];
+    const localHosts = ["localhost", "fgstore.pro", "procatalog.web", "nzen", 'beta.procatalog.web'];
     const cleanHost = hostname.split(":")[0];
     const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 

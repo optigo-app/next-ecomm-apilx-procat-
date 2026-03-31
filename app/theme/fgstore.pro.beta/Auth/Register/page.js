@@ -7,37 +7,30 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { CountryCode } from "@/app/(core)/utils/assets/Countrylist";
 import CountryDropDown from "@/app/(core)/utils/Glob_Functions/CountryDropDown/CountryDropDown";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Stack,
-  CircularProgress,
-  Backdrop,
-  IconButton,
-  InputAdornment,
-  useTheme,
-  useMediaQuery
-} from "@mui/material";
+import { Box, Container, Typography, TextField, Button, Paper, Stack, CircularProgress, Backdrop, IconButton, InputAdornment, useTheme, useMediaQuery } from "@mui/material";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AdminStatusDialog from "./components/AdminStatusDialog";
+import { currentActiveFlow } from "@/app/(core)/constants/data";
 
 export default function Register({ searchParams }) {
   const { push } = useNextRouterLikeRR();
   const navigation = push;
   const location = useNextRouterLikeRR();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [adminStatusDialog, setAdminStatusDialog] = useState({ open: false, type: "Approved", message: "Your account request has been rejected. Please contact support for more details." });
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNo, setMobileNo] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [taxId, setTaxId] = useState("");
+  const [businessType, setBusinessType] = useState("");
+  const [city, setCity] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [Errors, setErrors] = useState({});
@@ -51,10 +44,13 @@ export default function Register({ searchParams }) {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
+  const taxIdRef = useRef(null);
+  const businessTypeRef = useRef(null);
+  const cityRef = useRef(null);
   const [open, setOpen] = useState(false); // Track dropdown open/close
   const [isOtpNewUi, setIsOtpNewUi] = useState(true);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
   const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}`;
@@ -141,6 +137,24 @@ export default function Register({ searchParams }) {
       } else {
         setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: "" }));
       }
+    } else if (fieldName === "taxId") {
+      if (!value.trim()) {
+        setErrors((prevErrors) => ({ ...prevErrors, taxId: "Tax ID/GST is required" }));
+      } else {
+        setErrors((prevErrors) => ({ ...prevErrors, taxId: "" }));
+      }
+    } else if (fieldName === "businessType") {
+      if (!value.trim()) {
+        setErrors((prevErrors) => ({ ...prevErrors, businessType: "Business Type is required" }));
+      } else {
+        setErrors((prevErrors) => ({ ...prevErrors, businessType: "" }));
+      }
+    } else if (fieldName === "city") {
+      if (!value.trim()) {
+        setErrors((prevErrors) => ({ ...prevErrors, city: "City is required" }));
+      } else {
+        setErrors((prevErrors) => ({ ...prevErrors, city: "" }));
+      }
     }
   };
 
@@ -187,6 +201,26 @@ export default function Register({ searchParams }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentActiveFlow) {
+      // Fun toggle for demonstration (Approved -> Rejected -> Pending)
+      setAdminStatusDialog((prev) => {
+        const types = ["approved", "rejected", "pending"];
+        const nextIndex = (types.indexOf(prev.type?.toLowerCase()) + 1) % types.length;
+        const nextType = types[nextIndex];
+
+        const messages = {
+          approved: "Your account has been successfully approved by the admin. You can now login to your account.",
+          rejected: "Your account request has been rejected. Please contact support for more details.",
+          pending: "Your account request is still under review by the admin. Please wait for the confirmation.",
+        };
+
+        return {
+          open: true,
+          type: nextType,
+          message: messages[nextType],
+        };
+      });
+    }
     const errors = {};
     if (!firstName.trim()) {
       errors.firstName = "First Name is required";
@@ -204,26 +238,40 @@ export default function Register({ searchParams }) {
       errors.mobileNo = Errors.mobileNo;
     }
 
+    if (!currentActiveFlow) {
+      if (!taxId.trim()) {
+        errors.taxId = "Tax ID/GST is required";
+      }
+      if (!businessType.trim()) {
+        errors.businessType = "Business Type is required";
+      }
+      if (!city.trim()) {
+        errors.city = "City is required";
+      }
+    }
+
     if (!email.trim()) {
       errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = "Please enter a valid email address";
     }
-    if (!password.trim()) {
-      setPasswordError("Password is required");
-      errors.password = "Password is required";
-    } else if (!validatePassword(password)) {
-      errors.password = "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character!";
+    if (!currentActiveFlow) {
+      if (!password.trim()) {
+        setPasswordError("Password is required");
+        errors.password = "Password is required";
+      } else if (!validatePassword(password)) {
+        errors.password = "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character!";
+      }
+
+      if (!confirmPassword.trim()) {
+        errors.confirmPassword = "Confirm Password is required";
+      } else if (confirmPassword !== password) {
+        errors.confirmPassword = "Passwords do not match";
+      }
     }
 
-    if (!confirmPassword.trim()) {
-      errors.confirmPassword = "Confirm Password is required";
-    } else if (confirmPassword !== password) {
-      errors.confirmPassword = "Passwords do not match";
-    }
-
-    if (Object.keys(errors).length === 0 && passwordError.length === 0) {
-      const hashedPassword = hashPasswordSHA1(password);
+    if (Object.keys(errors).length === 0 && (currentActiveFlow || passwordError.length === 0)) {
+      const hashedPassword = !currentActiveFlow ? hashPasswordSHA1(password) : "";
 
       setIsLoading(true);
       // try {
@@ -240,7 +288,7 @@ export default function Register({ searchParams }) {
       //   }
       //   const response = await CommonAPI(body);
 
-      RegisterAPI(firstName, lastName, email, mobileNo, hashedPassword, Countrycodestate, countryShortName)
+      RegisterAPI(firstName, lastName, email, mobileNo, hashedPassword, Countrycodestate, countryShortName, taxId, businessType, city)
         .then((response) => {
           setIsLoading(false);
           if (response.Data.rd[0].stat === 1) {
@@ -278,436 +326,284 @@ export default function Register({ searchParams }) {
     }
   };
 
-  return <>
+  return (
+    <>
+      {/* Admin Status Dialog */}
+      <AdminStatusDialog open={adminStatusDialog.open} type={adminStatusDialog.type} message={adminStatusDialog.message} onClose={() => setAdminStatusDialog({ ...adminStatusDialog, open: false })} />
 
-    <Box
-      sx={{
-        minHeight: '110vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'white',
-        p: 0,
-        position: 'relative'
-      }}
-    >
-      {/* Loading Overlay */}
-      <Backdrop
-        open={isLoading}
+      <Box
         sx={{
-          zIndex: theme.zIndex.modal + 1,
-          color: '#fff',
-          bgcolor: 'rgba(0,0,0,0.3)'
+          minHeight: "110vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "white",
+          p: 0,
+          position: "relative",
         }}
       >
-        <CircularProgress size={50} thickness={4} color="primary" />
-      </Backdrop>
-
-      <Container maxWidth="sm">
-        <Paper
-          elevation={0}
+        {/* Loading Overlay */}
+        <Backdrop
+          open={isLoading}
           sx={{
-            p: { xs: 2, sm: 5 },
-            borderRadius: 3,
-            border: '1px solid',
-            borderColor: 'divider',
-            position: 'relative',
-            overflow: 'hidden'
+            zIndex: theme.zIndex.modal + 1,
+            color: "#fff",
+            bgcolor: "rgba(0,0,0,0.3)",
           }}
         >
-          {/* Back Button */}
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigation(cancelRedireactUrl)}
+          <CircularProgress size={50} thickness={4} color="primary" />
+        </Backdrop>
+
+        <Container maxWidth="sm"
+          sx={{
+            paddingBlock: '50px'
+          }}
+        >
+          <Paper
+            elevation={0}
             sx={{
-              position: 'absolute',
-              top: 16,
-              left: 16,
-              color: 'text.secondary',
-              textTransform: 'none',
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: 'grey.100',
-                color: 'text.primary'
-              }
+              p: { xs: 2, sm: 4 },
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              position: "relative",
+              overflow: "hidden",
             }}
           >
-            Back
-          </Button>
-
-          <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
-            {/* Icon */}
-            <Box
+            {/* Back Button */}
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigation(cancelRedireactUrl)}
               sx={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                bgcolor: 'success.light',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 1
+                position: "absolute",
+                top: 16,
+                left: 16,
+                color: "text.secondary",
+                textTransform: "none",
+                fontWeight: 500,
+                "&:hover": {
+                  bgcolor: "grey.100",
+                  color: "text.primary",
+                },
               }}
-
-              className="btnColorProCat"
             >
-              <PersonAddOutlinedIcon
+              Back
+            </Button>
+
+            <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
+              {/* Icon */}
+              <Box
                 sx={{
-                  fontSize: 32,
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  bgcolor: "success.light",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mb: 1,
                 }}
-              />
-            </Box>
-
-            {/* Title */}
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                fontWeight: 400,
-                color: 'text.primary',
-                mb: 1,
-                fontSize: { xs: '1.75rem', sm: '2.25rem' },
-                textAlign: 'center'
-              }}
-            >
-              Create Account
-            </Typography>
-
-            {/* Form */}
-            <Stack
-              spacing={2.5}
-              width="100%"
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
-            >
-              <TextField
-                autoFocus
-                name="user-firstName"
-                id="firstName"
-                label="First Name"
-                variant="outlined"
-                fullWidth
-                value={firstName}
-                inputRef={firstNameRef}
-                onKeyDown={(e) => handleKeyDown(e, lastNameRef)}
-                onChange={(e) => handleInputChange(e, setFirstName, "firstName")}
-                error={!!Errors.firstName}
-                helperText={Errors.firstName}
-                disabled={isLoading}
-
-              />
-
-              <TextField
-                name="user-lastName"
-                id="lastName"
-                label="Last Name"
-                variant="outlined"
-                fullWidth
-                value={lastName}
-                inputRef={lastNameRef}
-                onKeyDown={(e) => handleKeyDown(e, mobileNoRef)}
-                onChange={(e) => handleInputChange(e, setLastName, "lastName")}
-                error={!!Errors.lastName}
-                helperText={Errors.lastName}
-                disabled={isLoading}
-
-              />
-
-              {isOtpNewUi ? (
-                <CountryDropDown
-                  Errors={Errors}
-                  handleInputChange={handleInputChange}
-                  handleKeyDown={handleKeyDown}
-                  Countrycodestate={Countrycodestate}
-                  setCountrycodestate={setCountrycodestate}
-                  setCountryShortName={setCountryShortName}
-                  IsMobileThrough={isMobileThrough}
-                  emailRef={emailRef}
-                  mobileNo={mobileNo}
-                  mobileNoRef={mobileNoRef}
-                  setMobileNo={setMobileNo}
-                  setErrors={setErrors}
-                />
-              ) : (
-                <TextField
-                  id="mobileNo"
-                  label="Mobile No."
-                  name="Mobile No."
-                  autoComplete="tel"
-                  variant="outlined"
-                  fullWidth
-                  value={mobileNo}
-                  inputRef={mobileNoRef}
-                  onKeyDown={(e) => handleKeyDown(e, emailRef)}
-                  onChange={(e) => handleInputChange(e, setMobileNo, "mobileNo")}
-                  error={!!Errors.mobileNo}
-                  helperText={Errors.mobileNo}
-                  disabled={isLoading}
-                  InputProps={{
-                    sx: { borderRadius: 2 }
+                className="btnColorProCat"
+              >
+                <PersonAddOutlinedIcon
+                  sx={{
+                    fontSize: 32,
                   }}
                 />
-              )}
+              </Box>
 
-              <TextField
-                name="user-email"
-                id="email"
-                label="Email"
-                type="email"
-                autoComplete="email"
-                variant="outlined"
-                fullWidth
-                value={email}
-                inputRef={emailRef}
-                onKeyDown={(e) => handleKeyDown(e, passwordRef)}
-                onChange={(e) => handleInputChange(e, setEmail, "email")}
-                error={!!Errors.email}
-                helperText={Errors.email}
-                disabled={isLoading}
-
-              />
-
-              <TextField
-                name="user-password"
-                id="password"
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                variant="outlined"
-                fullWidth
-                value={password}
-                onChange={handlePasswordChange}
-                error={!!passwordError}
-                helperText={passwordError}
-                inputRef={passwordRef}
-                onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
-                disabled={isLoading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => handleTogglePasswordVisibility("password")}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: 2 }
-                }}
-              />
-
-              <TextField
-                name="user-confirmPassword"
-                id="confirmPassword"
-                label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
-                autoComplete="new-password"
-                variant="outlined"
-                fullWidth
-                value={confirmPassword}
-                inputRef={confirmPasswordRef}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleSubmit();
-                  }
-                }}
-                onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
-                error={!!Errors.confirmPassword}
-                helperText={Errors.confirmPassword}
-                disabled={isLoading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => handleTogglePasswordVisibility("confirmPassword")}
-                        onMouseDown={handleMouseDownConfirmPassword}
-                        edge="end"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: 2 }
-                }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                size="large"
-                variant="contained"
-                color="success"
-                disabled={isLoading}
-                className="btnColorProCat"
+              {/* Title */}
+              <Typography
+                variant="h4"
+                component="h1"
                 sx={{
+                  fontWeight: 400,
+                  color: "text.primary",
+                  mb: 1,
+                  fontSize: { xs: "1.75rem", sm: "2.25rem" },
+                  textAlign: "center",
+                }}
+              >
+                Create Account
+              </Typography>
+
+              {/* Form */}
+              <Stack spacing={2.5} width="100%" component="form" noValidate onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: "auto", mt: 2 }}>
+                <TextField autoFocus name="user-firstName" id="firstName" label="First Name" variant="outlined" fullWidth value={firstName} inputRef={firstNameRef} onKeyDown={(e) => handleKeyDown(e, lastNameRef)} onChange={(e) => handleInputChange(e, setFirstName, "firstName")} error={!!Errors.firstName} helperText={Errors.firstName} disabled={isLoading} />
+
+                <TextField name="user-lastName" id="lastName" label="Last Name" variant="outlined" fullWidth value={lastName} inputRef={lastNameRef} onKeyDown={(e) => handleKeyDown(e, !currentActiveFlow ? taxIdRef : isOtpNewUi ? mobileNoRef : emailRef)} onChange={(e) => handleInputChange(e, setLastName, "lastName")} error={!!Errors.lastName} helperText={Errors.lastName} disabled={isLoading} />
+
+                {!currentActiveFlow && (
+                  <>
+                    <TextField name="user-taxId" id="taxId" label="VAT/GST No." variant="outlined" fullWidth value={taxId} inputRef={taxIdRef} onKeyDown={(e) => handleKeyDown(e, businessTypeRef)} onChange={(e) => handleInputChange(e, setTaxId, "taxId")} error={!!Errors.taxId} helperText={Errors.taxId} disabled={isLoading} />
+
+                    <Autocomplete
+                      options={["Retailer", "Wholesaler", "Manufacturer", "Reseller", "Jewellery Workshop"]}
+                      value={businessType}
+                      onChange={(event, newValue) => {
+                        setBusinessType(newValue || "");
+                        setErrors((prev) => ({ ...prev, businessType: "" }));
+                      }}
+                      renderInput={(params) => <TextField {...params} label="Business Type" variant="outlined" inputRef={businessTypeRef} onKeyDown={(e) => handleKeyDown(e, cityRef)} error={!!Errors.businessType} helperText={Errors.businessType} />}
+                      disabled={isLoading}
+                    />
+
+                    <TextField name="user-city" id="city" label="City/Location" variant="outlined" fullWidth value={city} inputRef={cityRef} onKeyDown={(e) => handleKeyDown(e, isOtpNewUi ? mobileNoRef : emailRef)} onChange={(e) => handleInputChange(e, setCity, "city")} error={!!Errors.city} helperText={Errors.city} disabled={isLoading} />
+                  </>
+                )}
+
+                {isOtpNewUi ? (
+                  <CountryDropDown Errors={Errors} handleInputChange={handleInputChange} handleKeyDown={handleKeyDown} Countrycodestate={Countrycodestate} setCountrycodestate={setCountrycodestate} setCountryShortName={setCountryShortName} IsMobileThrough={isMobileThrough} emailRef={emailRef} mobileNo={mobileNo} mobileNoRef={mobileNoRef} setMobileNo={setMobileNo} setErrors={setErrors} />
+                ) : (
+                  <TextField
+                    id="mobileNo"
+                    label="Mobile No."
+                    name="Mobile No."
+                    autoComplete="tel"
+                    variant="outlined"
+                    fullWidth
+                    value={mobileNo}
+                    inputRef={mobileNoRef}
+                    onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                    onChange={(e) => handleInputChange(e, setMobileNo, "mobileNo")}
+                    error={!!Errors.mobileNo}
+                    helperText={Errors.mobileNo}
+                    disabled={isLoading}
+                    InputProps={{
+                      sx: { borderRadius: 2 },
+                    }}
+                  />
+                )}
+
+                <TextField name="user-email" id="email" label="Email" type="email" autoComplete="email" variant="outlined" fullWidth value={email} inputRef={emailRef} onKeyDown={(e) => handleKeyDown(e, passwordRef)} onChange={(e) => handleInputChange(e, setEmail, "email")} error={!!Errors.email} helperText={Errors.email} disabled={isLoading} />
+
+                {!currentActiveFlow && (
+                  <>
+                    <TextField
+                      name="user-password"
+                      id="password"
+                      label="Password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      variant="outlined"
+                      fullWidth
+                      value={password}
+                      onChange={handlePasswordChange}
+                      error={!!passwordError}
+                      helperText={passwordError}
+                      inputRef={passwordRef}
+                      onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
+                      disabled={isLoading}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("password")} onMouseDown={handleMouseDownPassword} edge="end" sx={{ color: "text.secondary" }}>
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: { borderRadius: 2 },
+                      }}
+                    />
+
+                    <TextField
+                      name="user-confirmPassword"
+                      id="confirmPassword"
+                      label="Confirm Password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      variant="outlined"
+                      fullWidth
+                      value={confirmPassword}
+                      inputRef={confirmPasswordRef}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleSubmit();
+                        }
+                      }}
+                      onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
+                      error={!!Errors.confirmPassword}
+                      helperText={Errors.confirmPassword}
+                      disabled={isLoading}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("confirmPassword")} onMouseDown={handleMouseDownConfirmPassword} edge="end" sx={{ color: "text.secondary" }}>
+                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: { borderRadius: 2 },
+                      }}
+                    />
+                  </>
+                )}
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  size="large"
+                  variant="contained"
+                  color="success"
+                  disabled={isLoading}
+                  className="btnColorProCat"
+                  sx={{
+                    mt: 2,
+                    py: 1.5,
+                    textTransform: "none",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    boxShadow: "none",
+                    transition: "all 0.2s ease-in-out",
+                    "&:disabled": {
+                      bgcolor: "grey.300",
+                      color: "grey.500",
+                    },
+                  }}
+                >
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                </Button>
+
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="text"
+                  onClick={() => navigation(cancelRedireactUrl)}
+                  disabled={isLoading}
+                  startIcon={<ArrowBackIcon />}
+                  sx={{
+                    py: 1.5,
+                    textTransform: "none",
+                    fontSize: "0.95rem",
+                    fontWeight: 500,
+                    color: "text.secondary",
+                    "&:hover": {
+                      bgcolor: "grey.100",
+                      color: "text.primary",
+                    },
+                  }}
+                >
+                  Back to Login
+                </Button>
+              </Stack>
+
+              {/* Terms Note */}
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  textAlign: "center",
+                  maxWidth: 350,
                   mt: 2,
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  boxShadow: 'none',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:disabled': {
-                    bgcolor: 'grey.300',
-                    color: 'grey.500'
-                  }
+                  display: "block",
                 }}
               >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
-              </Button>
-
-              <Button
-                fullWidth
-                size="large"
-                variant="text"
-                onClick={() => navigation(cancelRedireactUrl)}
-                disabled={isLoading}
-                startIcon={<ArrowBackIcon />}
-                sx={{
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: 'text.secondary',
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                    color: 'text.primary'
-                  }
-                }}
-              >
-                Back to Login
-              </Button>
+                By creating an account, you agree to our Terms of Use and Privacy Policy
+              </Typography>
             </Stack>
-
-            {/* Terms Note */}
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{
-                textAlign: 'center',
-                maxWidth: 350,
-                mt: 2,
-                display: 'block'
-              }}
-            >
-              By creating an account, you agree to our Terms of Use and Privacy Policy
-            </Typography>
-          </Stack>
-        </Paper>
-      </Container>
-    </Box>
-  </>
-
-  return (
-    <div className="smr_registerMain">
-      {isLoading && (
-        <div className="loader-overlay">
-          <CircularProgress className="loadingBarManage" />
-        </div>
-      )}
-      <div>
-        {/* style={{ backgroundColor: '#c0bbb1' }} */}
-        <div className="smling-register-main">
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "0px",
-              paddingTop: "5%",
-              fontSize: "40px",
-              color: "#7d7f85",
-            }}
-            className="AuthScreenRegisterMainTitle"
-          >
-            Register
-          </p>
-
-          <form
-            noValidate
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-            onSubmit={handleSubmit}
-          >
-            <TextField name="user-firstName" autoFocus id="outlined-basic firstName" label="First Name" variant="outlined" className="labgrowRegister" style={{ margin: "15px" }} value={firstName} inputRef={firstNameRef} onKeyDown={(e) => handleKeyDown(e, lastNameRef)} onChange={(e) => handleInputChange(e, setFirstName, "firstName")} error={!!Errors.firstName} helperText={Errors.firstName} />
-
-            <TextField name="user-lastName" id="outlined-basic lastName" label="Last Name" variant="outlined" className="labgrowRegister" style={{ margin: "15px" }} value={lastName} inputRef={lastNameRef} onKeyDown={(e) => handleKeyDown(e, mobileNoRef)} onChange={(e) => handleInputChange(e, setLastName, "lastName")} error={!!Errors.lastName} helperText={Errors.lastName} />
-            {isOtpNewUi ? <CountryDropDown Errors={Errors} handleInputChange={handleInputChange} handleKeyDown={handleKeyDown} Countrycodestate={Countrycodestate} setCountrycodestate={setCountrycodestate} setCountryShortName={setCountryShortName} IsMobileThrough={isMobileThrough} emailRef={emailRef} mobileNo={mobileNo} mobileNoRef={mobileNoRef} setMobileNo={setMobileNo} setErrors={setErrors} /> : <TextField id="outlined-basic" label="Mobile No." name="Mobile No." autoComplete="Mobile No." variant="outlined" className="labgrowRegister" style={{ margin: "15px" }} value={mobileNo} inputRef={mobileNoRef} onKeyDown={(e) => handleKeyDown(e, emailRef)} onChange={(e) => handleInputChange(e, setMobileNo, "mobileNo")} error={!!Errors.mobileNo} helperText={Errors.mobileNo} />}
-            <TextField name="user-email" id="outlined-basic email" label="Email" autoComplete="smr_registerEmail" variant="outlined" className="labgrowRegister" style={{ margin: "15px" }} value={email} inputRef={emailRef} onKeyDown={(e) => handleKeyDown(e, passwordRef)} onChange={(e) => handleInputChange(e, setEmail, "email")} error={!!Errors.email} helperText={Errors.email} />
-
-            <TextField
-              name="user-password"
-              id="outlined-password-input password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              className="labgrowRegister"
-              autoComplete="new-password" // Explicitly telling the browser not to autocomplete this field
-              style={{ margin: "15px" }}
-              value={password}
-              onChange={handlePasswordChange}
-              error={!!passwordError}
-              helperText={passwordError}
-              inputRef={passwordRef}
-              onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("password")} onMouseDown={handleMouseDownPassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              name="user-confirmPassword"
-              id="outlined-confirm-password-input  confirmPassword"
-              label="Confirm Password"
-              type={showConfirmPassword ? "text" : "password"}
-              className="labgrowRegister"
-              style={{ margin: "15px" }}
-              autoComplete="new-password" // Avoid autofill by browsers for password
-              value={confirmPassword}
-              inputRef={confirmPasswordRef}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSubmit();
-                }
-              }}
-              onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
-              error={!!Errors.confirmPassword}
-              helperText={Errors.confirmPassword}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("confirmPassword")} onMouseDown={handleMouseDownConfirmPassword} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <button type="submit" className="createBtnRegister btnColorProCat">
-              CREATE ACCOUNT
-            </button>
-
-            <Button style={{ marginTop: "10px", color: "gray" }} onClick={() => navigation(cancelRedireactUrl)}>
-              BACK
-            </Button>
-          </form>
-        </div>
-      </div>
-    </div>
+          </Paper>
+        </Container>
+      </Box>
+    </>
   );
 }

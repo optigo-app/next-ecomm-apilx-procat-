@@ -9,7 +9,7 @@ let apiUrlPromise = null;
 
 const setApiUrl = async () => {
   if (apiUrlPromise) return apiUrlPromise;
-  const localHosts = ["localhost", "fgstore.pro", "procatalog.web"];
+  const localHosts = ["localhost", "fgstore.pro", "procatalog.web", 'beta.procatalog.web'];
 
   apiUrlPromise = (async () => {
     try {

@@ -13,6 +13,7 @@ import { GetCountAPI } from '@/app/(core)/utils/API/GetCount/GetCountAPI';
 import { generateToken } from '@/app/(core)/utils/Glob_Functions/Tokenizer';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import { currentActiveFlow, IS_B2C } from '@/app/(core)/constants/data';
 
 
 import {
@@ -38,6 +39,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AdminStatusDialog from '../Register/components/AdminStatusDialog';
 
 
 export default function LoginWithEmail({ params, searchParams, storeInit }) {
@@ -47,6 +49,7 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [adminStatusDialog, setAdminStatusDialog] = useState({ open: false, type: "pending", message: "" });
   const [rememberMe, setRememberMe] = useState(false);
   const [isOtpNewUi, setIsOtpNewUi] = useState(true);
   const { push } = useNextRouterLikeRR();
@@ -97,9 +100,18 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
   }
 
   const handleSubmit = async () => {
+    if (!currentActiveFlow) {
+      setAdminStatusDialog({
+        open: true,
+        type: "pending",
+        message: "Your account request is still under review by the admin. Please wait for the confirmation."
+      });
+      return;
+    }
+
     const visiterId = Cookies.get('visiterId');
     if (!confirmPassword.trim()) {
-      errors.confirmPassword = 'Password is required';
+      setErrors(prev => ({ ...prev, confirmPassword: 'Password is required' }));
       return;
     }
 
@@ -176,7 +188,7 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
         }
 
       } else {
-          errors.confirmPassword = response.Data.rd[0].stat_msg;
+        errors.confirmPassword = response.Data.rd[0].stat_msg;
       }
     }).catch((err) => console.log(err))
 
@@ -212,400 +224,319 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
     navigation(`/LoginOption?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`)
   }
 
-   const theme = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    return (
+  return (
+    <>
+      {/* Admin Status Dialog */}
+      <AdminStatusDialog
+        open={adminStatusDialog.open}
+        type={adminStatusDialog.type}
+        message={adminStatusDialog.message}
+        onClose={() => setAdminStatusDialog({ ...adminStatusDialog, open: false })}
+      />
       <Box
-      sx={{
-        minHeight: '90vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'white',
-         p: { xs: 0, sm: 0 },
-        position: 'relative'
-      }}
-    >
-      {/* Loading Overlay */}
-      <Backdrop
-        open={isLoading}
         sx={{
-          zIndex: theme.zIndex.modal + 1,
-          color: '#fff',
-          bgcolor: 'rgba(0,0,0,0.3)'
+          minHeight: '90vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: 'white',
+          p: { xs: 0, sm: 0 },
+          position: 'relative'
         }}
       >
-        <CircularProgress size={50} thickness={4} color="primary" />
-      </Backdrop>
-
-      <Container maxWidth="sm">
-        <Paper
-          elevation={0}
+        {/* Loading Overlay */}
+        <Backdrop
+          open={isLoading}
           sx={{
-            p: { xs: 2, sm: 5 },
-            borderRadius: 3,
-            border: '1px solid',
-            borderColor: 'divider',
-            position: 'relative',
-            overflow: 'hidden'
+            zIndex: theme.zIndex.modal + 1,
+            color: '#fff',
+            bgcolor: 'rgba(0,0,0,0.3)'
           }}
         >
-          {/* Back Button */}
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={HandleCancel}
+          <CircularProgress size={50} thickness={4} color="primary" />
+        </Backdrop>
+
+        <Container maxWidth="sm">
+          <Paper
+            elevation={0}
             sx={{
-              position: 'absolute',
-              top: 16,
-              left: 16,
-              color: 'text.secondary',
-              textTransform: 'none',
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: 'grey.100',
-                color: 'text.primary'
-              }
+              p: { xs: 2, sm: 5 },
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
-            Back
-          </Button>
-
-          <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
-            {/* Icon */}
-            <Box
+            {/* Back Button */}
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={HandleCancel}
               sx={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                bgcolor: 'primary.light',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 1
+                position: 'absolute',
+                top: 16,
+                left: 16,
+                color: 'text.secondary',
+                textTransform: 'none',
+                fontWeight: 500,
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                  color: 'text.primary'
+                }
               }}
-                className='btnColorProCat'
             >
-              <LockOutlinedIcon 
-                sx={{ 
-                  fontSize: 32, 
-                }} 
-              />
-            </Box>
+              Back
+            </Button>
 
-            {/* Title */}
-            <Box textAlign="center">
-              <Typography
-                variant="h4"
-                component="h1"
+            <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
+              {/* Icon */}
+              <Box
                 sx={{
-                  fontWeight: 400,
-                  color: 'text.primary',
-                  mb: 1,
-                  fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                  width: 64,
+                  height: 64,
+                  borderRadius: '50%',
+                  bgcolor: 'primary.light',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 1
                 }}
+                className='btnColorProCat'
               >
-                Login with Password
-              </Typography>
-              
-              <Stack 
-                direction="row" 
-                spacing={1} 
-                justifyContent="center" 
-                alignItems="center"
-                sx={{ color: 'text.secondary' }}
-              >
-               <IconButton>
-                 <EmailOutlinedIcon sx={{ fontSize: 18 }} />
-               </IconButton>
-                <Typography variant="body1">
-                  {email}
-                </Typography>
-              </Stack>
-            </Box>
-
-            {/* Form */}
-            <Stack 
-              spacing={2.5} 
-              width="100%" 
-              component="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-              sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
-            >
-              <TextField
-                autoFocus
-                fullWidth
-                id="password"
-                label="Password"
-                type={showConfirmPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                value={confirmPassword}
-                onChange={(e) => handleInputChange(e, setConfirmPassword, 'confirmPassword')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSubmit();
-                }}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                disabled={isLoading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => handleTogglePasswordVisibility('confirmPassword')}
-                        onMouseDown={handleMouseDownConfirmPassword}
-                        edge="end"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: {
-                    bgcolor: 'background.paper'
-                  }
-                }}
-                FormHelperTextProps={{
-                  sx: { 
-                    ml: 0,
-                    fontSize: '0.875rem',
-                    fontWeight: 500
-                  }
-                }}
-              />
-
-              {/* Remember Me & Forgot Password Row */}
-              <Stack 
-                direction="row" 
-                justifyContent="space-between" 
-                alignItems="center"
-                sx={{ mt: 0.5 }}
-              >
-                {isOtpNewUi ? (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" color="text.secondary">
-                        Remember me
-                      </Typography>
-                    }
-                    sx={{ m: 0 }}
-                  />
-                ) : (
-                  <Box />
-                )}
-                
-                <Button
-                  onClick={handleForgotPassword}
+                <LockOutlinedIcon
                   sx={{
+                    fontSize: 32,
+                  }}
+                />
+              </Box>
+
+              {/* Title */}
+              <Box textAlign="center">
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    fontWeight: 400,
+                    color: 'text.primary',
+                    mb: 1,
+                    fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                  }}
+                >
+                  Login with Password
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{ color: 'text.secondary' }}
+                >
+                  <IconButton>
+                    <EmailOutlinedIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                  <Typography variant="body1">
+                    {email}
+                  </Typography>
+                </Stack>
+              </Box>
+
+              {/* Form */}
+              <Stack
+                spacing={2.5}
+                width="100%"
+                component="form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
+                sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
+              >
+                <TextField
+                  autoFocus
+                  fullWidth
+                  id="password"
+                  label="Password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  value={confirmPassword}
+                  onChange={(e) => handleInputChange(e, setConfirmPassword, 'confirmPassword')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSubmit();
+                  }}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
+                  disabled={isLoading}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => handleTogglePasswordVisibility('confirmPassword')}
+                          onMouseDown={handleMouseDownConfirmPassword}
+                          edge="end"
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    sx: {
+                      bgcolor: 'background.paper'
+                    }
+                  }}
+                  FormHelperTextProps={{
+                    sx: {
+                      ml: 0,
+                      fontSize: '0.875rem',
+                      fontWeight: 500
+                    }
+                  }}
+                />
+
+                {/* Remember Me & Forgot Password Row */}
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mt: 0.5 }}
+                >
+                  {isOtpNewUi ? (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          color="primary"
+                          size="small"
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" color="text.secondary">
+                          Remember me
+                        </Typography>
+                      }
+                      sx={{ m: 0 }}
+                    />
+                  ) : (
+                    <Box />
+                  )}
+
+                  <Button
+                    onClick={handleForgotPassword}
+                    sx={{
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      p: 0,
+                      minWidth: 'auto',
+                      color: 'primary.main',
+                      fontSize: '0.875rem',
+                      '&:hover': {
+                        bgcolor: 'transparent',
+                        textDecoration: 'underline'
+                      }
+                    }}
+                  >
+                    Forgot Password?
+                  </Button>
+                </Stack>
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  size="large"
+                  variant="contained"
+                  className='btnColorProCat'
+                  disabled={isLoading || !confirmPassword.trim()}
+                  sx={{
+                    py: 1.5,
                     textTransform: 'none',
-                    fontWeight: 500,
-                    p: 0,
-                    minWidth: 'auto',
-                    color: 'primary.main',
-                    fontSize: '0.875rem',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    boxShadow: 'none',
+                    transition: 'all 0.2s ease-in-out',
                     '&:hover': {
-                      bgcolor: 'transparent',
-                      textDecoration: 'underline'
+                      boxShadow: 2,
+                      transform: 'translateY(-1px)'
+                    },
+                    '&:disabled': {
+                      bgcolor: 'grey.300',
+                      color: 'grey.500'
                     }
                   }}
                 >
-                  Forgot Password?
+                  {isLoading ? 'Logging in...' : 'Login'}
+                </Button>
+
+                {/* Divider */}
+                <Divider sx={{ my: 2 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ px: 1 }}
+                  >
+                    OR
+                  </Typography>
+                </Divider>
+
+                {/* Login with Code Option */}
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="outlined"
+                  onClick={handleNavigation}
+                  startIcon={<EmailOutlinedIcon />}
+                  className='btnColorProCat'
+                  sx={{
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                >
+                  Login with Code Instead
+                </Button>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  textAlign="center"
+                  sx={{ display: 'block', mt: 1 }}
+                >
+                  Go passwordless! We'll send you an email.
+                </Typography>
+
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="text"
+                  onClick={HandleCancel}
+                  disabled={isLoading}
+                  sx={{
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    fontWeight: 500,
+                    color: 'text.secondary',
+                    mt: 1,
+                    '&:hover': {
+                      bgcolor: 'grey.100',
+                      color: 'text.primary'
+                    }
+                  }}
+                >
+                  Cancel
                 </Button>
               </Stack>
-
-              <Button
-                type="submit"
-                fullWidth
-                size="large"
-                variant="contained"
-                 className='btnColorProCat'
-                disabled={isLoading || !confirmPassword.trim()}
-                sx={{
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  boxShadow: 'none',
-                  transition: 'all 0.2s ease-in-out',
-                  '&:hover': {
-                    boxShadow: 2,
-                    transform: 'translateY(-1px)'
-                  },
-                  '&:disabled': {
-                    bgcolor: 'grey.300',
-                    color: 'grey.500'
-                  }
-                }}
-              >
-                {isLoading ? 'Logging in...' : 'Login'}
-              </Button>
-
-              {/* Divider */}
-              <Divider sx={{ my: 2 }}>
-                <Typography 
-                  variant="caption" 
-                  color="text.secondary"
-                  sx={{ px: 1 }}
-                >
-                  OR
-                </Typography>
-              </Divider>
-
-              {/* Login with Code Option */}
-              <Button
-                fullWidth
-                size="large"
-                variant="outlined"
-                onClick={handleNavigation}
-                startIcon={<EmailOutlinedIcon />}
-                className='btnColorProCat'
-                sx={{
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '0.95rem',
-                  fontWeight: 600,
-                  transition: 'all 0.2s ease-in-out',
-                }}
-              >
-                Login with Code Instead
-              </Button>
-
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                textAlign="center"
-                sx={{ display: 'block', mt: 1 }}
-              >
-                Go passwordless! We'll send you an email.
-              </Typography>
-
-              <Button
-                fullWidth
-                size="large"
-                variant="text"
-                onClick={HandleCancel}
-                disabled={isLoading}
-                sx={{
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: 'text.secondary',
-                  mt: 1,
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                    color: 'text.primary'
-                  }
-                }}
-              >
-                Cancel
-              </Button>
             </Stack>
-          </Stack>
-        </Paper>
-      </Container>
-    </Box>
+          </Paper>
+        </Container>
+      </Box>
+    </>
   )
 
-  return (
-    <div className='proCat_loginEmail'>
-      {isLoading && (
-        <div className="loader-overlay">
-          <CircularProgress className='loadingBarManage' />
-        </div>
-      )}
-      <div>
-        <div className='smr_loginEmailD'>
-          <p style={{
-            textAlign: 'center',
-            paddingBlock: '60px',
-            marginTop: '0px',
-            fontSize: '40px',
-            color: '#7d7f85',
-            fontFamily: 'FreightDispProBook-Regular,Times New Roman,serif'
-          }}
-            className='AuthScreenMainTitle'
-          >Login With Password</p>
-          <p style={{
-            textAlign: 'center',
-            marginTop: '-60px',
-            fontSize: '15px',
-            color: '#7d7f85',
-            fontFamily: 'FreightDispProBook-Regular,Times New Roman,serif'
-          }}
-            className='AuthScreenSubTitle'
-          >using {email}</p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <TextField
-              autoFocus
-              id="outlined-confirm-password-input"
-              label="Password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              className='smr_loginPasswordBox'
-              style={{ margin: '15px' }}
-              value={confirmPassword}
-              onChange={(e) => handleInputChange(e, setConfirmPassword, 'confirmPassword')}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  handleSubmit();
-                }
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => handleTogglePasswordVisibility('confirmPassword')}
-                      onMouseDown={handleMouseDownConfirmPassword}
-                      edge="end"
-                    >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {isOtpNewUi &&
-              <FormControlLabel
-                className='smr_loginPasswordBox'
-                sx={{
-                  height: '0px', padding: '0px', width: '0px', margin: '0px'
-                }}
-                control={
-                  <Checkbox
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Remember Me"
-              />}
-
-            <button className='submitBtnForgot btnColorProCat' onClick={handleSubmit}>Login</button>
-
-            <button type='submit' className='pro_SmilingLoginCodeBtn btnColorProCat' onClick={handleNavigation}>Login With a Code instead on email</button>
-            <p className='pro_loginText' style={{ textAlign: 'center', marginTop: '20px' }}>Go passwordless! we'll send you an email.</p>
-
-            <p style={{ color: 'blue', cursor: 'pointer' }} onClick={handleForgotPassword}>Forgot Password ?</p>
-            <Button className='pro_cancleForgot' style={{ marginTop: '10px', color: 'gray' }} onClick={HandleCancel}>CANCEL</Button>
-          </div>
-        </div>
-      </div>
-    </div >
-  );
 }
