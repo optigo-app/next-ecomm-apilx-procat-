@@ -1,8 +1,36 @@
-# CHANGELOG
+## [2026-03-31]
+
+### Added
+
+- **Multi-Domain Theme Routing**: Implemented dynamic theme selection based on the request domain.
+  - `beta.procatalog.web` now automatically renders the **fgstore.pro.beta** theme.
+  - `procatalog.web` and all other domains default to the **fgstore.pro** theme.
+  - Replaced the static `ACTIVE_THEME` constant with a dynamic `GET_THEME()` helper in router pages to support this flow.
+- **B2B Registration Form Update**: Refactored the registration form to better suit a professional jewelry B2B platform.
+  - Added `taxId` (VAT/GST No.), `businessType`, and `city` fields.
+  - Integrated these fields into the `RegisterAPI` utility.
+  - Fixed keyboard navigation for the updated form layout.
+
+### Changed
+
+- **Cleaned Up Themes**: Removed the deprecated `fgstore.pro.v1` theme from the configuration logic as requested.
+- **Registration Flow Refactoring**: Transitioned from grid to stack layout for B2B registration per user preference.
 
 ## [2026-03-30]
 
 ### Added
+
+- **Admin Status Dialogs**: Created reusable modals in the user registration and login components that mimic the OTP verification style using `Dialog` and `Slide` from Material UI.
+  - **Files**: 
+    - `app/theme/fgstore.pro.beta/Auth/Register/page.js`
+    - `app/theme/fgstore.pro.beta/Auth/LoginWithEmail/page.js`
+    - `app/theme/fgstore.pro.beta/Auth/LoginWithMobileCode/page.js`
+    - `app/theme/fgstore.pro.beta/Auth/LoginWithEmailCode/page.js`
+    - `app/theme/fgstore.pro.beta/Auth/Register/components/AdminStatusDialog.js`
+  - **Old behavior**: The system directly redirected or showed inline errors.
+  - **New behavior**: Added a unified `Dialog` with "Approved", "Rejected", and "Pending" (Waiting) states. Features include context-specific icons, smooth slide-down animation, and dynamic color schemes.
+  - **Reason**: To visually notify the user about different account status scenarios including pending admin verification across all registration and login flows.
+
 
 - **B2B and B2C constants**: Created a consolidated flag to manage store-wide B2B and B2C behavior.
   - **Files**: `app/(core)/constants/data.js`
