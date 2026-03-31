@@ -13,7 +13,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AdminStatusDialog from "./components/AdminStatusDialog";
-import { currentActiveFlow } from "@/app/(core)/constants/data";
+import { currentActiveFlow } from "../../../../(core)/constants/data";
 
 export default function Register({ searchParams }) {
   const { push } = useNextRouterLikeRR();

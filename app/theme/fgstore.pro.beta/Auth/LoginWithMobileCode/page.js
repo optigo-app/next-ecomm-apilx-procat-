@@ -7,7 +7,7 @@ import { LoginWithEmailAPI } from '@/app/(core)/utils/API/Auth/LoginWithEmailAPI
 import Cookies from 'js-cookie';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
 import OTP from './OTP';
-import { currentActiveFlow } from '@/app/(core)/constants/data';
+import { currentActiveFlow } from '../../../../(core)/constants/data';
 import AdminStatusDialog from '../Register/components/AdminStatusDialog';
 import {
   Box,

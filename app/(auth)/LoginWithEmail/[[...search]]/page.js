@@ -1,6 +1,6 @@
 import React from "react";
 import { getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
-import { getThemeByDomain } from "@/app/(core)/constants/data";
+import { getThemeByDomain } from "../../../(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
 
 const page = async ({ params, searchParams }) => {

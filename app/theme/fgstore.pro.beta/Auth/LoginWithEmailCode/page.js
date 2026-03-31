@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import OTP from './OTP'; // Make sure the path is correct
 import './LoginWithEmailCode.modul.scss'
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
-import { currentActiveFlow } from '@/app/(core)/constants/data';
+import { currentActiveFlow } from '../../../../(core)/constants/data';
 import AdminStatusDialog from '../Register/components/AdminStatusDialog';
 import {
     Box,

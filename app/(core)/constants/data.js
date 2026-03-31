@@ -1,7 +1,7 @@
-import config from "@/public/config.json";
+import config from "../../../public/config.json";
 
-export const IS_B2B = config.IS_B2B;
-export const IS_B2C = config.IS_B2C;
+export const IS_B2B = true;
+export const IS_B2C = false;
 
 export const THEME_VERSIONS = {
   PRO: "fgstore.pro",
@@ -23,5 +23,5 @@ export const getThemeByDomain = (host) => {
 
 export const ACTIVE_THEME = THEME_VERSIONS.BETA;
 
-export const currentActiveFlow = IS_B2B;
+export const currentActiveFlow = IS_B2C;
 export const ActiveMode = ACTIVE_THEME === THEME_VERSIONS.BETA;

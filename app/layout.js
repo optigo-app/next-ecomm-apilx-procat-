@@ -1,17 +1,17 @@
-import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "./(core)/utils/GlobalFunctions/GlobalFunctions";
-import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
-import { getStaticHtmlPages } from "./(core)/utils/StaticFileGetter";
-import { EmotionRegistry } from "./(core)/contexts/EmotionRegistry";
-import { generatePageMetadata } from "@/app/(core)/utils/HeadMeta";
-import { StoreProvider } from "./(core)/contexts/StoreProvider";
-import { AuthProvider } from "./(core)/contexts/AuthProvider";
-import SWRegistration from "./components/SWRegistration";
 import { Poppins } from "next/font/google";
-import path from "path";
+import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
+import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
+import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { EmotionRegistry } from "@/app/(core)/contexts/EmotionRegistry";
+import { generatePageMetadata } from "@/app/(core)/utils/HeadMeta";
+import { StoreProvider } from "@/app/(core)/contexts/StoreProvider";
+import { AuthProvider } from "@/app/(core)/contexts/AuthProvider";
+import SWRegistration from "./components/SWRegistration";
+import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
+import { getThemeByDomain } from "./(core)/constants/data";
 import "./globals.css";
 import fs from "fs";
-import { getDomainInfo } from "./(core)/utils/getDomainInfo";
-import { getThemeByDomain } from "./(core)/constants/data";
+import path from "path";
 
 const poppins = Poppins({
   subsets: ["latin"],

@@ -1,5 +1,5 @@
 import { getStoreInit } from "../(core)/utils/GlobalFunctions/GlobalFunctions";
-import { getThemeByDomain } from "@/app/(core)/constants/data";
+import { getThemeByDomain } from "../(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
 
 export default async function Page() {
