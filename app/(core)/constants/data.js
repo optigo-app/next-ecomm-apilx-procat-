@@ -10,7 +10,7 @@ export const THEME_VERSIONS = {
 
 export const getThemeByDomain = (host) => {
   if (host.includes("localhost")) {
-    return THEME_VERSIONS.BETA;
+    return THEME_VERSIONS.PRO;
   }
 
   const DomainBinding = {
