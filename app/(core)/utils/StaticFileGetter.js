@@ -20,7 +20,7 @@ export const domainHtmlMap = {
   "localhost:4000": 'sonasons',
   'procatalog.web': 'sonasons',
   'beta.procatalog.web': 'sonasons',
-
+  'jeweliita.procatalog.in': 'sonasons'
 };
 
 const pageFileMap = {

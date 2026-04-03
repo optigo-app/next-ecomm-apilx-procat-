@@ -21,7 +21,7 @@ export const getThemeByDomain = (host) => {
   return DomainBinding[host] || THEME_VERSIONS.PRO;
 };
 
-export const ACTIVE_THEME = THEME_VERSIONS.BETA;
+export const ACTIVE_THEME = THEME_VERSIONS.PRO;
 
 export const currentActiveFlow = IS_B2C;
 export const ActiveMode = ACTIVE_THEME === THEME_VERSIONS.BETA;
