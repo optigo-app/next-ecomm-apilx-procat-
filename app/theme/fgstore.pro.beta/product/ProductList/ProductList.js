@@ -299,26 +299,20 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
 
   useEffect(() => {
-
     let result = ParseAndDecodeSearchParams(searchParams);
-
-
-
-    // Create a unique key for current searchParams to avoid duplicate calls
     const currentSearchKey = JSON.stringify(searchParams);
-
-    // Skip if same searchParams or API call already in progress
     if (lastSearchParamsRef.current === currentSearchKey || isApiCallInProgressRef.current) {
       return;
     }
-
     lastSearchParamsRef.current = currentSearchKey;
     isApiCallInProgressRef.current = true;
+
+
 
     const fetchData = async () => {
       let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
       let UrlVal = result;
-      console.log("🚀 ~ fetchData ~ UrlVal:", UrlVal)
+      console.log("🚀 ~ fetchData ~ UrlVal:", result)
       let MenuVal = "";
       let MenuKey = "";
       let SearchVar = "";
@@ -357,7 +351,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
 
       UrlVal?.forEach((ele) => {
-
+        console.log(ele, "ele")
         let firstChar = ele.charAt(0);
 
         switch (firstChar) {
@@ -1311,6 +1305,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const decodeAndDecompress = (encodedString) => {
+    if (!encodedString || typeof encodedString !== "string") {
+      return null;
+    }
     try {
       // Decode the Base64 string to binary data
       const binaryString = atob(encodedString);
@@ -1377,7 +1374,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       count: productData?.ImageCount,
       s: productData?.DefaultSize || ""
     };
-    decodeAndDecompress();
     let encodeObj = compressAndEncode(JSON?.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
   };

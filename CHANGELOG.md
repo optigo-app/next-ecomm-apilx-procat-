@@ -4,8 +4,17 @@
 
 - **ProductList.js (fgstore.pro)**: Fixed filters not passing to the GETPRODUCTLIST API correctly (FilterKey/FilterVal empty).
   - **Old behavior**: The main useEffect read query params from the `searchParams` server-side prop, which is static after the initial render and doesn't update on client-side navigation (clicking albums/menus). Additionally, the code only handled a `?value=JSON` query format, not individual params like `?A=base64`.
-  - **New behavior**: Switched to reading query params from `location.searchParams` (via `useNextRouterLikeRR()` hook, backed by Next.js `useSearchParams()`), which always reflects the current browser URL. Also added fallback handling for individual query param keys (`A`, `M`, `S`, `T`, `N`, `B`). Changed useEffect dependency from the static `searchParams` prop to `location.search`.
-  - **Reason**: Album/Menu navigation uses `navigate.push()` which is client-side only. The hook-based searchParams tracks URL changes; the server prop does not.
+  - **New behavior**: Switched to using `ParseAndDecodeSearchParams` from Parser.js to handle both URL formats. Changed useEffect to properly read from searchParams prop.
+  - **Reason**: Album/Menu navigation uses `navigate.push()` which is client-side only.
+
+- **ProductList.js (fgstore.pro)**: Fixed `InvalidCharacterError: Failed to execute 'atob'` crash in `handleMoveToDetail`.
+  - **Old behavior**: `decodeAndDecompress()` was called at line 1374 with NO argument, passing `undefined` to `atob()` which threw an error every time a product card was clicked.
+  - **New behavior**: Removed the stray `decodeAndDecompress()` call (it wasn't using the return value). Added an input guard in `decodeAndDecompress` to return `null` if no valid string is passed.
+  - **Reason**: Leftover/stray function call from earlier development.
+
+- **Parser.js**: Fixed `atob` crash when processing non-base64 searchParam keys.
+  - **Old behavior**: `ParseAndDecodeSearchParams` attempted to `atob()` ALL searchParam values, including non-base64 keys like `K` (security key), causing `InvalidCharacterError`.
+  - **New behavior**: Only attempts base64 decode on known base64 keys (`A`, `M`, `S`). Other keys (`T`, `N`, `B`, `K`, etc.) are passed through as-is. Also filters out empty/null/undefined values.
 
 ## [2026-03-31]
 
