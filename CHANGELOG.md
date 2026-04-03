@@ -1,3 +1,12 @@
+## [2026-04-03]
+
+### Fixed
+
+- **ProductList.js (fgstore.pro)**: Fixed filters not passing to the GETPRODUCTLIST API correctly (FilterKey/FilterVal empty).
+  - **Old behavior**: The main useEffect read query params from the `searchParams` server-side prop, which is static after the initial render and doesn't update on client-side navigation (clicking albums/menus). Additionally, the code only handled a `?value=JSON` query format, not individual params like `?A=base64`.
+  - **New behavior**: Switched to reading query params from `location.searchParams` (via `useNextRouterLikeRR()` hook, backed by Next.js `useSearchParams()`), which always reflects the current browser URL. Also added fallback handling for individual query param keys (`A`, `M`, `S`, `T`, `N`, `B`). Changed useEffect dependency from the static `searchParams` prop to `location.search`.
+  - **Reason**: Album/Menu navigation uses `navigate.push()` which is client-side only. The hook-based searchParams tracks URL changes; the server prop does not.
+
 ## [2026-03-31]
 
 ### Added

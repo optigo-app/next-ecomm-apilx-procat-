@@ -49,6 +49,7 @@ import { toast } from "react-toastify";
 import EditablePagination from "@/app/components/EditablePagination/EditablePagination";
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import { ParseAndDecodeSearchParams } from "@/app/(core)/utils/GlobalFunctions/Parser";
 
 
 
@@ -299,39 +300,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   useEffect(() => {
 
-    try {
-      if (searchParams?.value) {
-        let parsed = null;
-        try {
-          parsed = JSON.parse(searchParams.value);
-        } catch (e) {
-          console.error("Invalid JSON in searchParams.value:", searchParams.value, e);
-        }
+    let result = ParseAndDecodeSearchParams(searchParams);
 
-        if (parsed && typeof parsed === "object") {
-          result = Object.entries(parsed)
-            .filter(([key, value]) => value !== undefined && value !== null && value !== "undefined" && value !== "null")
-            .map(([key, value]) => {
-              // Only atob keys that are known to be base64 (A for Album, S for Search, M for Menu)
-              if (key === "A" || key === "S" || key === "M") {
-                try {
-                  const decoded = atob(value);
-                  const reEncoded = btoa(decoded);
-                  return `${key}=${reEncoded}`;
-                } catch (e) {
-                  // If it's not valid base64, just return it as is or handle it
-                  console.warn(`Value for key ${key} is not valid base64:`, value);
-                  return `${key}=${value}`;
-                }
-              }
-              return `${key}=${value}`;
-            });
-          console.log(result, "hii")
-        }
-      }
-    } catch (err) {
-      console.error("Invalid searchParams.value:", searchParams?.value, err);
-    }
 
 
     // Create a unique key for current searchParams to avoid duplicate calls
