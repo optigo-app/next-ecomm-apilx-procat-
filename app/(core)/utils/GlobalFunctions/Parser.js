@@ -41,6 +41,8 @@ export const SearchParamsParser = (searchParams) => {
  */
 export const ParseAndDecodeSearchParams = (searchParams) => {
     let result = [];
+    // Keys known to contain base64-encoded values
+    const base64Keys = ["A", "M", "S"];
 
     try {
         let parsed = searchParams;
@@ -57,28 +59,37 @@ export const ParseAndDecodeSearchParams = (searchParams) => {
 
         // If parsed is a valid object, process each key/value
         if (parsed && typeof parsed === "object") {
-            result = Object.entries(parsed).map(([key, value]) => {
-                if (typeof value !== "string") return `${key}=null`;
+            result = Object.entries(parsed)
+                .filter(([key, value]) => value !== undefined && value !== null && value !== "undefined" && value !== "null" && value !== "")
+                .map(([key, value]) => {
+                    if (typeof value !== "string") return null;
 
-                try {
-                    // Replace spaces with + (common issue with Base64 in URLs)
-                    let fixed = value.replace(/ /g, "+");
+                    // Only attempt base64 decode/re-encode on known base64 keys
+                    if (base64Keys.includes(key)) {
+                        try {
+                            // Replace spaces with + (common issue with Base64 in URLs)
+                            let fixed = value.replace(/ /g, "+");
 
-                    // Ensure padding length is correct
-                    const paddingNeeded = (4 - (fixed.length % 4)) % 4;
-                    if (paddingNeeded !== 0) {
-                        fixed = fixed.padEnd(fixed.length + paddingNeeded, "=");
+                            // Ensure padding length is correct
+                            const paddingNeeded = (4 - (fixed.length % 4)) % 4;
+                            if (paddingNeeded !== 0) {
+                                fixed = fixed.padEnd(fixed.length + paddingNeeded, "=");
+                            }
+
+                            // Decode and then re-encode to ensure valid Base64
+                            const decoded = atob(fixed);
+                            const reEncoded = btoa(decoded);
+                            return `${key}=${reEncoded}`;
+                        } catch (e) {
+                            console.warn(`⚠️ Value for key "${key}" is not valid base64, passing as-is:`, value);
+                            return `${key}=${value}`;
+                        }
                     }
 
-                    // Decode and then re-encode to ensure valid Base64
-                    const decoded = atob(fixed);
-                    const reEncoded = btoa(decoded);
-                    return `${key}=${reEncoded}`;
-                } catch (e) {
-                    console.error(`❌ Error decoding key "${key}":`, e);
-                    return `${key}=null`;
-                }
-            });
+                    // Non-base64 keys (T, N, B, K, etc.) — pass through as-is
+                    return `${key}=${value}`;
+                })
+                .filter(Boolean); // Remove any null entries
         }
     } catch (err) {
         console.error("❌ Unexpected error in searchParams processing:", err);

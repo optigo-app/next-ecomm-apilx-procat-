@@ -1305,6 +1305,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const decodeAndDecompress = (encodedString) => {
+    if (!encodedString || typeof encodedString !== "string") {
+      return null;
+    }
     try {
       // Decode the Base64 string to binary data
       const binaryString = atob(encodedString);
@@ -1371,7 +1374,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       count: productData?.ImageCount,
       s: productData?.DefaultSize || ""
     };
-    decodeAndDecompress();
     let encodeObj = compressAndEncode(JSON?.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
   };

@@ -34,11 +34,19 @@ const QuantityInput = ({ defaultValue = 1, onChange, singleProd, disabled, isLoa
         justifyContent: "center",
       }}
     >
-      <IconButton onClick={handleDecrease} disabled={disabled || isLoading || value <= 1}>
+      <IconButton
+        sx={{
+          bgcolor: 'rgba(0, 0, 0, 0.04)'
+        }}
+        onClick={handleDecrease} disabled={disabled || isLoading || value <= 1}>
         <RemoveIcon />
       </IconButton>
       <Typography variant="body1">{value}</Typography>
-      <IconButton onClick={handleIncrease} disabled={disabled || isLoading}>
+      <IconButton
+        sx={{
+          bgcolor: 'rgba(0, 0, 0, 0.04)'
+        }}
+        onClick={handleIncrease} disabled={disabled || isLoading}>
         <AddIcon />
       </IconButton>
     </Box>
