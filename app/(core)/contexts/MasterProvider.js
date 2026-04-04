@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 // Keep base setup as-is
 import React, { useEffect, useRef, useState, createContext } from "react";
@@ -9,7 +9,7 @@ import { DiamondQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/Diamon
 import { CountryCodeListApi } from "@/app/(core)/utils/API/Auth/CountryCodeListApi";
 import { MetalTypeComboAPI } from "@/app/(core)//utils/API/Combo/MetalTypeComboAPI";
 import { fetchPayMaster } from "@/app/(core)/utils/API/OrderFlow/Paymaster";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
 import { NEXT_APP_WEB } from "@/app/(core)/utils/env";
 import { getSession } from "../utils/FetchSessionData";
@@ -72,7 +72,7 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
 
         if (CompanyinfoData) {
             const visitorId = CompanyinfoData?.VisitorId;
-            const cookieStore = Cookies
+            const cookieStore = Cookies;
             const existingVisitorId = cookieStore.get("visiterId") ?? "";
 
             if (!existingVisitorId) {
@@ -84,8 +84,7 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
                 try {
                     // parse stored cookie (if you stored JSON earlier)
                     const visitorIdCookie = JSON.parse(existingVisitorId);
-                    const expirationDate =
-                        visitorIdCookie?.expires && new Date(visitorIdCookie.expires);
+                    const expirationDate = visitorIdCookie?.expires && new Date(visitorIdCookie.expires);
 
                     if (expirationDate && expirationDate <= new Date()) {
                         // remove expired cookie
@@ -108,17 +107,17 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         sessionStorage.setItem("storeInit", JSON.stringify(getStoreInit));
         sessionStorage.setItem("myAccountFlags", JSON.stringify(getMyAccountFlags));
         fetchVisitorId();
-    }, [])
+    }, []);
 
     // Heartbeat mechanism for Service Worker
     useEffect(() => {
         const HEARTBEAT_INTERVAL = 30000; // 30 seconds
         const heartbeat = setInterval(() => {
-            if (typeof window !== 'undefined' && navigator.serviceWorker && navigator.serviceWorker.controller) {
+            if (typeof window !== "undefined" && navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
-                    type: 'HEARTBEAT',
-                    status: 'alive',
-                    timestamp: Date.now()
+                    type: "HEARTBEAT",
+                    status: "alive",
+                    timestamp: Date.now(),
                 });
             }
         }, HEARTBEAT_INTERVAL);
@@ -134,14 +133,10 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
                 if (!storedPayMaster) {
                     const payMaster = await fetchPayMaster();
                     const res = payMaster?.Data?.rd;
-                    if (res?.[0]?.stat != 0 && res?.[0]?.stat_msg != 'Sorry for invonvenient') {
+                    if (res?.[0]?.stat != 0 && res?.[0]?.stat_msg != "Sorry for invonvenient") {
                         sessionStorage.setItem("payMaster", JSON.stringify(res));
                     } else {
-                        console.log(
-                            "%c❌ ERROR: Payment Master API returned nothing! \n%cSorry for inconvenience — please contact your administrator.",
-                            "color: white; background: red; font-size: 18px; font-weight: bold; padding: 8px; border-radius: 4px;",
-                            "color: red; font-size: 16px; font-weight: bold;"
-                        );
+                        console.log("%c❌ ERROR: Payment Master API returned nothing! \n%cSorry for inconvenience — please contact your administrator.", "color: white; background: red; font-size: 18px; font-weight: bold; padding: 8px; border-radius: 4px;", "color: red; font-size: 16px; font-weight: bold;");
                     }
                 }
             } catch (error) {
@@ -168,25 +163,19 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         const loginUserDetail = getSession("loginUserDetail");
         const LoginUser = getSession("LoginUser");
         const visiterID = Cookies.get("visiterId");
+        console.log(storeInit, loginUserDetail, LoginUser, visiterID, "callAllApi -- store --");
 
         const finalID = storeInit?.IsB2BWebsite === 0 ? (LoginUser === false ? visiterID : loginUserDetail?.id || "0") : loginUserDetail?.id || "0";
 
         // Call all APIs in parallel
-        Promise.all([
-            callApiAndStore(MetalTypeComboAPI, "metalTypeCombo", finalID),
-            callApiAndStore(DiamondQualityColorComboAPI, "diamondQualityColorCombo", finalID),
-            callApiAndStore(MetalColorCombo, "MetalColorCombo", finalID),
-            callApiAndStore(ColorStoneQualityColorComboAPI, "ColorStoneQualityColorCombo", finalID),
-            callApiAndStore(CurrencyComboAPI, "CurrencyCombo", finalID),
-            callApiAndStore(CountryCodeListApi, "CountryCodeListApi", finalID)
-        ]).then(() => {
-            console.log("All combo APIs completed");
-        }).catch((error) => {
-            console.error("Error in API calls:", error);
-        });
+        Promise.all([callApiAndStore(MetalTypeComboAPI, "metalTypeCombo", finalID), callApiAndStore(DiamondQualityColorComboAPI, "diamondQualityColorCombo", finalID), callApiAndStore(MetalColorCombo, "MetalColorCombo", finalID), callApiAndStore(ColorStoneQualityColorComboAPI, "ColorStoneQualityColorCombo", finalID), callApiAndStore(CurrencyComboAPI, "CurrencyCombo", finalID), callApiAndStore(CountryCodeListApi, "CountryCodeListApi", finalID)])
+            .then(() => {
+                console.log("All combo APIs completed");
+            })
+            .catch((error) => {
+                console.error("Error in API calls:", error);
+            });
     };
 
-    return <masterContext.Provider value={{}}>
-        {children}
-    </masterContext.Provider>
-}
+    return <masterContext.Provider value={{}}>{children}</masterContext.Provider>;
+};

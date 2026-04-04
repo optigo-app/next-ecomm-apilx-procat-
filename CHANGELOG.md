@@ -1,3 +1,27 @@
+## [2026-04-04]
+
+### Fixed
+
+- **page.jsx (detail)**: Fixed `searchParams` not being awaited before passing to client component.
+  - **Old behavior**: In Next.js 15, `searchParams` is a Promise. It was passed directly to `ProductDetail` without awaiting, so the client component received a Promise object instead of `{ p: "encoded_value" }`.
+  - **New behavior**: `searchParams` is now awaited (`const resolvedSearchParams = await searchParams`) before being passed as a prop.
+  - **Reason**: Next.js 15 requires `searchParams` to be awaited in async server components.
+
+- **ProductDetail.js (fgstore.pro)**: Fixed `atob` `InvalidCharacterError` causing `autocode` and `designno` to be empty/undefined in API calls.
+  - **Old behavior**: `parseSearchParams()` only handled a legacy `searchParams.value` JSON structure, not the resolved `{ p: "..." }` format from Next.js 15. Additionally, `decodeAndDecompress()` did not handle URL-encoded base64 strings (`%2B`, `%2F`, `%3D`), causing `atob()` to throw `InvalidCharacterError`.
+  - **New behavior**: `parseSearchParams()` now first checks for direct key access (`searchParams.p`) before falling back to the legacy path. `decodeAndDecompress()` now applies `decodeURIComponent()` before base64 decoding.
+  - **Reason**: The `p` query param was never decoded, so `decodeobj` was always `null`, making `singprod?.a` and `singprod?.b` undefined — causing `autocode: ""` and `designno: "undefined"` in the API payload.
+
+- **ProductDetail.js (fgstore.pro)**: Fixed `searchParams` Base64 truncation and URL padding loss.
+  - **Old behavior**: The `navVal` string was extracted using `result[0]?.split("=")[1]` or `location?.search.split("?p=")[1]`. Because Base64 uses `=` for padding, calling `.split("=")` chopped off the essential padding characters resulting in a malformed Base64 string that crashed `atob()`. Also, `searchParams.p` automatically converted `+` to spaces due to standard HTTP URL decoding, causing `atob()` to fail parsing.
+  - **New behavior**: `navVal` is now extracted using `result[0].substring(result[0].indexOf("=") + 1)`, ensuring all subsequent characters (including `=`) remain intact. `parseSearchParams()` now intelligently applies `.replace(/ /g, "+")` to revert any browser URL mutations before attempting decoding.
+  - **Reason**: This guarantees the base64 string identically matches the one crafted by `compressAndEncode` in `ProductList.js`.
+
+- **SingleProdListAPI.js**: Added `?? ""` fallback for `designno` to prevent the literal string `"undefined"`.
+  - **Old behavior**: `designno: \`${singprod?.b}\`` — when `singprod?.b` is `undefined`, JavaScript template literals convert it to the string `"undefined"`.
+  - **New behavior**: `designno: \`${singprod?.b ?? ""}\`` — falls back to empty string.
+  - **Reason**: Safety net to prevent sending `"undefined"` as designno even if upstream decoding fails.
+
 ## [2026-04-03]
 
 ### Fixed
