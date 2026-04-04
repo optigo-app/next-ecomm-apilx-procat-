@@ -113,7 +113,15 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     try {
       if (!encodedString) return null;
 
-      const base64 = encodedString.replace(/-/g, "+").replace(/_/g, "/");
+      // Decode any URL-encoded characters first (%2B → +, %2F → /, %3D → =)
+      let decoded = encodedString;
+      try {
+        decoded = decodeURIComponent(decoded);
+      } catch (e) {
+        // If decodeURIComponent fails, use the original string
+      }
+
+      const base64 = decoded.replace(/-/g, "+").replace(/_/g, "/");
 
       const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
 
@@ -138,6 +146,16 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const parseSearchParams = () => {
     let result = [];
     try {
+      // Path 1: Next.js 15 resolved searchParams object — direct key access
+      if (searchParams && typeof searchParams === "object" && !searchParams.value) {
+        let pValue = searchParams?.p;
+        if (pValue) {
+          pValue = String(pValue).replace(/ /g, "+");
+          return [`p=${pValue}`];
+        }
+      }
+
+      // Path 2: Legacy searchParams.value (JSON string)
       if (!searchParams?.value) return result;
       let parsed;
       try {
@@ -163,7 +181,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             return `${key}=${reEncoded}`;
           } catch (err) {
             console.error(`❌ Error decoding key "${key}" with value "${rawValue}":`, err);
-            return null; // Return null instead of "key=null" to allow filtering
+            return null;
           }
         })
         .filter(item => item !== null);
@@ -175,7 +193,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const result = parseSearchParams();
-  let navVal = result[0]?.split("=")[1];
+  let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
   let decodeobj = decodeAndDecompress(navVal);
 
   const innerSwiperRef = useRef(null);
@@ -257,7 +275,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       let allListData = sessionStorage.getItem("deatilSliderData");
 
       if (!allListData) {
-        let navVal = location?.search.split("?p=")[1];
+        const result = parseSearchParams();
+        let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
         let decodeobj = decodeAndDecompress(navVal);
         let obj = { mt: decodeobj?.m, dia: decodeobj?.d, cs: decodeobj?.c };
 
@@ -516,7 +535,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     // let navVal = location?.search.split("?p=")[1];
     // let decodeobj = decodeAndDecompress(navVal);
     const result = parseSearchParams();
-    let navVal = result[0]?.split("=")[1];
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
 
@@ -558,7 +577,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-    let navVal = result[0]?.split("=")[1];
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     const mtColorLocal = getSession("MetalColorCombo");
     let decodeobj = decodeAndDecompress(navVal);
     if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
@@ -668,7 +687,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-    let navVal = result[0]?.split("=")[1];
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -697,7 +716,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let url = `${location?.pathname}${location?.search}`;
 
     const result = parseSearchParams();
-    let navVal = result[0]?.split("=")[1];
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
 
     let decodeobj = decodeAndDecompress(navVal);
 
@@ -716,7 +735,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     let storeinitInside = storeInit;
     const result = parseSearchParams();
-    let navVal = result[0]?.split("=")[1];
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -1335,7 +1354,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleMoveToDetail = (productData, index) => {
-    console.log(productData , "mian obj for router")
+    console.log(productData, "mian obj for router")
     setNextIndex(index);
     const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 

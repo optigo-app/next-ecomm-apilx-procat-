@@ -1332,7 +1332,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const handleMoveToDetail = (productData, i) => {
-    console.log(productData, "productData")
     const logininfoDetail = JSON.parse(
       sessionStorage.getItem("loginUserDetail")
     );

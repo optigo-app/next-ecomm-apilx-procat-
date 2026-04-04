@@ -3,9 +3,10 @@ import ProductDetail from "./ProductDetail/ProductDetail";
 
 const page = async ({ params, searchParams }) => {
     const storeint = await getStoreInit();
+    const resolvedSearchParams = await searchParams;
     return (
         <>
-            <ProductDetail storeInit={storeint} params={params} searchParams={searchParams}  />
+            <ProductDetail storeInit={storeint} params={params} searchParams={resolvedSearchParams}  />
         </>
     );
 };

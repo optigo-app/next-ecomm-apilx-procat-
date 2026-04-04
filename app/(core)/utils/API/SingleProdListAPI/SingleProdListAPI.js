@@ -23,7 +23,7 @@ export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId
     autocode: `${singprod?.a ?? ""}`,
     FrontEnd_RegNo: `${storeinit?.FrontEnd_RegNo}`,
     Customerid: `${customerId ?? 0}`,
-    designno: `${singprod?.b}`,
+    designno: `${singprod?.b ?? ""}`,
     // FilterKey:`${MenuParams?.FilterKey ?? ""}`,
     // FilterVal:`${MenuParams?.FilterVal ?? ""}`,
     // FilterKey1:`${MenuParams?.FilterKey1 ?? ""}`,
