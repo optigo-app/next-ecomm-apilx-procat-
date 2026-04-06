@@ -1,6 +1,46 @@
+## [2026-04-06]
+
+### Fixed
+
+- **Album.js (fgstore.pro)**: Fixed albums not loading on first page visit due to API race condition.
+  - **Old behavior**: On first load, the combo APIs would finish but the server-side visitor session wasn't fully ready. The album API returned `rd: []` (empty array). The code correctly skipped caching, but `lastRequestKeyRef` was already set to the cache key. Since no dependencies changed (`islogin` stayed `null`), the useEffect never re-triggered. Albums remained permanently empty until a manual page refresh. Additionally, the `finally` block unconditionally set `imagesReady = true`, so the skeleton disappeared immediately on the first empty response — leaving a blank page instead of a loading state.
+  - **New behavior**: When the API returns an empty `rd` array, the component now:
+    1. Resets `lastRequestKeyRef` to `""` so future triggers are not blocked
+    2. Schedules an automatic retry with exponential backoff (2s → 4s → 8s)
+    3. Caps retries at 3 attempts to prevent infinite loops
+    4. **Keeps the skeleton visible** during retries (only dismisses it on success or after max retries)
+    5. Retries also apply to network errors and missing `rd` responses
+    6. On success, the retry counter resets and any pending retry timer is cleared
+    7. Retry timer is cleaned up on component unmount
+  - **Reason**: The backend visitor session is not always initialized by the time the album API is called on first cold load, causing a transient empty response that became permanent.
+  - **File(s)**: `app/theme/fgstore.pro/home/Album/Album.js`
+
+- **MasterProvider.js + Album.js**: Architectural fix — Album now waits for combo APIs before fetching (root cause fix).
+  - **Old behavior**: `MasterProvider` called all combo APIs (MetalType, Diamond, ColorStone, etc.) in a fire-and-forget `Promise.all` with no completion signal. Its context value was empty `{}`. The Album component's `useEffect` fired **simultaneously** with the combo APIs. On first cold visit, the Album API hit the server before the visitor session was fully registered, causing the server to return an empty `rd: []`.
+  - **New behavior**:
+    1. `MasterProvider` now tracks a `comboReady` state, set to `true` after `Promise.all` completes (both success and error paths)
+    2. `MasterProvider` exposes `{ comboReady }` via its context and exports a `useMaster()` hook
+    3. `Album.js` now consumes `comboReady` via `useMaster()` and includes `!comboReady` as a guard in its fetch `useEffect`
+    4. The Album API is only called **after** all combo APIs have finished, guaranteeing the server session is ready
+  - **Reason**: This is the root cause fix — eliminates the race condition instead of patching it with retries.
+  - **File(s)**: `app/(core)/contexts/MasterProvider.js`, `app/theme/fgstore.pro/home/Album/Album.js`
+
 ## [2026-04-04]
 
 ### Fixed
+
+- **Album.js (fgstore.pro)**: Fixed edge cases causing empty album data to persist and block future fetches.
+  - **Old behavior (Edge Case 1)**: When API returned `Data.rd` as `null`/`undefined`, the `else` branch at line 136 did NOT reset `isFetchingRef.current` or `setIsFetching(false)`. This permanently blocked ALL future fetch attempts.
+  - **Old behavior (Edge Case 2)**: When API returned `Data.rd` as an empty array `[]`, `setAlbumData([])` was called, overwriting any existing valid data with empty state. The empty array was not cached (guard at line 121 prevented it), but the UI was left showing nothing.
+  - **Old behavior (Edge Case 3)**: `sessionStorage.setItem("ALCVALUE", "")` was called even when ALC was empty, poisoning future page loads to always use an empty ALC from session.
+  - **New behavior (Fix 1)**: `isFetchingRef.current = false` and `setIsFetching(false)` are now called in the `else` branch when API returns no `Data.rd`.
+  - **New behavior (Fix 2)**: When `Data.rd` is an empty array, the code skips `setAlbumData` entirely and resets fetch state, preventing empty data from overwriting valid state.
+  - **New behavior (Fix 3)**: `sessionStorage.setItem("ALCVALUE", ...)` is only called when `rawALC` is non-empty.
+  - **Reason**: First-time visitors or stale cache scenarios could result in empty API responses that permanently broke the album component.
+
+- **Album.js (fgstore.pro)**: Added comprehensive `██████` debug logs at every critical decision point.
+  - Logs cover: fetch blocked/start, cache key generation, pricing context values, cache validation flow, API call/response, data setting, and render state.
+  - **Reason**: To enable quick visual debugging of album data flow in browser console.
 
 - **page.jsx (detail)**: Fixed `searchParams` not being awaited before passing to client component.
   - **Old behavior**: In Next.js 15, `searchParams` is a Promise. It was passed directly to `ProductDetail` without awaiting, so the client component received a Promise object instead of `{ p: "encoded_value" }`.

@@ -1,7 +1,7 @@
 "use client";
 
 // Keep base setup as-is
-import React, { useEffect, useRef, useState, createContext } from "react";
+import React, { useContext, useEffect, useRef, useState, createContext } from "react";
 import { CurrencyComboAPI } from "@/app/(core)/utils/API/Combo/CurrencyComboAPI";
 import { MetalColorCombo } from "@/app/(core)/utils/API/Combo/MetalColorCombo";
 import { ColorStoneQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/ColorStoneQualityColorComboAPI";
@@ -44,6 +44,7 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
     const [currentTheme, setCurrentTheme] = useState(detectThemeNumber());
     const [isStoreInitLoaded, setIsStoreInitLoaded] = useState(false);
     const hasApiBeenCalled = useRef(false);
+    const [comboReady, setComboReady] = useState(false);
 
     const fetchWithRetry = (url, retries = 3, delay = 1000) => {
         return new Promise((resolve, reject) => {
@@ -99,11 +100,17 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         }
 
         if (storeInitData) {
+            console.log("██████ MASTER PROVIDER ██████ storeInitData exists — calling callAllApi()");
             callAllApi();
+        } else {
+            console.log("██████ MASTER PROVIDER ██████ storeInitData is FALSY — callAllApi() NOT called — comboReady will stay false!");
+            // Safety: set comboReady true even if storeInit is missing to avoid blocking Album forever
+            setComboReady(true);
         }
     };
 
     useEffect(() => {
+        console.log("██████ MASTER PROVIDER INIT ██████ Setting sessionStorage, calling fetchVisitorId");
         sessionStorage.setItem("storeInit", JSON.stringify(getStoreInit));
         sessionStorage.setItem("myAccountFlags", JSON.stringify(getMyAccountFlags));
         fetchVisitorId();
@@ -149,13 +156,16 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
     }, []);
 
     const callApiAndStore = (apiFunction, storageKey, finalID) => {
-        apiFunction(finalID)
+        return apiFunction(finalID)
             .then((response) => {
                 if (response?.Data?.rd) {
                     sessionStorage.setItem(storageKey, JSON.stringify(response.Data.rd));
                 }
+                console.log(`██████ COMBO API DONE ██████ ${storageKey} — has data:`, !!response?.Data?.rd);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(`██████ COMBO API FAILED ██████ ${storageKey}`, err);
+            });
     };
 
     const callAllApi = async () => {
@@ -163,19 +173,29 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         const loginUserDetail = getSession("loginUserDetail");
         const LoginUser = getSession("LoginUser");
         const visiterID = Cookies.get("visiterId");
-        console.log(storeInit, loginUserDetail, LoginUser, visiterID, "callAllApi -- store --");
+        console.log("██████ COMBO STARTING ██████ visiterID:", visiterID, "LoginUser:", LoginUser);
 
         const finalID = storeInit?.IsB2BWebsite === 0 ? (LoginUser === false ? visiterID : loginUserDetail?.id || "0") : loginUserDetail?.id || "0";
+        console.log("██████ COMBO FINAL ID ██████", finalID);
 
         // Call all APIs in parallel
         Promise.all([callApiAndStore(MetalTypeComboAPI, "metalTypeCombo", finalID), callApiAndStore(DiamondQualityColorComboAPI, "diamondQualityColorCombo", finalID), callApiAndStore(MetalColorCombo, "MetalColorCombo", finalID), callApiAndStore(ColorStoneQualityColorComboAPI, "ColorStoneQualityColorCombo", finalID), callApiAndStore(CurrencyComboAPI, "CurrencyCombo", finalID), callApiAndStore(CountryCodeListApi, "CountryCodeListApi", finalID)])
             .then(() => {
-                console.log("All combo APIs completed");
+                console.log("██████ ALL COMBO APIs COMPLETED ██████ Setting comboReady = true");
+                setComboReady(true);
             })
             .catch((error) => {
-                console.error("Error in API calls:", error);
+                console.error("██████ COMBO API ERROR ██████", error);
+                // Still mark as ready so Album doesn't wait forever
+                setComboReady(true);
             });
     };
 
-    return <masterContext.Provider value={{}}>{children}</masterContext.Provider>;
+    return <masterContext.Provider value={{ comboReady }}>{children}</masterContext.Provider>;
 };
+
+export function useMaster() {
+    const ctx = useContext(masterContext);
+    if (!ctx) throw new Error("useMaster must be used inside MasterProvider");
+    return ctx;
+}
