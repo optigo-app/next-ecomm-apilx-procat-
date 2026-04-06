@@ -1,13 +1,13 @@
 import { getSession } from "../../../FetchSessionData";
 import { CommonAPI } from "../../CommonAPI/CommonAPI";
 
-export const Get_Procatalog = async (mode, customerID, ALCID) => {
+export const Get_Procatalog = async (storeinit, mode, customerID, ALCID, islogin) => {
 
     let response;
     const ALCID_Value = ALCID > 0 ? ALCID : "";
     try {
-        const storeInit = getSession("storeInit") ?? "";
-        let userLogin = getSession('LoginUser')
+        const storeInit = storeinit ?? "";
+        let userLogin = islogin;
         const combinedValue = JSON.stringify({
             "FrontEnd_RegNo": `${storeInit?.FrontEnd_RegNo}`,
             // "FrontEnd_RegNo": `${RegNo}`,

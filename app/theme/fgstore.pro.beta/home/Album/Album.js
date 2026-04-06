@@ -9,6 +9,7 @@ import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import { useMaster } from "@/app/(core)/contexts/MasterProvider";
 import { useSearchParams } from "next/navigation";
 import { GetCacheList, BookCache } from "@/app/(core)/utils/API/Cache/CacheApi";
 import { normalizeALC, buildAlbumCacheKey, findMatchingCacheEntry, getPricingContext, processAlbumImages } from "./CacheBuilder";
@@ -16,6 +17,7 @@ import { getSession } from "@/app/(core)/utils/FetchSessionData";
 
 const Album = () => {
   const { islogin, loginUserDetail, storeinit } = useStore();
+  const { comboReady } = useMaster();
   const [albumData, setAlbumData] = useState([]);
   const [fallbackImages, setFallbackImages] = useState({});
   const [designSubData, setDesignSubData] = useState([]);
@@ -37,34 +39,57 @@ const Album = () => {
   const [isFetching, setIsFetching] = useState(false);
   const isFetchingRef = useRef(false);
   const lastRequestKeyRef = useRef("");
+  const retryCountRef = useRef(0);
+  const retryTimerRef = useRef(null);
+  const MAX_RETRIES = 3;
+  const RETRY_BASE_DELAY = 2000; // 2s, 4s, 8s exponential backoff
 
   useEffect(() => {
     setMounted(true);
+    // Cleanup retry timer on unmount
+    return () => {
+      if (retryTimerRef.current) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+    };
   }, []);
 
   const pricingContext = useMemo(() => getPricingContext(loginUserDetail, storeinit, islogin), [loginUserDetail, storeinit, islogin]);
 
   const fetchAndSetAlbumData = useCallback(
     async (value, finalID, precomputedKey) => {
-      if (!pricingContext || isFetchingRef.current) return;
+      if (!pricingContext || isFetchingRef.current) {
+        console.log("██████ ALBUM FETCH BLOCKED ██████ pricingContext:", !!pricingContext, "isFetchingRef:", isFetchingRef.current);
+        return;
+      }
 
       const apiALC = value;
       const keyALC = normalizeALC(value);
-      console.log("Starting fetch for ALC:", apiALC);
+      console.log("██████ ALBUM FETCH START ██████ ALC:", JSON.stringify(apiALC), "finalID:", finalID);
 
       const { key, meta } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
       const effectiveKey = precomputedKey || key;
       const eventName = "procatalog_album";
+
+      console.log("██████ ALBUM CACHE KEY ██████", effectiveKey);
+      console.log("██████ ALBUM PRICING ██████ PackageId:", pricingContext?.PackageId, "Laboursetid:", pricingContext?.Laboursetid, "diamond:", pricingContext?.diamondpricelistname, "colorstone:", pricingContext?.colorstonepricelistname);
 
       isFetchingRef.current = true;
       setIsFetching(true);
 
       try {
         const [serverRes, localCacheRes] = await Promise.all([
-          GetCacheList(finalID).catch(() => null),
+          GetCacheList(finalID).catch((err) => {
+            console.log("██████ ALBUM SERVER CACHE LIST FAILED ██████", err);
+            return null;
+          }),
           fetch(`/api/cache?mode=meta&key=${effectiveKey}`)
             .then((res) => res.json())
-            .catch(() => ({ cached: false })),
+            .catch((err) => {
+              console.log("██████ ALBUM LOCAL CACHE META FAILED ██████", err);
+              return { cached: false };
+            }),
         ]);
 
         const serverCacheEntries = serverRes?.Data?.rd ?? [];
@@ -74,30 +99,42 @@ const Album = () => {
         const localCacheMeta = localCacheRes;
         const localCacheRebuildDate = localCacheMeta?.CacheRebuildDate ?? null;
 
-        console.log("Cache meta checked: localCacheMeta.cached =", localCacheMeta?.cached, "server entries count =", serverCacheEntries?.length);
+        console.log("██████ ALBUM CACHE CHECK ██████ localCached:", localCacheMeta?.cached, "serverEntries:", serverCacheEntries?.length, "matchingEntry:", !!matchingServerEntry);
+        console.log("██████ ALBUM CACHE DATES ██████ local:", localCacheRebuildDate, "server:", serverCacheRebuildDate);
 
         if (localCacheMeta?.cached) {
           const canValidate = Boolean(matchingServerEntry && serverCacheRebuildDate);
           const datesMatch = localCacheRebuildDate === serverCacheRebuildDate;
 
+          console.log("██████ ALBUM CACHE VALIDATE ██████ canValidate:", canValidate, "datesMatch:", datesMatch);
+
           if (canValidate && datesMatch) {
             const cachedRes = await fetch(`/api/cache?key=${effectiveKey}`);
             const cached = await cachedRes.json();
-            console.log("Using cache, skipping API");
-            if (cached.cached && Array.isArray(cached.data)) {
-              console.log("Setting album data from cache");
+
+            console.log("██████ ALBUM CACHE DATA ██████ cached.cached:", cached.cached, "isArray:", Array.isArray(cached.data), "length:", cached.data?.length);
+
+            if (cached.cached && Array.isArray(cached.data) && cached.data.length > 0) {
+              console.log("██████ ALBUM USING CACHE ██████ Setting", cached.data.length, "albums from cache");
               setAlbumData(cached.data);
               setFallbackImages(processAlbumImages(cached.data, storeinit));
               setImagesReady(true);
               setIsFetching(false);
               isFetchingRef.current = false;
               return cached.data;
+            } else {
+              console.log("██████ ALBUM CACHE EMPTY ██████ Cache exists but data is empty/invalid — DELETING cache and fetching from API");
             }
+          } else {
+            console.log("██████ ALBUM CACHE STALE ██████ canValidate:", canValidate, "datesMatch:", datesMatch, "— DELETING cache and fetching from API");
           }
           fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(() => { });
+        } else {
+          console.log("██████ ALBUM NO LOCAL CACHE ██████ Will fetch from API");
         }
 
         if (!storeinit) {
+          console.log("██████ ALBUM STOREINIT MISSING ██████ Retrying in 500ms");
           setTimeout(() => {
             isFetchingRef.current = false;
             setIsFetching(false);
@@ -105,12 +142,46 @@ const Album = () => {
           }, 500);
           return;
         }
-        console.log("Making API call for finalID:", finalID, "apiALC:", apiALC);
-        const response = await Get_Procatalog("GET_Procatalog", finalID, apiALC);
-        console.log("API response received:", response);
+
+        console.log("██████ ALBUM API CALL ██████ finalID:", finalID, "apiALC:", JSON.stringify(apiALC));
+        const response = await Get_Procatalog(storeinit, "GET_Procatalog", finalID, apiALC, islogin);
+        console.log("██████ ALBUM API RESPONSE ██████ hasData:", !!response?.Data, "hasRd:", !!response?.Data?.rd, "rdLength:", response?.Data?.rd?.length);
+
         if (response?.Data?.rd) {
           const albums = response.Data.rd;
-          console.log("Setting album data from API, albums length:", albums.length);
+
+          if (albums.length === 0) {
+            setIsFetching(false);
+            isFetchingRef.current = false;
+
+            if (retryCountRef.current < MAX_RETRIES) {
+              retryCountRef.current += 1;
+              const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+              console.log(`██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+              // Reset lastRequestKeyRef so the useEffect or direct call can re-trigger
+              lastRequestKeyRef.current = "";
+              retryTimerRef.current = setTimeout(() => {
+                console.log(`██████ ALBUM RETRY ${retryCountRef.current}/${MAX_RETRIES} ██████ Retrying fetch...`);
+                fetchAndSetAlbumData(value, finalID, precomputedKey);
+              }, delay);
+            } else {
+              console.log("██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — max retries reached, giving up");
+              // Reset so a future dependency change (e.g. islogin) can still trigger a fresh attempt
+              lastRequestKeyRef.current = "";
+              retryCountRef.current = 0;
+              // Dismiss skeleton — we've exhausted retries
+              setImagesReady(true);
+            }
+            return;
+          }
+
+          console.log("██████ ALBUM API SUCCESS ██████ Setting", albums.length, "albums from API");
+          // Reset retry counter on success
+          retryCountRef.current = 0;
+          if (retryTimerRef.current) {
+            clearTimeout(retryTimerRef.current);
+            retryTimerRef.current = null;
+          }
           setAlbumData(albums);
 
           const fallbacks = processAlbumImages(albums, storeinit);
@@ -118,70 +189,102 @@ const Album = () => {
           setImagesReady(true);
           setIsFetching(false);
           isFetchingRef.current = false;
+
           try {
             const bookCacheResult = await BookCache(finalID, eventName, pricingContext, apiALC);
             const newCacheRebuildDate = bookCacheResult?.CacheRebuildDate ?? null;
 
             const updatedMeta = { ...meta, CacheRebuildDate: newCacheRebuildDate };
+            console.log("██████ ALBUM CACHING DATA ██████ key:", effectiveKey, "albums:", albums.length, "CacheRebuildDate:", newCacheRebuildDate);
             fetch("/api/cache", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ key: effectiveKey, data: albums, meta: updatedMeta }),
             }).catch(console.error);
           } catch (cacheErr) {
-            console.error("Cache update failed:", cacheErr);
+            console.error("██████ ALBUM CACHE SAVE FAILED ██████", cacheErr);
           }
         } else {
-          console.log("No Data.rd in response");
+          console.log("██████ ALBUM API NO DATA ██████ response.Data.rd is:", response?.Data?.rd, "— full response keys:", response ? Object.keys(response) : "null");
+          setIsFetching(false);
+          isFetchingRef.current = false;
+          // Also retry for completely missing rd (not just empty array)
+          if (retryCountRef.current < MAX_RETRIES) {
+            retryCountRef.current += 1;
+            const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+            console.log(`██████ ALBUM API NO DATA — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+            lastRequestKeyRef.current = "";
+            retryTimerRef.current = setTimeout(() => {
+              fetchAndSetAlbumData(value, finalID, precomputedKey);
+            }, delay);
+          } else {
+            lastRequestKeyRef.current = "";
+            retryCountRef.current = 0;
+            setImagesReady(true);
+          }
         }
       } catch (err) {
-        console.log("Error in fetch:", err);
+        console.log("██████ ALBUM FETCH ERROR ██████", err);
         console.error(err);
         setIsFetching(false);
         isFetchingRef.current = false;
-      } finally {
-        setImagesReady(true);
+        // Retry on network/fetch errors too
+        if (retryCountRef.current < MAX_RETRIES) {
+          retryCountRef.current += 1;
+          const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+          console.log(`██████ ALBUM FETCH ERROR — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+          lastRequestKeyRef.current = "";
+          retryTimerRef.current = setTimeout(() => {
+            fetchAndSetAlbumData(value, finalID, precomputedKey);
+          }, delay);
+        } else {
+          lastRequestKeyRef.current = "";
+          retryCountRef.current = 0;
+          setImagesReady(true);
+        }
       }
     },
     [pricingContext, storeinit],
   );
 
   useEffect(() => {
-    console.log("useEffect triggered with pricingContext:", !!pricingContext, "storeinit:", !!storeinit, "ALCVAL:", ALCVAL);
-    if (!pricingContext || !storeinit) {
-      console.log("Guards not met, skipping fetch");
+    console.log("██████ ALBUM USEEFFECT ██████ pricingContext:", !!pricingContext, "storeinit:", !!storeinit, "comboReady:", comboReady, "ALCVAL:", JSON.stringify(ALCVAL), "islogin:", islogin);
+
+    if (!pricingContext || !storeinit || !comboReady) {
+      console.log("██████ ALBUM GUARDS FAILED ██████ pricingContext:", !!pricingContext, "storeinit:", !!storeinit, "comboReady:", comboReady);
       return;
     }
 
     const fetchAlbumData = async () => {
-      console.log("fetchAlbumData called");
       const visiterID = Cookies.get("visiterId");
       const userId = loginUserDetail?.id;
       const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
 
+      console.log("██████ ALBUM IDENTITY ██████ IsB2BWebsite:", storeinit?.IsB2BWebsite, "islogin:", islogin, "visiterID:", visiterID, "userId:", userId, "finalID:", finalID);
+
       const rawALC = ALCVAL ? ALCVAL : (getSession("ALCVALUE") ?? "");
       const keyALC = normalizeALC(rawALC);
-      sessionStorage.setItem("ALCVALUE", String(rawALC));
+      if (rawALC) {
+        sessionStorage.setItem("ALCVALUE", String(rawALC));
+      }
 
       const { key } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
 
-      console.log("Checking fetch conditions: isFetching =", isFetchingRef.current, "lastKey =", lastRequestKeyRef.current, "current key =", key);
-      if (isFetchingRef.current || lastRequestKeyRef.current === key) return;
+      console.log("██████ ALBUM KEY CHECK ██████ isFetchingRef:", isFetchingRef.current, "lastKey:", lastRequestKeyRef.current, "newKey:", key, "keysMatch:", lastRequestKeyRef.current === key);
+
+      if (isFetchingRef.current || lastRequestKeyRef.current === key) {
+        console.log("██████ ALBUM FETCH SKIPPED ██████ reason:", isFetchingRef.current ? "ALREADY FETCHING" : "SAME KEY AS LAST REQUEST");
+        return;
+      }
       lastRequestKeyRef.current = key;
 
-      console.log("Calling fetchAndSetAlbumData");
+      console.log("██████ ALBUM CALLING FETCH ██████ rawALC:", JSON.stringify(rawALC), "finalID:", finalID, "key:", key);
       await fetchAndSetAlbumData(rawALC, finalID, key);
     };
 
     fetchAlbumData();
 
-    console.log("mounted:", mounted);
-    console.log("pricingContext:", pricingContext);
-    console.log("storeinit:", storeinit);
-    console.log("isFetchingRef:", isFetchingRef.current);
-    console.log("lastKey:", lastRequestKeyRef.current);
-
-  }, [islogin,  pricingContext, storeinit, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
+  }, [islogin, pricingContext, storeinit, comboReady, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
 
   const handleNavigate = (data) => {
     const albumName = data?.AlbumName;
@@ -252,7 +355,7 @@ const Album = () => {
   }, [albumData]);
 
   if (!imagesReady) {
-    console.log("Component render: albumData.length =", albumData.length, "imagesReady =", imagesReady);
+    console.log("██████ ALBUM RENDER SKELETON ██████ albumData.length:", albumData.length, "imagesReady:", imagesReady);
     return <AlbumSkeleton />;
   }
 
@@ -301,7 +404,7 @@ const Album = () => {
       </Modal>
       {albumData?.length !== 0 && (
         <>
-          {console.log("Rendering albums, count:", albumData.length)}
+          {console.log("██████ ALBUM RENDERING ██████ count:", albumData.length)}
           <p className="proCat_albumTitle">ALBUMS</p>
           <div className="proCat_albumALL_div">
             {albumData.map((data, index) => {
