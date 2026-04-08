@@ -9,6 +9,31 @@ $cartUpdateBtncolor: #b1b1b1;
   .proCat_cartMainPageDiv {
     background-color: #fff;
     min-height: 51.8vh;
+    padding-top: 15px; /* Added minor padding so the back button is not tight to the top */
+
+    .proCat_backButton {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 0 16px; /* Matches the 35px margin of the 'Select All' checkbox below */
+      background: none;
+      border: none;
+      color: $titleColor;
+      font-size: $fontSize3;
+      font-weight: 500;
+      font-family: $primaryFontFamily !important;
+      cursor: pointer;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #7d7f85;
+      }
+
+      svg {
+        font-size: $fontSize5;
+        margin-top: 1px;
+      }
+    }
   }
 
   .proCat_cartmainRowDiv {
