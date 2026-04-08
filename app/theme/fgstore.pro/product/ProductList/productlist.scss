@@ -353,7 +353,8 @@
 .smr_inner_portion {
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: stretch; /* Change to stretch to equal height or flex-start for top alignment */
+  align-items: flex-start;
   flex-wrap: wrap;
   margin-left: -8px;
   // justify-content: center;
@@ -365,12 +366,33 @@
 .procat_productCard {
   width: 19%;
   margin: 5px;
-  border: 1px solid $primaryBorderColor;
+  border: 1px solid transparent;
   text-align: center;
   color: $primaryfontcolor;
   position: relative;
   z-index: 0;
   font-family: $primaryFontFamily;
+
+  /* Button is hidden by default */
+  .view_detail_btn {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* When hovering anywhere on the card: show the button, make it blue with white text */
+  &:hover .view_detail_btn {
+    opacity: 1;
+    visibility: visible;
+    background-color: #98b8d9 !important;
+    color: white !important;
+  }
+
+  /* When specifically hovering over the button itself: make it transparent with blue border & text */
+  .view_detail_btn:hover {
+    background-color: transparent !important;
+    color: #98b8d9 !important;
+    border-color: #98b8d9 !important;
+  }
 }
 
 // .proCat_ImgandVideoContainer {
@@ -430,6 +452,7 @@
 .roop_ImgandVideoContainer {
   height: 260px;
   width: 100%;
+  border: 1px solid $primaryBorderColor;
 
   @media (max-width: 1750px) {
     height: 250px;
@@ -529,11 +552,56 @@
 
 .proCat_prod_card_info {
   display: flex;
-  justify-content: flex-start;
   flex-direction: column;
-  padding-left: 3px;
+  align-items: center; /* ✅ center horizontally */
+  justify-content: center;
+  text-align: center; /* ✅ text center */
+  gap: 2px;
+  padding: 5px 4px;
 }
 
+/* 🔥 Common title style */
+.productTitle {
+  width: 100%;
+  max-width: 100%; /* control width */
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: block;
+}
+
+/* Design No */
+.designNo {
+  font-size: 16px;
+  font-weight: 500;
+  color: #222;
+}
+
+/* Title Line */
+.titleLine {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
+
+/* Price Row */
+.priceRow {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Price */
+.priceValue {
+  font-weight: 500;
+}
 .proCat_price {
   display: flex;
   color: $primaryfontcolor;

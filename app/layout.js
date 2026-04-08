@@ -47,7 +47,6 @@ export default async function RootLayout({ children }) {
   const myAccountFlags = await getMyAccountFlags();
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
-  console.log(ACTIVE_THEME, "ACTIVE_THEME")
   const ht = getStaticHtmlPages(hostname);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");

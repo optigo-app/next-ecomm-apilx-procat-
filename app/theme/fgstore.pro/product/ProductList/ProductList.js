@@ -1,34 +1,11 @@
-'use client'
+"use client";
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import "./productlist.scss";
 import ProductListApi from "@/app/(core)/utils/API/ProductListAPI/ProductListApi";
 import { FilterListAPI } from "@/app/(core)/utils/API/FilterAPI/FilterListAPI";
-import {
-  findMetalColor,
-  findMetalType,
-  formatRedirectTitleLine,
-  formatTitleLine,
-} from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
+import { findMetalColor, findMetalType, formatRedirectTitleLine, formatTitleLine } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import ProductListSkeleton, { PageSkeleton } from "./productlist_skeleton/ProductListSkeleton";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  CardMedia,
-  Checkbox,
-  Drawer,
-  FormControlLabel,
-  Input,
-  Pagination,
-  PaginationItem,
-  Skeleton,
-  Slider,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CardMedia, Checkbox, Drawer, FormControlLabel, Input, Pagination, PaginationItem, Skeleton, Slider, Stack, Typography, useMediaQuery } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LocalMallOutlinedIcon from "@mui/icons-material/LocalMallOutlined";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
@@ -47,16 +24,13 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { toast } from "react-toastify";
 import EditablePagination from "@/app/components/EditablePagination/EditablePagination";
-import { useStore } from '@/app/(core)/contexts/StoreProvider';
-import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
+import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { ParseAndDecodeSearchParams } from "@/app/(core)/utils/GlobalFunctions/Parser";
-
-
 
 const imageNotFound = "/image-not-found.jpg";
 
 const ProductList = ({ params, searchParams, storeinit }) => {
-
   const storeInit = storeinit;
   const { islogin, setCartCountNum, setWishCountNum, SoketData, loginUserDetail } = useStore();
 
@@ -64,14 +38,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     let mtCombo = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
     setMetalTypeCombo(mtCombo);
 
-    let diaQcCombo = JSON.parse(
-      sessionStorage.getItem("diamondQualityColorCombo")
-    );
+    let diaQcCombo = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
     setDiaQcCombo(diaQcCombo);
 
-    let CsQcCombo = JSON.parse(
-      sessionStorage.getItem("ColorStoneQualityColorCombo")
-    );
+    let CsQcCombo = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
     setCsQcCombo(CsQcCombo);
   }, []);
 
@@ -100,12 +70,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const [metalTypeCombo, setMetalTypeCombo] = useState([]);
   const [diaQcCombo, setDiaQcCombo] = useState([]);
   const [csQcCombo, setCsQcCombo] = useState([]);
-  const [selectedMetalId, setSelectedMetalId] = useState(
-    loginUserDetail?.MetalId
-  );
-  const [selectedDiaId, setSelectedDiaId] = useState(
-    loginUserDetail?.cmboDiaQCid
-  );
+  const [selectedMetalId, setSelectedMetalId] = useState(loginUserDetail?.MetalId);
+  const [selectedDiaId, setSelectedDiaId] = useState(loginUserDetail?.cmboDiaQCid);
   const [selectedCsId, setSelectedCsId] = useState(loginUserDetail?.cmboCSQCid);
   const [IsBreadCumShow, setIsBreadcumShow] = useState(false);
   const [loginInfo, setLoginInfo] = useState();
@@ -120,20 +86,20 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const [sliderValue2, setSliderValue2] = useState([]);
   const [isRollOverVideo, setIsRollOverVideo] = useState({});
   const [afterCountStatus, setAfterCountStatus] = useState(false);
-  const [loadingIndex, setLoadingIndex] = useState(0)
-  const [diaRange, setDiaRange] = useState("")
-  const [netRange, setNetRange] = useState("")
-  const [grossRange, setGrossRange] = useState("")
+  const [loadingIndex, setLoadingIndex] = useState(0);
+  const [diaRange, setDiaRange] = useState("");
+  const [netRange, setNetRange] = useState("");
+  const [grossRange, setGrossRange] = useState("");
   const [securityKey, setSecurityKey] = useState();
   const formatter = new Intl.NumberFormat("en-IN");
-  let cookie = Cookies.get('visiterId')
-  const [menuDecode, setMenuDecode] = useState('');
+  let cookie = Cookies.get("visiterId");
+  const [menuDecode, setMenuDecode] = useState("");
 
   const [inputPage, setInputPage] = useState(currPage);
   const [inputGross, setInputGross] = useState([]);
   const [inputNet, setInputNet] = useState([]);
   const [inputDia, setInputDia] = useState([]);
-  const [isReset, setIsReset] = useState(false)
+  const [isReset, setIsReset] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
@@ -148,10 +114,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const setCSSVariable = () => {
     const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
     const backgroundColor = storeInit?.IsPLW == 1 ? "#c4cfdb" : "#c0bbb1";
-    document.documentElement.style.setProperty(
-      "--background-color",
-      backgroundColor
-    );
+    document.documentElement.style.setProperty("--background-color", backgroundColor);
   };
 
   const isEditablePage = 1;
@@ -171,12 +134,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const callAllApi = () => {
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-    let diaQcLocal = JSON.parse(
-      sessionStorage.getItem("diamondQualityColorCombo")
-    );
-    let csQcLocal = JSON.parse(
-      sessionStorage.getItem("ColorStoneQualityColorCombo")
-    );
+    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
+    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
     let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
 
     if (!mtTypeLocal || mtTypeLocal?.length === 0) {
@@ -198,10 +157,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem(
-              "diamondQualityColorCombo",
-              JSON.stringify(data)
-            );
+            sessionStorage.setItem("diamondQualityColorCombo", JSON.stringify(data));
             setDiaQcCombo(data);
           }
         })
@@ -215,10 +171,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem(
-              "ColorStoneQualityColorCombo",
-              JSON.stringify(data)
-            );
+            sessionStorage.setItem("ColorStoneQualityColorCombo", JSON.stringify(data));
             setCsQcCombo(data);
           }
         })
@@ -267,7 +220,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   useEffect(() => {
     const url = `${location?.pathname}${location?.search}`;
     const pathSegments = location?.pathname?.split("/") || [];
-    const kSegment = pathSegments.find(s => s.includes("K="));
+    const kSegment = pathSegments.find((s) => s.includes("K="));
     const encodedKey = kSegment?.split("?")[0]?.split("K=")[1];
 
     if (encodedKey) {
@@ -295,9 +248,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }
   }, [params, islogin, searchParams]);
 
-
-
-
   useEffect(() => {
     let result = ParseAndDecodeSearchParams(searchParams);
     const currentSearchKey = JSON.stringify(searchParams);
@@ -307,12 +257,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     lastSearchParamsRef.current = currentSearchKey;
     isApiCallInProgressRef.current = true;
 
-
-
     const fetchData = async () => {
       let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
       let UrlVal = result;
-      console.log("🚀 ~ fetchData ~ UrlVal:", result)
+      console.log("🚀 ~ fetchData ~ UrlVal:", result);
       let MenuVal = "";
       let MenuKey = "";
       let SearchVar = "";
@@ -326,7 +274,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       const getSecurityKeyFromUrl = () => {
         // 1. From path segment K=
         const pathSegments = location?.pathname?.split("/") || [];
-        const kSegment = pathSegments.find(s => s.includes("K="));
+        const kSegment = pathSegments.find((s) => s.includes("K="));
         const pathKey = kSegment?.split("?")[0]?.split("K=")[1];
         if (pathKey) {
           try {
@@ -349,9 +297,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       const securityKey = getSecurityKeyFromUrl();
       setSecurityKey(securityKey);
 
-
       UrlVal?.forEach((ele) => {
-        console.log(ele, "ele")
+        console.log(ele, "ele");
         let firstChar = ele.charAt(0);
 
         switch (firstChar) {
@@ -420,44 +367,26 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       setIsProdLoading(true);
       setprodListType(productlisttype);
-      let diafilter =
-        filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-          )[0]
-          : [];
-      let diafilter1 =
-        filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-          )[0]
-          : [];
-      let diafilter2 =
-        filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-          )[0]
-          : [];
+      let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+      let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+      let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
       const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
       const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
       const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
       let DiaRange = {
-        DiaMin: isDia ? sliderValue[0] ?? "" : "",
-        DiaMax: isDia ? sliderValue[1] ?? "" : ""
+        DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+        DiaMax: isDia ? (sliderValue[1] ?? "") : "",
       };
 
       let netRange = {
-        netMin: isNet ? sliderValue1[0] ?? "" : "",
-        netMax: isNet ? sliderValue1[1] ?? "" : ""
+        netMin: isNet ? (sliderValue1[0] ?? "") : "",
+        netMax: isNet ? (sliderValue1[1] ?? "") : "",
       };
 
       let grossRange = {
-        grossMin: isGross ? sliderValue2[0] ?? "" : "",
-        grossMax: isGross ? sliderValue2[1] ?? "" : ""
+        grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+        grossMax: isGross ? (sliderValue2[1] ?? "") : "",
       };
 
       setDiaRange(DiaRange);
@@ -465,16 +394,11 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       setGrossRange(grossRange);
 
       // await ProductListApi({}, 1, obj, productlisttype, cookie,sortBySelect ,DiaRange, netRange ,grossRange)
-      await ProductListApi({}, 1, obj, productlisttype, cookie, sortBySelect,
-        DiaRange, netRange, grossRange
-      )
+      await ProductListApi({}, 1, obj, productlisttype, cookie, sortBySelect, DiaRange, netRange, grossRange)
         .then((res) => {
           if (res) {
             setProductListData(res?.pdList);
-            sessionStorage.setItem(
-              "deatilSliderData",
-              JSON.stringify(res?.pdList)
-            );
+            sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
             setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
             // setIsProdLoading(false);
           }
@@ -520,9 +444,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           });
         })
         .catch((err) => {
-          console.log("err", err)
+          console.log("err", err);
           isApiCallInProgressRef.current = false; // Reset the flag on error too
-
         });
 
       // }
@@ -533,8 +456,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     if (searchParams) {
       setLocationKey(searchParams);
     }
-    setCurrPage(1)
-    setInputPage(1)
+    setCurrPage(1);
+    setInputPage(1);
   }, [searchParams]);
 
   let getDesignImageFol = storeInit?.CDNDesignImageFolThumb;
@@ -600,23 +523,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const generateImageList = useCallback((product) => {
     let storeInitX = JSON.parse(sessionStorage.getItem("storeInit"));
-    let pdImgList = []
+    let pdImgList = [];
     if (product?.ImageCount > 0) {
       for (let i = 1; i <= product?.ImageCount; i++) {
-        let imgString =
-          storeInitX?.CDNDesignImageFol +
-          product?.designno +
-          "~" +
-          i +
-          "." +
-          product?.ImageExtension
-        pdImgList?.push(imgString)
+        let imgString = storeInitX?.CDNDesignImageFol + product?.designno + "~" + i + "." + product?.ImageExtension;
+        pdImgList?.push(imgString);
       }
     } else {
-      pdImgList?.push(imageNotFound)
+      pdImgList?.push(imageNotFound);
     }
-    return pdImgList
-  }, [])
+    return pdImgList;
+  }, []);
 
   useEffect(() => {
     const initialProducts = productListData?.map((product) => ({
@@ -638,9 +555,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     // }, 150);
 
     // return () => clearTimeout(timer);
-
   }, [productListData, generateImageList]);
-
 
   // useEffect(() => {
   //   if (loadingIndex >= finalProductListData?.length) return
@@ -773,13 +688,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     if (pd?.ImageCount > 0) {
       for (let i = 1; i <= pd?.ImageCount; i++) {
-        let imgString =
-          storeInit?.CDNDesignImageFol +
-          pd?.designno +
-          "~" +
-          i +
-          "." +
-          pd?.ImageExtension;
+        let imgString = storeInit?.CDNDesignImageFol + pd?.designno + "~" + i + "." + pd?.ImageExtension;
         pdImgList.push(imgString);
       }
     } else {
@@ -809,13 +718,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const FilterValueWithCheckedOnly = () => {
-    let onlyTrueFilterValue = Object.values(filterChecked).filter(
-      (ele) => ele.checked
-    );
+    let onlyTrueFilterValue = Object.values(filterChecked).filter((ele) => ele.checked);
 
-    const priceValues = onlyTrueFilterValue
-      .filter((item) => item.type === "Price")
-      .map((item) => item.value);
+    const priceValues = onlyTrueFilterValue.filter((item) => item.type === "Price").map((item) => item.value);
 
     const output = {};
 
@@ -839,18 +744,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }
 
     // if
-    setCurrPage(1)
-    setInputPage(1)
+    setCurrPage(1);
+    setInputPage(1);
 
     return output;
   };
 
   useEffect(() => {
-    setSortBySelect('Recommended')
-  }, [params])
+    setSortBySelect("Recommended");
+  }, [params]);
 
   const prevFilterChecked = useRef();
-
 
   useEffect(() => {
     setAfterCountStatus(true);
@@ -864,27 +768,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
     const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
     const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
@@ -893,17 +779,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     // console.log("locationkey",location?.key !== locationKey,location?.key,locationKey);
 
     // if (location?.key === locationKey && (Object.keys(filterChecked)?.length > 0 || isClearAllClicked === true)) {
-    if ((Object.keys(filterChecked)?.length > 0 || isClearAllClicked === true)) {
+    if (Object.keys(filterChecked)?.length > 0 || isClearAllClicked === true) {
       setIsOnlyProdLoading(true);
-      let DiaRange = { DiaMin: isDia ? sliderValue[0] : "", DiaMax: isDia ? sliderValue[1] : "" }
-      let grossRange = { grossMin: isGross ? sliderValue2[0] : "", grossMax: isGross ? sliderValue2[1] : "" }
-      let netRange = { netMin: isNet ? sliderValue1[0] : "", netMax: isNet ? sliderValue1[1] : "" }
+      let DiaRange = { DiaMin: isDia ? sliderValue[0] : "", DiaMax: isDia ? sliderValue[1] : "" };
+      let grossRange = { grossMin: isGross ? sliderValue2[0] : "", grossMax: isGross ? sliderValue2[1] : "" };
+      let netRange = { netMin: isNet ? sliderValue1[0] : "", netMax: isNet ? sliderValue1[1] : "" };
 
       ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
         .then((res) => {
           if (res) {
             setProductListData(res?.pdList);
-            sessionStorage.setItem('deatilSliderData', JSON.stringify(res?.pdList));
+            sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
             setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
             setAfterCountStatus(false);
           }
@@ -925,8 +811,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           setIsOnlyProdLoading(false);
           setIsClearAllClicked(false);
         });
-    }
-    else {
+    } else {
       setAfterCountStatus(false);
     }
     // .then(async(res)=>{
@@ -938,64 +823,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   }, [filterChecked]);
 
   const handelFilterClearAll = useCallback(() => {
-    const diafilter =
-      filterData?.find((ele) => ele?.Name === "Diamond")?.options?.length > 0
-        ? JSON.parse(
-          filterData.find((ele) => ele?.Name === "Diamond")?.options
-        )[0]
-        : [];
-    const diafilter1 =
-      filterData?.find((ele) => ele?.Name === "NetWt")?.options?.length > 0
-        ? JSON.parse(
-          filterData.find((ele) => ele?.Name === "NetWt")?.options
-        )[0]
-        : [];
-    const diafilter2 =
-      filterData?.find((ele) => ele?.Name === "Gross")?.options?.length > 0
-        ? JSON.parse(
-          filterData.find((ele) => ele?.Name === "Gross")?.options
-        )[0]
-        : [];
+    const diafilter = filterData?.find((ele) => ele?.Name === "Diamond")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "Diamond")?.options)[0] : [];
+    const diafilter1 = filterData?.find((ele) => ele?.Name === "NetWt")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "NetWt")?.options)[0] : [];
+    const diafilter2 = filterData?.find((ele) => ele?.Name === "Gross")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "Gross")?.options)[0] : [];
 
-    const isFilterChecked = Object.values(filterChecked).some(
-      (ele) => ele.checked
-    );
-    const isSliderChanged =
-      JSON.stringify(sliderValue) !==
-      JSON.stringify(
-        diafilter?.Min != null || diafilter?.Max != null
-          ? [diafilter?.Min, diafilter?.Max]
-          : []
-      ) ||
-      JSON.stringify(sliderValue1) !==
-      JSON.stringify(
-        diafilter1?.Min != null || diafilter1?.Max != null
-          ? [diafilter1?.Min, diafilter1?.Max]
-          : []
-      ) ||
-      JSON.stringify(sliderValue2) !==
-      JSON.stringify(
-        diafilter2?.Min != null || diafilter2?.Max != null
-          ? [diafilter2?.Min, diafilter2?.Max]
-          : []
-      );
+    const isFilterChecked = Object.values(filterChecked).some((ele) => ele.checked);
+    const isSliderChanged = JSON.stringify(sliderValue) !== JSON.stringify(diafilter?.Min != null || diafilter?.Max != null ? [diafilter?.Min, diafilter?.Max] : []) || JSON.stringify(sliderValue1) !== JSON.stringify(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []) || JSON.stringify(sliderValue2) !== JSON.stringify(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
 
     if (isFilterChecked || isSliderChanged) {
-      setSliderValue(
-        diafilter?.Min != null || diafilter?.Max != null
-          ? [diafilter.Min, diafilter.Max]
-          : []
-      );
-      setSliderValue1(
-        diafilter1?.Min != null || diafilter1?.Max != null
-          ? [diafilter1?.Min, diafilter1?.Max]
-          : []
-      );
-      setSliderValue2(
-        diafilter2?.Min != null || diafilter2?.Max != null
-          ? [diafilter2?.Min, diafilter2?.Max]
-          : []
-      );
+      setSliderValue(diafilter?.Min != null || diafilter?.Max != null ? [diafilter.Min, diafilter.Max] : []);
+      setSliderValue1(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []);
+      setSliderValue2(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
       setInputDia([diafilter?.Min, diafilter?.Max]);
       setInputNet([diafilter1?.Min, diafilter1?.Max]);
       setInputGross([diafilter2?.Min, diafilter2?.Max]);
@@ -1013,13 +851,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }
   }, [filterData, filterChecked, sliderValue, sliderValue1, sliderValue2]);
 
-
-  const totalPages = Math.ceil(
-    afterFilterCount / storeInit.PageSize
-  );
+  const totalPages = Math.ceil(afterFilterCount / storeInit.PageSize);
 
   const handlePageInputChange = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       let newPage = parseInt(inputPage, 10);
       if (newPage < 1) newPage = 1;
       if (newPage > totalPages) newPage = totalPages;
@@ -1043,44 +878,26 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         behavior: "smooth",
       });
     }, 100);
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
     const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
     const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
-      DiaMin: isDia ? sliderValue[0] ?? "" : "",
-      DiaMax: isDia ? sliderValue[1] ?? "" : ""
+      DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+      DiaMax: isDia ? (sliderValue[1] ?? "") : "",
     };
 
     let netRange = {
-      netMin: isNet ? sliderValue1[0] ?? "" : "",
-      netMax: isNet ? sliderValue1[1] ?? "" : ""
+      netMin: isNet ? (sliderValue1[0] ?? "") : "",
+      netMax: isNet ? (sliderValue1[1] ?? "") : "",
     };
 
     let grossRange = {
-      grossMin: isGross ? sliderValue2[0] ?? "" : "",
-      grossMax: isGross ? sliderValue2[1] ?? "" : ""
+      grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+      grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
     ProductListApi(output, value, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
@@ -1115,8 +932,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       autocode: ele?.autocode,
       Metalid: selectedMetalId ?? ele?.MetalPurityid,
       MetalColorId: ele?.MetalColorid,
-      DiaQCid:
-        selectedDiaId ?? loginInfo?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
+      DiaQCid: selectedDiaId ?? loginInfo?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
       CsQCid: selectedCsId ?? loginInfo?.cmboCSQCid ?? storeInit?.cmboCSQCid,
       Size: ele?.DefaultSize,
       Unitcost: ele?.UnitCost,
@@ -1124,12 +940,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       UnitCostWithmarkup: ele?.UnitCostWithMarkUp,
       Remark: "",
       // AlbumName: decodeURI(extractedPart) ?? ""
-      AlbumName:
-        decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ??
-        "",
+      AlbumName: decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ?? "",
     };
-
-
 
     if (e.target.checked == true) {
       CartAndWishListAPI(type, prodObj, cookie)
@@ -1181,48 +993,30 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     if (location?.state?.SearchVal === undefined) {
       setIsOnlyProdLoading(true);
-      let diafilter =
-        filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-          )[0]
-          : [];
-      let diafilter1 =
-        filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-          )[0]
-          : [];
-      let diafilter2 =
-        filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-          ?.length > 0
-          ? JSON.parse(
-            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-          )[0]
-          : [];
+      let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+      let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+      let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
       const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
       const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
       const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
       let DiaRange = {
-        DiaMin: isDia ? sliderValue[0] ?? "" : "",
-        DiaMax: isDia ? sliderValue[1] ?? "" : ""
+        DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+        DiaMax: isDia ? (sliderValue[1] ?? "") : "",
       };
 
       let netRange = {
-        netMin: isNet ? sliderValue1[0] ?? "" : "",
-        netMax: isNet ? sliderValue1[1] ?? "" : ""
+        netMin: isNet ? (sliderValue1[0] ?? "") : "",
+        netMax: isNet ? (sliderValue1[1] ?? "") : "",
       };
 
       let grossRange = {
-        grossMin: isGross ? sliderValue2[0] ?? "" : "",
-        grossMax: isGross ? sliderValue2[1] ?? "" : ""
+        grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+        grossMax: isGross ? (sliderValue2[1] ?? "") : "",
       };
 
       setCurrPage(1);
-      setInputPage(1)
+      setInputPage(1);
 
       // , DiaRange, netRange ,grossRange
       ProductListApi(output, currPage, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
@@ -1280,10 +1074,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     } else {
       if (storeInit && Object.keys(storeInit).length > 0) {
         if (selectedMetalId != undefined || selectedDiaId != undefined || selectedCsId != undefined) {
-          if (
-            storeInit?.MetalId !== selectedMetalId ||
-            storeInit?.cmboDiaQCid !== selectedDiaId
-          ) {
+          if (storeInit?.MetalId !== selectedMetalId || storeInit?.cmboDiaQCid !== selectedDiaId) {
             handelCustomCombo(obj);
           }
         }
@@ -1332,9 +1123,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const handleMoveToDetail = (productData, i) => {
-    const logininfoDetail = JSON.parse(
-      sessionStorage.getItem("loginUserDetail")
-    );
+    const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 
     let output = FilterValueWithCheckedOnly();
 
@@ -1346,20 +1135,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       imageVideoDetail = [];
     }
 
-    const uniqueNmList = [...new Set(imageVideoDetail?.map(item => item?.Nm))].filter(Boolean);
+    const uniqueNmList = [...new Set(imageVideoDetail?.map((item) => item?.Nm))].filter(Boolean);
 
     let obj = {
       a: productData?.autocode,
       b: productData?.designno,
       m: selectedMetalId ?? logininfoDetail?.MetalId ?? storeInit?.MetalId,
-      d:
-        selectedDiaId ?? logininfoDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
+      d: selectedDiaId ?? logininfoDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
       c: selectedCsId ?? logininfoDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid,
       f: output,
       // n: decodeURI(extractedPart)
-      n:
-        decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ??
-        "",
+      n: decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ?? "",
       pl: prodListType ?? "",
       sb: sortBySelect ?? "",
       sk: securityKey,
@@ -1371,7 +1157,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       i: productData?.MetalColorid,
       l: productData?.ImageExtension || "",
       count: productData?.ImageCount,
-      s: productData?.DefaultSize || ""
+      s: productData?.DefaultSize || "",
     };
     let encodeObj = compressAndEncode(JSON?.stringify(obj));
     navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
@@ -1405,7 +1191,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }
   };
 
-
   const handleBreadcums = (mparams) => {
     let key = Object?.keys(mparams);
     let val = Object?.values(mparams);
@@ -1425,21 +1210,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     let finalData = { ...KeyObj, ...ValObj };
 
-    const queryParameters1 = [
-      finalData?.FilterKey && `${finalData.FilterVal}`,
-      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
-      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
-    ]
-      .filter(Boolean)
-      .join("/");
+    const queryParameters1 = [finalData?.FilterKey && `${finalData.FilterVal}`, finalData?.FilterKey1 && `${finalData.FilterVal1}`, finalData?.FilterKey2 && `${finalData.FilterVal2}`].filter(Boolean).join("/");
 
-    const queryParameters = [
-      finalData?.FilterKey && `${finalData.FilterVal}`,
-      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
-      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
-    ]
-      .filter(Boolean)
-      .join(",");
+    const queryParameters = [finalData?.FilterKey && `${finalData.FilterVal}`, finalData?.FilterKey1 && `${finalData.FilterVal1}`, finalData?.FilterKey2 && `${finalData.FilterVal2}`].filter(Boolean).join(",");
 
     const otherparamUrl = Object.entries({
       b: finalData?.FilterKey,
@@ -1453,10 +1226,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     let menuEncoded = `${queryParameters}/${otherparamUrl}`;
 
-    const url = `/p/${BreadCumsObj()?.menuname}/${queryParameters1}/?M=${btoa(
-      menuEncoded
-    )}`;
-    console.log("🚀 ~ ProductList ~ url:", url)
+    const url = `/p/${BreadCumsObj()?.menuname}/${queryParameters1}/?M=${btoa(menuEncoded)}`;
+    console.log("🚀 ~ ProductList ~ url:", url);
     // const url = `/p?V=${queryParameters}/K=${otherparamUrl}`;
 
     navigate.push(url);
@@ -1473,48 +1244,30 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     setIsOnlyProdLoading(true);
 
     let sortby = e.target?.value;
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
     const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
     const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
-      DiaMin: isDia ? sliderValue[0] ?? "" : "",
-      DiaMax: isDia ? sliderValue[1] ?? "" : ""
+      DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+      DiaMax: isDia ? (sliderValue[1] ?? "") : "",
     };
 
     let netRange = {
-      netMin: isNet ? sliderValue1[0] ?? "" : "",
-      netMax: isNet ? sliderValue1[1] ?? "" : ""
+      netMin: isNet ? (sliderValue1[0] ?? "") : "",
+      netMax: isNet ? (sliderValue1[1] ?? "") : "",
     };
 
     let grossRange = {
-      grossMin: isGross ? sliderValue2[0] ?? "" : "",
-      grossMax: isGross ? sliderValue2[1] ?? "" : ""
+      grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+      grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
     setCurrPage(1);
-    setInputPage(1)
+    setInputPage(1);
 
     // DiaRange, netRange ,grossRange
     await ProductListApi(output, currPage, obj, prodListType, cookie, sortby, DiaRange, netRange, grossRange)
@@ -1546,66 +1299,35 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     // console.log('ClientHeight', clientHeight);
   };
 
-
   const handleRangeFilterApi = async (Rangeval) => {
-    setIsOnlyProdLoading(true)
+    setIsOnlyProdLoading(true);
     setAfterCountStatus(true);
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
 
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isDia = JSON.stringify(Rangeval) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
     const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
     const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
-      DiaMin: isDia ? Rangeval[0] ?? "" : "",
-      DiaMax: isDia ? Rangeval[1] ?? "" : ""
+      DiaMin: isDia ? (Rangeval[0] ?? "") : "",
+      DiaMax: isDia ? (Rangeval[1] ?? "") : "",
     };
 
     let netRange = {
-      netMin: isNet ? sliderValue1[0] ?? "" : "",
-      netMax: isNet ? sliderValue1[1] ?? "" : ""
+      netMin: isNet ? (sliderValue1[0] ?? "") : "",
+      netMax: isNet ? (sliderValue1[1] ?? "") : "",
     };
 
     let grossRange = {
-      grossMin: isGross ? sliderValue2[0] ?? "" : "",
-      grossMax: isGross ? sliderValue2[1] ?? "" : ""
+      grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+      grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
-
-
-    await ProductListApi(
-      output,
-      1,
-      obj,
-      prodListType,
-      cookie,
-      sortBySelect,
-      DiaRange,
-      netRange,
-      grossRange
-    )
+    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1619,11 +1341,11 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         setIsOnlyProdLoading(false);
         setAfterCountStatus(false);
       });
-  }
+  };
 
   const handleRangeFilterApi1 = async (Rangeval1) => {
-    setIsOnlyProdLoading(true)
-    setAfterCountStatus(true)
+    setIsOnlyProdLoading(true);
+    setAfterCountStatus(true);
     // let diafilter = JSON.parse(
     //   filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
     // )[0];
@@ -1635,134 +1357,29 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
 
-
-
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
     const isNet = JSON.stringify(Rangeval1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
     const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
-      DiaMin: isDia ? sliderValue[0] ?? "" : "",
-      DiaMax: isDia ? sliderValue[1] ?? "" : ""
+      DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+      DiaMax: isDia ? (sliderValue[1] ?? "") : "",
     };
 
     let netRange = {
-      netMin: isNet ? Rangeval1[0] ?? "" : "",
-      netMax: isNet ? Rangeval1[1] ?? "" : ""
+      netMin: isNet ? (Rangeval1[0] ?? "") : "",
+      netMax: isNet ? (Rangeval1[1] ?? "") : "",
     };
 
     let grossRange = {
-      grossMin: isGross ? sliderValue2[0] ?? "" : "",
-      grossMax: isGross ? sliderValue2[1] ?? "" : ""
+      grossMin: isGross ? (sliderValue2[0] ?? "") : "",
+      grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
-
-    await ProductListApi(
-      output,
-      1,
-      obj,
-      prodListType,
-      cookie,
-      sortBySelect,
-      DiaRange,
-      netRange,
-      grossRange
-    )
-      .then((res) => {
-        if (res) {
-          setProductListData(res?.pdList);
-          setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
-          setAfterCountStatus(false)
-        }
-        return res;
-      })
-      .catch((err) => console.log("err", err))
-      .finally(() => {
-        setIsOnlyProdLoading(false);
-        setAfterCountStatus(false)
-      });
-  };
-
-  const handleRangeFilterApi2 = async (Rangeval2) => {
-    setIsOnlyProdLoading(true)
-    setAfterCountStatus(true)
-    let output = FilterValueWithCheckedOnly();
-    let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
-
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(Rangeval2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
-
-    let DiaRange = {
-      DiaMin: isDia ? sliderValue[0] ?? "" : "",
-      DiaMax: isDia ? sliderValue[1] ?? "" : ""
-    };
-
-    let netRange = {
-      netMin: isNet ? sliderValue1[0] ?? "" : "",
-      netMax: isNet ? sliderValue1[1] ?? "" : ""
-    };
-
-    let grossRange = {
-      grossMin: isGross ? Rangeval2[0] ?? "" : "",
-      grossMax: isGross ? Rangeval2[1] ?? "" : ""
-    };
-
-
-
-    await ProductListApi(
-      output,
-      1,
-      obj,
-      prodListType,
-      cookie,
-      sortBySelect,
-      DiaRange,
-      netRange,
-      grossRange
-    )
+    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1778,6 +1395,49 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       });
   };
 
+  const handleRangeFilterApi2 = async (Rangeval2) => {
+    setIsOnlyProdLoading(true);
+    setAfterCountStatus(true);
+    let output = FilterValueWithCheckedOnly();
+    let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
+
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
+    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross = JSON.stringify(Rangeval2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+
+    let DiaRange = {
+      DiaMin: isDia ? (sliderValue[0] ?? "") : "",
+      DiaMax: isDia ? (sliderValue[1] ?? "") : "",
+    };
+
+    let netRange = {
+      netMin: isNet ? (sliderValue1[0] ?? "") : "",
+      netMax: isNet ? (sliderValue1[1] ?? "") : "",
+    };
+
+    let grossRange = {
+      grossMin: isGross ? (Rangeval2[0] ?? "") : "",
+      grossMax: isGross ? (Rangeval2[1] ?? "") : "",
+    };
+
+    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+      .then((res) => {
+        if (res) {
+          setProductListData(res?.pdList);
+          setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
+          setAfterCountStatus(false);
+        }
+        return res;
+      })
+      .catch((err) => console.log("err", err))
+      .finally(() => {
+        setIsOnlyProdLoading(false);
+        setAfterCountStatus(false);
+      });
+  };
 
   const handleSliderChange = (event, newValue) => {
     setSliderValue(newValue);
@@ -1794,47 +1454,38 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const handleInputChange = (index) => (event) => {
     const newSliderValue = [...sliderValue];
-    newSliderValue[index] =
-      event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue(newSliderValue);
     handleRangeFilterApi(newSliderValue);
   };
   const handleInputChange1 = (index) => (event) => {
     const newSliderValue = [...sliderValue1];
-    newSliderValue[index] =
-      event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue1(newSliderValue);
     handleRangeFilterApi1(newSliderValue);
   };
   const handleInputChange2 = (index) => (event) => {
     const newSliderValue = [...sliderValue2];
-    newSliderValue[index] =
-      event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue2(newSliderValue);
     handleRangeFilterApi2(newSliderValue);
   };
 
   const SharedStyleForRange = {
-    width: 170, height: 88, '@media (max-width:1520px)': {
+    width: 170,
+    height: 88,
+    "@media (max-width:1520px)": {
       width: 165, // Example of how to change width on small screens
-    }, '@media (max-width:1410px)': {
+    },
+    "@media (max-width:1410px)": {
       width: 160, // Example of how to change width on small screens
-    }, '@media (max-width:1290px)': {
+    },
+    "@media (max-width:1290px)": {
       width: 145, // Example of how to change width on small screens
     },
-  }
+  };
 
-  const resetRangeFilter = async ({
-    filterName,
-    setSliderValue,
-    setTempSliderValue,
-    handleRangeFilterApi,
-    prodListType,
-    cookie,
-    setIsShowBtn,
-    show, setShow,
-    setAppliedRange,
-  }) => {
+  const resetRangeFilter = async ({ filterName, setSliderValue, setTempSliderValue, handleRangeFilterApi, prodListType, cookie, setIsShowBtn, show, setShow, setAppliedRange }) => {
     try {
       const res1 = await FilterListAPI(prodListType, cookie);
       const optionsRaw = res1?.find((f) => f?.Name === filterName)?.options;
@@ -1845,20 +1496,19 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         setSliderValue(resetValue);
         setTempSliderValue(resetValue);
         handleRangeFilterApi("");
-        setAppliedRange(["", ""])
+        setAppliedRange(["", ""]);
         // handleRangeFilterApi(resetValue);
         setIsShowBtn?.(false);
-        if (show) setShow(false)
+        if (show) setShow(false);
       }
     } catch (error) {
       console.error(`Failed to reset filter "${filterName}":`, error);
     }
   };
 
-
   const RangeFilterView = ({ ele, sliderValue, setSliderValue, handleRangeFilterApi, prodListType, cookie, setShow, show, setAppliedRange1, appliedRange1 }) => {
     const parsedOptions = JSON.parse(ele?.options || "[]")?.[0] || {};
-    const min = Number(parsedOptions.Min || 0);  // Ensure min is a number
+    const min = Number(parsedOptions.Min || 0); // Ensure min is a number
     const max = Number(parsedOptions.Max || 100);
     const [tempSliderValue, setTempSliderValue] = useState(sliderValue);
     const [isShowBtn, setIsShowBtn] = useState(false);
@@ -1869,7 +1519,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         if (index < tempSliderValue.length - 1) {
           inputRefs.current[index + 1]?.current?.focus();
         } else {
@@ -1901,8 +1551,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       const [minDiaWt, maxDiaWt] = tempSliderValue;
 
       // Empty or undefined
-      if (minDiaWt == null || maxDiaWt == null || minDiaWt === '' || maxDiaWt === '') {
-        toast.error('Please enter valid range values.', {
+      if (minDiaWt == null || maxDiaWt == null || minDiaWt === "" || maxDiaWt === "") {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1911,7 +1561,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Not a number
       if (isNaN(minDiaWt) || isNaN(maxDiaWt)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1920,7 +1570,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Negative values
       if (minDiaWt < 0 || maxDiaWt < 0) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1929,7 +1579,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Equal values
       if (Number(minDiaWt) === Number(maxDiaWt)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1947,7 +1597,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Below actual min
       if (minDiaWt < min) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1956,7 +1606,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Above actual max
       if (maxDiaWt > max) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -1967,13 +1617,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       setTempSliderValue(tempSliderValue);
       handleRangeFilterApi(tempSliderValue);
       setIsShowBtn(false);
-      setAppliedRange1([min, max])
-      setShow(true)
+      setAppliedRange1([min, max]);
+      setShow(true);
     };
 
     return (
       <div style={{ position: "relative" }}>
-
         {appliedRange1 && (
           <div
             style={{
@@ -1994,50 +1643,38 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           </div>
         )}
 
-        <Slider
-          value={tempSliderValue}
-          onChange={handleSliderChange}
-          min={min}
-          max={max}
-          step={0.001}
-          disableSwap
-          valueLabelDisplay="off"
-          sx={{ marginTop: 1, transition: "all 0.2s ease-out" }}
-        />
+        <Slider value={tempSliderValue} onChange={handleSliderChange} min={min} max={max} step={0.001} disableSwap valueLabelDisplay="off" sx={{ marginTop: 1, transition: "all 0.2s ease-out" }} />
 
         <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
           {tempSliderValue.map((val, index) => (
-            <Input
-              key={index}
-              value={val}
-              inputRef={inputRefs.current[index]}
-              onKeyDown={handleKeyDown(index)}
-              onChange={handleInputChange(index)}
-              inputProps={{ step: 0.001, min, max, type: "number" }}
-              sx={{ textAlign: "center" }}
-            />
+            <Input key={index} value={val} inputRef={inputRefs.current[index]} onKeyDown={handleKeyDown(index)} onChange={handleInputChange(index)} inputProps={{ step: 0.001, min, max, type: "number" }} sx={{ textAlign: "center" }} />
           ))}
         </div>
 
         <Stack direction="row" justifyContent="flex-end" gap={1} mt={1}>
-          {show &&
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={() =>
-              resetRangeFilter({
-                filterName: "Diamond",
-                setSliderValue: setSliderValue,
-                setTempSliderValue,
-                handleRangeFilterApi: handleRangeFilterApi,
-                prodListType,
-                cookie,
-                setIsShowBtn,
-                show: show,
-                setShow: setShow,
-                setAppliedRange: setAppliedRange1,
-              })
-            } color="error">
+          {show && (
+            <Button
+              variant="outlined"
+              sx={{ paddingBottom: "0" }}
+              onClick={() =>
+                resetRangeFilter({
+                  filterName: "Diamond",
+                  setSliderValue: setSliderValue,
+                  setTempSliderValue,
+                  handleRangeFilterApi: handleRangeFilterApi,
+                  prodListType,
+                  cookie,
+                  setIsShowBtn,
+                  show: show,
+                  setShow: setShow,
+                  setAppliedRange: setAppliedRange1,
+                })
+              }
+              color="error"
+            >
               Reset
             </Button>
-          }
+          )}
           {isShowBtn && (
             <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
               Apply
@@ -2048,8 +1685,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     );
   };
 
-  const RangeFilterView1 = ({ ele, sliderValue1, setSliderValue1, handleRangeFilterApi1, prodListType, cookie, show1,
-    setShow1, setAppliedRange2, appliedRange2 }) => {
+  const RangeFilterView1 = ({ ele, sliderValue1, setSliderValue1, handleRangeFilterApi1, prodListType, cookie, show1, setShow1, setAppliedRange2, appliedRange2 }) => {
     const parsedOptions = JSON.parse(ele?.options || "[]")?.[0] || {};
     const min = parsedOptions.Min || "";
     const max = parsedOptions.Max || "";
@@ -2062,7 +1698,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         if (index < tempSliderValue.length - 1) {
           inputRefs.current[index + 1]?.current?.focus();
         } else {
@@ -2076,7 +1712,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         setTempSliderValue(sliderValue1);
       }
     }, [sliderValue1]);
-
 
     useEffect(() => {
       if (Array.isArray(sliderValue1) && sliderValue1.length === 2) {
@@ -2100,8 +1735,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const handleSave = () => {
       const [minNetWt, maxNetWt] = tempSliderValue;
 
-      if (minNetWt == null || maxNetWt == null || minNetWt === '' || maxNetWt === '') {
-        toast.error('Please enter valid range values.', {
+      if (minNetWt == null || maxNetWt == null || minNetWt === "" || maxNetWt === "") {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2109,7 +1744,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       if (isNaN(minNetWt) || isNaN(maxNetWt)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2117,7 +1752,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       if (minNetWt < 0 || maxNetWt < 0) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2126,7 +1761,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // 👇 New specific validation
       if (Number(minNetWt) === Number(maxNetWt)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2142,7 +1777,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       if (minNetWt < min) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2150,7 +1785,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       if (maxNetWt > max) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2158,19 +1793,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       setSliderValue1(tempSliderValue);
-      setTempSliderValue(tempSliderValue)
+      setTempSliderValue(tempSliderValue);
       handleRangeFilterApi1(tempSliderValue);
-      setAppliedRange2([min, max])
+      setAppliedRange2([min, max]);
 
       setIsShowBtn(false);
-      setShow1(true)
+      setShow1(true);
     };
 
     return (
       <div style={{ position: "relative" }}>
-
         {appliedRange2 && (
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: '-12px', width: "100%" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: "-12px", width: "100%" }}>
             <Typography variant="caption" color="text.secondary" fontSize="11px">
               {appliedRange2[0] !== "" ? `Min: ${appliedRange2[0]}` : ""}
             </Typography>
@@ -2191,41 +1825,38 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           sx={{
             marginTop: "5px",
             transition: "all 0.2s ease-out",
-            '& .MuiSlider-valueLabel': { display: 'none' },
+            "& .MuiSlider-valueLabel": { display: "none" },
           }}
         />
         <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
           {tempSliderValue.map((val, index) => (
-            <Input
-              key={index}
-              inputRef={inputRefs.current[index]}
-              onKeyDown={handleKeyDown(index)}
-              value={val}
-              onChange={handleInputChange(index)}
-              inputProps={{ step: 0.001, min, max, type: "number" }}
-              sx={{ textAlign: "center" }}
-            />
+            <Input key={index} inputRef={inputRefs.current[index]} onKeyDown={handleKeyDown(index)} value={val} onChange={handleInputChange(index)} inputProps={{ step: 0.001, min, max, type: "number" }} sx={{ textAlign: "center" }} />
           ))}
         </div>
         <Stack flexDirection="row" justifyContent="flex-end" gap={1} mt={1}>
-          {show1 &&
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={() =>
-              resetRangeFilter({
-                filterName: "NetWt",
-                setSliderValue: setSliderValue1,
-                setTempSliderValue,
-                handleRangeFilterApi: handleRangeFilterApi1,
-                prodListType,
-                cookie,
-                setIsShowBtn,
-                show: show1,
-                setShow: setShow1,
-                setAppliedRange: setAppliedRange2,
-              })
-            } color="error">
+          {show1 && (
+            <Button
+              variant="outlined"
+              sx={{ paddingBottom: "0" }}
+              onClick={() =>
+                resetRangeFilter({
+                  filterName: "NetWt",
+                  setSliderValue: setSliderValue1,
+                  setTempSliderValue,
+                  handleRangeFilterApi: handleRangeFilterApi1,
+                  prodListType,
+                  cookie,
+                  setIsShowBtn,
+                  show: show1,
+                  setShow: setShow1,
+                  setAppliedRange: setAppliedRange2,
+                })
+              }
+              color="error"
+            >
               Reset
             </Button>
-          }
+          )}
           {isShowBtn && (
             <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
               Apply
@@ -2249,7 +1880,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         if (index < tempSliderValue.length - 1) {
           inputRefs.current[index + 1]?.current?.focus();
         } else {
@@ -2264,30 +1895,25 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
     }, [sliderValue2]);
 
-
     const handleInputChange = (index) => (event) => {
       const newValue = event.target.value === "" ? "" : Number(event.target.value);
       const updated = [...tempSliderValue];
       updated[index] = newValue;
       setTempSliderValue(updated);
-      setIsShowBtn(
-        updated[0] !== sliderValue2[0] || updated[1] !== sliderValue2[1]
-      );
+      setIsShowBtn(updated[0] !== sliderValue2[0] || updated[1] !== sliderValue2[1]);
     };
 
     const handleSliderChange = (_, newValue) => {
       setTempSliderValue(newValue);
-      setIsShowBtn(
-        newValue[0] !== sliderValue2[0] || newValue[1] !== sliderValue2[1]
-      );
+      setIsShowBtn(newValue[0] !== sliderValue2[0] || newValue[1] !== sliderValue2[1]);
     };
 
     const handleSave = () => {
       const [minWeight, maxWeight] = tempSliderValue;
 
       // Validation: Empty or undefined
-      if (minWeight == null || maxWeight == null || minWeight === '' || maxWeight === '') {
-        toast.error('Please enter valid range values.', {
+      if (minWeight == null || maxWeight == null || minWeight === "" || maxWeight === "") {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2296,7 +1922,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Validation: Not a number
       if (isNaN(minWeight) || isNaN(maxWeight)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2305,7 +1931,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Validation: Negative values
       if (minWeight < 0 || maxWeight < 0) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2314,7 +1940,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // 👇 New specific validation
       if (Number(minWeight) === Number(maxWeight)) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2332,7 +1958,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // Validation: Range must stay within allowed min and max
       if (minWeight < min) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2340,7 +1966,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
 
       if (maxWeight > max) {
-        toast.error('Please enter valid range values.', {
+        toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
         });
@@ -2349,18 +1975,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       // If validation passes, update the parent state and handle the API call
       setSliderValue2(tempSliderValue);
-      setTempSliderValue(tempSliderValue)
+      setTempSliderValue(tempSliderValue);
       handleRangeFilterApi2(tempSliderValue);
       setAppliedRange3([min, max]);
       setIsShowBtn(false);
-      setShow2(true)
+      setShow2(true);
     };
 
     return (
       <div style={{ position: "relative" }}>
-
         {appliedRange3 && (
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: '-12px', width: "100%" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: "-12px", width: "100%" }}>
             <Typography variant="caption" color="text.secondary" fontSize="11px">
               {appliedRange3[0] !== "" ? `Min: ${appliedRange3[0]}` : ""}
             </Typography>
@@ -2381,43 +2006,40 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           sx={{
             marginTop: "5px",
             transition: "all 0.2s ease-out",
-            '& .MuiSlider-valueLabel': { display: 'none' },
+            "& .MuiSlider-valueLabel": { display: "none" },
           }}
         />
 
         <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
           {tempSliderValue.map((val, index) => (
-            <Input
-              key={index}
-              inputRef={inputRefs.current[index]}
-              value={val}
-              onKeyDown={handleKeyDown(index)}
-              onChange={handleInputChange(index)}
-              inputProps={{ step: 0.001, type: "number" }}
-              sx={{ textAlign: "center" }}
-            />
+            <Input key={index} inputRef={inputRefs.current[index]} value={val} onKeyDown={handleKeyDown(index)} onChange={handleInputChange(index)} inputProps={{ step: 0.001, type: "number" }} sx={{ textAlign: "center" }} />
           ))}
         </div>
 
         <Stack direction="row" justifyContent="flex-end" gap={1} mt={1}>
-          {show2 &&
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={() =>
-              resetRangeFilter({
-                filterName: "Gross",
-                setSliderValue: setSliderValue2,
-                setTempSliderValue,
-                handleRangeFilterApi: handleRangeFilterApi2,
-                prodListType,
-                cookie,
-                setIsShowBtn,
-                show: show2,
-                setShow: setShow2,
-                setAppliedRange: setAppliedRange3,
-              })
-            } color="error">
+          {show2 && (
+            <Button
+              variant="outlined"
+              sx={{ paddingBottom: "0" }}
+              onClick={() =>
+                resetRangeFilter({
+                  filterName: "Gross",
+                  setSliderValue: setSliderValue2,
+                  setTempSliderValue,
+                  handleRangeFilterApi: handleRangeFilterApi2,
+                  prodListType,
+                  cookie,
+                  setIsShowBtn,
+                  show: show2,
+                  setShow: setShow2,
+                  setAppliedRange: setAppliedRange3,
+                })
+              }
+              color="error"
+            >
               Reset
             </Button>
-          }
+          )}
           {isShowBtn && (
             <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
               Apply
@@ -2446,56 +2068,26 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       return acc;
     }, {});
 
-    const result = Object.entries(updatedBreadCum).reduce(
-      (acc, [key, value], index) => {
-        acc[`FilterKey${index === 0 ? "" : index}`] =
-          key.charAt(0).toUpperCase() + key.slice(1);
-        acc[`FilterVal${index === 0 ? "" : index}`] = value;
-        return acc;
-      },
-      {}
-    );
+    const result = Object.entries(updatedBreadCum).reduce((acc, [key, value], index) => {
+      acc[`FilterKey${index === 0 ? "" : index}`] = key.charAt(0).toUpperCase() + key.slice(1);
+      acc[`FilterVal${index === 0 ? "" : index}`] = value;
+      return acc;
+    }, {});
 
-    result.menuname = decodeURI(location?.pathname)
-      .slice(3)
-      .slice(0, -1)
-      .split("/")[0];
+    result.menuname = decodeURI(location?.pathname).slice(3).slice(0, -1).split("/")[0];
 
     return result;
   };
 
   const showClearAllButton = () => {
-
-    let diafilter =
-      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
-        )[0]
-        : [];
-    let diafilter1 =
-      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options
-        )[0]
-        : [];
-    let diafilter2 =
-      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        ?.length > 0
-        ? JSON.parse(
-          filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options
-        )[0]
-        : [];
+    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
+    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
+    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
     const isFilterChecked = Object.values(filterChecked).some((ele) => ele.checked);
-    const isSliderChanged =
-      JSON.stringify(sliderValue) !== JSON.stringify((diafilter?.Min != null || diafilter?.Max != null) ? [diafilter?.Min, diafilter?.Max] : []) ||
-      JSON.stringify(sliderValue1) !== JSON.stringify((diafilter1?.Min != null || diafilter1?.Max != null) ? [diafilter1?.Min, diafilter1?.Max] : []) ||
-      JSON.stringify(sliderValue2) !== JSON.stringify((diafilter2?.Min != null || diafilter2?.Max != null) ? [diafilter2?.Min, diafilter2?.Max] : []);
+    const isSliderChanged = JSON.stringify(sliderValue) !== JSON.stringify(diafilter?.Min != null || diafilter?.Max != null ? [diafilter?.Min, diafilter?.Max] : []) || JSON.stringify(sliderValue1) !== JSON.stringify(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []) || JSON.stringify(sliderValue2) !== JSON.stringify(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
 
     return isFilterChecked || isSliderChanged;
   };
-
 
   return (
     <>
@@ -2700,142 +2292,99 @@ const ProductList = ({ params, searchParams, storeinit }) => {
               <div className="smr_mobile_filter_portion_outter">
                 <span className="smr_filter_text">
                   <span>
-                    {
-                      !showClearAllButton()
-                        // Object.values(filterChecked).filter((ele) => ele.checked)
-                        //   ?.length === 0 
-                        ? (
-                          "Filters"
-                        ) : (
-                          <>
-                            {afterCountStatus == true ? (
-                              <Skeleton
-                                variant="rounded"
-                                width={140}
-                                height={22}
-                                className="pSkelton"
-                              />
-                            ) : (
-                              <span>{`Product Found: ${afterFilterCount}`}</span>
-                            )}
-                          </>
-                        )}
+                    {!showClearAllButton() ? (
+                      // Object.values(filterChecked).filter((ele) => ele.checked)
+                      //   ?.length === 0
+                      "Filters"
+                    ) : (
+                      <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Product Found: ${afterFilterCount}`}</span>}</>
+                    )}
                   </span>
                   <span style={{ cursor: "pointer" }} onClick={() => handelFilterClearAll()}>
-                    {
-                      showClearAllButton()
-                        // Object.values(filterChecked).filter((ele) => ele.checked)
-                        //   ?.length > 0 
-                        ? (
-                          "Clear All"
-                        ) : (
-                          <>
-                            {afterCountStatus == true ? (
-                              <Skeleton
-                                variant="rounded"
-                                width={140}
-                                height={22}
-                                className="pSkelton"
-                              />
-                            ) : (
-                              <span>{`Total Products : ${afterFilterCount}`}</span>
-                            )}
-                          </>
-                        )}
+                    {showClearAllButton() ? (
+                      // Object.values(filterChecked).filter((ele) => ele.checked)
+                      //   ?.length > 0
+                      "Clear All"
+                    ) : (
+                      <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Total Products : ${afterFilterCount}`}</span>}</>
+                    )}
                   </span>
                 </span>
                 <div style={{ marginTop: "12px" }}>
                   {filterData?.map((ele) => (
                     <>
-                      {!ele?.id?.includes("Range") &&
-                        !ele?.id?.includes("Price") && (
-                          <Accordion
-                            elevation={0}
+                      {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
+                        <Accordion
+                          elevation={0}
+                          sx={{
+                            borderBottom: "1px solid #c7c8c9",
+                            borderRadius: 0,
+                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
+                              borderBottomLeftRadius: "0px",
+                              borderBottomRightRadius: "0px",
+                            },
+                            "&.MuiPaper-root.MuiAccordion-root:before": {
+                              background: "none",
+                            },
+                          }}
+                        >
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
+                            aria-controls="panel1-content"
+                            id="panel1-header"
                             sx={{
-                              borderBottom: "1px solid #c7c8c9",
+                              color: "#7d7f85",
                               borderRadius: 0,
-                              "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                              {
-                                borderBottomLeftRadius: "0px",
-                                borderBottomRightRadius: "0px",
-                              },
-                              "&.MuiPaper-root.MuiAccordion-root:before": {
-                                background: "none",
+
+                              "&.MuiAccordionSummary-root": {
+                                padding: 0,
                               },
                             }}
                           >
-                            <AccordionSummary
-                              expandIcon={
-                                <ExpandMoreIcon sx={{ width: "20px" }} />
-                              }
-                              aria-controls="panel1-content"
-                              id="panel1-header"
-                              sx={{
-                                color: "#7d7f85",
-                                borderRadius: 0,
-
-                                "&.MuiAccordionSummary-root": {
-                                  padding: 0,
-                                },
-                              }}
-                            >
-                              {ele.Fil_DisName}
-                            </AccordionSummary>
-                            <AccordionDetails
-                              sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "4px",
-                                minHeight: "fit-content",
-                                maxHeight: "300px",
-                                overflow: "auto",
-                              }}
-                            >
-                              {(JSON.parse(ele?.options) ?? []).map((opt) => (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    gap: "12px",
-                                  }}
-                                  key={opt?.id}
-                                >
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        name={`${ele?.id}${opt?.id}`}
-                                        checked={
-                                          filterChecked[`${ele?.id}${opt?.id}`]
-                                            ?.checked === undefined
-                                            ? false
-                                            : filterChecked[
-                                              `${ele?.id}${opt?.id}`
-                                            ]?.checked
-                                        }
-                                        style={{
-                                          color: "#7f7d85",
-                                          padding: 0,
-                                          width: "10px",
-                                        }}
-                                        onClick={(e) =>
-                                          handleCheckboxChange(
-                                            e,
-                                            ele?.id,
-                                            opt?.Name
-                                          )
-                                        }
-                                        size="small"
-                                      />
-                                    }
-                                    className="smr_mui_checkbox_label"
-                                    label={opt.Name}
-                                  />
-                                </div>
-                              ))}
-                            </AccordionDetails>
-                          </Accordion>
-                        )}
+                            {ele.Fil_DisName}
+                          </AccordionSummary>
+                          <AccordionDetails
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "4px",
+                              minHeight: "fit-content",
+                              maxHeight: "300px",
+                              overflow: "auto",
+                            }}
+                          >
+                            {(JSON.parse(ele?.options) ?? []).map((opt) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  gap: "12px",
+                                }}
+                                key={opt?.id}
+                              >
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      name={`${ele?.id}${opt?.id}`}
+                                      checked={filterChecked[`${ele?.id}${opt?.id}`]?.checked === undefined ? false : filterChecked[`${ele?.id}${opt?.id}`]?.checked}
+                                      style={{
+                                        color: "#7f7d85",
+                                        padding: 0,
+                                        width: "10px",
+                                      }}
+                                      onClick={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
+                                      size="small"
+                                    />
+                                  }
+                                  className="smr_mui_checkbox_label"
+                                  label={opt.Name}
+                                />
+                              </div>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
+                      )}
                       {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
                         <Accordion
                           elevation={0}
@@ -2852,9 +2401,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                           }}
                         >
                           <AccordionSummary
-                            expandIcon={
-                              <ExpandMoreIcon sx={{ width: "20px" }} />
-                            }
+                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                             aria-controls="panel1-content"
                             id="panel1-header"
                             sx={{
@@ -2894,13 +2441,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                   control={
                                     <Checkbox
                                       name={`Price${i}${i}`}
-                                      checked={
-                                        filterChecked[`Price${i}${i}`]
-                                          ?.checked === undefined
-                                          ? false
-                                          : filterChecked[`Price${i}${i}`]
-                                            ?.checked
-                                      }
+                                      checked={filterChecked[`Price${i}${i}`]?.checked === undefined ? false : filterChecked[`Price${i}${i}`]?.checked}
                                       style={{
                                         color: "#7f7d85",
                                         padding: 0,
@@ -2911,9 +2452,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                         padding: 0,
                                         width: "10px",
                                       }}
-                                      onClick={(e) =>
-                                        handleCheckboxChange(e, ele?.id, opt)
-                                      }
+                                      onClick={(e) => handleCheckboxChange(e, ele?.id, opt)}
                                       size="small"
                                     />
                                   }
@@ -2922,25 +2461,13 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                   className="smr_mui_checkbox_label smr_mui_label_price "
                                   sx={{ fontSize: "14px" }}
                                   label={
-                                    <div style={{ fontSize: '0.6vw !important' }}>
-                                      {
-                                        opt?.Minval == 0
-                                          ? `Under ${loginUserDetail?.CurrencyCode ??
-                                          storeInit?.CurrencyCode
-                                          } ${formatter.format(opt?.Maxval)}`
-                                          : opt?.Maxval == 0
-                                            ? `Over ${loginUserDetail?.CurrencyCode ??
-                                            storeInit?.CurrencyCode
-                                            }${formatter.format(opt?.Minval)}`
-                                            : `${loginUserDetail?.CurrencyCode ??
-                                            storeInit?.CurrencyCode
-                                            } ${formatter.format(opt?.Minval)}
-                                      - ${loginUserDetail?.CurrencyCode ??
-                                            storeInit?.CurrencyCode
-                                            } ${formatter.format(
-                                              opt?.Maxval
-                                            )}`
-                                      }
+                                    <div style={{ fontSize: "0.6vw !important" }}>
+                                      {opt?.Minval == 0
+                                        ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`
+                                        : opt?.Maxval == 0
+                                          ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode}${formatter.format(opt?.Minval)}`
+                                          : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)}
+                                      - ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`}
                                     </div>
                                   }
                                 />
@@ -2967,9 +2494,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         // defaultExpanded={}
                         >
                           <AccordionSummary
-                            expandIcon={
-                              <ExpandMoreIcon sx={{ width: "20px" }} />
-                            }
+                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                             aria-controls="panel1-content"
                             id="panel1-header"
                             sx={{
@@ -3023,9 +2548,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         // defaultExpanded={}
                         >
                           <AccordionSummary
-                            expandIcon={
-                              <ExpandMoreIcon sx={{ width: "20px" }} />
-                            }
+                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                             aria-controls="panel1-content"
                             id="panel1-header"
                             sx={{
@@ -3079,9 +2602,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         // defaultExpanded={}
                         >
                           <AccordionSummary
-                            expandIcon={
-                              <ExpandMoreIcon sx={{ width: "20px" }} />
-                            }
+                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                             aria-controls="panel1-content"
                             id="panel1-header"
                             sx={{
@@ -3144,33 +2665,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         />
                       </div>
 
-                      {filterData?.length != 0 && <div className="smr_mobile_prodSorting">
-                        <Checkbox
-                          sx={{ padding: "0px 9px 0px 9px" }}
-                          icon={<FilterAltIcon fontSize="large" />}
-                          checkedIcon={
-                            <FilterAltOffIcon
-                              fontSize="large"
-                              style={{ color: "#666666" }}
-                            />
-                          }
-                          checked={isDrawerOpen}
-                          onChange={(e) => setIsDrawerOpen(e.target.value)}
-                        />
-                      </div>}
+                      {filterData?.length != 0 && (
+                        <div className="smr_mobile_prodSorting">
+                          <Checkbox sx={{ padding: "0px 9px 0px 9px" }} icon={<FilterAltIcon fontSize="large" />} checkedIcon={<FilterAltOffIcon fontSize="large" style={{ color: "#666666" }} />} checked={isDrawerOpen} onChange={(e) => setIsDrawerOpen(e.target.value)} />
+                        </div>
+                      )}
                     </div>
                   ) : null}
 
                   <div className="smr_mainPortion">
                     {filterData?.length > 0 && (
-                      <div
-                        className="proCat_filter_portion"
-                        style={{ marginTop: "20px" }}
-                      >
-                        <div
-                          className="proCat_topTitleList"
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
+                      <div className="proCat_filter_portion" style={{ marginTop: "20px" }}>
+                        <div className="proCat_topTitleList" style={{ display: "flex", alignItems: "center" }}>
                           <div className="proCat_mpty_sorting_div">
                             <IoArrowBack
                               style={{
@@ -3182,11 +2688,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                               onClick={() => navigate.push("/")}
                             />
                           </div>
-                          <p className="proCat_NameTopShow">
-                            {decodeURIComponent(
-                              location.pathname?.split("/p/")[1].split("/")[0]
-                            )}
-                          </p>
+                          <p className="proCat_NameTopShow">{decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}</p>
                         </div>
                         {filterData?.length > 0 && (
                           <div className="proCat_filter_portion_outter">
@@ -3196,192 +2698,39 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                   // Object.values(filterChecked).filter(
                                   //   (ele) => ele.checked
                                   // )?.length === 0
-                                  !showClearAllButton()
-                                    ? (
-                                      "Filters"
-                                    ) : (
-                                      // ? <span style={{display:'flex',justifyContent:'space-between'}}><span>{"Filters"}</span> <span>{`Total Products : ${afterFilterCount}`}</span></span>
-                                      <>
-                                        {afterCountStatus == true ? (
-                                          <Skeleton
-                                            variant="rounded"
-                                            width={140}
-                                            height={22}
-                                            className="pSkelton"
-                                          />
-                                        ) : (
-                                          <span>{`Product Found: ${afterFilterCount}`}</span>
-                                        )}
-                                      </>
-                                    )}
+                                  !showClearAllButton() ? (
+                                    "Filters"
+                                  ) : (
+                                    // ? <span style={{display:'flex',justifyContent:'space-between'}}><span>{"Filters"}</span> <span>{`Total Products : ${afterFilterCount}`}</span></span>
+                                    <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Product Found: ${afterFilterCount}`}</span>}</>
+                                  )
+                                }
                               </span>
                               <span style={{ cursor: "pointer" }} onClick={() => handelFilterClearAll()}>
-                                {
-                                  showClearAllButton()
-                                    // Object.values(filterChecked).filter(
-                                    //   (ele) => ele.checked
-                                    // )?.length > 0 
-                                    ? (
-                                      "Clear All"
-                                    ) : (
-                                      <>
-                                        {afterCountStatus == true ? (
-                                          <Skeleton
-                                            variant="rounded"
-                                            width={140}
-                                            height={22}
-                                            className="pSkelton"
-                                          />
-                                        ) : (
-                                          <span>{`Total Products : ${afterFilterCount}`}</span>
-                                        )}
-                                      </>
-                                    )}
+                                {showClearAllButton() ? (
+                                  // Object.values(filterChecked).filter(
+                                  //   (ele) => ele.checked
+                                  // )?.length > 0
+                                  "Clear All"
+                                ) : (
+                                  <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Total Products : ${afterFilterCount}`}</span>}</>
+                                )}
                               </span>
                             </span>
                             <div style={{ marginTop: "12px" }}>
                               {filterData?.map((ele) => (
                                 <>
-                                  {!ele?.id?.includes("Range") &&
-                                    !ele?.id?.includes("Price") && (
-                                      <Accordion
-                                        elevation={0}
-                                        sx={{
-                                          borderBottom: "1px solid #c7c8c9",
-                                          borderRadius: 0,
-                                          "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                                          {
-                                            borderBottomLeftRadius: "0px",
-                                            borderBottomRightRadius: "0px",
-                                          },
-                                          "&.MuiPaper-root.MuiAccordion-root:before":
-                                          {
-                                            background: "none",
-                                          },
-                                        }}
-                                      // expanded={accExpanded}
-                                      // defaultExpanded={}
-                                      >
-                                        <AccordionSummary
-                                          expandIcon={
-                                            <ExpandMoreIcon
-                                              sx={{ width: "20px" }}
-                                            />
-                                          }
-                                          aria-controls="panel1-content"
-                                          id="panel1-header"
-                                          sx={{
-                                            color: "#7d7f85",
-                                            borderRadius: 0,
-
-                                            "&.MuiAccordionSummary-root": {
-                                              padding: 0,
-                                            },
-                                          }}
-                                          // className="filtercategoryLable"
-                                          onClick={() => handleScrollHeight()}
-                                        >
-                                          {/* <span> */}
-                                          {ele.Fil_DisName}
-                                          {/* </span> */}
-                                        </AccordionSummary>
-                                        <AccordionDetails
-                                          sx={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            gap: "4px",
-                                            minHeight: "fit-content",
-                                            maxHeight: "300px",
-                                            overflow: "auto",
-                                          }}
-                                        >
-                                          {(JSON.parse(ele?.options) ?? []).map(
-                                            (opt) => (
-                                              <div
-                                                style={{
-                                                  display: "flex",
-                                                  alignItems: "center",
-                                                  justifyContent:
-                                                    "space-between",
-                                                  gap: "12px",
-                                                }}
-                                                key={opt?.id}
-                                              >
-                                                {/* <small
-                                        style={{
-                                          fontFamily: "TT Commons, sans-serif",
-                                          color: "#7f7d85",
-                                        }}
-                                      >
-                                        {opt.Name}
-                                      </small> */}
-                                                <FormControlLabel
-                                                  control={
-                                                    <Checkbox
-                                                      name={`${ele?.id}${opt?.id}`}
-                                                      // checked={
-                                                      //   filterChecked[`checkbox${index + 1}${i + 1}`]
-                                                      //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
-                                                      //     : false
-                                                      // }
-                                                      checked={
-                                                        filterChecked[
-                                                          `${ele?.id}${opt?.id}`
-                                                        ]?.checked === undefined
-                                                          ? false
-                                                          : filterChecked[
-                                                            `${ele?.id}${opt?.id}`
-                                                          ]?.checked
-                                                      }
-                                                      style={{
-                                                        color:
-                                                          "#7f7d85 !important",
-                                                        padding: 0,
-                                                        width: "10px",
-                                                      }}
-                                                      onClick={(e) =>
-                                                        handleCheckboxChange(
-                                                          e,
-                                                          ele?.id,
-                                                          opt?.Name
-                                                        )
-                                                      }
-                                                      size="small"
-                                                    />
-                                                  }
-                                                  // sx={{
-                                                  //   display: "flex",
-                                                  //   justifyContent: "space-between", // Adjust spacing between checkbox and label
-                                                  //   width: "100%",
-                                                  //   flexDirection: "row-reverse", // Align items to the right
-                                                  //   fontFamily:'TT Commons Regular'
-                                                  // }}
-                                                  className="smr_mui_checkbox_label"
-                                                  label={
-                                                    <span style={{ fontSize: '15px' }}>
-                                                      {opt.Name}
-                                                    </span>
-                                                  }
-                                                />
-                                              </div>
-                                            )
-                                          )}
-                                        </AccordionDetails>
-                                      </Accordion>
-                                    )}
-                                  {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
+                                  {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
                                     <Accordion
                                       elevation={0}
                                       sx={{
                                         borderBottom: "1px solid #c7c8c9",
                                         borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
                                           borderBottomLeftRadius: "0px",
                                           borderBottomRightRadius: "0px",
                                         },
-                                        "&.MuiPaper-root.MuiAccordion-root:before":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:before": {
                                           background: "none",
                                         },
                                       }}
@@ -3389,11 +2738,105 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     // defaultExpanded={}
                                     >
                                       <AccordionSummary
-                                        expandIcon={
-                                          <ExpandMoreIcon
-                                            sx={{ width: "20px" }}
-                                          />
-                                        }
+                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
+                                        aria-controls="panel1-content"
+                                        id="panel1-header"
+                                        sx={{
+                                          color: "#7d7f85",
+                                          borderRadius: 0,
+
+                                          "&.MuiAccordionSummary-root": {
+                                            padding: 0,
+                                          },
+                                        }}
+                                        // className="filtercategoryLable"
+                                        onClick={() => handleScrollHeight()}
+                                      >
+                                        {/* <span> */}
+                                        {ele.Fil_DisName}
+                                        {/* </span> */}
+                                      </AccordionSummary>
+                                      <AccordionDetails
+                                        sx={{
+                                          display: "flex",
+                                          flexDirection: "column",
+                                          gap: "4px",
+                                          minHeight: "fit-content",
+                                          maxHeight: "300px",
+                                          overflow: "auto",
+                                        }}
+                                      >
+                                        {(JSON.parse(ele?.options) ?? []).map((opt) => (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "space-between",
+                                              gap: "12px",
+                                            }}
+                                            key={opt?.id}
+                                          >
+                                            {/* <small
+                                        style={{
+                                          fontFamily: "TT Commons, sans-serif",
+                                          color: "#7f7d85",
+                                        }}
+                                      >
+                                        {opt.Name}
+                                      </small> */}
+                                            <FormControlLabel
+                                              control={
+                                                <Checkbox
+                                                  name={`${ele?.id}${opt?.id}`}
+                                                  // checked={
+                                                  //   filterChecked[`checkbox${index + 1}${i + 1}`]
+                                                  //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
+                                                  //     : false
+                                                  // }
+                                                  checked={filterChecked[`${ele?.id}${opt?.id}`]?.checked === undefined ? false : filterChecked[`${ele?.id}${opt?.id}`]?.checked}
+                                                  style={{
+                                                    color: "#7f7d85 !important",
+                                                    padding: 0,
+                                                    width: "10px",
+                                                  }}
+                                                  onClick={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
+                                                  size="small"
+                                                />
+                                              }
+                                              // sx={{
+                                              //   display: "flex",
+                                              //   justifyContent: "space-between", // Adjust spacing between checkbox and label
+                                              //   width: "100%",
+                                              //   flexDirection: "row-reverse", // Align items to the right
+                                              //   fontFamily:'TT Commons Regular'
+                                              // }}
+                                              className="smr_mui_checkbox_label"
+                                              label={<span style={{ fontSize: "15px" }}>{opt.Name}</span>}
+                                            />
+                                          </div>
+                                        ))}
+                                      </AccordionDetails>
+                                    </Accordion>
+                                  )}
+                                  {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
+                                    <Accordion
+                                      elevation={0}
+                                      sx={{
+                                        borderBottom: "1px solid #c7c8c9",
+                                        borderRadius: 0,
+                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
+                                          borderBottomLeftRadius: "0px",
+                                          borderBottomRightRadius: "0px",
+                                        },
+                                        "&.MuiPaper-root.MuiAccordion-root:before": {
+                                          background: "none",
+                                        },
+                                      }}
+                                    // expanded={accExpanded}
+                                    // defaultExpanded={}
+                                    >
+                                      <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                                         aria-controls="panel1-content"
                                         id="panel1-header"
                                         sx={{
@@ -3421,18 +2864,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                           overflow: "auto",
                                         }}
                                       >
-                                        {(JSON.parse(ele?.options) ?? []).map(
-                                          (opt, i) => (
-                                            <div
-                                              style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "space-between",
-                                                gap: "12px",
-                                              }}
-                                              key={i}
-                                            >
-                                              {/* <small
+                                        {(JSON.parse(ele?.options) ?? []).map((opt, i) => (
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "space-between",
+                                              gap: "12px",
+                                            }}
+                                            key={i}
+                                          >
+                                            {/* <small
                                         style={{
                                           fontFamily: "TT Commons, sans-serif",
                                           color: "#7f7d85",
@@ -3440,73 +2882,49 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       >
                                         {opt.Name}
                                       </small> */}
-                                              <FormControlLabel
-                                                control={
-                                                  <Checkbox
-                                                    name={`Price${i}${i}`}
-                                                    // checked={
-                                                    //   filterChecked[`checkbox${index + 1}${i + 1}`]
-                                                    //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
-                                                    //     : false
-                                                    // }
-                                                    checked={
-                                                      filterChecked[
-                                                        `Price${i}${i}`
-                                                      ]?.checked === undefined
-                                                        ? false
-                                                        : filterChecked[
-                                                          `Price${i}${i}`
-                                                        ]?.checked
-                                                    }
-                                                    style={{
-                                                      color: "#7f7d85",
-                                                      padding: 0,
-                                                      width: "10px",
-                                                    }}
-                                                    onClick={(e) =>
-                                                      handleCheckboxChange(
-                                                        e,
-                                                        ele?.id,
-                                                        opt
-                                                      )
-                                                    }
-                                                    size="small"
-                                                  />
-                                                }
-                                                // sx={{
-                                                //   display: "flex",
-                                                //   justifyContent: "space-between", // Adjust spacing between checkbox and label
-                                                //   width: "100%",
-                                                //   flexDirection: "row-reverse", // Align items to the right
-                                                //   fontFamily:'TT Commons Regular'
-                                                // }}
-                                                className="pro_mui_checkbox_label"
-                                                label={
-                                                  <span style={{ fontSize: '13px' }}>
-                                                    {opt?.Minval == 0
-                                                      ? `Under ${loginUserDetail?.CurrencyCode ??
-                                                      storeInit?.CurrencyCode
-                                                      } ${opt?.Maxval}`
-                                                      : opt?.Maxval == 0
-                                                        ? `Over ${loginUserDetail?.CurrencyCode ??
-                                                        storeInit?.CurrencyCode
-                                                        } ${opt?.Minval}`
-                                                        : `${loginUserDetail?.CurrencyCode ??
-                                                        storeInit?.CurrencyCode
-                                                        } ${opt?.Minval} 
-                                                    - ${loginUserDetail?.CurrencyCode ??
-                                                        storeInit?.CurrencyCode
-                                                        } ${opt?.Maxval}`}
-                                                  </span>
-                                                }
-                                                sx={{
-                                                  fontSize: '14px',  // This applies the font size to the label
-                                                }}
-
-                                              />
-                                            </div>
-                                          )
-                                        )}
+                                            <FormControlLabel
+                                              control={
+                                                <Checkbox
+                                                  name={`Price${i}${i}`}
+                                                  // checked={
+                                                  //   filterChecked[`checkbox${index + 1}${i + 1}`]
+                                                  //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
+                                                  //     : false
+                                                  // }
+                                                  checked={filterChecked[`Price${i}${i}`]?.checked === undefined ? false : filterChecked[`Price${i}${i}`]?.checked}
+                                                  style={{
+                                                    color: "#7f7d85",
+                                                    padding: 0,
+                                                    width: "10px",
+                                                  }}
+                                                  onClick={(e) => handleCheckboxChange(e, ele?.id, opt)}
+                                                  size="small"
+                                                />
+                                              }
+                                              // sx={{
+                                              //   display: "flex",
+                                              //   justifyContent: "space-between", // Adjust spacing between checkbox and label
+                                              //   width: "100%",
+                                              //   flexDirection: "row-reverse", // Align items to the right
+                                              //   fontFamily:'TT Commons Regular'
+                                              // }}
+                                              className="pro_mui_checkbox_label"
+                                              label={
+                                                <span style={{ fontSize: "13px" }}>
+                                                  {opt?.Minval == 0
+                                                    ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Maxval}`
+                                                    : opt?.Maxval == 0
+                                                      ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Minval}`
+                                                      : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Minval} 
+                                                    - ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Maxval}`}
+                                                </span>
+                                              }
+                                              sx={{
+                                                fontSize: "14px", // This applies the font size to the label
+                                              }}
+                                            />
+                                          </div>
+                                        ))}
                                       </AccordionDetails>
                                     </Accordion>
                                   )}
@@ -3516,13 +2934,11 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       sx={{
                                         borderBottom: "1px solid #c7c8c9",
                                         borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
                                           borderBottomLeftRadius: "0px",
                                           borderBottomRightRadius: "0px",
                                         },
-                                        "&.MuiPaper-root.MuiAccordion-root:before":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:before": {
                                           background: "none",
                                         },
                                       }}
@@ -3530,11 +2946,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     // defaultExpanded={}
                                     >
                                       <AccordionSummary
-                                        expandIcon={
-                                          <ExpandMoreIcon
-                                            sx={{ width: "20px" }}
-                                          />
-                                        }
+                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                                         aria-controls="panel1-content"
                                         id="panel1-header"
                                         sx={{
@@ -3575,13 +2987,11 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       sx={{
                                         borderBottom: "1px solid #c7c8c9",
                                         borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
                                           borderBottomLeftRadius: "0px",
                                           borderBottomRightRadius: "0px",
                                         },
-                                        "&.MuiPaper-root.MuiAccordion-root:before":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:before": {
                                           background: "none",
                                         },
                                       }}
@@ -3589,11 +2999,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     // defaultExpanded={}
                                     >
                                       <AccordionSummary
-                                        expandIcon={
-                                          <ExpandMoreIcon
-                                            sx={{ width: "20px" }}
-                                          />
-                                        }
+                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                                         aria-controls="panel1-content"
                                         id="panel1-header"
                                         sx={{
@@ -3634,13 +3040,11 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       sx={{
                                         borderBottom: "1px solid #c7c8c9",
                                         borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
                                           borderBottomLeftRadius: "0px",
                                           borderBottomRightRadius: "0px",
                                         },
-                                        "&.MuiPaper-root.MuiAccordion-root:before":
-                                        {
+                                        "&.MuiPaper-root.MuiAccordion-root:before": {
                                           background: "none",
                                         },
                                       }}
@@ -3648,11 +3052,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     // defaultExpanded={}
                                     >
                                       <AccordionSummary
-                                        expandIcon={
-                                          <ExpandMoreIcon
-                                            sx={{ width: "20px" }}
-                                          />
-                                        }
+                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
                                         aria-controls="panel1-content"
                                         id="panel1-header"
                                         sx={{
@@ -3704,18 +3104,13 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                           height: "500px",
                         }}
                       >
-                        <span className="smr_prod_datanotfound">
-                          Products Not found !!!
-                        </span>
+                        <span className="smr_prod_datanotfound">Products Not found !!!</span>
                       </div>
                     ) : (
                       // <div className="smr_productList" style={{ width: filterData?.length <= 0 && '100%', margin: filterData?.length <= 0 && '20px 50px 0px 65px' }}>
                       <div className={filterData?.length == 0 ? "procat_productList_Nodata" : "procat_productList"}>
                         {isOnlyProdLoading ? (
-                          <PageSkeleton
-                            fromPage={"Prodlist"}
-                            className="pSkelton"
-                          />
+                          <PageSkeleton fromPage={"Prodlist"} className="pSkelton" />
                         ) : (
                           <>
                             {filterData?.length == 0 && (
@@ -3733,19 +3128,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                         height: "25px",
                                         width: "25px",
                                         cursor: "pointer",
-                                        color:
-                                          "rgba(143, 140, 139, 0.9019607843)",
+                                        color: "rgba(143, 140, 139, 0.9019607843)",
                                       }}
                                       onClick={() => navigate.push("/")}
                                     />
                                   </div>
                                   <p className="proCat_NameTopShow">
                                     {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(
-                                      location.pathname
-                                        ?.split("/p/")[1]
-                                        .split("/")[0]
-                                    )}
+                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
                                   </p>
                                 </div>
                                 <div
@@ -3761,44 +3151,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       margin: "0px",
                                       width: "100%",
                                       fontWeight: 600,
-                                      color:
-                                        "rgba(143, 140, 139, 0.9019607843)",
+                                      color: "rgba(143, 140, 139, 0.9019607843)",
                                     }}
                                   >
                                     {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(
-                                      location.pathname
-                                        ?.split("/p/")[1]
-                                        .split("/")[0]
-                                    )}
+                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
                                   </p>
                                 </div>
-                                <div
-                                  className={
-                                    filterData?.length <= 0
-                                      ? "smr_sorting_custom_NoData"
-                                      : "smr_sorting_custom"
-                                  }
-                                >
-                                  <div
-                                    className={
-                                      filterData?.length <= 0
-                                        ? "NoDatacontainer"
-                                        : "container"
-                                    }
-                                  >
-                                    <label className="label">
-                                      Sort By:&nbsp;
-                                    </label>
-                                    <select
-                                      className="select"
-                                      value={sortBySelect}
-                                      onChange={(e) => handleSortby(e)}
-                                    >
-                                      <option
-                                        className="option"
-                                        value="Recommended"
-                                      >
+                                <div className={filterData?.length <= 0 ? "smr_sorting_custom_NoData" : "smr_sorting_custom"}>
+                                  <div className={filterData?.length <= 0 ? "NoDatacontainer" : "container"}>
+                                    <label className="label">Sort By:&nbsp;</label>
+                                    <select className="select" value={sortBySelect} onChange={(e) => handleSortby(e)}>
+                                      <option className="option" value="Recommended">
                                         Recommended
                                       </option>
                                       {/* <option className="option" value="New">
@@ -3808,10 +3172,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       Trending
                                     </option> */}
                                       {storeInit?.IsStockWebsite == 1 && (
-                                        <option
-                                          className="option"
-                                          value="In Stock"
-                                        >
+                                        <option className="option" value="In Stock">
                                           In stock
                                         </option>
                                       )}
@@ -3827,16 +3188,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                         Bestseller
                                       </option> */}
                                       {/* )} */}
-                                      <option
-                                        className="option"
-                                        value="PRICE HIGH TO LOW"
-                                      >
+                                      <option className="option" value="PRICE HIGH TO LOW">
                                         Price High To Low
                                       </option>
-                                      <option
-                                        className="option"
-                                        value="PRICE LOW TO HIGH"
-                                      >
+                                      <option className="option" value="PRICE LOW TO HIGH">
                                         Price Low To High
                                       </option>
                                     </select>
@@ -3858,9 +3213,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                     width: "100%",
                                     fontWeight: 600,
                                     color: "rgba(143, 140, 139, 0.9)",
-                                    whiteSpace: "nowrap",      // keep text on a single line
-                                    overflow: "hidden",        // hide overflowing text
-                                    textOverflow: "ellipsis",  // show ...
+                                    whiteSpace: "nowrap", // keep text on a single line
+                                    overflow: "hidden", // hide overflowing text
+                                    textOverflow: "ellipsis", // show ...
                                   }}
                                 >
                                   <Typography
@@ -3869,64 +3224,41 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       width: "100%",
                                       fontWeight: 600,
                                       color: "rgba(143, 140, 139, 0.9)",
-                                      whiteSpace: "nowrap",      // keep text on one line
-                                      overflow: "hidden",        // hide overflow
-                                      textOverflow: "ellipsis",  // show "..."
+                                      whiteSpace: "nowrap", // keep text on one line
+                                      overflow: "hidden", // hide overflow
+                                      textOverflow: "ellipsis", // show "..."
                                       fontSize: {
-                                        xs: 12,  // small screens
-                                        sm: 14,  // tablets
-                                        md: 16,  // desktops
-                                        lg: 18,  // large desktops
+                                        xs: 12, // small screens
+                                        sm: 14, // tablets
+                                        md: 16, // desktops
+                                        lg: 18, // large desktops
                                       },
                                     }}
                                   >
                                     {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(
-                                      location.pathname
-                                        ?.split("/p/")[1]
-                                        .split("/")[0]
-                                    )}
+                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
                                   </Typography>
                                 </div>
                                 <div
-                                  className={
-                                    filterData?.length <= 0
-                                      ? "smr_sorting_custom_NoData"
-                                      : "smr_sorting_custom"
-                                  }
+                                  className={filterData?.length <= 0 ? "smr_sorting_custom_NoData" : "smr_sorting_custom"}
                                   style={{
                                     flex: 1,
                                     margin: 0,
                                     width: "100%",
                                     fontWeight: 600,
                                     color: "rgba(143, 140, 139, 0.9)",
-                                    whiteSpace: "nowrap",      // keep text on a single line
-                                    overflow: "hidden",        // hide overflowing text
-                                    textOverflow: "ellipsis",  // show ...
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-end'
+                                    whiteSpace: "nowrap", // keep text on a single line
+                                    overflow: "hidden", // hide overflowing text
+                                    textOverflow: "ellipsis", // show ...
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "flex-end",
                                   }}
                                 >
-                                  <div
-                                    className={
-                                      filterData?.length <= 0
-                                        ? "NoDatacontainer"
-                                        : "container"
-                                    }
-                                  >
-                                    <label className="label">
-                                      Sort By:&nbsp;
-                                    </label>
-                                    <select
-                                      className="select"
-                                      value={sortBySelect}
-                                      onChange={(e) => handleSortby(e)}
-                                    >
-                                      <option
-                                        className="option"
-                                        value="Recommended"
-                                      >
+                                  <div className={filterData?.length <= 0 ? "NoDatacontainer" : "container"}>
+                                    <label className="label">Sort By:&nbsp;</label>
+                                    <select className="select" value={sortBySelect} onChange={(e) => handleSortby(e)}>
+                                      <option className="option" value="Recommended">
                                         Recommended
                                       </option>
                                       {/* <option className="option" value="New">
@@ -3936,10 +3268,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                       Trending
                                     </option> */}
                                       {storeInit?.IsStockWebsite == 1 && (
-                                        <option
-                                          className="option"
-                                          value="In Stock"
-                                        >
+                                        <option className="option" value="In Stock">
                                           In stock
                                         </option>
                                       )}
@@ -3954,16 +3283,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                         Bestseller
                                       </option> */}
                                       {/* )} */}
-                                      <option
-                                        className="option"
-                                        value="PRICE HIGH TO LOW"
-                                      >
+                                      <option className="option" value="PRICE HIGH TO LOW">
                                         Price High To Low
                                       </option>
-                                      <option
-                                        className="option"
-                                        value="PRICE LOW TO HIGH"
-                                      >
+                                      <option className="option" value="PRICE LOW TO HIGH">
                                         Price Low To High
                                       </option>
                                     </select>
@@ -3971,108 +3294,67 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                                 </div>
                               </div>
                             )}
-                            <div
-                              className="smr_outer_portion"
-                              id="smr_outer_portion"
-                            >
-                              <div className="smr_inner_portion"
+                            <div className="smr_outer_portion" id="smr_outer_portion">
+                              <div
+                                className="smr_inner_portion"
                                 style={{
-                                  marginBottom: Math.ceil(afterFilterCount / storeInit.PageSize) <= 1
-                                    ? '45px'
-                                    : '0px'
+                                  marginBottom: Math.ceil(afterFilterCount / storeInit.PageSize) <= 1 ? "45px" : "0px",
                                 }}
-
                               >
                                 {finalProductListData?.map((productData, i) => {
-                                  return (
-                                    <Product_Card
-                                      key={i}
-                                      productData={productData}
-                                      setIsRollOverVideo={setIsRollOverVideo}
-                                      handleImgRollover={handleImgRollover}
-                                      handleMoveToDetail={handleMoveToDetail}
-                                      i={i}
-                                      videoUrl={getDynamicVideo(productData.designno, productData.VideoCount, productData.VideoExtension)}
-                                      RollImageUrl={getDynamicRollImages(productData.designno, productData.ImageCount, productData.ImageExtension)}
-                                      imageUrl={getDynamicImages(productData.designno, productData.ImageExtension)}
-                                      handleLeaveImgRolloverImg={handleLeaveImgRolloverImg}
-                                      isRollOverVideo={isRollOverVideo}
-                                      storeInit={storeInit}
-                                      rollOverImgPd={rollOverImgPd}
-                                      loginUserDetail={loginUserDetail}
-                                      formatter={formatter}
-                                      handleCartandWish={handleCartandWish}
-                                      cartArr={cartArr}
-
-                                    />
-                                  )
+                                  return <Product_Card key={i} productData={productData} setIsRollOverVideo={setIsRollOverVideo} handleImgRollover={handleImgRollover} handleMoveToDetail={handleMoveToDetail} i={i} videoUrl={getDynamicVideo(productData.designno, productData.VideoCount, productData.VideoExtension)} RollImageUrl={getDynamicRollImages(productData.designno, productData.ImageCount, productData.ImageExtension)} imageUrl={getDynamicImages(productData.designno, productData.ImageExtension)} handleLeaveImgRolloverImg={handleLeaveImgRolloverImg} isRollOverVideo={isRollOverVideo} storeInit={storeInit} rollOverImgPd={rollOverImgPd} loginUserDetail={loginUserDetail} formatter={formatter} handleCartandWish={handleCartandWish} cartArr={cartArr} />;
                                 })}
                               </div>
                             </div>
                             {isEditablePage === 1 ? (
                               <>
-                                {storeInit?.IsProductListPagination == 1 &&
-                                  Math.ceil(
-                                    afterFilterCount / storeInit.PageSize
-                                  ) > 1 &&
-                                  <Box sx={{
-                                    py: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    width: '100%',
-                                    mb: 3
-                                  }} >
-                                    <EditablePagination
-                                      currentPage={currPage}
-                                      totalItems={afterFilterCount || 0}
-                                      itemsPerPage={storeInit?.PageSize || 60}
-                                      onPageChange={handelPageChange}
-                                      inputPage={inputPage}
-                                      setInputPage={setInputPage}
-                                      handlePageInputChange={handlePageInputChange}
-                                      maxwidth464px={maxwidth464px}
-                                      totalPages={totalPages}
-                                      currPage={currPage}
-                                      isShowButton={false}
-                                    />
+                                {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
+                                  <Box
+                                    sx={{
+                                      py: 1,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      width: "100%",
+                                      mb: 3,
+                                    }}
+                                  >
+                                    <EditablePagination currentPage={currPage} totalItems={afterFilterCount || 0} itemsPerPage={storeInit?.PageSize || 60} onPageChange={handelPageChange} inputPage={inputPage} setInputPage={setInputPage} handlePageInputChange={handlePageInputChange} maxwidth464px={maxwidth464px} totalPages={totalPages} currPage={currPage} isShowButton={false} />
                                   </Box>
-                                }
+                                )}
                               </>
                             ) : (
                               <>
-                                {storeInit?.IsProductListPagination == 1 &&
-                                  Math.ceil(afterFilterCount / storeInit.PageSize)
-                                  > 1 && (
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginTop: "5%",
-                                        width: '100%'
-                                      }}
-                                      className="smr_pagination_portion"
-                                    >
-                                      <Pagination
-                                        count={Math.ceil(afterFilterCount / storeInit.PageSize)}
-                                        size={maxwidth464px ? "small" : "large"}
-                                        shape="circular"
-                                        onChange={handelPageChange}
-                                        page={currPage}
-                                        showFirstButton
-                                        showLastButton
-                                        disabled={false}
-                                        renderItem={(item) => (
-                                          <PaginationItem
-                                            {...item}
-                                            sx={{
-                                              pointerEvents: item.page === currPage ? 'none' : 'auto',
-                                            }}
-                                          />
-                                        )}
-                                      />
-                                    </div>
-                                  )}
+                                {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      marginTop: "5%",
+                                      width: "100%",
+                                    }}
+                                    className="smr_pagination_portion"
+                                  >
+                                    <Pagination
+                                      count={Math.ceil(afterFilterCount / storeInit.PageSize)}
+                                      size={maxwidth464px ? "small" : "large"}
+                                      shape="circular"
+                                      onChange={handelPageChange}
+                                      page={currPage}
+                                      showFirstButton
+                                      showLastButton
+                                      disabled={false}
+                                      renderItem={(item) => (
+                                        <PaginationItem
+                                          {...item}
+                                          sx={{
+                                            pointerEvents: item.page === currPage ? "none" : "auto",
+                                          }}
+                                        />
+                                      )}
+                                    />
+                                  </div>
+                                )}
                               </>
                             )}
                           </>
@@ -4095,25 +3377,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
 export default memo(ProductList);
 
-const Product_Card = ({
-  productData,
-  setIsRollOverVideo,
-  handleImgRollover,
-  handleMoveToDetail,
-  i,
-  videoUrl,
-  RollImageUrl,
-  imageUrl,
-  handleLeaveImgRolloverImg,
-  isRollOverVideo,
-  storeInit,
-  rollOverImgPd,
-  loginUserDetail,
-  formatter,
-  handleCartandWish,
-  cartArr,
-}) => {
-
+const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, handleMoveToDetail, i, videoUrl, RollImageUrl, imageUrl, handleLeaveImgRolloverImg, isRollOverVideo, storeInit, rollOverImgPd, loginUserDetail, formatter, handleCartandWish, cartArr }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isHover, setIsHover] = useState(false);
 
@@ -4129,7 +3393,7 @@ const Product_Card = ({
     return () => clearTimeout(timer);
   }, [i]);
   return (
-    <div className="procat_productCard" >
+    <div className="procat_productCard">
       {isLoading ? (
         <CardMedia style={{ width: "100%" }} className="cardMainSkeleton">
           <Skeleton
@@ -4138,31 +3402,31 @@ const Product_Card = ({
             width={"100%"}
             height="260px"
             sx={{
-              '@media (max-width: 1750px)': {
+              "@media (max-width: 1750px)": {
                 height: "250px !important",
               },
-              '@media (max-width: 1700px)': {
+              "@media (max-width: 1700px)": {
                 height: "280px !important",
               },
-              '@media (max-width: 1500px)': {
+              "@media (max-width: 1500px)": {
                 height: "230px",
               },
-              '@media (max-width: 1350px)': {
+              "@media (max-width: 1350px)": {
                 height: "210px",
               },
-              '@media (max-width: 1200px)': {
+              "@media (max-width: 1200px)": {
                 height: "270px",
               },
-              '@media (max-width: 1100px)': {
+              "@media (max-width: 1100px)": {
                 height: "250px",
               },
-              '@media (max-width: 1040px)': {
+              "@media (max-width: 1040px)": {
                 height: "270px",
               },
-              '@media (max-width: 600px)': {
+              "@media (max-width: 600px)": {
                 height: "250px",
               },
-              '@media (max-width: 600px)': {
+              "@media (max-width: 600px)": {
                 height: "500px",
               },
             }}
@@ -4170,27 +3434,10 @@ const Product_Card = ({
           />
         </CardMedia>
       ) : (
-        <div
-          onClick={() =>
-            handleMoveToDetail(productData, i)
-          }
-          onMouseMove={() => setIsHover(true)}
-          onMouseLeave={() => setIsHover(false)}
-          className="roop_ImgandVideoContainer"
-          style={{ position: 'relative', overflow: 'hidden' }}
-        >
+        <div onClick={() => handleMoveToDetail(productData, i)} onMouseMove={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} className="roop_ImgandVideoContainer" style={{ position: "relative", overflow: "hidden" }}>
           {isLoading ? (
-            <CardMedia
-              style={{ width: '100%', height: '100%' }}
-              className="proCat_productCard_cardMainSkeleton"
-            >
-              <Skeleton
-                animation="wave"
-                variant="rect"
-                width="100%"
-                height="100%"
-                style={{ backgroundColor: '#e8e8e86e' }}
-              />
+            <CardMedia style={{ width: "100%", height: "100%" }} className="proCat_productCard_cardMainSkeleton">
+              <Skeleton animation="wave" variant="rect" width="100%" height="100%" style={{ backgroundColor: "#e8e8e86e" }} />
             </CardMedia>
           ) : (
             <>
@@ -4208,7 +3455,7 @@ const Product_Card = ({
                       e.target.poster = imageNotFound;
                     }}
                   />
-                ) : (videoUrl === undefined && RollImageUrl !== undefined) ? (
+                ) : videoUrl === undefined && RollImageUrl !== undefined ? (
                   <img
                     className="proCat_productListCard_Image"
                     src={RollImageUrl}
@@ -4234,7 +3481,7 @@ const Product_Card = ({
                 style={{
                   display: isHover && (RollImageUrl || videoUrl) ? "none" : "block",
                   opacity: isHover && (RollImageUrl || videoUrl) ? "0" : "1",
-                  transition: '0s ease-in-out',
+                  transition: "0s ease-in-out",
                 }}
               />
             </>
@@ -4242,114 +3489,117 @@ const Product_Card = ({
         </div>
       )}
 
-      <div className="proCat_app_product_label">
-        {productData?.StatusId == 1 ? (
-          <span className="proCat_app_instock">
-            In Stock
-          </span>
-        ) : productData?.StatusId == 2 ? (
-          <span className="proCat_app_MEMO">
-            In memo
-          </span>
-        ) : (
-          <span className="proCat_app_Make_to_order">
-            Make To Order
-          </span>
-        )}
-      </div>
-
+      <div className="proCat_app_product_label">{productData?.StatusId == 1 ? <span className="proCat_app_instock">In Stock</span> : productData?.StatusId == 2 ? <span className="proCat_app_MEMO">In memo</span> : <span className="proCat_app_Make_to_order">Make To Order</span>}</div>
 
       <div className="proCat_prod_card_info">
-        <span className="proCat1_prod_title_with_no_width">
-          {productData?.designno} {formatTitleLine(productData?.TitleLine) && " - " + productData?.TitleLine}
-        </span>
-        <p
-          className="proCatPriceMobile"
-          style={{
-            display: "flex",
-            margin: "0px",
+
+        {/* Design No */}
+        {productData?.designno && (
+          <span className="productTitle designNo">
+            {productData?.designno}
+          </span>
+        )}
+
+        {/* Title Line */}
+        {formatTitleLine(productData?.TitleLine) && (
+          <span className="productTitle titleLine">
+            {productData?.TitleLine}
+          </span>
+        )}
+
+        {/* Price + GWT */}
+        {(productData?.Gwt || storeInit?.IsPriceShow == 1) && (
+          <p className="priceRow">
+            {productData?.Gwt && `GWT - ${productData?.Gwt}`}
+
+            {productData?.Gwt && storeInit?.IsPriceShow == 1 && " / "}
+
+            {storeInit?.IsPriceShow == 1 && (
+              <span className="priceValue">
+                {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) + " "}
+                {formatter.format(productData?.UnitCostWithMarkUp)}
+              </span>
+            )}
+          </p>
+        )}
+
+      </div>
+
+      {IsMultiVariantCart && (
+        <FormControlLabel
+          control={
+            <Checkbox
+              icon={
+                <LocalMallOutlinedIcon
+                  sx={{
+                    fontSize: "22px",
+                  }}
+                  className="btnColorSvg"
+                />
+              }
+              checkedIcon={
+                <LocalMallIcon
+                  sx={{
+                    fontSize: "22px",
+                  }}
+                  className="btnColorRemoveSvg"
+                />
+                // <LocalMallIcon
+                //   sx={{
+                //     fontSize: "22px",
+                //     color: "red",
+                //   }}
+                // />
+              }
+              disableRipple={false}
+              onChange={(e) => handleCartandWish(e, productData, "Cart")}
+              checked={(cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false}
+            />
+          }
+          label={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? <span className="">Add To Cart</span> : <span className="">Remove From Cart</span>}
+          // sx={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#474747d1',marginLeft:'0px',color:'white'}}
+          className={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? "procat_cart_btn btnColorProCatProduct" : "procat_cart_btn_alter btnColorProCatProductRemoveCart"}
+        />
+      )}
+
+      <Box
+        sx={{
+          width: "100%",
+          flex: 1,
+        }}
+      >
+        <Button
+          className="view_detail_btn"
+          fullWidth
+          onClick={() => handleMoveToDetail(productData, i)}
+          sx={{
+            border: "1px solid #98b8d9",
+            borderRadius: "0px",
+            backgroundColor: "transparent",
+            color: "black",
+            px: { xs: 2, sm: 3, md: 4 },
+            py: { xs: 0.6, sm: 0.7, md: 0.85 },
+
+            fontSize: {
+              xs: "11px",
+              sm: "12px",
+              md: "13px",
+              lg: "14px",
+            },
+
+            fontWeight: 400,
+            letterSpacing: "1px",
+
+            "&:hover": {
+              backgroundColor: "#98b8d9",
+              color: "white",
+              border: "1px solid #98b8d9",
+            },
           }}
         >
-          {productData?.Gwt &&
-            `GWT - ${productData?.Gwt} / `}
-          {storeInit?.IsPriceShow == 1 && (
-            <span className="proCat_price">
-              <span className="smr_currencyFont">
-                {(loginUserDetail?.CurrencyCode ??
-                  storeInit?.CurrencyCode) + " "}
-                {formatter.format(
-                  productData?.UnitCostWithMarkUp
-                )}
-              </span>
-            </span>
-          )}
-        </p>
-      </div>
-      {IsMultiVariantCart && <FormControlLabel
-        control={
-          <Checkbox
-            icon={
-              <LocalMallOutlinedIcon
-                sx={{
-                  fontSize: "22px",
-                }}
-                className="btnColorSvg"
-              />
-            }
-            checkedIcon={
-              <LocalMallIcon
-                sx={{
-                  fontSize: "22px",
-                }}
-                className="btnColorRemoveSvg"
-              />
-              // <LocalMallIcon
-              //   sx={{
-              //     fontSize: "22px",
-              //     color: "red",
-              //   }}
-              // />
-            }
-            disableRipple={false}
-            onChange={(e) =>
-              handleCartandWish(
-                e,
-                productData,
-                "Cart"
-              )
-            }
-            checked={
-              cartArr[productData?.autocode] ??
-                productData?.IsInCart === 1
-                ? true
-                : false
-            }
-          />
-        }
-        label={
-          !(cartArr[productData?.autocode] ??
-            productData?.IsInCart === 1
-            ? true
-            : false) ? (
-            <span className="">
-              Add To Cart
-            </span>
-          ) : (
-            <span className="">
-              Remove From Cart
-            </span>
-          )
-        }
-        // sx={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#474747d1',marginLeft:'0px',color:'white'}}
-        className={
-          !(cartArr[productData?.autocode] ??
-            productData?.IsInCart === 1
-            ? true
-            : false)
-            ? "procat_cart_btn btnColorProCatProduct"
-            : "procat_cart_btn_alter btnColorProCatProductRemoveCart"
-        }
-      />}
+          VIEW DETAILS
+        </Button>
+      </Box>
     </div>
-  )
-}
+  );
+};

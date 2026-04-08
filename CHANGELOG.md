@@ -1,3 +1,19 @@
+## [2026-04-08]
+
+### Added
+
+- **Cart.js (fgstore.pro)**: Added a "Back" button at the top of the Cart page for easier navigation.
+  - Styled with `.proCat_backButton` using a clean, borderless design, matching `titleColor`, with a smooth hover effect and left alignment mirroring the multiselect checkboxes.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/Cart.js`, `proCat_cartPage.scss`
+
+### Fixed
+
+- **Cart.js (useCart hook)**: Fixed an issue where manual quantity inputs were incorrectly decrementing by 1 instead of setting the actual typed value.
+  - **Old behavior**: `handleIncrement` and `handleDecrement` inside `useCart` strictly functioned by mutating the `item.Quantity` by +1 or -1. In `QuantitySelector.js`, passing an exact number via numeric input triggered `handleDecrement` (e.g., inputting 1 when current was 15) which only reduced the quantity by 1 (to 14).
+  - **New behavior**: `handleIncrement` and `handleDecrement` now accept an optional `targetQuantity` parameter. If given, they set the quantity directly to the target amount while still recalculating the associated price correctly and making the backend `updateQuantity` API call. `setQtyCount` has been updated to confidently set the target amount synchronously.
+  - **Reason**: To reliably parse and apply explicit numeric inputs while preserving the original click-to-decrement (-1 / +1) behavior.
+  - **File(s)**: `app/(core)/utils/Glob_Functions/Cart_Wishlist/Cart.js`
+
 ## [2026-04-06]
 
 ### Fixed

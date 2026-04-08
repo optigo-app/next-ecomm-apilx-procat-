@@ -16,7 +16,7 @@ import Cookies from "js-cookie";
 import ConfirmationDialog from '@/app/(core)/utils/Glob_Functions/ConfirmationDialog/ConfirmationDialog';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useRouter } from 'next/navigation';
-
+import { IoArrowBack } from "react-icons/io5";
 
 const CartPage = ({ storeinit }) => {
   const addressData = useAddress();
@@ -184,6 +184,10 @@ const CartPage = ({ storeinit }) => {
   return (
     <div className='proCat_MainBGDiv'>
       <div className='proCat_cartMainPageDiv'>
+        <button className="proCat_backButton" onClick={() => Router.back()}>
+          <IoArrowBack />
+          <span>Back</span>
+        </button>
         <div className="cartBtnGroupMainDiv">
           {isMobileScreen &&
             <div className="proCat_cart-title">My Cart</div>

@@ -460,13 +460,13 @@ const useCart = () => {
     setSelectedItem(updatedSelectedItem);
   };
 
-  const handleIncrement = async (item) => {
+  const handleIncrement = async (item, targetQuantity = null) => {
     console.log("TCL: handleIncrement -> item", item)
-    const newQuantity = (item?.Quantity || 0) + 1;
+    const newQuantity = targetQuantity !== null ? targetQuantity : (item?.Quantity || 0) + 1;
     const priceQty = (item?.UnitCostWithMarkUp) * newQuantity;
 
     updateCartAndSelectedItem(item, newQuantity, priceQty);
-    setQtyCount(prevCount => prevCount + 1);
+    setQtyCount(newQuantity);
 
     if (storeInit?.Themeno != 3) {
       try {
@@ -479,13 +479,13 @@ const useCart = () => {
     }
   };
 
-  const handleDecrement = async (item) => {
-    if (item?.Quantity > 1) {
-      const newQuantity = item.Quantity - 1;
+  const handleDecrement = async (item, targetQuantity = null) => {
+    if (item?.Quantity > 1 || (targetQuantity !== null && targetQuantity >= 1)) {
+      const newQuantity = targetQuantity !== null ? targetQuantity : item.Quantity - 1;
       const priceQty = (item?.UnitCostWithMarkUp) * newQuantity;
 
       updateCartAndSelectedItem(item, newQuantity, priceQty);
-      setQtyCount(prevCount => (prevCount > 1 ? prevCount - 1 : 1));
+      setQtyCount(newQuantity);
 
       if (storeInit?.Themeno != 3) {
         try {
