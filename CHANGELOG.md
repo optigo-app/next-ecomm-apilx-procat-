@@ -1,4 +1,20 @@
-## [2026-04-09]
+## [2026-04-09] — Critical: Product Detail Crash Fix
+
+### Fixed
+
+- **CRITICAL — useProductDetail.js (fgstore.web)**: Fixed `TypeError: Cannot destructure property 'FrontEnd_RegNo' of 'u' as it is null` crash when navigating to the product detail page.
+  - **Old behavior**: The `useEffect` that decodes the URL param called `decodeAndDecompress(navVal)` — which explicitly returns `null` on any parsing or decompression error — and then **immediately** destructured the result with `const { b, l, count } = decodeobj`. When `decodeobj` is `null`, JavaScript throws a fatal `TypeError`, crashing the entire detail page. The product data was still inside a `if (decodeobj)` block below, but the destructure on line 343 happened before that check.
+  - **New behavior**: Added an early-return guard `if (!decodeobj) { console.warn(...); return; }` immediately after `decodeAndDecompress()`. If the URL param is missing or corrupt, the effect bails gracefully without crashing. The `if (decodeobj)` wrapper below was also removed (now redundant) and the code was flattened for clarity.
+  - **Reason**: The URL param is decoded via pako inflate + atob. Any navigation where the param is missing, malformed, or from an incompatible source will return `null`. This null was not guarded at the destructuring site.
+  - **File(s)**: `app/theme/fgstore.web/detail/_detComponents/hooks/useProductDetail.js`
+
+- **SingleProdListAPI.js**: Fixed `"undefined"` literal strings being sent to the backend as API parameter values.
+  - **Old behavior**: Template literals like `` `${storeinit?.FrontEnd_RegNo}` `` and `` `${storeinit?.CurrencyRate}` `` produce the string `"undefined"` when properties are missing or `storeInit` itself is null at call time. The backend received parameters like `PackageId: "undefined"`, `FrontEnd_RegNo: "undefined"`, etc.
+  - **New behavior**: Added `?? ""` fallbacks to all critical fields (`FrontEnd_RegNo`, `PackageId`, `CurrencyRate`, `Metalid`, `DiaQCid`, `Laboursetid`, `diamondpricelistname`, `colorstonepricelistname`, `SettingPriceUniqueNo`, `IsStockWebsite`). These now produce clean empty strings instead of `"undefined"`.
+  - **Reason**: Prevents junk parameter values from corrupting the product API request even in race-condition / guest scenarios.
+  - **File(s)**: `app/(core)/utils/API/SingleProdListAPI/SingleProdListAPI.js`
+
+
 
 ### Changed
 

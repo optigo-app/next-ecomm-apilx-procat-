@@ -99,10 +99,10 @@ export const useProductDetail = (searchParams, storeInit) => {
 
     // Load combo data from session storage or API
     const callAllApi = () => {
-        let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-        let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-        let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
-        let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
+        let mtTypeLocal = getSession("metalTypeCombo");
+        let diaQcLocal = getSession("diamondQualityColorCombo");
+        let csQcLocal = getSession("ColorStoneQualityColorCombo");
+        let mtColorLocal = getSession("MetalColorCombo");
 
         if (!mtTypeLocal || mtTypeLocal?.length === 0) {
             MetalTypeComboAPI(cookie)
@@ -209,7 +209,7 @@ export const useProductDetail = (searchParams, storeInit) => {
 
     // Fetch additional data (size, stock, similar designs, design sets)
     const fetchAdditionalData = async (product, obj) => {
-        const storeinitInside = JSON.parse(sessionStorage.getItem("storeInit"));
+        const storeinitInside = window.__STORE_INIT__ || getSession("storeInit");
 
         try {
             // Get size data
@@ -249,9 +249,9 @@ export const useProductDetail = (searchParams, storeInit) => {
         let csArr;
         let size;
 
-        let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-        let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-        let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+        let mtTypeLocal = getSession("metalTypeCombo");
+        let diaQcLocal = getSession("diamondQualityColorCombo");
+        let csQcLocal = getSession("ColorStoneQualityColorCombo");
 
         if (type === "mt") {
             metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == e.target.value)[0]?.Metalid;
@@ -324,7 +324,7 @@ export const useProductDetail = (searchParams, storeInit) => {
 
     // Initialize login info
     useEffect(() => {
-        const logininfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+        const logininfo = getSession("loginUserDetail");
         setLoginInfo(logininfo);
     }, []);
 
@@ -338,7 +338,14 @@ export const useProductDetail = (searchParams, storeInit) => {
         const result = parseSearchParams();
         let navVal = result[0]?.split("=")[1];
         let decodeobj = decodeAndDecompress(navVal);
-        console.log("TCL: useProductDetail -> decodeobj", decodeobj)
+        console.log("TCL: useProductDetail -> decodeobj", decodeobj);
+
+        // ✅ Guard: decodeAndDecompress returns null if URL param is missing or corrupt.
+        // Without this guard, destructuring null throws TypeError and crashes the detail page.
+        if (!decodeobj) {
+            console.warn("useProductDetail: decodeobj is null, skipping product load.");
+            return;
+        }
 
         const { b, l, count } = decodeobj;
         const imageUrl = storeInit?.CDNDesignImageFol;
@@ -346,50 +353,48 @@ export const useProductDetail = (searchParams, storeInit) => {
 
         setDefaultImage(urlPath);
         setDefaultExtension(l);
-        setProThumImgCount(count)
+        setProThumImgCount(count);
 
-        if (decodeobj) {
-            setDecodeUrl(decodeobj);
+        setDecodeUrl(decodeobj);
 
-            let storeinitInside = JSON.parse(sessionStorage.getItem("storeInit"));
-            let logininfoInside = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+        let storeinitInside = getSession("storeInit");
+        let logininfoInside = getSession("loginUserDetail");
 
-            let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-            let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-            let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+        let mtTypeLocal = getSession("metalTypeCombo");
+        let diaQcLocal = getSession("diamondQualityColorCombo");
+        let csQcLocal = getSession("ColorStoneQualityColorCombo");
 
-            let metalArr, diaArr, csArr;
+        let metalArr, diaArr, csArr;
 
-            if (mtTypeLocal?.length) {
-                metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == decodeobj?.m)[0]?.Metalid;
-            }
-            if (diaQcLocal) {
-                diaArr = diaQcLocal?.filter(
-                    (ele) =>
-                        ele?.QualityId == decodeobj?.d?.split(",")[0] &&
-                        ele?.ColorId == decodeobj?.d?.split(",")[1]
-                )[0];
-            }
-            if (csQcLocal) {
-                csArr = csQcLocal?.filter(
-                    (ele) =>
-                        ele?.QualityId == decodeobj?.c?.split(",")[0] &&
-                        ele?.ColorId == decodeobj?.c?.split(",")[1]
-                )[0];
-            }
-
-            let obj = {
-                mt: metalArr ? metalArr : logininfoInside?.MetalId ?? storeinitInside?.MetalId,
-                diaQc: diaArr
-                    ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}`
-                    : logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid,
-                csQc: csArr
-                    ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}`
-                    : logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid,
-            };
-
-            fetchProductData(decodeobj, sizeData, obj);
+        if (mtTypeLocal?.length) {
+            metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == decodeobj?.m)[0]?.Metalid;
         }
+        if (diaQcLocal) {
+            diaArr = diaQcLocal?.filter(
+                (ele) =>
+                    ele?.QualityId == decodeobj?.d?.split(",")[0] &&
+                    ele?.ColorId == decodeobj?.d?.split(",")[1]
+            )[0];
+        }
+        if (csQcLocal) {
+            csArr = csQcLocal?.filter(
+                (ele) =>
+                    ele?.QualityId == decodeobj?.c?.split(",")[0] &&
+                    ele?.ColorId == decodeobj?.c?.split(",")[1]
+            )[0];
+        }
+
+        let obj = {
+            mt: metalArr ? metalArr : logininfoInside?.MetalId ?? storeinitInside?.MetalId,
+            diaQc: diaArr
+                ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}`
+                : logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid,
+            csQc: csArr
+                ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}`
+                : logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid,
+        };
+
+        fetchProductData(decodeobj, sizeData, obj);
 
         window.scroll({ top: 0, behavior: "smooth" });
     }, []);
@@ -397,13 +402,13 @@ export const useProductDetail = (searchParams, storeInit) => {
     // Set initial selections when product data is loaded
     useEffect(() => {
         if (singleProd && Object.keys(singleProd).length > 0) {
-            let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-            let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-            let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
-            let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
+            let mtTypeLocal = getSession("metalTypeCombo");
+            let diaQcLocal = getSession("diamondQualityColorCombo");
+            let csQcLocal = getSession("ColorStoneQualityColorCombo");
+            let mtColorLocal = getSession("MetalColorCombo");
 
-            let storeinitInside = JSON.parse(sessionStorage.getItem("storeInit"));
-            let logininfoInside = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+            let storeinitInside = getSession("storeInit");
+            let logininfoInside = getSession("loginUserDetail");
 
             if (decodeUrl) {
                 let metalArr, diaArr, csArr;
