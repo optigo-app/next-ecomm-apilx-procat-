@@ -2,7 +2,7 @@ import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId, AlbumName = '') => {
-  let storeinit = getSession("storeInit");
+  let storeinit = window.__STORE_INIT__ || getSession("storeInit");
   let loginInfo = getSession("loginUserDetail");
   const islogin = getSession("LoginUser") ?? false;
 
@@ -19,9 +19,9 @@ export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId
   //   };
 
   const data = {
-    PackageId: `${loginInfo?.PackageId ?? storeinit?.PackageId}`,
+    PackageId: `${loginInfo?.PackageId ?? storeinit?.PackageId ?? ""}`,
     autocode: `${singprod?.a ?? ""}`,
-    FrontEnd_RegNo: `${storeinit?.FrontEnd_RegNo}`,
+    FrontEnd_RegNo: `${storeinit?.FrontEnd_RegNo ?? ""}`,
     Customerid: `${customerId ?? 0}`,
     designno: `${singprod?.b ?? ""}`,
     // FilterKey:`${MenuParams?.FilterKey ?? ""}`,
@@ -33,11 +33,11 @@ export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId
     // SearchKey:`${serachVar ?? ""}`,
     // PageNo:`${page}`,
     // PageSize:`${storeinit?.PageSize}`,
-    CurrencyRate: `${loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate}`,
-    Metalid: `${obj?.mt == undefined ? (loginInfo?.MetalId ?? storeinit?.MetalId) : obj?.mt}`,
+    CurrencyRate: `${loginInfo?.CurrencyRate ?? storeinit?.CurrencyRate ?? ""}`,
+    Metalid: `${obj?.mt == undefined ? (loginInfo?.MetalId ?? storeinit?.MetalId ?? "") : obj?.mt}`,
     MetalColorId: `${obj?.MetalColorId == undefined ? '' : obj?.MetalColorId}`,
-    DiaQCid: `${obj?.diaQc == undefined ? (loginInfo?.cmboDiaQCid ?? storeinit?.cmboDiaQCid) : obj?.diaQc}`,
-    CsQCid: `${obj?.csQc == undefined ? (loginInfo?.cmboCSQCid ?? storeinit?.cmboCSQCid) : obj?.csQc ?? "0,0"}`,
+    DiaQCid: `${obj?.diaQc == undefined ? (loginInfo?.cmboDiaQCid ?? storeinit?.cmboDiaQCid ?? "") : obj?.diaQc}`,
+    CsQCid: `${obj?.csQc == undefined ? (loginInfo?.cmboCSQCid ?? storeinit?.cmboCSQCid ?? "0,0") : obj?.csQc ?? "0,0"}`,
     // Collectionid: `${filterObj?.collection ?? ""}`,
     // Categoryid: `${filterObj?.category ?? ""}`,
     // SubCategoryid: `${filterObj?.subcategory ?? ""}`,
@@ -56,22 +56,22 @@ export const SingleProdListAPI = async (singprod, size = "", obj = {}, visiterId
     // Min_Price: '',
     // SortBy: "",
     Laboursetid: `${storeinit?.IsB2BWebsite == 0 && islogin == false
-      ? storeinit?.pricemanagement_laboursetid
-      : loginInfo?.pricemanagement_laboursetid
+      ? (storeinit?.pricemanagement_laboursetid ?? "")
+      : (loginInfo?.pricemanagement_laboursetid ?? "")
       }`,
     diamondpricelistname: `${storeinit?.IsB2BWebsite == 0 && islogin == false
-      ? storeinit?.diamondpricelistname
-      : loginInfo?.diamondpricelistname
+      ? (storeinit?.diamondpricelistname ?? "")
+      : (loginInfo?.diamondpricelistname ?? "")
       }`,
     colorstonepricelistname: `${storeinit?.IsB2BWebsite == 0 && islogin == false
-      ? storeinit?.colorstonepricelistname
-      : loginInfo?.colorstonepricelistname
+      ? (storeinit?.colorstonepricelistname ?? "")
+      : (loginInfo?.colorstonepricelistname ?? "")
       }`,
     SettingPriceUniqueNo: `${storeinit?.IsB2BWebsite == 0 && islogin == false
-      ? storeinit?.SettingPriceUniqueNo
-      : loginInfo?.SettingPriceUniqueNo
+      ? (storeinit?.SettingPriceUniqueNo ?? "")
+      : (loginInfo?.SettingPriceUniqueNo ?? "")
       }`,
-    IsStockWebsite: `${storeinit?.IsStockWebsite}`,
+    IsStockWebsite: `${storeinit?.IsStockWebsite ?? ""}`,
     Size: `${size}`,
     IsFromDesDet: 1,
     AlbumName: AlbumName ?? '',

@@ -3,7 +3,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const DesignSetListAPI = async (obj, dno, visiterId) => {
 
-  let storeinit = getSession("storeInit");
+  let storeinit = window.__STORE_INIT__ || getSession("storeInit");
   let loginInfo = getSession("loginUserDetail");
 
   const islogin = getSession("LoginUser") ?? false;
