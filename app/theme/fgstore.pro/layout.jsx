@@ -1,4 +1,4 @@
-import { getCompanyInfoData,  getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
+import { getCompanyInfoData, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
 // import Header2 from "@/app/components/(dynamic)/Header/Procat/Header2";
 import Header1 from "@/app/components/(dynamic)/Header/Procat/Header";
 import React from "react";
@@ -43,7 +43,7 @@ const layout = async ({ children }) => {
         className="theme-content"
       >
         {children}
-        <FooterNew socialMediaData={parsedSocialLinks} companyInfoData={companyInfoData} storeData={storeData}  logos={logos} />
+        <FooterNew socialMediaData={parsedSocialLinks} companyInfoData={companyInfoData} storeData={storeData} logos={logos} />
       </Box>
       <BackToTop />
     </Box>

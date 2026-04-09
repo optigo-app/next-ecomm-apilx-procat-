@@ -1,3 +1,19 @@
+## [2026-04-09]
+
+### Fixed
+
+- **Header.modul.scss (Procat)**: Fixed logo display issues in both the normal header and sticky (fixed) header where logos were being cut off, half-hidden, or not displaying proportionally.
+  - **Old behavior**: `.smr_logo_header` and `.smr_logo_header_Fixed` both only had `max-width: 1000px` with no height constraint. Because the header containers are height-constrained (110px normal, 60px sticky), an unconstrained image would overflow vertically and get clipped. The image had no `object-fit` so it could distort or be cut at unpredictable sizes.
+  - **New behavior**:
+    - `.smr_logo_header` now has `max-height: 75px`, `width: auto`, `max-width: 100%`, `object-fit: contain`, `object-position: left center`. Logo stays proportional and is fully visible within the 110px header.
+    - `.smr_logo_header_Fixed` now has `max-height: 42px`, same `contain` rules — fits cleanly inside the 60px sticky header.
+    - Mobile (`≤1200px`): logos scale to `55px` / `38px`.
+    - Small mobile (`≤500px`): logos scale to `50px` / `35px`.
+    - `.smiling_Top_header_div2_web` and `.smiling_Top_header_div2_mobile` now have `overflow: hidden` to prevent any edge-case overflow bleed.
+    - Removed two empty/comment-only SCSS rulesets that triggered lint warnings.
+  - **Reason**: The logo was cut or half-hidden because there was no vertical (height) constraint on the `<img>` element — only a max-width that was effectively uncapped. Adding `max-height` relative to the header height and `object-fit: contain` guarantees the logo is always fully visible regardless of its original aspect ratio.
+  - **File(s)**: `app/components/(dynamic)/Header/Procat/Header.modul.scss`
+
 ## [2026-04-08]
 
 ### Added
