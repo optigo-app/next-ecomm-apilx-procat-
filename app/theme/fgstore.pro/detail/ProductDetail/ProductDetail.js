@@ -44,6 +44,7 @@ import { HiOutlineChevronLeft } from "react-icons/hi2";
 import { formatRedirectTitleLine, formatTitleLine, storImagePath } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import { SaveLastViewDesign } from "@/app/(core)/utils/API/SaveLastViewDesign/SaveLastViewDesign";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import { useMaster } from "@/app/(core)/contexts/MasterProvider";
 import SimilarDesigns from "./Blocks/SimilarDesigns";
 import MoreProducts from "./Blocks/MoreProducts";
 import StockBlock from "./Blocks/StockBlock";
@@ -57,6 +58,7 @@ const imageNotFound = "/image-not-found.jpg";
 
 const ProductDetail = ({ params, searchParams, storeInit }) => {
   const { islogin, setCartCountNum, setWishCountNum, SoketData, loginUserDetail } = useStore();
+  const { comboReady } = useMaster();
   let location = useNextRouterLikeRR();
   let navigate = useNextRouterLikeRR();
   const Almacarino = true;
@@ -731,6 +733,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   }, [params]);
 
   useEffect(() => {
+    // ✅ Guard: wait for MasterProvider to finish populating sessionStorage
+    // (storeInit, loginUserDetail, metalTypeCombo, etc.) before making the API call.
+    // Without this, SingleProdListAPI reads undefined values and passes them as the
+    // string "undefined" to the backend.
+    if (!comboReady || !storeInit) {
+      return;
+    }
+
     let logininfoInside = loginUserDetail;
 
     let storeinitInside = storeInit;
@@ -906,7 +916,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       top: 0,
       behavior: "smooth",
     });
-  }, [params]);
+  }, [params, comboReady, storeInit]);
 
   function checkImageAvailability(imageUrl) {
     return new Promise((resolve, reject) => {
