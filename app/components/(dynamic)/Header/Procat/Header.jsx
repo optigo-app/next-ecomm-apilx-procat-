@@ -337,10 +337,10 @@ const Header = ({ storeinit, logos }) => {
     }
   };
 
-  const OpenLogoutMode = ()=>setOpenLogoutModal(true);
-  const CloseLogoutMode = ()=>setOpenLogoutModal(false);
+  const OpenLogoutMode = () => setOpenLogoutModal(true);
+  const CloseLogoutMode = () => setOpenLogoutModal(false);
 
-  
+
   return (
     <>
       <ReusableConfirmModal
