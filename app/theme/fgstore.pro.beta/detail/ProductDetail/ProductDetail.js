@@ -44,6 +44,7 @@ import { HiOutlineChevronLeft } from "react-icons/hi2";
 import { formatRedirectTitleLine, formatTitleLine, storImagePath } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import { SaveLastViewDesign } from "@/app/(core)/utils/API/SaveLastViewDesign/SaveLastViewDesign";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
+import { useMaster } from "@/app/(core)/contexts/MasterProvider";
 import SimilarDesigns from "./Blocks/SimilarDesigns";
 import MoreProducts from "./Blocks/MoreProducts";
 import StockBlock from "./Blocks/StockBlock";
@@ -57,6 +58,7 @@ const imageNotFound = "/image-not-found.jpg";
 
 const ProductDetail = ({ params, searchParams, storeInit }) => {
   const { islogin, setCartCountNum, setWishCountNum, SoketData, loginUserDetail } = useStore();
+  const { comboReady } = useMaster();
   let location = useNextRouterLikeRR();
   let navigate = useNextRouterLikeRR();
   const Almacarino = true;
@@ -193,7 +195,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+  let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
   let decodeobj = decodeAndDecompress(navVal);
 
   const innerSwiperRef = useRef(null);
@@ -535,7 +537,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     // let navVal = location?.search.split("?p=")[1];
     // let decodeobj = decodeAndDecompress(navVal);
     const result = parseSearchParams();
-      let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
 
@@ -577,7 +579,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-      let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     const mtColorLocal = getSession("MetalColorCombo");
     let decodeobj = decodeAndDecompress(navVal);
     if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
@@ -687,7 +689,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-      let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -716,7 +718,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let url = `${location?.pathname}${location?.search}`;
 
     const result = parseSearchParams();
-      let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
 
     let decodeobj = decodeAndDecompress(navVal);
 
@@ -731,11 +733,19 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   }, [params]);
 
   useEffect(() => {
+    // ✅ Guard: wait for MasterProvider to finish populating sessionStorage
+    // (storeInit, loginUserDetail, metalTypeCombo, etc.) before making the API call.
+    // Without this, SingleProdListAPI reads undefined values and passes them as the
+    // string "undefined" to the backend.
+    if (!comboReady || !storeInit) {
+      return;
+    }
+
     let logininfoInside = loginUserDetail;
 
     let storeinitInside = storeInit;
     const result = parseSearchParams();
-      let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -906,7 +916,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       top: 0,
       behavior: "smooth",
     });
-  }, [params]);
+  }, [params, comboReady, storeInit]);
 
   function checkImageAvailability(imageUrl) {
     return new Promise((resolve, reject) => {
@@ -1354,7 +1364,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleMoveToDetail = (productData, index) => {
-    console.log(productData , "mian obj for router")
+    console.log(productData, "mian obj for router")
     setNextIndex(index);
     const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
 

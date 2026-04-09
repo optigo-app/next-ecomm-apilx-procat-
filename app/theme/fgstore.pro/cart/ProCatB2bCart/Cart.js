@@ -184,10 +184,7 @@ const CartPage = ({ storeinit }) => {
   return (
     <div className='proCat_MainBGDiv'>
       <div className='proCat_cartMainPageDiv'>
-        <button className="proCat_backButton" onClick={() => Router.back()}>
-          <IoArrowBack />
-          <span>Back</span>
-        </button>
+
         <div className="cartBtnGroupMainDiv">
           {isMobileScreen &&
             <div className="proCat_cart-title">My Cart</div>
@@ -195,6 +192,10 @@ const CartPage = ({ storeinit }) => {
           <div className='proCat_cartmainRowDiv'>
             {!isloding && finalCartData?.length != 0 &&
               <div className='proCat_cartButton-groups'>
+                <button className="proCat_backButton" onClick={() => Router.back()}>
+                  <IoArrowBack />
+                  <span className='proCat_backButton_txt'>Back</span>
+                </button>
                 <Link
                   className='proCat_ReomoveAllCartbtn'
                   variant="body2"

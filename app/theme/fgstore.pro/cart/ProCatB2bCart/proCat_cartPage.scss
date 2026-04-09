@@ -15,7 +15,6 @@ $cartUpdateBtncolor: #b1b1b1;
       display: flex;
       align-items: center;
       gap: 8px;
-      margin: 10px 0 0 16px; /* Matches the 35px margin of the 'Select All' checkbox below */
       background: none;
       border: none;
       color: $titleColor;
@@ -45,6 +44,19 @@ $cartUpdateBtncolor: #b1b1b1;
     .proCat_cartButton-groups {
       flex: 1;
       text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-direction: row;
+      margin-left: 20px;
+      @media (max-width: 768px) {
+        gap: 2px;
+      }
+      .proCat_backButton_txt {
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
     }
 
     .proCat_cart-title {
@@ -55,6 +67,20 @@ $cartUpdateBtncolor: #b1b1b1;
     .proCat_placeOrderMainbtnDivs {
       flex: 1;
       text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0 10px;
+      margin-bottom: 20px;
+
+      .proCat_cartButton-groups {
+        flex: none;
+        margin-left: 0;
+      }
+
+      .proCat_placeOrderMainbtnDivs {
+        flex: none;
+      }
     }
   }
 
@@ -90,7 +116,7 @@ $cartUpdateBtncolor: #b1b1b1;
       }
 
       .proCat_ReomoveAllCartbtn {
-        margin-left: 20px;
+        margin-left: 10px;
       }
 
       .proCat_cartBtn {
@@ -135,6 +161,23 @@ $cartUpdateBtncolor: #b1b1b1;
 
       &:hover {
         background-color: #666;
+      }
+
+      @media (max-width: 768px) {
+        width: auto;
+        padding: 0 15px;
+        margin-inline: 0;
+        margin-right: 5px;
+        font-size: 14px;
+        height: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding-top: 15px;
+      .proCat_cart-title {
+        font-size: 24px;
+        margin-bottom: 15px;
       }
     }
   }
@@ -242,7 +285,7 @@ $cartUpdateBtncolor: #b1b1b1;
 
     .proCat_mui_CartBox {
       display: flex !important;
-      justify-content: space-evenly !important;
+      justify-content: space-between !important;
     }
 
     .proCat_inStockbadgeDiv {
@@ -590,7 +633,7 @@ $cartUpdateBtncolor: #b1b1b1;
   }
 
   .proCat_rightContentDataDiv {
-    max-width: 150px;
+    max-width: 190px;
     width: 50%;
   }
 

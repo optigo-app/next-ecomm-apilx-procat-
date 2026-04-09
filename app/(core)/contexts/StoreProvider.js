@@ -56,7 +56,7 @@ export function StoreProvider({ children, storeinit }) {
 
   return (
     <StoreContext.Provider value={value}>
-      <ToastContainer toastStyle={toastStyle} stacked={true} hideProgressBar={true} autoClose={1400} transition={Zoom} style={{ zIndex: "9999999999999999", fontFamily: "inherit" }} />
+      <ToastContainer position="bottom-right" toastStyle={toastStyle} stacked={true} hideProgressBar={true} autoClose={1400} transition={Zoom} style={{ zIndex: "9999999999999999", fontFamily: "inherit" }} />
       {children}
     </StoreContext.Provider>
   );

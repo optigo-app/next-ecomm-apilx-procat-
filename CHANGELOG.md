@@ -1,6 +1,28 @@
 ## [2026-04-09]
 
+### Changed
+
+- **StoreProvider.js**: Changed `ToastContainer` position to `bottom-right` to ensure toast notifications no longer obstruct center-screen interactions.
+
 ### Fixed
+
+- **Cart Mobile Header (proCat_cartPage.scss)**: Improved mobile alignment of the `Back`, `Clear All`, and `Place Order` button cluster.
+  - **Old behavior**: The `Place Order` button retained a forced `width: 200px` and huge `margin-inline: 6%` over-stretching the mobile flexbox layout and causing overlap/wrapping issues with the `Back` and `Clear All` buttons.
+  - **New behavior**: Added a precise `@media (max-width: 768px)` constraint to `.proCat_cartmainRowDiv`. Removed `flex: 1` pushing and configured `Place Order` button to use responsive padding (`width: auto`) instead of a fixed 200px width. `Back/Clear All` buttons now fit comfortably on the left without touching the edges.
+  - **Reason**: To give the mobile cart heading the proper spacing and correct visual weight.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/proCat_cartPage.scss`
+
+- **ProductDetail.js (fgstore.pro + fgstore.pro.beta)**: Fixed product detail page receiving all API params as `undefined`/`null` when navigating from the product list.
+  - **Old behavior**: The `FetchProductData` `useEffect` ran on `[params]` change immediately on navigation — before `MasterProvider`'s `useEffect` had finished writing `storeInit`, `loginUserDetail`, `metalTypeCombo`, etc. to `sessionStorage`. As a result, `SingleProdListAPI` read `undefined` from `getSession()` and the JS template literals converted them to the literal string `"undefined"`, causing the backend to receive invalid parameters (`PackageId: "undefined"`, `CurrencyRate: "undefined"`, etc.) and return no data.
+  - **New behavior**: 
+    1. Both `ProductDetail.js` files now import `useMaster` from `MasterProvider` and destructure `comboReady`.
+    2. The `FetchProductData` `useEffect` has an early-return guard: `if (!comboReady || !storeInit) return;`
+    3. `comboReady` and `storeInit` are added to the effect's dependency array so the fetch fires automatically once both are ready.
+    4. This is the same proven pattern already used in `Album.js`.
+  - **Reason**: `MasterProvider`'s session-population `useEffect` runs asynchronously after the first render. Client components that read from `sessionStorage` on mount/navigation must wait for `comboReady` before making API calls.
+  - **File(s)**:
+    - `app/theme/fgstore.pro/detail/ProductDetail/ProductDetail.js`
+    - `app/theme/fgstore.pro.beta/detail/ProductDetail/ProductDetail.js`
 
 - **Header.modul.scss (Procat)**: Fixed logo display issues in both the normal header and sticky (fixed) header where logos were being cut off, half-hidden, or not displaying proportionally.
   - **Old behavior**: `.smr_logo_header` and `.smr_logo_header_Fixed` both only had `max-width: 1000px` with no height constraint. Because the header containers are height-constrained (110px normal, 60px sticky), an unconstrained image would overflow vertically and get clipped. The image had no `object-fit` so it could distort or be cut at unpredictable sizes.
