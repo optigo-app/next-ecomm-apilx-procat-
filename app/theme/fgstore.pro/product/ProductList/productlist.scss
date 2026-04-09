@@ -366,12 +366,18 @@
 .procat_productCard {
   width: 19%;
   margin: 5px;
-  border: 1px solid transparent;
   text-align: center;
   color: $primaryfontcolor;
   position: relative;
   z-index: 0;
   font-family: $primaryFontFamily;
+  border: 1px solid transparent;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    border: 1px solid $primaryBorderColor;
+    box-sizing: border-box;
+  }
 
   /* Button is hidden by default */
   .view_detail_btn {
@@ -452,7 +458,7 @@
 .roop_ImgandVideoContainer {
   height: 260px;
   width: 100%;
-  border: 1px solid $primaryBorderColor;
+  // border: 1px solid $primaryBorderColor;
 
   @media (max-width: 1750px) {
     height: 250px;

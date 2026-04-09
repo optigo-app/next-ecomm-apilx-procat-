@@ -1,7 +1,7 @@
 import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
-export const updateCartAPI = async (updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup) => {
+export const updateCartAPI = async (updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup, visiterI) => {
     try {
         const islogin = getSession("LoginUser");
         const storeInit = getSession("storeInit");
@@ -9,13 +9,18 @@ export const updateCartAPI = async (updatedItems, metalID, metalCOLORID, diaIDDa
         const loginUserDetail = getSession("loginUserDetail");
         const UserEmail = getSession("registerEmail")
 
+
+        const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : data.id ?? 0;
+        const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : data?.userid ?? "";
+
+
         // console.log('jbjasd--', updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup);
 
         const combinedValue = JSON.stringify({
             ForEvt: "Cart",
             FrontEnd_RegNo: `${FrontEnd_RegNo}`,
-            userid: `${UserEmail}`,
-            Customerid: `${loginUserDetail?.id ?? 0}`,
+            userid: `${customerEmail}`,
+            Customerid: `${customerId}`,
             AddCartDetail: [
                 {
                     "CartId": `${updatedItems?.id}`,
