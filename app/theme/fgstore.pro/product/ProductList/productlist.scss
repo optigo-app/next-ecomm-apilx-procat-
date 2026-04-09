@@ -99,6 +99,7 @@
   object-fit: contain;
   width: 100%;
   height: 260px;
+  box-sizing: border-box;
 
   @media (max-width: 1750px) {
     height: 250px;
@@ -458,7 +459,9 @@
 .roop_ImgandVideoContainer {
   height: 260px;
   width: 100%;
-  // border: 1px solid $primaryBorderColor;
+  box-sizing: border-box;
+  padding-bottom: 12px;
+  padding-inline: 12px;
 
   @media (max-width: 1750px) {
     height: 250px;

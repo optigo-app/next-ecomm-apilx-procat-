@@ -3442,7 +3442,7 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
           ) : (
             <>
               {/* Hover Content (Video or RollImage) */}
-              <div style={{ display: isHover ? "block" : "none" }}>
+              <div style={{ display: isHover ? "block" : "none", boxSizing: 'border-box' }}>
                 {videoUrl !== undefined ? (
                   <video
                     className="proCat_productCard_video"
