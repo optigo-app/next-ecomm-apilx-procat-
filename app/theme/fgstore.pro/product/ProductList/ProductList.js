@@ -3566,6 +3566,9 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
         sx={{
           width: "100%",
           flex: 1,
+          boxSizing: 'border-box',
+          px: 1,
+          pb: 1
         }}
       >
         <Button

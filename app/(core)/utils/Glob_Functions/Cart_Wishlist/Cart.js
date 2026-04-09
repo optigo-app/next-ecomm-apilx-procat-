@@ -54,6 +54,7 @@ const useCart = () => {
   const [diaQua, setDiaQua] = useState();
   const [csColor, setCsColor] = useState();
   const [csQua, setCsQua] = useState();
+  const visiterI = Cookies.get('visiterId');
 
   const imageNotFound = "/image-not-found.jpg";
 
@@ -318,7 +319,7 @@ const useCart = () => {
 
       if (resStatus1?.stat_msg == "success") {
         try {
-          const response = await updateCartAPI(updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup);
+          const response = await updateCartAPI(updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup, visiterI);
           let resStatus = response?.Data.rd[0];
           const mtcCode = metalColorCombo?.find(option => option?.id === metalCOLORID);
           if (resStatus?.msg == "success") {
@@ -358,7 +359,7 @@ const useCart = () => {
       }
     } else {
       try {
-        const response = await updateCartAPI(updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup);
+        const response = await updateCartAPI(updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup, visiterI);
         let resStatus = response?.Data.rd[0]
         if (resStatus?.msg == "success") {
           setOpenMobileModal(false);
