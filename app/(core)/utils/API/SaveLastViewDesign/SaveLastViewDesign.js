@@ -3,7 +3,7 @@ import { CommonAPI } from '../CommonAPI/CommonAPI'
 
 export const SaveLastViewDesign = async (visiterId, autocode, designno) => {
 
-  let storeInit = getSession("storeInit");
+  let storeInit = window.__STORE_INIT__ || getSession("storeInit");
   let loginInfo = getSession("loginUserDetail");
   let userEmail = getSession("registerEmail")
   const islogin = getSession("LoginUser") ?? false;

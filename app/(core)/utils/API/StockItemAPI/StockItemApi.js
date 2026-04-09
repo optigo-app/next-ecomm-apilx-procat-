@@ -2,7 +2,7 @@ import { getSession } from "../../FetchSessionData";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const StockItemApi = async (ac, type, obj = {}, visiterId) => {
-  let storeInit = getSession("storeInit");
+  let storeInit = window.__STORE_INIT__ || getSession("storeInit");
   let loginUserDetail = getSession("loginUserDetail");
   let islogin = getSession("LoginUser") ?? false;
 
@@ -15,20 +15,20 @@ export const StockItemApi = async (ac, type, obj = {}, visiterId) => {
     autocode: `${ac ?? ""}`,
     Customerid: `${customerId ?? 0}`,
     Laboursetid: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.pricemanagement_laboursetid
-        : loginUserDetail?.pricemanagement_laboursetid
+      ? storeInit?.pricemanagement_laboursetid
+      : loginUserDetail?.pricemanagement_laboursetid
       }`,
     diamondpricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.diamondpricelistname
-        : loginUserDetail?.diamondpricelistname
+      ? storeInit?.diamondpricelistname
+      : loginUserDetail?.diamondpricelistname
       }`,
     colorstonepricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.colorstonepricelistname
-        : loginUserDetail?.colorstonepricelistname
+      ? storeInit?.colorstonepricelistname
+      : loginUserDetail?.colorstonepricelistname
       }`,
     SettingPriceUniqueNo: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.SettingPriceUniqueNo
-        : loginUserDetail?.SettingPriceUniqueNo
+      ? storeInit?.SettingPriceUniqueNo
+      : loginUserDetail?.SettingPriceUniqueNo
       }`,
   }
   let data1 = {
@@ -39,20 +39,20 @@ export const StockItemApi = async (ac, type, obj = {}, visiterId) => {
     DiaQCid: `${obj?.diaQc == undefined ? (loginUserDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid) : obj?.diaQc}`,
     CsQCid: `${obj?.csQc == undefined ? (loginUserDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid) : obj?.csQc}`,
     Laboursetid: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.pricemanagement_laboursetid
-        : loginUserDetail?.pricemanagement_laboursetid
+      ? storeInit?.pricemanagement_laboursetid
+      : loginUserDetail?.pricemanagement_laboursetid
       }`,
     diamondpricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.diamondpricelistname
-        : loginUserDetail?.diamondpricelistname
+      ? storeInit?.diamondpricelistname
+      : loginUserDetail?.diamondpricelistname
       }`,
     colorstonepricelistname: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.colorstonepricelistname
-        : loginUserDetail?.colorstonepricelistname
+      ? storeInit?.colorstonepricelistname
+      : loginUserDetail?.colorstonepricelistname
       }`,
     SettingPriceUniqueNo: `${storeInit?.IsB2BWebsite == 0 && islogin == false
-        ? storeInit?.SettingPriceUniqueNo
-        : loginUserDetail?.SettingPriceUniqueNo
+      ? storeInit?.SettingPriceUniqueNo
+      : loginUserDetail?.SettingPriceUniqueNo
       }`,
   }
 
