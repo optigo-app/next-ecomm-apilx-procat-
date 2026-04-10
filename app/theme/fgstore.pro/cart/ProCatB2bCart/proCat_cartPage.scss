@@ -1005,10 +1005,7 @@ $cartUpdateBtncolor: #b1b1b1;
           width: 75%;
 
           .proCat_RightCartList {
-            .proCat_cartListCardGrid {
-              flex-basis: 50% !important;
-              max-width: 50% !important;
-            }
+            // No flex-basis override here — Grid lg:4 (33.33%) handles 3 columns
 
             .proCat_mui_CartBox {
               .proCat_cartListImage {
