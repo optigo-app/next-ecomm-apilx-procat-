@@ -9,7 +9,7 @@ $cartUpdateBtncolor: #b1b1b1;
   .proCat_cartMainPageDiv {
     background-color: #fff;
     min-height: 51.8vh;
-    padding-top: 15px; /* Added minor padding so the back button is not tight to the top */
+    padding-top: 15px;
 
     .proCat_backButton {
       display: flex;
@@ -102,7 +102,6 @@ $cartUpdateBtncolor: #b1b1b1;
 
     .proCat_cart-title {
       color: $titleColor;
-      // padding-bottom: 35px;
       font-size: $fontSize8;
       font-family: $primaryFontFamily !important;
     }
@@ -146,8 +145,6 @@ $cartUpdateBtncolor: #b1b1b1;
 
     .proCat_place-order-btn {
       font-family: $primaryFontFamily !important;
-      // background-color: #98b8d9 !important;
-      // color: black;
       font-size: $fontSize2;
       border: none;
       outline: none;
@@ -353,8 +350,6 @@ $cartUpdateBtncolor: #b1b1b1;
     display: flex;
     align-items: center;
     justify-content: center;
-    // max-width: 400px;
-    // max-height: 400px;
     width: 98%;
     height: 100%;
     border-radius: 0px;
@@ -369,7 +364,6 @@ $cartUpdateBtncolor: #b1b1b1;
   }
 
   .proCat_CartCusto_R-details {
-    // padding: 0 20px;
     flex: 1;
     max-width: 600px;
     width: 100%;
@@ -380,12 +374,6 @@ $cartUpdateBtncolor: #b1b1b1;
       margin: 10px;
       text-align: center;
       max-height: 100px;
-      // height: 55px;
-      // display: -webkit-box;
-      // -webkit-line-clamp: 2;
-      // -webkit-box-orient: vertical;
-      // overflow: hidden;
-      // text-overflow: ellipsis;
     }
 
     .proCat_Cart-options {
@@ -565,9 +553,6 @@ $cartUpdateBtncolor: #b1b1b1;
       font-size: $fontSize6;
       color: $titleColor;
       margin-bottom: 20px;
-      // width: 100%;
-      // display: flex;
-      // justify-content: end;
     }
 
     .proCat_UpdateCartBtn {
@@ -580,7 +565,6 @@ $cartUpdateBtncolor: #b1b1b1;
       display: block;
       height: 40px;
       width: 100px;
-      // background-color: #98b8d9 !important;
       color: black;
       border: none;
       border-radius: 0px;
@@ -594,7 +578,7 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  // cart list item css(left side)
+  // cart list item css (left side)
 
   .proCat_cartListCard {
     box-shadow:
@@ -618,13 +602,12 @@ $cartUpdateBtncolor: #b1b1b1;
       font-size: $fontSize1;
       font-family: $primaryFontFamily;
       display: flex !important;
-      justify-content: start I !important;
+      justify-content: start !important;
       margin-right: 5px !important;
     }
   }
 
   .proCat_cartListImage {
-    width: 100%;
     max-width: 200px;
     max-height: 200px;
     height: 200px;
@@ -633,8 +616,10 @@ $cartUpdateBtncolor: #b1b1b1;
   }
 
   .proCat_rightContentDataDiv {
-    max-width: 190px;
-    width: 50%;
+    max-width: 100%;
+    width: 100%;
+    padding-inline: 12px;
+    position: relative; /* Required so .proCat_cartbtngroupReRm (position:absolute) anchors inside this div */
   }
 
   .proCat_cartcontentData {
@@ -643,6 +628,19 @@ $cartUpdateBtncolor: #b1b1b1;
 
   .proCat_cartlistdetails {
     font-size: 10px !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+
+    @media (max-width: 1000px) {
+      justify-content: center;
+    }
+
+    @media (max-width: 400px) {
+      justify-content: center;
+      gap: 2px;
+    }
   }
 
   .proCat_cartbtngroupReRm {
@@ -937,6 +935,8 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
+  // ── Large screen breakpoints (>1000px) ──────────────────────────────────────
+
   @media (max-width: 1500px) and (min-width: 1440px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
@@ -1030,7 +1030,9 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media (max-width: 999px) {
+  // ── 601px – 999px: 2 columns, ROW layout (image left, details right) ────────
+
+  @media (max-width: 999px) and (min-width: 601px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         .proCat_cart-left-sides {
@@ -1039,16 +1041,36 @@ $cartUpdateBtncolor: #b1b1b1;
 
           .proCat_RightCartList {
             .proCat_cartListCardGrid {
-              flex-basis: 33.333333% !important;
-              max-width: 33.333333% !important;
+              flex-basis: 50% !important;
+              max-width: 50% !important;
             }
 
             .proCat_mui_CartBox {
+              flex-direction: row !important;
+
               .proCat_cartListImage {
+                width: 45% !important;
                 max-width: 180px;
-                max-height: 180px;
-                height: 130px;
-                width: 130px;
+                height: 160px;
+                max-height: 160px;
+                object-fit: contain;
+              }
+
+              .proCat_rightContentDataDiv {
+                width: 55%;
+                padding: 8px;
+                text-align: left;
+                position: relative;
+
+                .proCat_cartlistdetails {
+                  justify-content: flex-start !important;
+                }
+              }
+
+              .proCat_cartbtngroupReRm {
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
               }
             }
           }
@@ -1061,81 +1083,85 @@ $cartUpdateBtncolor: #b1b1b1;
     }
   }
 
-  @media (max-width: 849px) {
-    .proCat_cartMainPageDiv {
-      .proCat_cartMainPage {
-        .proCat_cart-left-sides {
-          max-width: 100%;
-          width: 100%;
+  // ── ≤ 600px: 2 columns, COLUMN layout (image top, content below, ALL centered) ─
 
-          .proCat_RightCartList {
-            .proCat_cartListCardGrid {
-              flex-basis: 50% !important;
-              max-width: 50% !important;
-            }
-          }
-        }
-
-        .proCat_cart-right-side {
-          display: none;
-        }
-      }
-    }
-  }
-
-  @media (max-width: 570px) {
+  @media (max-width: 600px) {
     .proCat_cartMainPageDiv {
       .proCat_cartMainPage {
         padding: 0;
 
         .proCat_cart-left-sides {
-          width: 100%;
           max-width: 100%;
-          max-height: 100%;
-          overflow: auto;
+          width: 100%;
 
           .proCat_RightCartList {
-            width: 100%;
-            padding: 0px 12px 0px 10px;
+            padding: 0px 8px;
 
             .proCat_cartListCardGrid {
-              padding-left: 10px !important;
-              padding-top: 10px !important;
-              width: 50% !important;
-              max-width: 50% !important;
               flex-basis: 50% !important;
+              max-width: 50% !important;
+              padding-left: 8px !important;
+              padding-top: 8px !important;
+            }
 
-              .proCat_mui_CartBox {
-                display: flex;
-                flex-direction: column;
+            .proCat_mui_CartBox {
+              flex-direction: column !important;
+              align-items: center;
 
-                .proCat_cartListImage {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  text-align: center;
-                  width: 100%;
-                  max-width: 100%;
-                  height: 200px;
-                  object-fit: contain;
-                }
+              .proCat_cartListImage {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 150px;
+                max-height: 150px;
+                object-fit: contain;
               }
 
               .proCat_rightContentDataDiv {
                 width: 100%;
                 max-width: 100%;
-                padding: 5px;
+                padding: 5px 4px;
                 text-align: center;
+                position: relative;
 
-                .proCat_cartlistdetails {
-                  justify-content: center !important;
-                  width: 100%;
+                // Center all card text content
+                .proCat_cartcontentData {
+                  padding: 8px 0px !important;
+
+                  .proCat_DesignNoTExt {
+                    text-align: center;
+                    justify-content: center !important;
+                    display: flex;
+                    flex-wrap: wrap;
+                  }
+
+                  .proCat_card-ContentsData {
+                    justify-content: center !important;
+                    text-align: center;
+                  }
+
+                  .proCat_cartlistdetails {
+                    justify-content: center !important;
+                    width: 100%;
+                  }
+
+                  .proCat_PriceBox {
+                    justify-content: center !important;
+                    display: flex;
+                  }
                 }
               }
 
               .proCat_cartbtngroupReRm {
                 text-align: center;
                 width: 100%;
+                position: relative;
+                bottom: unset;
+                right: unset;
+                padding: 4px 0 6px;
+
+                .proCat_ItemRemarkbtn {
+                  margin-right: 10px;
+                }
               }
             }
 

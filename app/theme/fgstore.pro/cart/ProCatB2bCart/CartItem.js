@@ -100,8 +100,8 @@ const CartItem = ({
   }, [isSelected])
 
   const handleIsSelected = () => {
-    let isselected = selectedItem?.id == item?.id
-    setIsSelectedItems()
+    let isselected = selectedItem?.id == item?.id;
+    setIsSelectedItems(isselected);
   }
 
 
@@ -136,6 +136,7 @@ const CartItem = ({
   };
 
   function truncateText(text, maxLength) {
+    if (!text) return '';
     if (text.length <= maxLength) {
       return text;
     }
@@ -146,7 +147,7 @@ const CartItem = ({
   // const isLoading = item && item?.loading === true;
 
 
-  console.log(item, "item")
+  // [REMOVED] console.log(item, "item") — debug log removed for production
 
   return (
     <Grid
@@ -219,7 +220,7 @@ const CartItem = ({
                 }
               </Typography>
 
-              <div className='proCat_cartlistdetails' style={{ display: 'flex', justifyContent: isMobileImage ? 'center' : 'space-between', flexWrap: 'wrap', gap: isMobileImage ? '10px' : '0' }}>
+              <div className='proCat_cartlistdetails' >
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobileImage ? 'center' : 'flex-start', gap: '5px' }}>
                   {storeinit?.IsGrossWeight == 1 &&
                     <Typography variant="body2" className='proCat_card-ContentsData'>
@@ -306,7 +307,7 @@ const CartItem = ({
                   }
                 </>
               </Box>
-              {item?.Remarks !== "" && (
+              {(item?.Remarks && item?.Remarks !== "") && (
                 <Typography
                   title={item?.Remarks || productRemark}
                   variant="body2" className='proCat_remarktext'>
