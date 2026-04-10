@@ -154,10 +154,10 @@ const CartItem = ({
       item
       size={{
         xs: 6,
-        sm: itemLength <= 2 ? 6 : 6,
-        md: itemLength <= 2 ? 6 : 6,
-        lg: itemLength <= 2 ? 6 : 4,
-        xxl: itemLength <= 2 ? 6 : 3,
+        sm: 6,
+        md: 6,
+        lg: 4,   // always 3 columns on large screens (4/12 = 33.33%)
+        xxl: 4,  // always 3 columns on extra-large screens
       }}
       className='proCat_cartListCardGrid'>
       <Card className={itemLength <= 3 ? 'proCat_cartListCard' : 'proCat_cartListCard'}

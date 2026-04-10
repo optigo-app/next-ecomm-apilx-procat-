@@ -1,4 +1,20 @@
-## [2026-04-10] — Cart Grid Layout Fix (Medium Screens)
+## [2026-04-10] — Cart Always-3-Column Grid Fix
+
+### Fixed
+
+- **CartItem.js**: Fixed cart grid collapsing to 2 columns when fewer than 3 items remain.
+  - **Old behavior**: Grid `size` used `itemLength <= 2 ? 6 : 4` for `lg` — when only 1 or 2 items were in the cart, each item got size `6` (50% width = 2 columns per row).
+  - **New behavior**: `lg: 4` always (33.33% = 3 columns per row), regardless of item count. Same for `xxl: 4`. `sm/md` remain `6` (2 cols on smaller screens handled by CSS).
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/CartItem.js`
+
+- **proCat_cartPage.scss**: Removed `flex-basis: 50% !important` override at the `1000px–1359px` breakpoint that was forcing 2 columns in the SCSS layer, overriding the Grid's `lg:4` value.
+  - **Old behavior**: `flex-basis: 50%` in the 1000–1359px media query always forced 2 columns at this screen range, regardless of item count.
+  - **New behavior**: No override — MUI Grid's `lg:4` (33.33%) now takes full effect, giving 3 consistent columns.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/proCat_cartPage.scss`
+
+---
+
+
 
 ### Fixed
 
