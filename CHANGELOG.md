@@ -1,3 +1,52 @@
+## [2026-04-10] — Cart Grid Layout Fix (Medium Screens)
+
+### Fixed
+
+- **proCat_cartPage.scss**: Fixed cart item grid showing 3 columns at 501px–999px screen widths (e.g. 865px).
+  - **Old behavior**: `@media (max-width: 999px)` set `flex-basis: 33.333333%` forcing 3 columns. Cards kept a horizontal (image-left, text-right) row layout making them too cramped at this width.
+  - **New behavior**: Split into two clean breakpoints:
+    - `(max-width: 999px) and (min-width: 501px)` → **2 columns** (50%), **vertical card layout** (image on top, content below, buttons inline at bottom).
+    - `(max-width: 500px)` → **2 columns** (50%), smaller image height (140px), same vertical layout.
+  - Removed now-redundant `@media (max-width: 849px)` and `@media (max-width: 570px)` blocks (fully superseded).
+  - The `remarkModalBox` narrow-width override from the old 570px block was preserved in the ≤500px block.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/proCat_cartPage.scss`
+
+---
+
+### Fixed
+
+- **CartItem.js**: Fixed `handleIsSelected` never updating `isSelectedItems` state.
+  - **Old behavior**: `setIsSelectedItems()` was called with no argument, always setting state to `undefined`. The computed `isselected` variable was quietly discarded, so selected-item highlighting logic was broken.
+  - **New behavior**: `setIsSelectedItems(isselected)` correctly passes the comparison result.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/CartItem.js`
+
+- **CartItem.js**: Fixed crash in `truncateText()` when called with `null` or `undefined` text.
+  - **Old behavior**: `text.length` would throw `TypeError: Cannot read properties of null/undefined` when `item?.Remarks` was null and `productRemark` was also undefined/null.
+  - **New behavior**: Added a `if (!text) return '';` guard at the start of `truncateText()`.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/CartItem.js`
+
+- **CartItem.js**: Fixed Remark section appearing incorrectly when Remarks is `null` or `undefined`.
+  - **Old behavior**: `item?.Remarks !== ""` evaluated to `true` even when Remarks was `null` or `undefined`, causing the Remark Typography element to render with no content.
+  - **New behavior**: Guard changed to `(item?.Remarks && item?.Remarks !== "")` — only renders when Remarks has a truthy, non-empty value.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/CartItem.js`
+
+- **CartItem.js**: Removed production `console.log(item, "item")` debug statement.
+  - **Old behavior**: Every cart item re-render printed full item data to the browser console.
+  - **New behavior**: Debug log replaced with a comment.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/CartItem.js`
+
+- **proCat_cartPage.scss**: Fixed duplicate `width` property on `.proCat_cartListImage`.
+  - **Old behavior**: `width: 100%` was declared first, then overridden by `width: 50%` on the next line — redundant and confusing.
+  - **New behavior**: Removed the first `width: 100%` declaration; only `width: 50%` remains.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/proCat_cartPage.scss`
+
+- **proCat_cartPage.scss**: Fixed absolute-positioned action buttons (Add Remark / Remove) overlapping card content.
+  - **Old behavior**: `.proCat_cartbtngroupReRm` is `position: absolute` but its parent `.proCat_rightContentDataDiv` had no `position` set, so buttons anchored to the nearest positioned ancestor (the Card root), causing overlap issues.
+  - **New behavior**: Added `position: relative` to `.proCat_rightContentDataDiv` so the buttons now correctly anchor to the content div.
+  - **File(s)**: `app/theme/fgstore.pro/cart/ProCatB2bCart/proCat_cartPage.scss`
+
+---
+
 ## [2026-04-09] — Critical: Product Detail Crash Fix
 
 ### Fixed
@@ -14,8 +63,6 @@
   - **Reason**: Prevents junk parameter values from corrupting the product API request even in race-condition / guest scenarios.
   - **File(s)**: `app/(core)/utils/API/SingleProdListAPI/SingleProdListAPI.js`
 
-
-
 ### Changed
 
 - **StoreProvider.js**: Changed `ToastContainer` position to `bottom-right` to ensure toast notifications no longer obstruct center-screen interactions.
@@ -30,7 +77,7 @@
 
 - **ProductDetail.js (fgstore.pro + fgstore.pro.beta)**: Fixed product detail page receiving all API params as `undefined`/`null` when navigating from the product list.
   - **Old behavior**: The `FetchProductData` `useEffect` ran on `[params]` change immediately on navigation — before `MasterProvider`'s `useEffect` had finished writing `storeInit`, `loginUserDetail`, `metalTypeCombo`, etc. to `sessionStorage`. As a result, `SingleProdListAPI` read `undefined` from `getSession()` and the JS template literals converted them to the literal string `"undefined"`, causing the backend to receive invalid parameters (`PackageId: "undefined"`, `CurrencyRate: "undefined"`, etc.) and return no data.
-  - **New behavior**: 
+  - **New behavior**:
     1. Both `ProductDetail.js` files now import `useMaster` from `MasterProvider` and destructure `comboReady`.
     2. The `FetchProductData` `useEffect` has an early-return guard: `if (!comboReady || !storeInit) return;`
     3. `comboReady` and `storeInit` are added to the effect's dependency array so the fetch fires automatically once both are ready.
@@ -128,7 +175,7 @@
   - **Reason**: This guarantees the base64 string identically matches the one crafted by `compressAndEncode` in `ProductList.js`.
 
 - **SingleProdListAPI.js**: Added `?? ""` fallback for `designno` to prevent the literal string `"undefined"`.
-  - **Old behavior**: `designno: \`${singprod?.b}\`` — when `singprod?.b` is `undefined`, JavaScript template literals convert it to the string `"undefined"`.
+  - **Old behavior**: `designno: \`${singprod?.b}\``— when`singprod?.b`is`undefined`, JavaScript template literals convert it to the string `"undefined"`.
   - **New behavior**: `designno: \`${singprod?.b ?? ""}\`` — falls back to empty string.
   - **Reason**: Safety net to prevent sending `"undefined"` as designno even if upstream decoding fails.
 
@@ -173,7 +220,7 @@
 ### Added
 
 - **Admin Status Dialogs**: Created reusable modals in the user registration and login components that mimic the OTP verification style using `Dialog` and `Slide` from Material UI.
-  - **Files**: 
+  - **Files**:
     - `app/theme/fgstore.pro.beta/Auth/Register/page.js`
     - `app/theme/fgstore.pro.beta/Auth/LoginWithEmail/page.js`
     - `app/theme/fgstore.pro.beta/Auth/LoginWithMobileCode/page.js`
@@ -182,7 +229,6 @@
   - **Old behavior**: The system directly redirected or showed inline errors.
   - **New behavior**: Added a unified `Dialog` with "Approved", "Rejected", and "Pending" (Waiting) states. Features include context-specific icons, smooth slide-down animation, and dynamic color schemes.
   - **Reason**: To visually notify the user about different account status scenarios including pending admin verification across all registration and login flows.
-
 
 - **B2B and B2C constants**: Created a consolidated flag to manage store-wide B2B and B2C behavior.
   - **Files**: `app/(core)/constants/data.js`
@@ -209,11 +255,10 @@
 - **Service Worker & Heartbeat Mechanism**: Implemented PWA-like service worker and periodic heartbeat.
   - **Files**: `public/service-worker.js`, `app/components/SWRegistration.js`, `app/layout.js`, `app/(core)/contexts/MasterProvider.js`
   - **Old behavior**: No service worker or client-side keep-alive mechanism existed.
-  - **New behavior**: 
+  - **New behavior**:
     - A Service Worker (`sw.js`) is now registered to cache static assets while bypassing dynamic API/Cart routes.
     - `MasterProvider.js` sends a `HEARTBEAT` message to the Service Worker every 30 seconds to signal the application is alive.
   - **Reason**: To enhance site performance via caching and establish a local heartbeat mechanism as requested.
-
 
 ## [2026-03-25]
 
@@ -224,14 +269,13 @@
   - **New behavior**: Keyboard events are now stopped from bubbling up to the `Swiper` component, allowing normal text navigation within the `TextField`.
   - **Reason**: To prevent conflicting keyboard navigation between the text input and the product image slider.
 
-
 ## [2026-03-24]
 
 ### Fixed
 
 - **Product Listing & Detail Pages**: Resolved "undefined" strings in API parameters and `TypeError` crashes.
   - **Old behavior**: URL search parameters containing `null` or `undefined` were sometimes stringified as `"null"` or `"undefined"` and passed to API utilities. In `ProductListApi.js` and `FilterListAPI.js`, `atob()` would crash on these strings. Additionally, several API utilities (e.g., `StockItemApi.js`, `SaveLastViewDesign.js`) crashed with `TypeError: null reading 'id'` when `islogin` was true but session data was incomplete.
-  - **New behavior**: 
+  - **New behavior**:
     - Added defensive filtering and `atob` guards in `ProductList.js` and `ProductDetail.js` to ensure only valid base64 strings are processed and no `"undefined"` parameters are generated.
     - Implemented a `safeAtob` helper in `ProductListApi.js` and `FilterListAPI.js` to gracefully handle malformed or reserved strings.
     - Added optional chaining (`?.id`) to all session data accesses in API utility files to prevent `null` property access crashes.
