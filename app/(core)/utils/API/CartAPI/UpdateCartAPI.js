@@ -10,8 +10,8 @@ export const updateCartAPI = async (updatedItems, metalID, metalCOLORID, diaIDDa
         const UserEmail = getSession("registerEmail")
 
 
-        const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : data.id ?? 0;
-        const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : data?.userid ?? "";
+        const customerId = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : loginUserDetail.id ?? 0;
+        const customerEmail = storeInit?.IsB2BWebsite == 0 && islogin == false || islogin == null ? visiterI : loginUserDetail?.userid ?? "";
 
 
         // console.log('jbjasd--', updatedItems, metalID, metalCOLORID, diaIDData, colorStoneID, sizeId, markupData, finalPrice, finalPriceWithMarkup);
