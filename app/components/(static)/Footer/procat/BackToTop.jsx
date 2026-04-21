@@ -6,6 +6,7 @@ const BackToTop = () => {
     <>
       <div>
         <p
+          className="color_jeweliita"
           style={{
             paddingBlock: "30px",
             margin: "0px",

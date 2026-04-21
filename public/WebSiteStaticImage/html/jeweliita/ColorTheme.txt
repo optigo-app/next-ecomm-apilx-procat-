@@ -1,0 +1,58 @@
+.setFullThemeBack{
+background-color: #0d3c3cff !important;
+}
+
+.btnColorProCat{
+	background-color: #0d3c3cff !important;
+	color : #fff !important;
+	border: 1px solid #0d3c3cff;
+}
+
+.btnColorProCatProduct{
+	background-color: #0d3c3cff!important;
+	color : #fff !important;
+	border: 1px solid #0d3c3cff!important;
+}
+
+.btnColorProCatProductRemoveCart {
+	background-color:  #fff!important;
+	color: #fff !important;
+	border: 1px solid  #0d3c3cff;
+}
+
+.btnColorSvg{
+	color : #fff !important;
+	fill : #fff !important;
+}
+
+.btnColorRemoveSvg{
+	color : black !important;
+	fill : black !important;
+}
+
+.color_jeweliita{
+	color : #c79762 !important;
+	svg : {
+		fill: #c79762 !important;
+	}
+}
+
+.color_jeweliita__footer{
+	color : #0d3c3cff !important;
+}
+
+{
+"rd":[
+ {
+  "Themeno": 6,
+  "Headerno": 1,
+  "Blockno": 1,
+  "Footerno": 1,
+  "IsHomeAlbum": 1,
+  "IsHomeBestSeller": 1,
+  "IsHomeTrending": 1,
+  "IsHomeDesignSet": 1,
+  "IsHomeNewArrival": 1
+ }
+]
+}

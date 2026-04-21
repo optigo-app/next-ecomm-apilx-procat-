@@ -19,7 +19,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
       <div className="footerContent">
         {/* CONTACT SECTION */}
         <div className="footerColumn">
-          {hasCompanyInfo && <h4 className="footerTitle">Contact Us</h4>}
+          {hasCompanyInfo && <h4 className="footerTitle color_jeweliita">Contact Us</h4>}
 
           {companyInfoData?.FrontEndAddress && (
             <div className="footerRow">
@@ -61,7 +61,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
 
         {/* LINKS SECTION */}
         <div className="footerColumn">
-          <h4 className="footerTitle">Quick Links</h4>
+          <h4 className="footerTitle color_jeweliita">Quick Links</h4>
           <div className="footerLinks">
             <Link href="/terms-and-conditions">Terms & Conditions</Link>
             <Link href="/privacyPolicy">Privacy Policy</Link>
@@ -74,7 +74,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
         {/* SOCIAL SECTION */}
         {socialMediaData?.length > 0 && (
           <div className="footerColumn">
-            <h4 className="footerTitle">Follow Us</h4>
+            <h4 className="footerTitle color_jeweliita">Follow Us</h4>
             <div className="footerSocial">
               {socialMediaData.map((social, i) => (
                 <a
@@ -96,7 +96,7 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
       </div>
 
       <div className="footerBottom">
-        <p style={{ textTransform: 'capitalize' }}>© {new Date().getFullYear()} {companyInfoData?.companyname_menu}. All rights reserved.</p>
+        <p className="color_jeweliita__footer" style={{ textTransform: 'capitalize' }}>© {new Date().getFullYear()} {companyInfoData?.companyname_menu}. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -17,7 +17,10 @@ export const themeMap = {
   "almacarino.procatalog.in": {
     page: "fgstore.pro",
   },
-    "uscreation.procatalog.in": {
+  "uscreation.procatalog.in": {
     page: "fgstore.pro",
   },
+  "jeweliita.procatalog.in": {
+    page: "fgstore.pro",
+  }
 };

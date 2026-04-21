@@ -390,15 +390,21 @@
   &:hover .view_detail_btn {
     opacity: 1;
     visibility: visible;
-    background-color: #98b8d9 !important;
+    background-color: #98b8d9;
     color: white !important;
+    border: 1px solid transparent !important;
   }
 
-  /* When specifically hovering over the button itself: make it transparent with blue border & text */
-  .view_detail_btn:hover {
+  /* When specifically hovering over the button itself */
+  &:hover .view_detail_btn:hover {
     background-color: transparent !important;
     color: #98b8d9 !important;
-    border-color: #98b8d9 !important;
+    border: 1px solid currentColor !important;
+  }
+
+  /* Dynamic color for jeweliita configuration */
+  &:hover .view_detail_btn.color_jeweliita:hover {
+    color: currentColor !important;
   }
 }
 
