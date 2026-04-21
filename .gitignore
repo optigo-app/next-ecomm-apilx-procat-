@@ -47,3 +47,10 @@ next-env.d.ts
 
 .next_cache
 next_cache/*
+
+
+.zip
+zip
+app.zip
+tar.gz
+.gz
