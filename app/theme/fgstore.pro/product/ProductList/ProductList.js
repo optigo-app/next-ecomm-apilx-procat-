@@ -3572,14 +3572,11 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
         }}
       >
         <Button
-          className="view_detail_btn"
+          className="view_detail_btn setFullThemeBack color_jeweliita"
           fullWidth
           onClick={() => handleMoveToDetail(productData, i)}
           sx={{
-            border: "1px solid #98b8d9",
             borderRadius: "0px",
-            backgroundColor: "transparent",
-            color: "black",
             px: { xs: 2, sm: 3, md: 4 },
             py: { xs: 0.6, sm: 0.7, md: 0.85 },
 
@@ -3592,12 +3589,6 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
 
             fontWeight: 400,
             letterSpacing: "1px",
-
-            "&:hover": {
-              backgroundColor: "#98b8d9",
-              color: "white",
-              border: "1px solid #98b8d9",
-            },
           }}
         >
           VIEW DETAILS

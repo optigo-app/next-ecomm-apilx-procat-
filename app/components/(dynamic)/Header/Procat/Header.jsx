@@ -468,13 +468,11 @@ const Header = ({ storeinit, logos }) => {
 
                           <li
                             onClick={() => { navigate('/cartPage') }}
-                            className="nav_li_smining_Icone"
+                            className="nav_li_smining_Icone color_jeweliita"
                           >
                             <ShoppingCartOutlinedIcon
                               sx={{
                                 height: '30px', width: '30px',
-                                color: 'black'
-
                               }}
                             />
                           </li>
@@ -623,7 +621,7 @@ const Header = ({ storeinit, logos }) => {
               </a>
             </div>
             <div className='smiling_Top_header_div3'>
-              {isMounted && <ul className="nav_ul_shop">
+              {isMounted && <ul className="nav_ul_shop ">
                 {/* <li
                 className="nav_li_smining nav_li_smining_Mobile"
                 style={{ cursor: "pointer" }}
@@ -634,7 +632,7 @@ const Header = ({ storeinit, logos }) => {
                 {
                   !!islogin == true &&
                   <li
-                    className="nav_li_smining nav_li_smining_Mobile"
+                    className="nav_li_smining nav_li_smining_Mobile color_jeweliita "
                     style={{ cursor: "pointer" }}
                     onClick={() => navigation("/account")}
                   >
@@ -644,7 +642,7 @@ const Header = ({ storeinit, logos }) => {
                 }
                 {!!islogin ? (
                   <li
-                    className="nav_li_smining nav_li_smining_Mobile"
+                    className="nav_li_smining nav_li_smining_Mobile color_jeweliita"
                     style={{ cursor: "pointer" }}
                     onClick={OpenLogoutMode}
                   >
@@ -653,7 +651,7 @@ const Header = ({ storeinit, logos }) => {
 
                 ) : (
                   <li
-                    className="nav_li_smining"
+                    className="nav_li_smining color_jeweliita"
                     style={{ cursor: "pointer" }}
                     onClick={() => navigation("/LoginOption")}
                   >
@@ -704,12 +702,11 @@ const Header = ({ storeinit, logos }) => {
                         <Tooltip title="Cart">
                           <li
                             onClick={() => navigation("/cartPage")}
-                            className="nav_li_smining_Icone"
+                            className="nav_li_smining_Icone color_jeweliita"
                           >
                             <ShoppingCartOutlinedIcon
                               sx={{
                                 height: '30px', width: '30px',
-                                color: 'black'
                               }}
                             />
                           </li>
@@ -758,12 +755,11 @@ const Header = ({ storeinit, logos }) => {
                         <Tooltip title="Cart">
                           <li
                             onClick={() => { navigate('/cartPage') }}
-                            className="nav_li_smining_Icone"
+                            className="nav_li_smining_Icone color_jeweliita"
                           >
                             <ShoppingCartOutlinedIcon
                               sx={{
                                 height: '30px', width: '30px',
-                                color: 'black'
                               }}
                             />
                           </li>
@@ -805,7 +801,7 @@ const Header = ({ storeinit, logos }) => {
                   {
                     !!islogin &&
                     <li
-                      className="nav_li_smining_Fixed nav_li_smining_Mobile"
+                      className="nav_li_smining_Fixed nav_li_smining_Mobile color_jeweliita"
                       style={{ cursor: "pointer" }}
                       // onClick={() => navigation("/LoginOption")}
                       onClick={() => navigation("/account")}
@@ -819,7 +815,7 @@ const Header = ({ storeinit, logos }) => {
                   {!!islogin ? (
 
                     <li
-                      className="nav_li_smining_Fixed nav_li_smining_Mobile"
+                      className="nav_li_smining_Fixed nav_li_smining_Mobile color_jeweliita"
                       style={{ cursor: "pointer" }}
                       onClick={OpenLogoutMode}
                     >
@@ -827,7 +823,7 @@ const Header = ({ storeinit, logos }) => {
                     </li>
                   ) : (
                     <li
-                      className="nav_li_smining_Fixed"
+                      className="nav_li_smining_Fixed color_jeweliita"
                       style={{ cursor: "pointer" }}
                       onClick={() => navigation("/LoginOption")}
                     >
@@ -876,7 +872,7 @@ const Header = ({ storeinit, logos }) => {
                           <Tooltip title="Cart">
                             <li
                               onClick={() => navigation("/cartPage")}
-                              className="nav_li_smining_Fixed_Icone"
+                              className="nav_li_smining_Fixed_Icone color_jeweliita"
                             >
                               <ShoppingCartOutlinedIcon
                                 sx={{ height: '30px', width: '30px' }}
@@ -926,9 +922,10 @@ const Header = ({ storeinit, logos }) => {
                           <Tooltip title="Cart">
                             <li
                               onClick={() => { navigate('/cartPage') }}
-                              className="nav_li_smining_Fixed_Icone"
+                              className="nav_li_smining_Fixed_Icone color_jeweliita"
                             >
                               <ShoppingCartOutlinedIcon
+
                                 sx={{ height: '30px', width: '30px' }}
                               />
                             </li>

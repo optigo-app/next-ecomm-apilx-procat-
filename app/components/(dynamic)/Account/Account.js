@@ -122,7 +122,7 @@ export default function Account({ Storeinit }) {
           <div>
             <div className="Smiling-AccountMain">
               <div className="sticky-header_web_sm">
-                <p className="SmilingAccountTitle youraccountpagesecSMR ">Your Account</p>
+                <p className="SmilingAccountTitle youraccountpagesecSMR color_jeweliita">Your Account</p>
                 <div className="smlingAccountTabWebView_SMR yourAccount_SMR d_none_acc_smr">
                   <Box sx={{ display: "flex", justifyContent: "center", borderBottom: 1, borderColor: "divider" }}>
                     <Tabs value={value} onChange={handleChange} onClick={handleScrollTop} aria-label="basic tabs example">

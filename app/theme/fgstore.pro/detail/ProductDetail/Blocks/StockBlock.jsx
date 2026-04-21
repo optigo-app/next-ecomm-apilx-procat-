@@ -207,7 +207,7 @@ const StockBlock = ({ stockItemArr = [], storeInit, loginInfo, imageStates, imag
                           checked={(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? true : false}
                         />
                       }
-                      label={(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? <span className="">Remove From Cart</span> : <span className="">Add To Cart</span>}
+                      label={(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? <span className="color_jeweliita__footer">Remove From Cart</span> : <span className="">Add To Cart</span>}
                       // For pink one
                       // className={`${ele?.IsInCart === 1 ? 'btnColorProCatProductRemoveCart' : 'btnColorProCatProduct'} procat_cart_btn`}
                       style={{

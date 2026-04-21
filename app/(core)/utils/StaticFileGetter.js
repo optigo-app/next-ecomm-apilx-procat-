@@ -14,13 +14,13 @@ export const domainHtmlMap = {
   "company.procatalog.in": "sonasons",
   "test.procatalog.in": "sonasons",
   "localhost:5006": 'sonasons',
-  "localhost:8012": 'sonasons',
   "localhost:8006": 'sonasons',
   "localhost:3000": 'sonasons',
   "localhost:4000": 'sonasons',
-  'procatalog.web': 'sonasons',
+  'procatalog.web': 'jeweliita',
   'beta.procatalog.web': 'sonasons',
-  'jeweliita.procatalog.in': 'sonasons'
+  'jeweliita.procatalog.in': 'jeweliita',
+  "localhost:8012": 'jeweliita',
 };
 
 const pageFileMap = {

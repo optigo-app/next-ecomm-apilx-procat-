@@ -21,6 +21,14 @@
       "domains": ["thereflections.procatalog.in"]
     },
     {
+      "id": "jeweliita",
+      "folder": "jeweliita",
+      "keys": {
+        "JEWELIITA": "jeweliita.procatalog.in"
+      },
+      "domains": ["jeweliita.procatalog.in"]
+    },
+    {
       "id": "almacarino",
       "folder": "almacarino",
       "keys": {
