@@ -60,7 +60,7 @@ const CountryDropDown = ({
       }
     }
     FetchCodeList()
-  }, [setCountrycodestate, setCountryShortName]);
+  }, []); // Empty array prevents infinite loops from parent inline functions
 
   useEffect(() => {
     const handleClickOutside = (event) => {

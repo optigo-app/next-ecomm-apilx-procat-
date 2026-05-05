@@ -559,9 +559,16 @@ const Header = ({ storeinit, logos }) => {
               </div>
 
               {isMounted && !!islogin == true &&
-                <div>
-                  <p className='smr_menuStaicMobilePageLink' onClick={() => { setDrawerShowOverlay(false); navigation('/account') }}>Account</p>
-                </div>
+                <>
+                  {storeinit?.IsCustomOrder == 1 &&
+                    <div>
+                      <p className='smr_menuStaicMobilePageLink' onClick={() => { setDrawerShowOverlay(false); navigation('/custom-orders') }}>Custom Order</p>
+                    </div>
+                  }
+                  <div>
+                    <p className='smr_menuStaicMobilePageLink' onClick={() => { setDrawerShowOverlay(false); navigation('/account') }}>Account</p>
+                  </div>
+                </>
               }
               <div>
                 <p className='smr_menuStaicMobilePageLink' onClick={() => { setDrawerShowOverlay(false); OpenLogoutMode(); }}>Log Out</p>
@@ -631,14 +638,24 @@ const Header = ({ storeinit, logos }) => {
               </li> */}
                 {
                   !!islogin == true &&
-                  <li
-                    className="nav_li_smining nav_li_smining_Mobile color_jeweliita "
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigation("/account")}
-                  >
-                    ACCOUNT
-                  </li>
-
+                  <>
+                    {storeinit?.IsCustomOrder == 1 &&
+                      <li
+                        className="nav_li_smining nav_li_smining_Mobile color_jeweliita "
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigation("/custom-orders")}
+                      >
+                        CUSTOM ORDER
+                      </li>
+                    }
+                    <li
+                      className="nav_li_smining nav_li_smining_Mobile color_jeweliita "
+                      style={{ cursor: "pointer" }}
+                      onClick={() => navigation("/account")}
+                    >
+                      ACCOUNT
+                    </li>
+                  </>
                 }
                 {!!islogin ? (
                   <li
@@ -800,14 +817,25 @@ const Header = ({ storeinit, logos }) => {
 
                   {
                     !!islogin &&
-                    <li
-                      className="nav_li_smining_Fixed nav_li_smining_Mobile color_jeweliita"
-                      style={{ cursor: "pointer" }}
-                      // onClick={() => navigation("/LoginOption")}
-                      onClick={() => navigation("/account")}
-                    >
-                      ACCOUNT
-                    </li>
+                    <>
+                      {storeinit?.IsCustomOrder == 1 &&
+                        <li
+                          className="nav_li_smining_Fixed nav_li_smining_Mobile color_jeweliita"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => navigation("/custom-orders")}
+                        >
+                          CUSTOM ORDER
+                        </li>
+                      }
+                      <li
+                        className="nav_li_smining_Fixed nav_li_smining_Mobile color_jeweliita"
+                        style={{ cursor: "pointer" }}
+                        // onClick={() => navigation("/LoginOption")}
+                        onClick={() => navigation("/account")}
+                      >
+                        ACCOUNT
+                      </li>
+                    </>
                   }
 
 

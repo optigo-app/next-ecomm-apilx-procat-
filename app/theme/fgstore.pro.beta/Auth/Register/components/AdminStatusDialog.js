@@ -1,25 +1,21 @@
 import React from "react";
 import { Dialog, Slide, Box, Typography, Button } from "@mui/material";
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
-import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
+import { eventUIMap } from "@/app/(core)/constants/EventMessage";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
 export default function AdminStatusDialog({ open, type, message, onClose }) {
-  const isApproved = type?.toLowerCase() === "approved";
-  const isPending = type?.toLowerCase() === "pending";
-  const isRejected = type?.toLowerCase() === "rejected";
-
-  const getStatusColor = () => {
-    if (isApproved) return "success";
-    if (isPending) return "warning";
-    return "error";
+  const eventConfig = eventUIMap[type] || {
+    type: "Error",
+    title: "Something went wrong",
+    color: "error",
+    icon: PriorityHighRoundedIcon
   };
 
-  const statusColor = getStatusColor();
+  const statusColor = eventConfig.color || "error";
 
   return (
     <Dialog
@@ -51,24 +47,16 @@ export default function AdminStatusDialog({ open, type, message, onClose }) {
             bgcolor: `${statusColor}.light`,
           }}
         >
-          {isApproved && <CheckRoundedIcon sx={{ fontSize: 45, color: "white" }} />}
-          {isPending && <AccessTimeRoundedIcon sx={{ fontSize: 45, color: "white" }} />}
-          {isRejected && <PriorityHighRoundedIcon sx={{ fontSize: 45, color: "white" }} />}
+          {eventConfig?.icon && <eventConfig.icon sx={{ fontSize: 45, color: "white" }} />}
         </Box>
       </Box>
 
       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "text.primary", fontSize: "1.25rem" }}>
-        {isApproved && "Approved by Admin"}
-        {isPending && "Approval Pending"}
-        {isRejected && "Rejected by Admin"}
+        {eventConfig?.type}
       </Typography>
 
       <Typography variant="body2" sx={{ color: "text.secondary", mb: 3, fontSize: "0.9rem", lineHeight: 1.5 }}>
-        {message || (
-          isApproved ? "Your account has been successfully approved by the admin. You can now login to your account." :
-          isPending ? "Your account request is still under review by the admin. Please wait for the confirmation." :
-          "Your account request has been rejected. Please contact support for more details."
-        )}
+        {message}
       </Typography>
 
       <Button

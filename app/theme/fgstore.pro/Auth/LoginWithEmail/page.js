@@ -13,8 +13,6 @@ import { GetCountAPI } from '@/app/(core)/utils/API/GetCount/GetCountAPI';
 import { generateToken } from '@/app/(core)/utils/Glob_Functions/Tokenizer';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
-
-
 import {
   Box,
   Container,

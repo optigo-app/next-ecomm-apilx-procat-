@@ -12,7 +12,8 @@ import { fetchPayMaster } from "@/app/(core)/utils/API/OrderFlow/Paymaster";
 import Cookies from "js-cookie";
 
 import { NEXT_APP_WEB } from "@/app/(core)/utils/env";
-import { getSession } from "../utils/FetchSessionData";
+import { getSession } from "@/app/(core)/utils/FetchSessionData";
+import { RegisterMasterApi } from "@/app/(core)/utils/API/Auth/RegisterMasterApi";
 
 // Detect theme based on REACT_APP_WEB value
 const detectThemeNumber = () => {
@@ -179,7 +180,9 @@ export const MasterProvider = ({ children, getCompanyInfoData, getStoreInit, get
         console.log("██████ COMBO FINAL ID ██████", finalID);
 
         // Call all APIs in parallel
-        Promise.all([callApiAndStore(MetalTypeComboAPI, "metalTypeCombo", finalID), callApiAndStore(DiamondQualityColorComboAPI, "diamondQualityColorCombo", finalID), callApiAndStore(MetalColorCombo, "MetalColorCombo", finalID), callApiAndStore(ColorStoneQualityColorComboAPI, "ColorStoneQualityColorCombo", finalID), callApiAndStore(CurrencyComboAPI, "CurrencyCombo", finalID), callApiAndStore(CountryCodeListApi, "CountryCodeListApi", finalID)])
+        Promise.all([callApiAndStore(MetalTypeComboAPI, "metalTypeCombo", finalID), callApiAndStore(DiamondQualityColorComboAPI, "diamondQualityColorCombo", finalID), callApiAndStore(MetalColorCombo, "MetalColorCombo", finalID), callApiAndStore(ColorStoneQualityColorComboAPI, "ColorStoneQualityColorCombo", finalID), callApiAndStore(CurrencyComboAPI, "CurrencyCombo", finalID), callApiAndStore(CountryCodeListApi, "CountryCodeListApi", finalID),
+        callApiAndStore(RegisterMasterApi, "B2BRegisterMasterApi", finalID)
+        ])
             .then(() => {
                 console.log("██████ ALL COMBO APIs COMPLETED ██████ Setting comboReady = true");
                 setComboReady(true);

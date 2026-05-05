@@ -716,6 +716,20 @@ const Header = ({ storeinit, logos }) => {
                   About us
                 </Link>
               </div>
+              {islogin && storeinit?.IsCustomOrder == 1 && (
+                <div>
+                  <Link
+                    href="/custom-orders"
+                    className="smr_menuStaicMobilePageLink"
+                    onClick={() => {
+                      setDrawerShowOverlay(false);
+                      navigate("/custom-orders");
+                    }}
+                  >
+                    Custom Order
+                  </Link>
+                </div>
+              )}
               {islogin && (
                 <div>
                   <Link
@@ -851,6 +865,13 @@ const Header = ({ storeinit, logos }) => {
             </div>
             <div className="smiling_Top_header_div3">
               <ul className="nav_ul_shop">
+                {isMounted && islogin && storeinit?.IsCustomOrder == 1 && (
+                  <li>
+                    <Link href="/custom-orders" className="nav_li_smining nav_li_smining_Mobile" style={{ cursor: "pointer" }} >
+                      CUSTOM ORDER
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link href="/aboutUs" className="nav_li_smining nav_li_smining_Mobile" style={{ cursor: "pointer" }} >
                     ABOUT US
@@ -1042,6 +1063,13 @@ const Header = ({ storeinit, logos }) => {
               </div>
               <div className="smiling_Top_header_div3">
                 <ul className="nav_ul_shop">
+                  {isMounted && islogin && storeinit?.IsCustomOrder == 1 && (
+                    <li className="nav_li_smining_Fixed nav_li_smining_Mobile" style={{ cursor: "pointer" }}>
+                      <Link href="/custom-orders" className="smr_A_linkFixed">
+                        CUSTOM ORDER
+                      </Link>
+                    </li>
+                  )}
                   <li className="nav_li_smining_Fixed nav_li_smining_Mobile" style={{ cursor: "pointer" }}>
                     <Link href="/aboutUs" className="smr_A_linkFixed">
                       ABOUT US

@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { getEventMessage } from '@/app/(core)/constants/EventMessage';
 
 
 export default function LoginWithEmailCode({ params, searchParams }) {
@@ -89,17 +90,19 @@ export default function LoginWithEmailCode({ params, searchParams }) {
             return;
         }
 
-        if (!currentActiveFlow) {
-            setAdminStatusDialog({
-                open: true,
-                type: "pending",
-                message: "Your account request is still under review by the admin. Please wait for the confirmation."
-            });
-            return;
-        }
 
         setIsLoading(true);
         LoginWithEmailAPI(email, '', otp, 'otp_email_login', '', visiterId).then((response) => {
+            const result = getEventMessage(response);
+            if (result?.eventName && result?.status) {
+                setIsLoading(false);
+                setAdminStatusDialog({
+                    open: true,
+                    type: result?.eventName,
+                    message: result?.message
+                });
+                return;
+            }
             setIsLoading(false);
             if (response?.Data?.rd[0]?.stat === 1) {
                 setIsLoginState(true);
@@ -120,7 +123,7 @@ export default function LoginWithEmailCode({ params, searchParams }) {
                     window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
                 }
             } else {
-                setErrors({ otp: 'The code you entered is invalid.' });
+                setErrors({ otp: response?.Data?.rd[0]?.stat_msg });
             }
         }).catch((err) => {
             setIsLoading(false);
