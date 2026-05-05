@@ -25,6 +25,7 @@ import {
 import SmartphoneOutlinedIcon from "@mui/icons-material/SmartphoneOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { getEventMessage } from '@/app/(core)/constants/EventMessage';
 
 
 export default function LoginWithMobileCode({ params, searchParams }) {
@@ -84,16 +85,18 @@ export default function LoginWithMobileCode({ params, searchParams }) {
       setErrors(prevErrors => ({ ...prevErrors, otp: 'Please complete the code.' }));
       return;
     }
-    if (!currentActiveFlow) {
-      setAdminStatusDialog({
-        open: true,
-        type: "pending",
-        message: "Your account request is still under review by the admin. Please wait for the confirmation."
-      });
-      return;
-    }
+
 
     LoginWithEmailAPI('', mobileNo, enterOTP, 'otp_mobile_login', '', visiterId).then((response) => {
+      const result = getEventMessage(response);
+      if (result?.eventName && result?.status) {
+        setAdminStatusDialog({
+          open: true,
+          type: result?.eventName,
+          message: result?.message
+        });
+        return;
+      }
       if (response.Data.rd[0].stat === 1) {
         Cookies.set('LoginUser', true)
         sessionStorage.setItem('LoginUser', true)

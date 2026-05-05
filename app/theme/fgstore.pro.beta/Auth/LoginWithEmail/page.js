@@ -40,6 +40,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AdminStatusDialog from '../Register/components/AdminStatusDialog';
+import { getEventMessage } from '@/app/(core)/constants/EventMessage';
 
 
 export default function LoginWithEmail({ params, searchParams, storeInit }) {
@@ -100,14 +101,7 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
   }
 
   const handleSubmit = async () => {
-    if (!currentActiveFlow) {
-      setAdminStatusDialog({
-        open: true,
-        type: "pending",
-        message: "Your account request is still under review by the admin. Please wait for the confirmation."
-      });
-      return;
-    }
+
 
     const visiterId = Cookies.get('visiterId');
     if (!confirmPassword.trim()) {
@@ -120,10 +114,18 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
     setIsLoading(true);
     LoginWithEmailAPI(email, '', hashedPassword, '', '', visiterId).then((response) => {
       setIsLoading(false);
+      const result = getEventMessage(response);
+      if (result?.eventName && result?.status) {
+        setAdminStatusDialog({
+          open: true,
+          type: result?.eventName,
+          message: result?.message
+        });
+        return;
+      }
       if (response.Data.rd[0].stat === 1) {
         const visiterID = Cookies.get('visiterId');
         Cookies.set('userLoginCookie', response?.Data?.rd[0]?.Token);
-        // rememberMe 
         if (isOtpNewUi) {
           if (rememberMe) {
             const Token = generateToken(response?.Data?.rd[0]?.Token, 1);
@@ -173,8 +175,6 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
         }).catch((err) => console.log(err))
 
         if (redirectEmailUrl) {
-          console.log("🚀 ~ handleSubmit ~ redirectEmailUrl:", redirectEmailUrl)
-
           let finalRedirectUrl = redirectEmailUrl;
           if (securityKey) {
             const separator = finalRedirectUrl.includes('?') ? '&' : '?';
@@ -183,7 +183,6 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
 
           window.location.href = finalRedirectUrl;
         } else {
-          console.log("🚀 ~ handleSubmit ~ else:")
           window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
         }
 
@@ -225,7 +224,6 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
   }
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <>

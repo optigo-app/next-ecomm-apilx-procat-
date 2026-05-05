@@ -51,7 +51,7 @@ export default async function RootLayout({ children }) {
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
 
-
+  console.log(ACTIVE_THEME, "ACTIVE_THEME")
 
   // Dynamically load theme-specific components
   const [{ default: LayoutComponent }, { default: StyleInjector }] = await Promise.all([

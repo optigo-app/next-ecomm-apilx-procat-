@@ -1,0 +1,192 @@
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
+import AccessTimeRoundedIcon from '@mui/icons-material/AccessTimeRounded';
+
+
+const eventMessages = [
+    {
+        eventName: "Approval",
+        status: "not_working",
+        message: "Successfully Login.",
+        icon: CheckRoundedIcon,
+    },
+    {
+        eventName: "Reject",
+        status: "not_working",
+        message: "Your account request wasn’t approved. Please contact admin.",
+        icon: PriorityHighRoundedIcon,
+    },
+    {
+        eventName: "RoamingOff",
+        status: "working",
+        message: "Roaming is currently turned off. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "EcatSuspended",
+        status: "working",
+        message: "Your account is temporarily suspended. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "LoginOff",
+        status: "working",
+        message: "You don’t have access to log in. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "Active",
+        status: "working",
+        message: "No message shown on the front end. Login is successful.",
+        icon: CheckRoundedIcon,
+    },
+    {
+        eventName: "Deactive",
+        status: "working",
+        message: "Your account is inactive. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "ExpiryReminder",
+        status: "working",
+        message: "No front-end message. Notification is sent via WhatsApp and email.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "ExpireAccount",
+        status: "working",
+        message: "Your account has expired. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    },
+    {
+        eventName: "IncorrectPassword",
+        status: "working",
+        message: "Incorrect password. Please try again.",
+        icon: PriorityHighRoundedIcon,
+    },
+    {
+        eventName: "InvalidUser",
+        status: "working",
+        message: "User not found. Please check your details.",
+        icon: PriorityHighRoundedIcon,
+    },
+    {
+        eventName: "TimeOff",
+        status: "Account Expired",
+        message: "Your account has expired. Please contact the admin.",
+        icon: AccessTimeRoundedIcon,
+    }
+];
+
+export const eventUIMap = {
+    Approved: {
+        type: "Approved",
+        title: "Approved by Admin",
+        icon: CheckRoundedIcon,
+        color: "success"
+    },
+    Approval: {
+        type: "Approval",
+        title: "Approved by Admin",
+        icon: CheckRoundedIcon,
+        color: "success"
+    },
+    Pending: {
+        type: "Pending",
+        title: "Approval Pending",
+        icon: AccessTimeRoundedIcon,
+        color: "warning"
+    },
+    Reject: {
+        type: "Reject",
+        title: "Request Not Approved",
+        icon: PriorityHighRoundedIcon,
+        color: "error"
+    },
+    IncorrectPassword: {
+        type: "Incorrect Password",
+        title: "Login Failed",
+        icon: PriorityHighRoundedIcon,
+        color: "error"
+    },
+    InvalidUser: {
+        type: "Invalid User",
+        title: "User Not Found",
+        icon: PriorityHighRoundedIcon,
+        color: "error"
+    },
+    Deactive: {
+        type: "Deactive",
+        title: "Account Inactive",
+        icon: AccessTimeRoundedIcon,
+        color: "error"
+    },
+    ExpireAccount: {
+        type: "Expire Account",
+        title: "Account Expired",
+        icon: AccessTimeRoundedIcon,
+        color: "error"
+    },
+    RoamingOff: {
+        type: "Roaming Off",
+        title: "Access Restricted",
+        icon: AccessTimeRoundedIcon,
+        color: "error"
+    },
+    EcatSuspended: {
+        type: "Ecat Suspended",
+        title: "Account Suspended",
+        icon: AccessTimeRoundedIcon,
+        color: "error"
+    },
+    Active: {
+        type: "Active",
+        title: "Login Successful",
+        icon: CheckRoundedIcon,
+        color: "success"
+    },
+    TimeOff: {
+        type: "TimeOff",
+        title: "Account Expired",
+        icon: AccessTimeRoundedIcon,
+        color: "warning"
+    }
+};
+
+export function getEventMessage(apiResponse) {
+    try {
+        const eventName = apiResponse?.Data?.rd?.[0]?.EventName;
+
+        if (!eventName) {
+            return {
+                eventName: null,
+                message: "No event found in response."
+            };
+        }
+
+        const event = eventMessages.find(
+            (e) => e.eventName === eventName
+        );
+
+        if (!event) {
+            return {
+                eventName,
+                message: "No matching event configuration found.",
+                status: false
+            };
+        }
+
+        return {
+            eventName,
+            message: event.message,
+            status: event.status
+        };
+
+    } catch (error) {
+        return {
+            eventName: null,
+            message: "Something went wrong while processing the response.",
+            status: false
+        };
+    }
+}

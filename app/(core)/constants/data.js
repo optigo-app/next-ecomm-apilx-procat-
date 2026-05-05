@@ -24,4 +24,4 @@ export const getThemeByDomain = (host) => {
 export const ACTIVE_THEME = THEME_VERSIONS.PRO;
 
 export const currentActiveFlow = IS_B2C;
-export const ActiveMode = ACTIVE_THEME === THEME_VERSIONS.BETA;
+export const ActiveMode = ACTIVE_THEME === THEME_VERSIONS.PRO;

@@ -118,7 +118,8 @@ const redirectEmailUrl =
         "/delivery",
         "/payment",
         "/confirmation",
-        "/accountdwsr"
+        "/accountdwsr" ,
+        "/custom-orders"
     ];
 
     if (islogin === false) {
