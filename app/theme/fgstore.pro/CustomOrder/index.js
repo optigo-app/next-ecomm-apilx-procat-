@@ -10,9 +10,10 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { generateCustomerConfirmationEmail, generateOrderEmail } from "./OrderTemplate";
 import { sendEmail } from '@/app/(core)/utils/API/SendEmail';
+import { useStore } from "@/app/(core)/contexts/StoreProvider";
 
 // --- CONSTANTS & CONFIGURATION ---
-const CONTACT_NUMBERS = []; // Will be populated from storeInit or left empty if not provided
+const CONTACT_NUMBERS = []; // Will be populated from storeinit or left empty if not provided
 
 const COLORS = {
   bg: "#f0f2f5",
@@ -47,6 +48,8 @@ const INITIAL_STATE = {
   otherRhodium: "",
   otherStamping: "",
   company: "Om Jiyansh Jewels",
+  companyLogo: "",
+  companyname: ""
 };
 
 const INITIAL_DIAMONDS = {
@@ -58,17 +61,10 @@ const INITIAL_DIAMONDS = {
 
 const OrderForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { loginuser, storeInit } = useMemo(() => {
-    try {
-      const loginuser = JSON.parse(sessionStorage.getItem("loginUserDetail")) || {};
-      const storeInit = JSON.parse(sessionStorage.getItem("storeInit")) || {};
-      return { loginuser, storeInit };
-    } catch {
-      return { loginuser: null, storeInit: null };
-    }
-  }, []);
+  const { loginUserDetail, storeinit } = useStore();
 
-  let companyLogo = storeInit?.logo || '';
+
+  let companyLogo = storeinit?.logo || '';
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [diamondOptions, setDiamondOptions] = useState(INITIAL_DIAMONDS);
   const [file, setFile] = useState(null); // Stores file name
@@ -86,22 +82,22 @@ const OrderForm = () => {
     }
     setFormData((prev) => ({
       ...prev,
-      name: `${loginuser?.firstname || ""} ${loginuser?.lastname || ""}`,
-      email: loginuser?.FirstVerifyEmail || "",
-      mobile: loginuser?.mobileno || "",
+      name: `${loginUserDetail?.firstname || ""} ${loginUserDetail?.lastname || ""}`,
+      email: loginUserDetail?.FirstVerifyEmail || "",
+      mobile: loginUserDetail?.mobileno || "",
     }));
   };
 
   useEffect(() => {
-    if (loginuser) {
+    if (loginUserDetail) {
       setFormData((prev) => ({
         ...prev,
-        name: `${loginuser?.firstname || ""} ${loginuser?.lastname || ""}`,
-        email: loginuser?.FirstVerifyEmail || "",
-        mobile: loginuser?.mobileno || "",
+        name: `${loginUserDetail?.firstname || ""} ${loginUserDetail?.lastname || ""}`,
+        email: loginUserDetail?.FirstVerifyEmail || "",
+        mobile: loginUserDetail?.mobileno || "",
       }));
     }
-  }, [loginuser]);
+  }, [loginUserDetail]);
 
   // Ref for file input to programmatically clear it
   const fileInputRef = useRef(null);
@@ -178,18 +174,21 @@ const OrderForm = () => {
     if (!validateForm()) return;
     try {
       setIsSubmitting(true);
-      const OrderMail = generateOrderEmail(formData, diamondOptions);
-      const CustomerConfirmationEmail = generateCustomerConfirmationEmail(formData, diamondOptions);
+      const finalFormData = { ...formData, companyLogo: storeinit?.companylogo || storeinit?.companyMlogo, companyname: storeinit?.companyname, };
+      const OrderMail = generateOrderEmail(finalFormData, diamondOptions);
+      const CustomerConfirmationEmail = generateCustomerConfirmationEmail(finalFormData, diamondOptions);
       // const data = 
       await sendEmail({
+        storeinit: storeinit,
         subject: `New Customize Order Request received - ${formData?.name}`,
-        cust_subject: `Customize Order Request Has Been placed - ${storeInit?.CompanyTitle || 'Om Jiyansh Jewels'}`,
+        cust_subject: `Customize Order Request Has Been placed - ${storeinit?.CompanyTitle || '-'}`,
         attachments: file ? [file] : [],
         replyto: formData.email,
-        Mails: storeInit?.Website_Email,
+        Mails: storeinit?.Website_Email,
         CustomerMail: formData?.email,
         htmlTemplate: OrderMail,
         cust_htmlTemplate: CustomerConfirmationEmail,
+        companyname: storeinit?.companyname,
       });
       // if (data?.success == false || data?.message != "Emails sent successfully") {
       //   setSnackbar({
@@ -227,26 +226,26 @@ const OrderForm = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ backgroundColor: "#fff", minHeight: "100vh", pt: { xs: 4, md: 8 }, pb: 10 }}>
+      <Box sx={{ backgroundColor: COLORS.bg, minHeight: "100vh", pt: { xs: 4, md: 8 }, pb: 10 }}>
         <Container maxWidth="lg">
-          <Box
-            className="btnColorProCat"
-            sx={{
-              p: { xs: 3, sm: 4 },
-              textAlign: "center",
-              color: '#fff',
-            }}>
+          <Box sx={{
+            backgroundColor: COLORS.black,
+            p: { xs: 3, sm: 4 },
+            textAlign: "center",
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            color: '#fff'
+          }}>
             <Typography variant="h4" sx={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, mb: 1 }}>
               Custom Order Form
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1, maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}>
+            <Typography variant="body1" sx={{ color: '#ccc', mt: 1, maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}>
               Place your unique Jewelry request here. Our artisans will bring your vision to life.
               If this order was placed by mistake, please contact us immediately.
             </Typography>
             <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1.5} sx={{ mt: 3 }}>
-              {storeInit?.CompanyContactNo && (
+              {storeinit?.CompanyContactNo && (
                 <Chip
-                  label={storeInit?.CompanyContactNo}
+                  label={storeinit?.CompanyContactNo}
                   variant="outlined"
                   sx={{
                     borderColor: 'rgba(197, 160, 89, 0.5)',
@@ -255,9 +254,9 @@ const OrderForm = () => {
                   }}
                 />
               )}
-              {storeInit?.CompanyEmail && (
+              {storeinit?.CompanyEmail && (
                 <Chip
-                  label={storeInit?.CompanyEmail}
+                  label={storeinit?.CompanyEmail}
                   variant="outlined"
                   sx={{
                     borderColor: 'rgba(197, 160, 89, 0.5)',
@@ -443,7 +442,6 @@ const OrderForm = () => {
                   <Button
                     variant="contained"
                     fullWidth
-                    className="btnColorProCat"
                     size="large"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
@@ -454,6 +452,7 @@ const OrderForm = () => {
                       fontWeight: 700,
                       fontSize: "1rem",
                       letterSpacing: 2,
+                      borderRadius: 2,
                       boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
                       '&:hover': { backgroundColor: '#333', boxShadow: '0 10px 25px rgba(0,0,0,0.3)' },
                       '&:disabled': { backgroundColor: '#ccc' }

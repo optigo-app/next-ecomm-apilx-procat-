@@ -48,6 +48,8 @@ const INITIAL_STATE = {
   otherRhodium: "",
   otherStamping: "",
   company: "Om Jiyansh Jewels",
+  companyLogo: "",
+  companyname: ""
 };
 
 const INITIAL_DIAMONDS = {
@@ -172,18 +174,21 @@ const OrderForm = () => {
     if (!validateForm()) return;
     try {
       setIsSubmitting(true);
-      const OrderMail = generateOrderEmail(formData, diamondOptions);
-      const CustomerConfirmationEmail = generateCustomerConfirmationEmail(formData, diamondOptions);
+      const finalFormData = { ...formData, companyLogo: storeinit?.companylogo || storeinit?.companyMlogo, companyname: storeinit?.companyname, };
+      const OrderMail = generateOrderEmail(finalFormData, diamondOptions);
+      const CustomerConfirmationEmail = generateCustomerConfirmationEmail(finalFormData, diamondOptions);
       // const data = 
       await sendEmail({
+        storeinit: storeinit,
         subject: `New Customize Order Request received - ${formData?.name}`,
-        cust_subject: `Customize Order Request Has Been placed - ${storeinit?.CompanyTitle || 'Om Jiyansh Jewels'}`,
+        cust_subject: `Customize Order Request Has Been placed - ${storeinit?.CompanyTitle || '-'}`,
         attachments: file ? [file] : [],
         replyto: formData.email,
         Mails: storeinit?.Website_Email,
         CustomerMail: formData?.email,
         htmlTemplate: OrderMail,
         cust_htmlTemplate: CustomerConfirmationEmail,
+        companyname: storeinit?.companyname,
       });
       // if (data?.success == false || data?.message != "Emails sent successfully") {
       //   setSnackbar({
