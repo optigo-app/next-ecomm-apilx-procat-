@@ -15,7 +15,8 @@ export function getValidUrl(website) {
 }
 
 
-export function generatePageMetadata(pageData) {
+export function generatePageMetadata(pageData, url) {
+    const MetaImage = url + '/meta_preview_image.png' || url + '/MetaShareImage.jpg'
     if (!pageData) return {};
     const baseMetadata = {
         title: `${pageData.title} | ${pageData.websiteName}`,
@@ -56,7 +57,7 @@ export function generatePageMetadata(pageData) {
             images:
                 [
                     {
-                        url: '/MetaShareImage.jpg',
+                        url: MetaImage,
                         width: 1200,
                         height: 630,
                         alt: `${pageData.title} - ${pageData.websiteName}`,
@@ -67,7 +68,7 @@ export function generatePageMetadata(pageData) {
             card: "summary_large_image",
             title: `${pageData.title} | ${pageData.websiteName}`,
             description: pageData.description || "",
-            images: '/MetaShareImage.jpg' ? ['/MetaShareImage.jpg'] : [],
+            images: MetaImage ? [MetaImage] : [],
             creator: NEXT_APP_WEB,
         },
         additionalScripts: [],

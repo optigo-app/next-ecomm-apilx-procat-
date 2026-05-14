@@ -22,14 +22,20 @@ const poppins = Poppins({
 
 const DEFAULT_JEWELRY_DESCRIPTION = "Discover timeless jewelry crafted with precision and elegance. Explore gold, diamond, and silver collections designed for everyday wear and special occasions, with trusted quality and exceptional craftsmanship.";
 const DEFAULT_JEWELRY_KEYWORDS = "jewelry online, gold jewelry, diamond jewelry, silver jewelry, fine jewelry, bridal jewelry, earrings, rings, necklaces, bracelets, luxury jewelry, handcrafted jewelry";
-
+const FrancisDiamondDefaultMeta = {
+  title: "Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue",
+  description: "	Explore premium diamond jewellery collections from Francis           			Diamonds, a trusted manufacturer of elegant and modern 				diamond jewellery designs.",
+  keywords: "Francis Diamonds, Diamond Jewellery Manufacturer, Wholesale Jewellery Catalogue, Diamond Jewellery Designs",
+  author: "Francis Diamonds",
+};
 export async function generateMetadata() {
   const storeInit = await getStoreInit();
+  const { hostname, protocol, fullUrl } = await getDomainInfo();
 
   return generatePageMetadata({
     title: storeInit?.ufcc,
-    description: DEFAULT_JEWELRY_DESCRIPTION,
-    keywords: DEFAULT_JEWELRY_KEYWORDS,
+    description: FrancisDiamondDefaultMeta.description || DEFAULT_JEWELRY_DESCRIPTION,
+    keywords: FrancisDiamondDefaultMeta.keywords || DEFAULT_JEWELRY_KEYWORDS,
     ogImage: storeInit?.ogImage,
     ufcc: storeInit?.ufcc,
     websiteName: storeInit?.BrowserTitle,
@@ -38,7 +44,7 @@ export async function generateMetadata() {
       shortcut: storeInit?.favicon,
       apple: storeInit?.favicon,
     },
-  });
+  }, fullUrl);
 }
 
 export default async function RootLayout({ children }) {

@@ -20,7 +20,8 @@ export const PROCATALOG_DOMAINS = {
   COMPANY: "company.procatalog.in",
   TEST: "test.procatalog.in",
   JEWELIITA: "jeweliita.procatalog.in",
+  FRANCISDIAMOND: "francisdiamonds.procatalog.in",
 };
 
 
-export const NEXT_APP_WEB = PROCATALOG_DOMAINS.JEWELIITA;
+export const NEXT_APP_WEB = PROCATALOG_DOMAINS.FRANCISDIAMOND;

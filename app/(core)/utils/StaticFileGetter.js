@@ -17,10 +17,11 @@ export const domainHtmlMap = {
   "localhost:8006": 'sonasons',
   "localhost:3000": 'sonasons',
   "localhost:4000": 'sonasons',
-  'procatalog.web': 'jeweliita',
+  'procatalog.web': 'francisdiamond',
   'beta.procatalog.web': 'sonasons',
   'jeweliita.procatalog.in': 'jeweliita',
-  "localhost:8012": 'sonasons',
+  "localhost:8012": 'francisdiamond',
+  "francisdiamonds.procatalog.in": 'francisdiamond'
 };
 
 const pageFileMap = {
@@ -30,6 +31,7 @@ const pageFileMap = {
   shipping: "ShippingPolicy.html",
   terms: "TermsPolicy.html",
   styleContent: "ColorTheme.txt",
+  contact: "contact.html",
 };
 
 export function getStaticHtmlPages(host) {

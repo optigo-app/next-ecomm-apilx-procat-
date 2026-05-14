@@ -6,11 +6,16 @@ import { getLogos } from "@/app/(core)/lib/ServerHelper";
 import FooterNew from "@/app/components/(static)/Footer/procat/Footer";
 import { Box } from "@mui/material";
 import BackToTop from "@/app/components/(static)/Footer/procat/BackToTop";
+import { getFooterLinks } from "@/app/(core)/utils/footerMenuConfig";
+import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
 
 const layout = async ({ children }) => {
   const storeData = await getStoreInit();
   const companyInfoData = await getCompanyInfoData();
+  const { hostname } = await getDomainInfo();
   const logos = getLogos();
+  const FooterList = await getFooterLinks(hostname);
+  console.log(FooterList, "FooterList")
 
   let parsedSocialLinks = [];
   try {
@@ -43,7 +48,7 @@ const layout = async ({ children }) => {
         className="theme-content"
       >
         {children}
-        <FooterNew socialMediaData={parsedSocialLinks} companyInfoData={companyInfoData} storeData={storeData} logos={logos} />
+        <FooterNew list={FooterList} socialMediaData={parsedSocialLinks} companyInfoData={companyInfoData} storeData={storeData} logos={logos} />
       </Box>
       <BackToTop />
     </Box>

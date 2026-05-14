@@ -2,35 +2,86 @@ import { NEXT_APP_WEB } from "./env";
 
 export async function getDomainInfo() {
     try {
-        // ✅ If running on server
+        // ✅ Server side
         if (typeof window === "undefined") {
             const { headers } = await import("next/headers");
             const headerList = await headers();
 
-            const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
-            console.log("🚀 ~ getDomainInfo ~ rawHost:", rawHost)
-            const rawProto = headerList.get("x-forwarded-proto") || "https";
-            console.log("🚀 ~ getDomainInfo ~ rawProto:", rawProto)
+            const rawHost =
+                headerList.get("x-forwarded-host") ||
+                headerList.get("host") ||
+                NEXT_APP_WEB;
+
+            const rawProto =
+                headerList.get("x-forwarded-proto") || "https";
+
+            const hostname = rawHost.replace(/^www\./, "");
+            const protocol = `${rawProto}:`;
 
             return {
-                hostname: rawHost || NEXT_APP_WEB,
-                protocol: `${rawProto}:`,
+                hostname,
+                protocol,
+                fullUrl: `${protocol}//${hostname}`,
             };
         }
-        const { hostname, protocol } = window.location;
+
+        // ✅ Client side
+        const { hostname, protocol, origin, href } = window.location;
+
         return {
             hostname: hostname.replace(/^www\./, ""),
             protocol,
+            fullUrl: origin, // https://example.com
+            currentUrl: href, // https://example.com/page?x=1
         };
     } catch (error) {
         console.error("😉 ~ getDomainInfo ~ error:", error);
+
+        const protocol =
+            process.env.NODE_ENV === "development"
+                ? "http:"
+                : "https:";
+
         return {
             hostname: NEXT_APP_WEB,
-            protocol:
-                process.env.NODE_ENV === "development" ? "http:" : "https:",
+            protocol,
+            fullUrl: `${protocol}//${NEXT_APP_WEB}`,
         };
     }
 }
+// import { NEXT_APP_WEB } from "./env";
+
+// export async function getDomainInfo() {
+//     try {
+//         // ✅ If running on server
+//         if (typeof window === "undefined") {
+//             const { headers } = await import("next/headers");
+//             const headerList = await headers();
+
+//             const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+//             console.log("🚀 ~ getDomainInfo ~ rawHost:", rawHost)
+//             const rawProto = headerList.get("x-forwarded-proto") || "https";
+//             console.log("🚀 ~ getDomainInfo ~ rawProto:", rawProto)
+
+//             return {
+//                 hostname: rawHost || NEXT_APP_WEB,
+//                 protocol: `${rawProto}:`,
+//             };
+//         }
+//         const { hostname, protocol } = window.location;
+//         return {
+//             hostname: hostname.replace(/^www\./, ""),
+//             protocol,
+//         };
+//     } catch (error) {
+//         console.error("😉 ~ getDomainInfo ~ error:", error);
+//         return {
+//             hostname: NEXT_APP_WEB,
+//             protocol:
+//                 process.env.NODE_ENV === "development" ? "http:" : "https:",
+//         };
+//     }
+// }
 
 // "use server";
 // import { headers } from "next/headers";

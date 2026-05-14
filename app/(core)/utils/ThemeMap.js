@@ -22,5 +22,8 @@ export const themeMap = {
   },
   "jeweliita.procatalog.in": {
     page: "fgstore.pro",
+  },
+  "francisdiamonds.procatalog.in": {
+    page: "fgstore.pro",
   }
 };
