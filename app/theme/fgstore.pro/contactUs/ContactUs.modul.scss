@@ -1,167 +1,145 @@
-@use '../../fgstore.web/style/variable.scss' as *;
+.main_warrpper_pro {
+  width: 100%;
+  background-color: white;
+  margin: 0 auto;
 
+  @media screen and (max-width: 1200px) {
+    width: 98%;
+  }
 
-.smr_contactMain_div {
-    background-color: $bgColor;
-    margin-bottom: 4rem;
+  .procatalog {
+    &-banner {
+      position: relative;
+      height: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      // background-color: rgb(229, 249, 255);
+      background-color: whitesmoke;
+      margin-bottom: 2rem;
+      opacity: 0.9;
 
-    .Fo-contactMain {
-        background-color: white;
-        margin-inline: 6%;
+      @media screen and (max-width: 768px) {
+        height: 200px;
+
+        h1 {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media screen and (max-width: 420px) {
+        height: 120px;
+      }
     }
 
-    .daimondsEveryAbout {
-        background-color: white;
-        margin-inline: 6%;
+    &-terms {
+      min-height: 100vh;
+      background-color: #ffffff;
     }
 
-    .smr_contactPage_BoxMain {
-        display: flex;
-        margin-inline: 10%;
+    &-main {
+      margin: 0 auto;
+      width: 72%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+
+      @media screen and (max-width: 1400px) {
+        width: 85%;
+      }
+
+      @media screen and (max-width: 1000px) {
+        width: 85%;
+      }
+
+      @media screen and (max-width: 768px) {
+        width: 95%;
+      }
     }
 
-    .smr_Fo_contactBox1 {
-        width: 50%;
-        border-right: 1px solid #e1e1e1;
-        display: flex;
-        justify-content: center;
+    &-title {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 2rem;
+      font-weight: 600;
     }
 
-    .Fo-contactBox1Title {
-        margin: 0px 0px 10px;
-        letter-spacing: 1px;
-        color: #7d7f85;
+    &-introduction {
+      color: #666;
+      line-height: 1.75;
+      margin-bottom: 2rem;
+      text-wrap: pretty;
+      text-align: justify;
+    }
+
+    &-section {
+      margin-bottom: 3rem;
+
+      &-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 1.5rem;
         font-weight: 500;
-        font-size: 12px;
+      }
+
+      &-content-p {
+        margin-bottom: 1.5rem;
+      }
     }
 
-    .Fo-contactBox1InputBox {
-        height: 50px !important;
-        width: 300px;
-        border: 1px solid #e1e1e1;
-        padding: 0px 5px;
+    &-subtitle {
+      font-size: 1.125rem;
+      color: #444;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      text-wrap: pretty;
+      text-align: justify;
     }
 
-    .smr_Fo_contactBox2_main {
-        width: 50%;
-        margin: 0px;
+    &-text {
+      color: #666;
+      line-height: 1.75;
+      margin-bottom: 1rem;
+      text-wrap: pretty;
+      text-align: justify;
     }
 
-    .Fo-contactBox2Title {
-        font-family: 'TTCommons-Regular,Helvetica,sans-serif';
-        font-size: 23px;
-        font-weight: 500;
-        color: #7d7f85;
-        margin: 0;
+    &-conclusion {
+      color: #666;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eaeaea;
+      text-wrap: pretty;
+      text-align: justify;
     }
+  }
 
-    .Fo-contactBox1BtnSub {
-        height: 60px;
-        width: 300px;
-        margin-top: 30px;
-        border: 0;
-        background-color: $btnBg;
-        color:$btncolor;
-        transition: all 0.4s ease;
-    }
+  @media (max-width: 768px) {
+    .procatalog {
+      &-main {
+        padding: 1rem;
+      }
 
-    .Fo-contactBox1BtnSub:hover {
-        background-color: white;
-        border: 1px solid #7d7f85;
-        color: #7d7f85;
-    }
+      &-title {
+        font-size: 1.65rem;
+        margin-bottom: 1.5rem;
+      }
 
-    .Fo-contactBox2Desc {
-        color: #7d7f85;
-        font-size: 14px;
-    }
+      &-section {
+        margin-bottom: 2rem;
 
-    .error {
-        color: red;
-    }
-
-    .tab-buttons {
-        display: flex;
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .tab-buttons button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        margin-right: 10px;
-    }
-
-    .tab-buttons button.active {
-        border-bottom: 2px solid blue;
-    }
-
-    @media screen and (min-width:1441px) {
-        .mobileHeaderSmining {
-            /* display: none; */
+        &-title {
+          font-size: 1.25rem;
         }
+      }
+
+      &-subtitle {
+        font-size: 1rem;
+      }
     }
-
-    @media screen and (max-width:1440px) {
-        .smr_Fo_contactBox1 {
-            padding-left: 0px;
-
-        }
-
-        .smr_Fo_contactBox2_main {
-            width: 40%;
-            margin: 0px;
-            // margin-top: 15%;
-            margin-left: 60px;
-        }
-    }
-
-    @media screen and (max-width:1200px) {
-        .Fo-contactMain {
-            margin-inline: 2% !important;
-        }
-    }
-
-    @media screen and (max-width:800px) {
-        .Fo-contactMain {
-            margin-inline: 1% !important;
-        }
-    }
-
-    @media screen and (max-width:1000px) {
-        padding-top: 10px !important;
-
-        .smr_contactPage_BoxMain {
-            display: flex;
-            margin-inline: 10%;
-            flex-direction: column;
-        }
-
-        .smr_Fo_contactBox1 {
-            width: 100%;
-            padding-left: 0px;
-            margin-top: 50px;
-            border-right: 0;
-        }
-
-        .Fo-contactBox1InputBox {
-            height: 40px;
-            width: 100%;
-            border: 1px solid #e1e1e1;
-        }
-
-        .smr_Fo_contactBox2_main {
-            width: 100%;
-            margin: 10px;
-            margin-top: 30px;
-
-        }
-
-        .mapContact {
-            width: 100% !important;
-        }
-
-    }
+  }
 }

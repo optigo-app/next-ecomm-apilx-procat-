@@ -5,10 +5,12 @@ import path from "path";
 
 export default async function AboutUs() {
   const ht = getStaticHtmlPages();
+  console.log(ht?.pages?.aboutUs, "ht?.pages?.aboutUs")
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.aboutUs
   );
+  console.log(filePath, "filePath")
 
   const htmlContent = fs.readFileSync(filePath, "utf8");
 

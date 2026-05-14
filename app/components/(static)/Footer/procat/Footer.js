@@ -3,7 +3,7 @@ import { IoMdCall, IoMdMail } from "react-icons/io";
 import { IoLocationOutline } from "react-icons/io5";
 import Link from "next/link";
 
-const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
+const Footer = ({ list, fromPage, companyInfoData, socialMediaData }) => {
   const hasCompanyInfo =
     companyInfoData?.FrontEndAddress ||
     companyInfoData?.FrontEndCity ||
@@ -63,11 +63,16 @@ const Footer = ({ fromPage, companyInfoData, socialMediaData }) => {
         <div className="footerColumn">
           <h4 className="footerTitle color_jeweliita">Quick Links</h4>
           <div className="footerLinks">
-            <Link href="/terms-and-conditions">Terms & Conditions</Link>
+            {list && list?.length > 0 && list?.map((item, i) => (
+              <Link key={i} href={item?.href}>
+                {item?.label}
+              </Link>
+            ))}
+            {/* <Link href="/terms-and-conditions">Terms & Conditions</Link>
             <Link href="/privacyPolicy">Privacy Policy</Link>
             <Link href="/aboutUs">About Us</Link>
             <Link href="/refund-policy">Refund Policy</Link>
-            <Link href="/shipping-policy">Shipping Policy</Link>
+            <Link href="/shipping-policy">Shipping Policy</Link> */}
           </div>
         </div>
 
