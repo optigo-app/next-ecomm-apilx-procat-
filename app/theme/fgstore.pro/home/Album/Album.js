@@ -40,8 +40,8 @@ const Album = () => {
   const lastRequestKeyRef = useRef("");
   const retryCountRef = useRef(0);
   const retryTimerRef = useRef(null);
-  const MAX_RETRIES = 3;
-  const RETRY_BASE_DELAY = 2000;
+  const MAX_RETRIES = 2;
+  const RETRY_BASE_DELAY = 1500;
 
   useEffect(() => {
     setMounted(true);

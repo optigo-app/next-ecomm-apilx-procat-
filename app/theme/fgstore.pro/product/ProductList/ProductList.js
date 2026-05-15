@@ -3526,43 +3526,53 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
       </div>
 
       {IsMultiVariantCart && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              icon={
-                <LocalMallOutlinedIcon
-                  sx={{
-                    fontSize: "22px",
-                  }}
-                  className="btnColorSvg"
-                />
-              }
-              checkedIcon={
-                <LocalMallIcon
-                  sx={{
-                    fontSize: "22px",
-                  }}
-                  className="btnColorRemoveSvg"
-                />
-                // <LocalMallIcon
-                //   sx={{
-                //     fontSize: "22px",
-                //     color: "red",
-                //   }}
-                // />
-              }
-              disableRipple={false}
-              onChange={(e) => handleCartandWish(e, productData, "Cart")}
-              checked={(cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false}
-            />
-          }
-          label={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? <span className="">Add To Cart</span> : <span className="">Remove From Cart</span>}
-          // sx={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#474747d1',marginLeft:'0px',color:'white'}}
-          className={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? "procat_cart_btn btnColorProCatProduct" : "procat_cart_btn_alter btnColorProCatProductRemoveCart"}
-        />
-      )}
+        <Box
+          sx={{
+            width: "100%",
+            flex: 1,
+            boxSizing: 'border-box',
+            p: 1
 
-      <Box
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                icon={
+                  <LocalMallOutlinedIcon
+                    sx={{
+                      fontSize: "22px",
+                    }}
+                    className="btnColorSvg"
+                  />
+                }
+                checkedIcon={
+                  <LocalMallIcon
+                    sx={{
+                      fontSize: "22px",
+                    }}
+                    className="btnColorRemoveSvg"
+                  />
+                  // <LocalMallIcon
+                  //   sx={{
+                  //     fontSize: "22px",
+                  //     color: "red",
+                  //   }}
+                  // />
+                }
+                disableRipple={false}
+                onChange={(e) => handleCartandWish(e, productData, "Cart")}
+                checked={(cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false}
+              />
+            }
+            label={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? <span className="">Add To Cart</span> : <span className="">Remove From Cart</span>}
+            // sx={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#474747d1',marginLeft:'0px',color:'white'}}
+            className={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? "procat_cart_btn btnColorProCatProduct" : "procat_cart_btn_alter btnColorProCatProductRemoveCart"}
+          />
+        </Box>)
+      }
+
+      {!IsMultiVariantCart && <Box
         sx={{
           width: "100%",
           flex: 1,
@@ -3593,7 +3603,7 @@ const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, hand
         >
           VIEW DETAILS
         </Button>
-      </Box>
+      </Box>}
     </div>
   );
 };

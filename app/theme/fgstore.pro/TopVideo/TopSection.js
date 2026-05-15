@@ -6,15 +6,25 @@ import "./TopSection.modul.scss";
 const TopSection = ({ assetBase }) => {
   const { storeinit } = useStore();
   const defaultImage = `${assetBase}/procat1.jpg`;
-  const [imageSrc, setImageSrc] = useState(defaultImage);
+
+  // Check if storeinit is completely absent or empty
+  const isStoreInitMissing = !storeinit || Object.keys(storeinit).length === 0;
+
+  // Determine initial image:
+  // - If banner exists, use it
+  // - If storeinit is missing/failed, use default fallback
+  // - If storeinit is present but no banner, use no image
+  const getInitialImage = () => {
+    if (storeinit?.ProCatLogbanner) return storeinit.ProCatLogbanner;
+    if (isStoreInitMissing) return defaultImage;
+    return "";
+  };
+
+  const [imageSrc, setImageSrc] = useState(getInitialImage());
 
   useEffect(() => {
-    if (storeinit?.ProCatLogbanner) {
-      setImageSrc(storeinit.ProCatLogbanner);
-    } else {
-      setImageSrc(defaultImage);
-    }
-  }, [storeinit?.ProCatLogbanner, defaultImage]);
+    setImageSrc(getInitialImage());
+  }, [storeinit, defaultImage]);
 
   const handleImageError = () => {
     if (imageSrc !== defaultImage) {
@@ -24,13 +34,15 @@ const TopSection = ({ assetBase }) => {
 
   return (
     <div>
-      <img
-        src={imageSrc}
-        className="proCatTopBannerImg"
-        alt="Top Banner"
-        onError={handleImageError}
-        loading="eager"
-      />
+      {imageSrc && (
+        <img
+          src={imageSrc}
+          className="proCatTopBannerImg"
+          alt="Top Banner"
+          onError={handleImageError}
+          loading="eager"
+        />
+      )}
     </div>
   );
 };
