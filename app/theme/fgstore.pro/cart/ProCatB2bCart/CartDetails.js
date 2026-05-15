@@ -50,15 +50,16 @@ const CartDetails = ({
   //   }
   // }, [selectedItem]);
 
-  const defaultUrl = selectedItem?.images?.replace("/Design_Thumb", "");
-  const firstPart = defaultUrl?.split(".")[0]
+  const defaultUrl = (typeof selectedItem?.images === 'string') ? selectedItem?.images?.replace("/Design_Thumb", "") : "";
+  const lastDotIndex = defaultUrl?.lastIndexOf('.');
+  const firstPart = lastDotIndex !== -1 ? defaultUrl?.substring(0, lastDotIndex) : defaultUrl;
   const secondPart = selectedItem?.ImageExtension;
-  const finalSelectedUrl = `${firstPart}.${secondPart}`;
+  const finalSelectedUrl = firstPart ? `${firstPart}.${secondPart}` : "";
 
   const [imgSrc, setImgSrc] = useState('');
 
   useEffect(() => {
-    let imageURL = selectedItem?.images
+    let imageURL = (typeof selectedItem?.images === 'string' && selectedItem?.images !== "")
       ? finalSelectedUrl
       : selectedItem?.ImageCount > 1
         ? `${storeinit?.CDNDesignImageFol}${selectedItem?.designno}~1~${selectedItem?.metalcolorname}.${selectedItem?.ImageExtension}`
