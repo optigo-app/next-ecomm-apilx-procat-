@@ -21,6 +21,7 @@ export const PROCATALOG_DOMAINS = {
   TEST: "test.procatalog.in",
   JEWELIITA: "jeweliita.procatalog.in",
   FRANCISDIAMOND: "francisdiamonds.procatalog.in",
+  SAKUNA: 'sakungems.procatalog.in'
 };
 
 
