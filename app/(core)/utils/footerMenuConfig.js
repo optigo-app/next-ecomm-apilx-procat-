@@ -64,7 +64,8 @@ export const domainHtmlMap = {
     'beta.procatalog.web': DEFAULT_FOOTER_LINKS,
     'jeweliita.procatalog.in': DEFAULT_FOOTER_LINKS,
     "localhost:8012": FRANCIS_FOOTER_LINKS,
-    "francisdiamonds.procatalog.in": FRANCIS_FOOTER_LINKS
+    "francisdiamonds.procatalog.in": FRANCIS_FOOTER_LINKS,
+    'sakungems.procatalog.in': DEFAULT_FOOTER_LINKS
 };
 
 export function getFooterLinks(host) {
