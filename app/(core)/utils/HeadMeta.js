@@ -15,8 +15,9 @@ export function getValidUrl(website) {
 }
 
 
-export function generatePageMetadata(pageData, url) {
-    const MetaImage = url + '/meta_preview_image.png' || url + '/MetaShareImage.jpg'
+export function generatePageMetadata(pageData, url, MetaImage) {
+    console.log(MetaImage, "MetaImage")
+
     if (!pageData) return {};
     const baseMetadata = {
         title: `${pageData.title} | ${pageData.websiteName}`,

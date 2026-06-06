@@ -111,6 +111,7 @@ const redirectEmailUrl =
         "/shipping-policy",
         "/terms-and-conditions",
         "/debug-internal-config-manager-v2",
+        "/cache"
     ];
 
     const protectedPages = [

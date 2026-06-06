@@ -518,7 +518,7 @@ const Header = ({ storeinit, logos }) => {
 
                 <div className="smr_mobileHeader_top_div2_mobile" draggable={false} onContextMenu={(e) => e.preventDefault()}>
                   <Link href="/" draggable={false} onContextMenu={(e) => e.preventDefault()}>
-                    <img src={compnyLogoM} loading="lazy" alt="Company Logo" className="smr_logo_header" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+                    <img src={compnyLogo} loading="lazy" alt="Company Logo" className="smr_logo_header" draggable={false} onContextMenu={(e) => e.preventDefault()} />
                   </Link>
                 </div>
 
@@ -860,7 +860,7 @@ const Header = ({ storeinit, logos }) => {
             </div>
             <div className="smiling_Top_header_div2_Mobile" draggable={false} onContextMenu={(e) => e.preventDefault()}>
               <Link href="/" draggable={false} onContextMenu={(e) => e.preventDefault()}>
-                <img src={compnyLogoM} loading="lazy" alt="Company Logo" className="smr_logo_header" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+                <img src={compnyLogo} loading="lazy" alt="Company Logo" className="smr_logo_header" draggable={false} onContextMenu={(e) => e.preventDefault()} />
               </Link>
             </div>
             <div className="smiling_Top_header_div3">
@@ -1058,7 +1058,7 @@ const Header = ({ storeinit, logos }) => {
 
               <div className="smiling_Top_header_div2_Mobile" draggable={false} onContextMenu={(e) => e.preventDefault()}>
                 <Link href="/" draggable={false} onContextMenu={(e) => e.preventDefault()}>
-                  <img src={compnyLogoM} loading="lazy" alt="Company Logo" className="smr_logo_header_Fixed" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+                  <img src={compnyLogo} loading="lazy" alt="Company Logo" className="smr_logo_header_Fixed" draggable={false} onContextMenu={(e) => e.preventDefault()} />
                 </Link>
               </div>
               <div className="smiling_Top_header_div3">
