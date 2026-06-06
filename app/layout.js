@@ -13,6 +13,12 @@ import "./globals.css";
 import fs from "fs";
 import path from "path";
 
+// Force dynamic rendering per-request so generateMetadata always reads the
+// correct hostname from request headers. Without this, Next.js may cache the
+// metadata result from one domain (e.g. francisdiamonds) and serve it to
+// another domain (e.g. sakungems).
+export const dynamic = "force-dynamic";
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -22,6 +28,8 @@ const poppins = Poppins({
 
 const DEFAULT_JEWELRY_DESCRIPTION = "Discover timeless jewelry crafted with precision and elegance. Explore gold, diamond, and silver collections designed for everyday wear and special occasions, with trusted quality and exceptional craftsmanship.";
 const DEFAULT_JEWELRY_KEYWORDS = "jewelry online, gold jewelry, diamond jewelry, silver jewelry, fine jewelry, bridal jewelry, earrings, rings, necklaces, bracelets, luxury jewelry, handcrafted jewelry";
+
+
 const FrancisDiamondDefaultMeta = {
   title: "Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue",
   description: "	Explore premium diamond jewellery collections from Francis           			Diamonds, a trusted manufacturer of elegant and modern 				diamond jewellery designs.",
