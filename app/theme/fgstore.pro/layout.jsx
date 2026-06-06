@@ -15,7 +15,7 @@ const layout = async ({ children }) => {
   const { hostname } = await getDomainInfo();
   const logos = getLogos();
   const FooterList = await getFooterLinks(hostname);
-  console.log(FooterList, "FooterList")
+  // console.log(FooterList, "FooterList")
 
   let parsedSocialLinks = [];
   try {

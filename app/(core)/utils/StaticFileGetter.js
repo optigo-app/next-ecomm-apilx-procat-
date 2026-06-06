@@ -20,7 +20,7 @@ export const domainHtmlMap = {
   'procatalog.web': 'francisdiamond',
   'beta.procatalog.web': 'sonasons',
   'jeweliita.procatalog.in': 'jeweliita',
-  "localhost:8012": 'francisdiamond',
+  "localhost:8012": 'sonasons',
   "francisdiamonds.procatalog.in": 'francisdiamond'
 };
 
@@ -35,6 +35,7 @@ const pageFileMap = {
 };
 
 export function getStaticHtmlPages(host) {
+  console.log(host, "host")
   const domain = host || NEXT_APP_WEB;
   const folder = domainHtmlMap[domain];
 
