@@ -29,47 +29,46 @@ const poppins = Poppins({
 const DEFAULT_JEWELRY_DESCRIPTION = "Discover timeless jewelry crafted with precision and elegance. Explore gold, diamond, and silver collections designed for everyday wear and special occasions, with trusted quality and exceptional craftsmanship.";
 const DEFAULT_JEWELRY_KEYWORDS = "jewelry online, gold jewelry, diamond jewelry, silver jewelry, fine jewelry, bridal jewelry, earrings, rings, necklaces, bracelets, luxury jewelry, handcrafted jewelry";
 
-
-const FrancisDiamondDefaultMeta = {
-  title: "Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue",
-  description: "	Explore premium diamond jewellery collections from Francis           			Diamonds, a trusted manufacturer of elegant and modern 				diamond jewellery designs.",
-  keywords: "Francis Diamonds, Diamond Jewellery Manufacturer, Wholesale Jewellery Catalogue, Diamond Jewellery Designs",
-  author: "Francis Diamonds",
-};
-
-
-const SakungemsDefaultMeta = {
-  title: "Sakungems | Gemstone Jewellery Manufacturer & Wholesale Jewellery Catalogue",
-  description: "	Explore premium gemstone jewellery collections from Sakungems           			manufacturer of elegant and modern gemstone jewellery designs.",
-  keywords: "Sakungems, Gemstone Jewellery Manufacturer, Wholesale Jewellery Catalogue, Gemstone Jewellery Designs",
-  author: "Sakungems",
+const DOMAIN_METADATA_CONFIG = {
+  "sakungems.procatalog.in": {
+    defaultMeta: {
+      title: "Sakungems | Gemstone Jewellery Manufacturer & Wholesale Jewellery Catalogue",
+      description: "Explore premium gemstone jewellery collections from Sakungems manufacturer of elegant and modern gemstone jewellery designs.",
+      keywords: "Sakungems, Gemstone Jewellery Manufacturer, Wholesale Jewellery Catalogue, Gemstone Jewellery Designs",
+      author: "Sakungems",
+    },
+    metaImageFile: "/ogsakungems.png",
+  },
+  "francisdiamonds.procatalog.in": {
+    defaultMeta: {
+      title: "Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue",
+      description: "Explore premium diamond jewellery collections from Francis Diamonds, a trusted manufacturer of elegant and modern diamond jewellery designs.",
+      keywords: "Francis Diamonds, Diamond Jewellery Manufacturer, Wholesale Jewellery Catalogue, Diamond Jewellery Designs",
+      author: "Francis Diamonds",
+    },
+    metaImageFile: "/og_francis.png",
+  },
 };
 
 // 'sakungems.procatalog.in'
 // 'francisdiamonds.procatalog.in'
 export async function generateMetadata() {
   const storeInit = await getStoreInit();
-  const { hostname, protocol, fullUrl } = await getDomainInfo();
-  // const MetaImage = fullUrl + '/meta_preview_image.png' || fullUrl + '/MetaShareImage.jpg'
-  console.log(hostname, "metadata")
-  let defaultMeta;
-  let MetaImage;
-  if (hostname === 'sakungems.procatalog.in') {
-    console.log("sakungems", hostname)
-    defaultMeta = SakungemsDefaultMeta;
-    MetaImage = fullUrl + '/MetaShareImage.jpg';
-  } else if (hostname === 'francisdiamonds.procatalog.in') {
-    console.log("francisdiamonds", hostname)
-    defaultMeta = FrancisDiamondDefaultMeta;
-    MetaImage = fullUrl + '/meta_preview_image.png'
-  } else {
-    console.log("else", hostname)
-    defaultMeta = {
+  const { hostname, fullUrl } = await getDomainInfo();
+
+  console.log(hostname, "metadata lookup");
+
+  const config = DOMAIN_METADATA_CONFIG[hostname] || {
+    defaultMeta: {
       description: DEFAULT_JEWELRY_DESCRIPTION,
       keywords: DEFAULT_JEWELRY_KEYWORDS,
-    };
-    MetaImage = fullUrl + '/MetaShareImage.jpg';
-  }
+      author: storeInit?.ufcc || "Procatalog",
+    },
+    metaImageFile: "/MetaShareImage.jpg",
+  };
+
+  const defaultMeta = config.defaultMeta;
+  const MetaImage = `${fullUrl}${config.metaImageFile}`;
 
   return generatePageMetadata({
     title: storeInit?.ufcc,
@@ -78,6 +77,8 @@ export async function generateMetadata() {
     ogImage: storeInit?.ogImage,
     ufcc: storeInit?.ufcc,
     websiteName: storeInit?.BrowserTitle,
+    author: defaultMeta.author || storeInit?.ufcc || "Procatalog",
+    publishedTime: "2026-06-16T00:00:00.000Z",
     icons: {
       icon: storeInit?.favicon,
       shortcut: storeInit?.favicon,

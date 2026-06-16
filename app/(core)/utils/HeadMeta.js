@@ -19,11 +19,16 @@ export function generatePageMetadata(pageData, url, MetaImage) {
     console.log(MetaImage, "MetaImage")
 
     if (!pageData) return {};
+    const isSakunGems = url && String(url).includes('sakungems');
+    const pageTitle = isSakunGems
+        ? (pageData.websiteName || pageData.title || "")
+        : `${pageData.title} | ${pageData.websiteName}`;
+
     const baseMetadata = {
-        title: `${pageData.title} | ${pageData.websiteName}`,
+        title: pageTitle,
         description: pageData.description || "",
         keywords: pageData.keywords || "",
-        authors: [{ name: pageData.ufcc }],
+        authors: [{ name: pageData.author || pageData.ufcc }],
         alternates: { canonical: getValidUrl(pageData?.websiteName) },
         metadataBase: getValidUrl(pageData?.websiteName),
         icons: {
@@ -49,11 +54,13 @@ export function generatePageMetadata(pageData, url, MetaImage) {
             },
         },
         openGraph: {
-            title: `${pageData.title} | ${pageData.websiteName}`,
+            title: pageTitle,
             description: pageData.description || "",
             url: getValidUrl(pageData.websiteName),
             siteName: pageData.websiteName,
-            type: "website",
+            type: "article",
+            publishedTime: pageData.publishedTime || "2026-06-16T00:00:00.000Z",
+            authors: pageData.author ? [pageData.author] : (pageData.ufcc ? [pageData.ufcc] : []),
             locale: "en_IN",
             images:
                 [
@@ -67,7 +74,7 @@ export function generatePageMetadata(pageData, url, MetaImage) {
         },
         twitter: {
             card: "summary_large_image",
-            title: `${pageData.title} | ${pageData.websiteName}`,
+            title: pageTitle,
             description: pageData.description || "",
             images: MetaImage ? [MetaImage] : [],
             creator: NEXT_APP_WEB,
