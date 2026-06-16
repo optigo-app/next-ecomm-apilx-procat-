@@ -31,7 +31,7 @@ export async function fetchStoreInitData(req) {
     const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
 
     if (localHosts.includes(cleanHost)) {
-      baseUrl = `http://192.168.1.153/R50B3/UFS/StoreInit/procatalog.web/StoreInit.json`
+      baseUrl = `http://nzen/R50B3/UFS/StoreInit/procatalog.web/StoreInit.json`
     } else if (isLocalhost) {
       baseUrl = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${hostname}/StoreInit.json`;
     }

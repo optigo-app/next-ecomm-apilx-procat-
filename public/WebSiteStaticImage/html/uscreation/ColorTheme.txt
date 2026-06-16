@@ -1,3 +1,8 @@
+
+.Smining-Top-Header-fixed-main{
+background-color: #fff !important;
+}
+
 .setFullThemeBack{
   background-color: #e6d9ff !important;
 }

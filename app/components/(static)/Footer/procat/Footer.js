@@ -11,6 +11,33 @@ const Footer = ({ list, fromPage, companyInfoData, socialMediaData }) => {
     companyInfoData?.FrontEndContactno1 ||
     companyInfoData?.FrontEndEmail1;
 
+  const getContactNumbers = () => {
+    const numbers = [];
+    const parse = (val) => {
+      if (val === undefined || val === null) return [];
+      const str = String(val);
+      return str
+        .split(/[,/]/)
+        .map(n => {
+          let trimmed = n.trim();
+          trimmed = trimmed.replace(/^\+\s*\+/, '+');
+          return trimmed;
+        })
+        .filter(Boolean);
+    };
+    try {
+      if (companyInfoData?.FrontEndContactno1) {
+        numbers.push(...parse(companyInfoData.FrontEndContactno1));
+      }
+      if (companyInfoData?.FrontEndContactno2) {
+        numbers.push(...parse(companyInfoData.FrontEndContactno2));
+      }
+    } catch (e) {
+      console.error("Error parsing contact numbers:", e);
+    }
+    return numbers;
+  };
+
   return (
     <footer
       className="footerContainer"
@@ -32,17 +59,16 @@ const Footer = ({ list, fromPage, companyInfoData, socialMediaData }) => {
             </div>
           )}
 
-          {companyInfoData?.FrontEndContactno1 && (
+          {getContactNumbers().length > 0 && (
             <div className="footerRow">
               <IoMdCall className="footerIcon" />
-              <span>
-                {companyInfoData?.FrontEndContactno1}
-                {companyInfoData?.FrontEndContactno2 && (
-                  <>
-                    , {companyInfoData?.FrontEndContactno2}
-                  </>
-                )}
-              </span>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {getContactNumbers().map((num, index) => (
+                  <span key={index} style={{ whiteSpace: "nowrap" }}>
+                    {num}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 

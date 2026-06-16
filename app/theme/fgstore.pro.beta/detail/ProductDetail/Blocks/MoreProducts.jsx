@@ -10,7 +10,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, imageNotFound }, ref) => {
-  if (!imageData?.length) return null;
+  const filteredImageData = (imageData || []).filter(
+    (ele) => ele?.designno !== singleProd?.designno
+  );
+
+  if (!filteredImageData?.length) return null;
 
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -20,7 +24,7 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
   }));
 
   // 1. Condition to check if we should show the left/right arrows
-  const showArrows = imageData.length > 5;
+  const showArrows = filteredImageData.length > 5;
 
   return (
     <>
@@ -73,7 +77,7 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
             }}
             style={{ paddingBottom: "20px" }}
           >
-            {imageData.map((ele, index) => (
+            {filteredImageData.map((ele, index) => (
               <SwiperSlide key={ele?.autocode}>
                 <Box sx={{ py: 1 }}>
                   <Card
@@ -85,7 +89,10 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
                       bgcolor: "#bebebe3b",
                     }}
                   >
-                    <CardActionArea onClick={() => handleMoveToDetail(ele, index)}>
+                    <CardActionArea onClick={() => {
+                      const originalIndex = imageData.findIndex((item) => item.designno === ele.designno);
+                      handleMoveToDetail(ele, originalIndex !== -1 ? originalIndex : index);
+                    }}>
                       <CardMedia
                         component="img"
                         image={ele?.imageSrc}
