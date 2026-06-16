@@ -12,7 +12,7 @@ export const domainHtmlMap = {
   "glossyjewel.procatalog.in": "glossyjewel",
   "demo.procatalog.in": "sonasons",
   "company.procatalog.in": "sonasons",
-  "test.procatalog.in": "sonasons",
+  "test.procatalog.in": "sonasons",         // testing domain 
   "localhost:5006": 'sonasons',
   "localhost:8006": 'sonasons',
   "localhost:3000": 'sonasons',
@@ -20,7 +20,7 @@ export const domainHtmlMap = {
   'procatalog.web': 'francisdiamond',
   'beta.procatalog.web': 'sonasons',
   'jeweliita.procatalog.in': 'jeweliita',
-  "localhost:8012": 'francisdiamond',
+  "localhost:8012": 'sakuna',
   "francisdiamonds.procatalog.in": 'francisdiamond',
   'sakungems.procatalog.in': 'sakuna'
 };

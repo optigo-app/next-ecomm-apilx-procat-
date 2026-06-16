@@ -3,18 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
+    <title>About Us – Facets Hong Kong Limited</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #fafaf8;
+            color: #2c2c2c;
+            line-height: 1.75;
+        }
+
+        .main-content {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 64px 32px 96px;
+        }
+
+        /* Header */
+        .about-header {
+            border-bottom: 1px solid #d4c9b8;
+            padding-bottom: 32px;
+            margin-bottom: 48px;
+        }
+
+        .about-brand {
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #8a7a65;
+            margin-bottom: 20px;
+        }
+
+        .about-title {
+            font-size: 36px;
+            font-weight: normal;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+        }
+
+        /* Story paragraphs */
+        .brand-story .story-section p {
+            font-size: 15px;
+            color: #3a3a3a;
+            margin-bottom: 24px;
+        }
+
+        .brand-story .story-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        .about-footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid #d4c9b8;
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .main-content { padding: 40px 20px 64px; }
+            .about-title { font-size: 28px; }
+        }
+    </style>
 </head>
 <body>
-    <main className="main-content">
-        <section className="brand-story">
-          <div className='story-section'>
-            <p>Welcome to our fine jewellery collection, a premium jewellery company dedicated to crafting exquisite designs that blend timeless elegance with contemporary sophistication.</p>
-            <p>We believe jewellery is more than just an accessory—it is a statement of individuality and a celebration of life’s most cherished moments. Our collections showcase a harmonious balance of artistry, innovation, and quality, using only the finest materials and expert craftsmanship.</p>
-            <p>We are committed to delivering exceptional value and outstanding customer experiences. Whether you are seeking a timeless piece for yourself or a bespoke gift for a loved one, our fine jewellery offers designs that resonate with elegance and style.</p>
-            <p>Thank you for choosing us as your trusted jeweller. We look forward to being a part of your journey in celebrating beauty, milestones, and memories.</p>
-          </div>
-        </section>
-      </main>
+
+<main class="main-content">
+
+    <header class="about-header">
+        <p class="about-brand">Facets Hong Kong Limited</p>
+        <h1 class="about-title">About Us</h1>
+    </header>
+
+    <section class="brand-story">
+        <div class="story-section">
+            <p>At Facets Hong Kong Ltd, we are committed to providing premium diamond jewellery that meets the highest standards of quality and craftsmanship. We specialize in delivering exquisite diamond pieces to jewellers, retailers, and wholesalers around the world. With decades of expertise in the diamond industry, we are passionate about creating timeless collections that inspire elegance and sophistication.</p>
+
+            <p>Our diamonds and gemstones are sourced with expertise, ensuring that every piece reflects the brilliance and beauty that our clients expect. We offer a wide range of products, including engagement rings, earrings, necklaces, bracelets, and custom designs, all crafted with precision and attention to detail.</p>
+
+            <p>Our mission is to be the preferred partner for businesses in the jewellery industry by providing exceptional value, unparalleled quality, and personalized service. Whether you are looking to expand your inventory or collaborate on a unique design, Facets Hong Kong Ltd is dedicated to supporting your success.</p>
+
+            <p>With a strong focus on customer satisfaction and long-lasting relationships, we work closely with our clients to understand their needs and exceed their expectations. Let us be your trusted source for premium diamonds and jewellery solutions.</p>
+        </div>
+    </section>
+
+    <footer class="about-footer">
+        <p>© 2026 Facets Hong Kong Limited. All rights reserved.</p>
+    </footer>
+
+</main>
+
 </body>
 </html>
