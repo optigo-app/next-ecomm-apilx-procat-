@@ -3,44 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy</title>
+    <title>Privacy Policy – Facets Hong Kong Limited</title>
     <style>
-        .smr_pp_policy{
-            width: 100%;
-            height: auto;
-            h1, h4 {
-                color: #333;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #fafaf8;
+            color: #2c2c2c;
+            line-height: 1.75;
         }
-        p {
-            margin: 15px 0;
+
+        .smr_pp_policy {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 64px 32px 96px;
         }
-        ul {
-            list-style-type: none;
+
+        /* Header */
+        .pp-header {
+            border-bottom: 1px solid #d4c9b8;
+            padding-bottom: 32px;
+            margin-bottom: 48px;
         }
-        .contact-info {
-            font-weight: bold;
+
+        .pp-brand {
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #8a7a65;
+            margin-bottom: 20px;
         }
-    }
+
+        .pp-title {
+            font-size: 36px;
+            font-weight: normal;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .pp-effective {
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* Sections */
+        .pp-section {
+            margin-bottom: 40px;
+        }
+
+        .pp-section h2 {
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #8a7a65;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e8e2d8;
+        }
+
+        .pp-section p {
+            font-size: 15px;
+            color: #3a3a3a;
+            margin-bottom: 12px;
+        }
+
+        .pp-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Lists */
+        .pp-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 12px;
+        }
+
+        .pp-section ul li {
+            font-size: 15px;
+            color: #3a3a3a;
+            padding: 5px 0 5px 20px;
+            position: relative;
+        }
+
+        .pp-section ul li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #b5a48a;
+            font-size: 13px;
+        }
+
+        /* Sub-heading within section */
+        .pp-sub-heading {
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #555;
+            margin: 20px 0 8px;
+        }
+
+        /* Contact block */
+        .pp-contact-block {
+            background: #f2ede5;
+            border-left: 3px solid #b5a48a;
+            padding: 24px 28px;
+            margin-top: 16px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .pp-contact-block p {
+            margin-bottom: 6px !important;
+            font-size: 14px !important;
+        }
+
+        .pp-contact-block a {
+            color: #7a6a50;
+            text-decoration: none;
+            border-bottom: 1px solid #b5a48a;
+        }
+
+        .pp-contact-block a:hover {
+            color: #2c2c2c;
+        }
+
+        /* Footer */
+        .pp-footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid #d4c9b8;
+            font-family: 'Trebuchet MS', 'Arial', sans-serif;
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .smr_pp_policy { padding: 40px 20px 64px; }
+            .pp-title { font-size: 28px; }
+        }
     </style>
 </head>
-<body >
+<body>
     <div class="smr_pp_policy">
-        
-        <h4>SECTION 1 - WHAT DO WE DO WITH YOUR INFORMATION?</h4>
-        <p>When you purchase something from our store, as part of the buying and selling process, we collect the personal information you give us such as your name, address and email address.</p>
-        <p>When you browse our store, we also automatically receive your computer’s internet protocol (IP) address in order to provide us with information that helps us learn about your browser and operating system.</p>
-        <p><strong>Email marketing (if applicable):</strong> With your permission, we may send you emails about our store, new products and other updates.</p>
-    
-        <h4>SECTION 2 - CONSENT</h4>
-    
-        <h4>How do you get my consent?</h4>
-        <p>When you provide us with personal information to complete a transaction, verify your credit card, place an order, arrange for a delivery or return a purchase, we imply that you consent to our collecting it and using it for that specific reason only.</p>
-        <p>If we ask for your personal information for a secondary reason, like marketing, we will either ask you directly for your expressed consent, or provide you with an opportunity to say no.</p>
-    
-    
-        <h4>SECTION 3 - DISCLOSURE</h4>
-        <p>We may disclose your personal information if we are required by law to do so or if you violate our Terms of Service.</p>
+
+        <header class="pp-header">
+            <p class="pp-brand">Facets Hong Kong Limited</p>
+            <h1 class="pp-title">Privacy Policy</h1>
+            <p class="pp-effective">Effective Date: 01 April 2026</p>
+        </header>
+
+        <section class="pp-section">
+            <h2>1. Introduction</h2>
+            <p>Facets Hong Kong Limited ("Facets", "we", "our", or "us") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard information when you visit our website or interact with our services.</p>
+            <p>By using our website, you agree to the practices described in this Privacy Policy.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>2. Information We Collect</h2>
+
+            <p class="pp-sub-heading">Personal Information</p>
+            <ul>
+                <li>Name</li>
+                <li>Company Name</li>
+                <li>Email Address</li>
+                <li>Phone Number</li>
+                <li>Country and City</li>
+                <li>Shipping and Billing Information</li>
+                <li>Any information voluntarily submitted through contact forms or inquiries</li>
+            </ul>
+
+            <p class="pp-sub-heading">Technical Information</p>
+            <ul>
+                <li>IP Address</li>
+                <li>Browser Type</li>
+                <li>Device Information</li>
+                <li>Website Usage Data</li>
+                <li>Cookies and Analytics Information</li>
+            </ul>
+        </section>
+
+        <section class="pp-section">
+            <h2>3. How We Use Your Information</h2>
+            <p>We may use your information to:</p>
+            <ul>
+                <li>Respond to inquiries and requests</li>
+                <li>Provide quotations and product information</li>
+                <li>Process orders and transactions</li>
+                <li>Improve our website and services</li>
+                <li>Send updates regarding products, services, and promotions</li>
+                <li>Maintain business records and customer relationships</li>
+                <li>Comply with legal obligations</li>
+            </ul>
+        </section>
+
+        <section class="pp-section">
+            <h2>4. Marketing Communications</h2>
+            <p>With your consent, we may send marketing communications regarding our jewelry collections, new product launches, promotions, and company updates.</p>
+            <p>You may unsubscribe from marketing communications at any time by contacting us or using the unsubscribe link provided in our communications.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>5. Sharing of Information</h2>
+            <p>We do not sell, rent, or trade your personal information.</p>
+            <p>We may share information with:</p>
+            <ul>
+                <li>Service providers assisting with website hosting, payment processing, logistics, and marketing</li>
+                <li>Professional advisors such as accountants, auditors, and legal consultants</li>
+                <li>Government authorities where required by law</li>
+            </ul>
+        </section>
+
+        <section class="pp-section">
+            <h2>6. Data Security</h2>
+            <p>We implement reasonable administrative, technical, and physical safeguards to protect personal information against unauthorized access, disclosure, alteration, or destruction.</p>
+            <p>However, no method of internet transmission or electronic storage is completely secure.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>7. Cookies</h2>
+            <p>Our website may use cookies and similar technologies to enhance user experience, analyze website traffic, and improve functionality.</p>
+            <p>Users may adjust browser settings to refuse cookies, although some website features may not function properly as a result.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>8. Third-Party Links</h2>
+            <p>Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of external websites.</p>
+            <p>Users are encouraged to review the privacy policies of any third-party sites they visit.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>9. International Data Transfers</h2>
+            <p>As an international business, information may be processed and stored in countries outside your country of residence. By using our website, you consent to such transfers where permitted by applicable law.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>10. Data Retention</h2>
+            <p>We retain personal information only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, comply with legal obligations, resolve disputes, and enforce agreements.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>11. Your Rights</h2>
+            <p>Depending on applicable law, you may have the right to:</p>
+            <ul>
+                <li>Access your personal information</li>
+                <li>Request correction of inaccurate information</li>
+                <li>Request deletion of personal information</li>
+                <li>Object to certain processing activities</li>
+                <li>Withdraw consent where processing is based on consent</li>
+            </ul>
+            <p>To exercise these rights, please contact us using the information below.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>12. Children's Privacy</h2>
+            <p>Our website and services are not directed toward individuals under the age of 18. We do not knowingly collect personal information from minors.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>13. Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page along with an updated effective date.</p>
+        </section>
+
+        <section class="pp-section">
+            <h2>14. Contact Us</h2>
+            <p>If you have any questions regarding this Privacy Policy or our handling of personal information, please contact:</p>
+            <div class="pp-contact-block">
+                <p><strong>Facets Hong Kong Limited</strong></p>
+                <p>Email: <a href="mailto:salesfacetshk9@gmail.com">salesfacetshk9@gmail.com</a></p>
+                <p>Phone: <a href="tel:+85291327736">+852 9132 7736</a></p>
+                <p>Website: <a href="https://www.facetshk.com" target="_blank" rel="noopener">www.facetshk.com</a></p>
+                <p>Hong Kong</p>
+            </div>
+        </section>
+
+        <footer class="pp-footer">
+            <p>© 2026 Facets Hong Kong Limited. All rights reserved.</p>
+        </footer>
+
     </div>
-    
 </body>
 </html>
