@@ -4,13 +4,13 @@ import fs from "fs";
 import path from "path";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter.js";
 
-export const metadata = {
-  title: 'Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue',
-  description: 'Explore premium diamond jewellery collections from Francis Diamonds, a trusted manufacturer of elegant and modern diamond jewellery designs.',
-};
+// export const metadata = {
+//   title: 'Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue',
+//   description: 'Explore premium diamond jewellery collections from Francis Diamonds, a trusted manufacturer of elegant and modern diamond jewellery designs.',
+// };
 
-export default async function ContactUsPage() {
-  const ht = getStaticHtmlPages();
+export default async function ContactUsPage({ hostname }) {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.contact || ""

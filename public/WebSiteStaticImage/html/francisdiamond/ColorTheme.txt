@@ -1,8 +1,4 @@
 
-.Smining-Top-Header-fixed-main{
-background-color: #fff !important;
-}
-
 .setFullThemeBack{
 background-color: #fff!important;
 }
@@ -34,6 +30,11 @@ background-color: #fff!important;
 	color : black !important;
 	fill : black !important;
 }
+
+.sticky_part_header_pk{
+background-color: #fff !important;
+}
+
 
 {
 "rd":[

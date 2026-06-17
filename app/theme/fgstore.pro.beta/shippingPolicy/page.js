@@ -3,8 +3,8 @@ import path from "path";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
 import "./ShippingPolicy.scss";
 
-const ShippingPolicy = () => {
-  const ht = getStaticHtmlPages();
+const ShippingPolicy = async ({ hostname }) => {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.shipping

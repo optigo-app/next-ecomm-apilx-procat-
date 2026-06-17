@@ -78,7 +78,7 @@ export const getExtraFlag = async () => {
 
 export const getStyleContent = async () => {
   try {
-    const ht = getStaticHtmlPages();
+    const ht = await getStaticHtmlPages();
     const filePath = path.join(process.cwd(), ht.pages.styleContent);
     const htmlContent = await fs.promises.readFile(filePath, "utf-8");
     return htmlContent;

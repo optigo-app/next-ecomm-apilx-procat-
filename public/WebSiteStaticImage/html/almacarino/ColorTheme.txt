@@ -1,7 +1,4 @@
 
-.Smining-Top-Header-fixed-main{
-background-color: #fff !important;
-}
 
 .setFullThemeBack{
 background-color:  #98b8d9 !important;
@@ -23,6 +20,10 @@ background-color:  #98b8d9 !important;
 	background-color: #CBE5FF  !important;
 	color: #474747D1 !important;
 	border: 1px solid #CBE5FF;
+}
+
+.sticky_part_header_pk{
+background-color: #fff !important;
 }
 
 {

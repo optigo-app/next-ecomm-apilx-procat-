@@ -3,6 +3,8 @@ import { getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions
 import { getThemeByDomain } from "../../../(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
 
+export const dynamic = "force-dynamic";
+
 const page = async ({ params, searchParams }) => {
   const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
   const storeInit = await getStoreInit();

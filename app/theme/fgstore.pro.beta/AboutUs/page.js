@@ -3,8 +3,8 @@ import "./index.scss";
 import fs from "fs";
 import path from "path";
 
-export default async function AboutUs() {
-  const ht = getStaticHtmlPages();
+export default async function AboutUs({ hostname }) {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.aboutUs

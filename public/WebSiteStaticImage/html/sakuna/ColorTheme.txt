@@ -3,6 +3,13 @@ background-color: #0a1328 !important;
 }
 
 
+
+.sticky_part_header_pk{
+	background-color:  #0a1328!important;
+}
+
+
+
 .setFullThemeBack{
 background-color: #0a1328 !important;
 }

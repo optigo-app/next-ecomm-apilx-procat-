@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
 
-const TermsAndConditions = () => {
-  const ht = getStaticHtmlPages();
+const TermsAndConditions = async ({ hostname }) => {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.terms

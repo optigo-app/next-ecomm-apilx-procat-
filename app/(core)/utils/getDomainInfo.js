@@ -6,14 +6,18 @@ export async function getDomainInfo() {
         if (typeof window === "undefined") {
             const { headers } = await import("next/headers");
             const headerList = await headers();
+            console.log(headers, "headers")
 
             const rawHost =
                 headerList.get("x-forwarded-host") ||
                 headerList.get("host") ||
                 NEXT_APP_WEB;
 
+            console.log(rawHost, "rawHost")
+
             const rawProto =
                 headerList.get("x-forwarded-proto") || "https";
+            console.log(rawProto, "rawProto")
 
             const hostname = rawHost.replace(/^www\./, "");
             const protocol = `${rawProto}:`;
