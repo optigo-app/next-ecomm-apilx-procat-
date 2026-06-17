@@ -56,8 +56,6 @@ export async function generateMetadata() {
   const storeInit = await getStoreInit();
   const { hostname, fullUrl } = await getDomainInfo();
 
-  console.log(hostname, "metadata lookup");
-
   const config = DOMAIN_METADATA_CONFIG[hostname] || {
     defaultMeta: {
       description: DEFAULT_JEWELRY_DESCRIPTION,
@@ -92,12 +90,10 @@ export default async function RootLayout({ children }) {
   const storeInit = await getStoreInit();
   const myAccountFlags = await getMyAccountFlags();
   const { hostname } = await getDomainInfo();
+  console.log(hostname, "hostname")
   const ACTIVE_THEME = getThemeByDomain(hostname);
-  const ht = getStaticHtmlPages(hostname);
-  const filePath = path.join(process.cwd(), ht.pages.styleContent);
-  const styleContent = await fs.promises.readFile(filePath, "utf-8");
+  console.log(ACTIVE_THEME, "ACTIVE_THEME")
 
-  // Dynamically load theme-specific components
   const [{ default: LayoutComponent }, { default: StyleInjector }] = await Promise.all([
     import(`@/app/theme/${ACTIVE_THEME}/layout.jsx`),
     import(`@/app/theme/${ACTIVE_THEME}/StyleInjector.jsx`),
@@ -106,10 +102,13 @@ export default async function RootLayout({ children }) {
   return (
     <>
       <html lang="en">
+        <head>
+          <link rel="stylesheet" href={`/api/theme-style?host=${hostname}&v=${storeInit?.token || ""}`} />
+        </head>
         <SWRegistration />
         <EmotionRegistry>
-          <StyleInjector styleContent={styleContent} />
           <body className={`${poppins.variable}`}>
+            {/* <StyleInjector styleContent="" /> */}
             <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
               <StoreProvider storeinit={storeInit}>
                 <AuthProvider storeInit={storeInit}>

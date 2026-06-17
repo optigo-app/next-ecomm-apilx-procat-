@@ -65,12 +65,13 @@ export const domainHtmlMap = {
     'jeweliita.procatalog.in': DEFAULT_FOOTER_LINKS,
     "localhost:8012": FRANCIS_FOOTER_LINKS,
     "francisdiamonds.procatalog.in": FRANCIS_FOOTER_LINKS,
-    'sakungems.procatalog.in': DEFAULT_FOOTER_LINKS
+    'sakungems.procatalog.in': DEFAULT_FOOTER_LINKS,
+    "sonasons.procatalog.in": DEFAULT_FOOTER_LINKS
 };
 
 export function getFooterLinks(host) {
     const domain = host || NEXT_APP_WEB;
-    const list = domainHtmlMap[domain];
+    const list = domainHtmlMap[domain] || DEFAULT_FOOTER_LINKS;
 
     return list;
 }

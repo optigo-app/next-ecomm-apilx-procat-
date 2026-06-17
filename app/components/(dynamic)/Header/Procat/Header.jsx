@@ -791,7 +791,7 @@ const Header = ({ storeinit, logos }) => {
           </div>
 
           <div
-            className={`Smining-Top-Header-fixed-main ${isHeaderFixed ? "fixed" : ""}  ${serachsShowOverlay ? "searchoverly" : ""}`}
+            className={`sticky_part_header_pk Smining-Top-Header-fixed-main ${isHeaderFixed ? "fixed" : ""}  ${serachsShowOverlay ? "searchoverly" : ""}`}
           >
             <div className='smiling_Top_header_sub' style={{ width: '100%' }}>
               <div className='smiling_Top_header_div2_web'>

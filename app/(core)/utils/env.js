@@ -21,8 +21,9 @@ export const PROCATALOG_DOMAINS = {
   TEST: "test.procatalog.in",
   JEWELIITA: "jeweliita.procatalog.in",
   FRANCISDIAMOND: "francisdiamonds.procatalog.in",
-  SAKUNA: 'sakungems.procatalog.in'
+  SAKUNA: 'sakungems.procatalog.in',
+  LOCAL: 'localhost:8012'
 };
 
 
-export const NEXT_APP_WEB = PROCATALOG_DOMAINS.SAKUNA;
+export const NEXT_APP_WEB = PROCATALOG_DOMAINS.LOCAL;

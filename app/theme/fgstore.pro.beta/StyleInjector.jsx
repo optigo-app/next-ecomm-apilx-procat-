@@ -6,16 +6,13 @@ import { usePathname } from "next/navigation";
 
 const StyleInjector = ({ styleContent }) => {
   const [applied, setApplied] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
+  const [bodyBgColor, setBodyBgColor] = useState("transparent");
   const pathname = usePathname();
   const isCMSPage = pathname?.startsWith("/debug-internal-config-manager-v2");
 
   useEffect(() => {
     if (!styleContent) return;
-
-    const styleTag = document.createElement("style");
-    styleTag.type = "text/css";
-    styleTag.innerHTML = styleContent;
-    document.head.appendChild(styleTag);
 
     const animateBackground = () => {
       const element = document.querySelector(".setFullThemeBack");
@@ -25,43 +22,52 @@ const StyleInjector = ({ styleContent }) => {
       element.classList.add("animateThemeFill");
     };
     const timeout = setTimeout(animateBackground, 50);
-    requestAnimationFrame(() => setApplied(true));
+
+    const frameId = requestAnimationFrame(() => {
+      if (typeof window !== "undefined") {
+        const bg = window.getComputedStyle(document.body).backgroundColor;
+        setBodyBgColor(bg || "transparent");
+      }
+      setApplied(true);
+      setAnimationDone(false);
+    });
 
     return () => {
-      document.head.removeChild(styleTag);
       setApplied(false);
+      setAnimationDone(false);
       clearTimeout(timeout);
+      cancelAnimationFrame(frameId);
     };
   }, [styleContent]);
 
   return (
     <AnimatePresence>
-      {applied && !isCMSPage && (
+      {applied && !animationDone && !isCMSPage && (
         <motion.div
           key="bg-reveal"
           initial={{
-            clipPath: "circle(0% at 0% 0%)",
-            opacity: 1,
-          }}
-          animate={{
             clipPath: "circle(150% at 0% 0%)",
             opacity: 1,
           }}
-          exit={{
+          animate={{
             clipPath: "circle(0% at 0% 0%)",
+            opacity: 1,
+          }}
+          exit={{
+            clipPath: "circle(150% at 0% 0%)",
             opacity: 0,
           }}
           transition={{
             duration: 1.2,
             ease: [0.76, 0, 0.24, 1],
           }}
+          onAnimationComplete={() => setAnimationDone(true)}
           style={{
             position: "fixed",
             inset: 0,
             zIndex: 9999,
             pointerEvents: "none",
-            backgroundColor: window
-              .getComputedStyle(document.body).backgroundColor || "transparent",
+            backgroundColor: bodyBgColor,
             mixBlendMode: "normal",
           }}
         />

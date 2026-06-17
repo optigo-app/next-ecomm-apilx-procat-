@@ -1,8 +1,4 @@
 
-.Smining-Top-Header-fixed-main{
-background-color: #fff !important;
-}
-
 .setFullThemeBack{
 background-color: #0d3c3cff !important;
 }
@@ -45,6 +41,12 @@ background-color: #0d3c3cff !important;
 .color_jeweliita__footer{
 	color : #0d3c3cff !important;
 }
+
+
+.sticky_part_header_pk{
+background-color: #fff !important;
+}
+
 
 {
 "rd":[

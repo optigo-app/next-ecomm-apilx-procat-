@@ -13,11 +13,10 @@ export default async function middleware(req) {
   try {
     const { cookies, nextUrl } = req;
     const host = req.headers.get("host");
-
-    const storeName = domainMap[host] || NEXT_APP_WEB;
+    console.log(host, "host")
     let storeData = {};
     try {
-      storeData = await fetchStoreInitData(storeName);
+      storeData = await fetchStoreInitData();
     } catch {
       storeData = { rd: [{}], rd1: [], rd2: [{}] };
     }

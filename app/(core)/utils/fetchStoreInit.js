@@ -5,7 +5,7 @@ import { getDomainInfo } from "./getDomainInfo";
 // const staticPathCDN = `https://cdnfs.optigoapps.com/content-global3/StoreInit/${NEXT_APP_WEB}/StoreInit.json`;
 
 
-export async function fetchStoreInitData(req) {
+export async function fetchStoreInitData() {
   try {
     let baseUrl = "";
     let hostname = "";

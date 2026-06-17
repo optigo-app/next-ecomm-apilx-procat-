@@ -50,7 +50,6 @@ const setApiUrl = async () => {
 
       const datas = await fetch(fetchUrl, { method: 'GET' });
       const parseddata = await datas.json();
-      console.log(parseddata, "logssss")
       const domainInfo = await getDomainInfo();
       const hostname = domainInfo?.hostname || "";
       const cleanHost = hostname.split(":")[0];

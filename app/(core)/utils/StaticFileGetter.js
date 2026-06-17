@@ -1,3 +1,4 @@
+import { getDomainInfo } from "./getDomainInfo";
 import { NEXT_APP_WEB } from "./env";
 
 export const domainHtmlMap = {
@@ -22,7 +23,8 @@ export const domainHtmlMap = {
   'jeweliita.procatalog.in': 'jeweliita',
   "localhost:8012": 'sakuna',
   "francisdiamonds.procatalog.in": 'francisdiamond',
-  'sakungems.procatalog.in': 'sakuna'
+  'sakungems.procatalog.in': 'sakuna',
+  "sonasons.procatalog.in": 'sonasons'
 };
 
 const pageFileMap = {
@@ -35,15 +37,35 @@ const pageFileMap = {
   contact: "contact.html",
 };
 
-export function getStaticHtmlPages(host) {
-  const domain = host || NEXT_APP_WEB;
-  const folder = domainHtmlMap[domain];
 
-  const pages = Object.fromEntries(Object.entries(pageFileMap).map(([key, file]) => [key, `public/WebSiteStaticImage/html/${folder}/${file}`]));
+
+export async function getStaticHtmlPages(host) {
+  let hostname = host;
+  if (!hostname) {
+    try {
+      const domainInfo = await getDomainInfo();
+      hostname = domainInfo.hostname;
+      console.log(123, "worked", domainInfo)
+    } catch (error) {
+      console.error(1234, "Error reading domain info in getStaticHtmlPages:", error);
+      hostname = NEXT_APP_WEB.replace(/^www\./, "");
+    }
+  } else {
+    hostname = hostname.replace(/^www\./, "");
+  }
+
+  const folder = domainHtmlMap[hostname] || domainHtmlMap[NEXT_APP_WEB] || "sonasons";
+  const pages = Object.fromEntries(
+    Object.entries(pageFileMap).map(([key, file]) => [
+      key,
+      `public/WebSiteStaticImage/html/${folder}/${file}`,
+    ])
+  );
+
 
   return {
-    domain,
+    domain: hostname,
     folder,
-    pages,
+    pages
   };
 }

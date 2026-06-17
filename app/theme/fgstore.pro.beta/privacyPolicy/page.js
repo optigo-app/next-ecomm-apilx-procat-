@@ -3,8 +3,8 @@ import path from "path";
 import "./PrivacyPolicy.scss";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
 
-const PrivacyPolicy = () => {
-  const ht = getStaticHtmlPages();
+const PrivacyPolicy = async ({ hostname }) => {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.privacy

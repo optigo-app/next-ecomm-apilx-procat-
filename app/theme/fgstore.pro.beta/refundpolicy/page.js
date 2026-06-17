@@ -3,8 +3,8 @@ import path from "path";
 import "./refundPolicy.scss";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
 
-const RefundPolicy = () => {
-  const ht = getStaticHtmlPages();
+const RefundPolicy = async ({ hostname }) => {
+  const ht = await getStaticHtmlPages(hostname);
   const filePath = path.join(
     process.cwd(),
     ht?.pages?.refund
