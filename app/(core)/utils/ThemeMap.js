@@ -1,5 +1,3 @@
-
-
 export const themeMap = {
   "fgstore.web": {
     page: "fgstore.web",
@@ -9,7 +7,6 @@ export const themeMap = {
   },
   "nxt10.optigoapps.com": {
     page: "fgstore.pro",
-    // page: "fgstore.web",
   },
   "thereflections.procatalog.in": {
     page: "fgstore.pro",
@@ -28,5 +25,17 @@ export const themeMap = {
   },
   "francisdiamonds.procatalog.in": {
     page: "fgstore.pro",
-  }
+  },
+  "demo.procatalog.in": {
+    page: "fgstore.pro",
+  },
+  "company.procatalog.in": {
+    page: "fgstore.pro",
+  },
+  "test.procatalog.in": {
+    page: "fgstore.pro",
+  },
+  "procatalog.web": {
+    page: "fgstore.pro",
+  },
 };
