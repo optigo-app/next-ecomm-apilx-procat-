@@ -13,18 +13,18 @@ export const domainHtmlMap = {
   "glossyjewel.procatalog.in": "glossyjewel",
   "demo.procatalog.in": "sonasons",
   "company.procatalog.in": "sonasons",
-  "test.procatalog.in": "sonasons",         // testing domain 
-  "localhost:5006": 'sonasons',
-  "localhost:8006": 'sonasons',
-  "localhost:3000": 'sonasons',
-  "localhost:4000": 'sonasons',
-  'procatalog.web': 'francisdiamond',
-  'beta.procatalog.web': 'sonasons',
-  'jeweliita.procatalog.in': 'jeweliita',
-  "localhost:8012": 'sakuna',
-  "francisdiamonds.procatalog.in": 'francisdiamond',
-  'sakungems.procatalog.in': 'sakuna',
-  "sonasons.procatalog.in": 'sonasons'
+  "test.procatalog.in": "sonasons", // testing domain
+  "localhost:5006": "sonasons",
+  "localhost:8006": "sonasons",
+  "localhost:3000": "sonasons",
+  "localhost:4000": "sonasons",
+  "procatalog.web": "sonasons",
+  "beta.procatalog.web": "sonasons",
+  "jeweliita.procatalog.in": "jeweliita",
+  "localhost:8012": "sonasons",
+  "francisdiamonds.procatalog.in": "francisdiamond",
+  "sakungems.procatalog.in": "sakuna",
+  "sonasons.procatalog.in": "sonasons",
 };
 
 const pageFileMap = {
@@ -37,35 +37,36 @@ const pageFileMap = {
   contact: "contact.html",
 };
 
-
-
 export async function getStaticHtmlPages(host) {
   let hostname = host;
   if (!hostname) {
     try {
       const domainInfo = await getDomainInfo();
       hostname = domainInfo.hostname;
-      console.log(123, "worked", domainInfo)
     } catch (error) {
-      console.error(1234, "Error reading domain info in getStaticHtmlPages:", error);
+      console.error(
+        1234,
+        "Error reading domain info in getStaticHtmlPages:",
+        error,
+      );
       hostname = NEXT_APP_WEB.replace(/^www\./, "");
     }
   } else {
     hostname = hostname.replace(/^www\./, "");
   }
 
-  const folder = domainHtmlMap[hostname] || domainHtmlMap[NEXT_APP_WEB] || "sonasons";
+  const folder =
+    domainHtmlMap[hostname] || domainHtmlMap[NEXT_APP_WEB] || "sonasons";
   const pages = Object.fromEntries(
     Object.entries(pageFileMap).map(([key, file]) => [
       key,
       `public/WebSiteStaticImage/html/${folder}/${file}`,
-    ])
+    ]),
   );
-
 
   return {
     domain: hostname,
     folder,
-    pages
+    pages,
   };
 }
