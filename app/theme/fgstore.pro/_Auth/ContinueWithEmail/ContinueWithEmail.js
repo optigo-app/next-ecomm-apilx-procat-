@@ -35,8 +35,8 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
     const search = paramsObj.LoginRedirect || paramsObj.loginRedirect || paramsObj.search || "";
     const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
 
-    const redirectEmailUrl = `/LoginWithEmail?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}&email=${encodeURIComponent(email.trim())}`;
-    const redirectSignUpUrl = `/register?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}&email=${encodeURIComponent(email.trim())}`;
+    const redirectEmailUrl = `/LoginWithEmail?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
+    const redirectSignUpUrl = `/register?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
     const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}`;
 
     const validateEmail = (email) => {
@@ -77,7 +77,6 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                 navigation(redirectEmailUrl);
                 if (trimmedEmail) {
                     sessionStorage.setItem("registerEmail", trimmedEmail);
-                    sessionStorage.setItem("email", trimmedEmail);
                     sessionStorage.removeItem("registerMobile");
                 }
             } else {
@@ -91,7 +90,6 @@ export default function ContinueWithEmail({ params, searchParams, storeInit }) {
                     navigation(redirectSignUpUrl);
                     if (trimmedEmail) {
                         sessionStorage.setItem("registerEmail", trimmedEmail);
-                        sessionStorage.setItem("email", trimmedEmail);
                         sessionStorage.removeItem("registerMobile");
                     }
                 }

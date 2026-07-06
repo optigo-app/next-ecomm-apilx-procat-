@@ -42,6 +42,8 @@ import getMasterOptions from "./B2bRegister/MasterParser";
 import CryptoJS from "crypto-js";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { WEBSignUpWithCompanyInfoAPI } from "@/app/(core)/utils/API/Auth/WEBSignUpWithCompanyInfoAPI";
+import { LoginWithEmailAPI } from "@/app/(core)/utils/API/Auth/LoginWithEmailAPI";
+import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import RegistrationSuccess from "./B2bRegister/SuccessCard";
 import CountryDropDown from "@/app/(core)/utils/Glob_Functions/CountryDropDown/CountryDropDown";
@@ -138,6 +140,9 @@ const B2bRegister = ({ searchParams }) => {
   const location = useNextRouterLikeRR();
   const [activeStep, setActiveStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState(new Set());
+  const [isFirstTimeSuccess, setIsFirstTimeSuccess] = useState(true);
+  const [checkLoading, setCheckLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const sectionRefs = useRef([]);
   const mobileNoRef = useRef(null);
   const theme = useTheme();
@@ -186,9 +191,30 @@ const B2bRegister = ({ searchParams }) => {
   const singupRedirectUrl = `/LoginOption?LoginRedirect=${search}`;
 
   useEffect(() => {
-    const storedEmail = getSession("email");
+    const queryEmail = searchParams?.email
+      ? decodeURIComponent(searchParams.email)
+      : "";
+    const storedEmail =
+      queryEmail || getSession("email") || getSession("registerEmail");
     const routeMobileNo = getSession("registerMobile");
     const storedCountryCode = getSession("Countrycodestate");
+
+    if (storedEmail) {
+      sessionStorage.setItem("email", storedEmail);
+
+      const savedReviewEmail =
+        sessionStorage.getItem("b2b_registered_email") ||
+        localStorage.getItem("b2b_registered_email");
+      if (savedReviewEmail && savedReviewEmail !== storedEmail) {
+        sessionStorage.removeItem("b2b_registered_email");
+        sessionStorage.removeItem("b2b_registered_password");
+        localStorage.removeItem("b2b_registered_email");
+        localStorage.removeItem("b2b_registered_password");
+        setSubmitSuccess(false);
+        setIsFirstTimeSuccess(true);
+        setStatusMessage("");
+      }
+    }
 
     setFormData((prev) => {
       let updated = false;
@@ -226,7 +252,122 @@ const B2bRegister = ({ searchParams }) => {
         mobileNoRef.current.disabled = false;
       }
     }
-  }, [location.searchParams]);
+  }, [location.searchParams, searchParams?.email]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedEmail =
+        sessionStorage.getItem("b2b_registered_email") ||
+        localStorage.getItem("b2b_registered_email");
+      const savedPassword =
+        sessionStorage.getItem("b2b_registered_password") ||
+        localStorage.getItem("b2b_registered_password");
+      if (savedEmail && savedPassword) {
+        setSubmitSuccess(true);
+        setIsFirstTimeSuccess(false);
+      }
+    }
+  }, []);
+
+  const handleCheckStatus = async () => {
+    if (typeof window === "undefined") return;
+    const savedEmail =
+      sessionStorage.getItem("b2b_registered_email") ||
+      localStorage.getItem("b2b_registered_email");
+    const savedPassword =
+      sessionStorage.getItem("b2b_registered_password") ||
+      localStorage.getItem("b2b_registered_password");
+    if (!savedEmail || !savedPassword) {
+      toast.error("No registered credentials found.");
+      return;
+    }
+
+    setCheckLoading(true);
+    try {
+      const visiterId = Cookies.get("visiterId");
+      // savedPassword is ALREADY the SHA-1 hashed password
+      const response = await LoginWithEmailAPI(
+        savedEmail,
+        "",
+        savedPassword,
+        "",
+        "",
+        visiterId,
+      );
+
+      if (
+        response &&
+        response.Data &&
+        response.Data.rd &&
+        response.Data.rd[0]
+      ) {
+        const userStatus = response.Data.rd[0];
+        if (userStatus.stat === 1) {
+          toast.success("Account approved successfully! Redirecting...");
+          sessionStorage.removeItem("b2b_registered_email");
+          sessionStorage.removeItem("b2b_registered_password");
+          localStorage.removeItem("b2b_registered_email");
+          localStorage.removeItem("b2b_registered_password");
+          sessionStorage.setItem("registerEmail", savedEmail);
+
+          navigation(
+            `/LoginWithEmail?email=${encodeURIComponent(savedEmail)}&LoginRedirect=${encodeURIComponent(search)}`,
+          );
+        } else {
+          setIsFirstTimeSuccess(false);
+          const msg =
+            userStatus.stat_msg ||
+            "Your request is still under review. Please contact the admin.";
+          setStatusMessage(msg);
+          toast.info(msg);
+        }
+      } else {
+        toast.error("Failed to check status. Please try again.");
+      }
+    } catch (err) {
+      console.error("Check status error:", err);
+      toast.error("An error occurred while checking status.");
+    } finally {
+      setCheckLoading(false);
+    }
+  };
+
+  const handleRegisterNew = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("b2b_registered_email");
+      sessionStorage.removeItem("b2b_registered_password");
+      localStorage.removeItem("b2b_registered_email");
+      localStorage.removeItem("b2b_registered_password");
+    }
+    setSubmitSuccess(false);
+    setIsFirstTimeSuccess(true);
+    setStatusMessage("");
+    setFormData({
+      company_name: "",
+      entity_type: "",
+      industry_category: "",
+      gst_number: "",
+      pan_number: "",
+      iec_code: "",
+      address_line: "",
+      city: "",
+      state: "",
+      country: "",
+      password: "",
+      confirm_password: "",
+      pincode: "",
+      first_name: "",
+      last_name: "",
+      mobileNo: "",
+      mobileCountry: "",
+      email: "",
+      documents: {},
+      declaration: false,
+      consent: false,
+    });
+    setActiveStep(0);
+    setCompletedSteps(new Set());
+  };
 
   const canNavigateToStep = (targetStep) => {
     if (targetStep <= activeStep) return true;
@@ -511,6 +652,11 @@ const B2bRegister = ({ searchParams }) => {
         password: hashedPassword,
       });
       if (response.stat === 1) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("b2b_registered_email", formData.email);
+          sessionStorage.setItem("b2b_registered_password", hashedPassword);
+        }
+        setIsFirstTimeSuccess(true);
         setSubmitSuccess(true);
         setCompletedSteps(new Set([0, 1, 2, 3]));
         // navigation(singupRedirectUrl);
@@ -546,6 +692,11 @@ const B2bRegister = ({ searchParams }) => {
           <RegistrationSuccess
             onHome={() => navigation("/")}
             onLogin={() => navigation("/LoginOption")}
+            isFirstTime={isFirstTimeSuccess}
+            onCheckStatus={handleCheckStatus}
+            checkLoading={checkLoading}
+            statusMessage={statusMessage}
+            onRegisterNew={handleRegisterNew}
           />
         </Box>
       </Fade>
