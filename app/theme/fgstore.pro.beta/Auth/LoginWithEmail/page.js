@@ -116,6 +116,13 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
       setIsLoading(false);
       const result = getEventMessage(response);
       if (result?.eventName && result?.status) {
+        if (result.eventName === "IncorrectPassword") {
+          setErrors((prev) => ({
+            ...prev,
+            confirmPassword: result.message || "Incorrect password. Please try again.",
+          }));
+          return;
+        }
         setAdminStatusDialog({
           open: true,
           type: result?.eventName,
@@ -187,7 +194,10 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
         }
 
       } else {
-        errors.confirmPassword = response.Data.rd[0].stat_msg;
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: response.Data.rd[0].stat_msg || "Invalid password",
+        }));
       }
     }).catch((err) => console.log(err))
 

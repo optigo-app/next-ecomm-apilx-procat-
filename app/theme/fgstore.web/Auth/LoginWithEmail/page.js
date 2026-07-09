@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Button, CircularProgress, IconButton, InputAdornment, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
@@ -32,7 +38,11 @@ export default function LoginWithEmail({ params, searchParams }) {
   const location = useNextRouterLikeRR();
 
   const paramsObj = searchParams || {};
-  const search = paramsObj.LoginRedirect || paramsObj.loginRedirect || paramsObj.search || "";
+  const search =
+    paramsObj.LoginRedirect ||
+    paramsObj.loginRedirect ||
+    paramsObj.search ||
+    "";
   const redirectEmailUrl = search ? decodeURIComponent(search) : "/";
   const cancelRedireactUrl = `/LoginOption/?LoginRedirect=${search}`;
 
@@ -71,14 +81,15 @@ export default function LoginWithEmail({ params, searchParams }) {
     if (storedEmail) setEmail(storedEmail);
   }, []);
 
-
-
   const handleInputChange = (e, setter, fieldName) => {
     const { value } = e.target;
     setter(value);
     if (fieldName === "confirmPassword") {
       if (!value.trim()) {
-        setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: "Password is required" }));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          confirmPassword: "Password is required",
+        }));
       } else {
         setErrors((prevErrors) => ({ ...prevErrors, confirmPassword: "" }));
       }
@@ -138,11 +149,14 @@ export default function LoginWithEmail({ params, searchParams }) {
         if (response.Data.rd[0].stat === 1) {
           const visiterID = Cookies.get("visiterId");
           Cookies.set("userLoginCookie", response?.Data?.rd[0]?.Token);
-          Cookies.set('LoginUser', true)
+          Cookies.set("LoginUser", true);
           sessionStorage.setItem("registerEmail", email);
           setislogin(true);
           sessionStorage.setItem("LoginUser", true);
-          sessionStorage.setItem("loginUserDetail", JSON.stringify(response.Data.rd[0]));
+          sessionStorage.setItem(
+            "loginUserDetail",
+            JSON.stringify(response.Data.rd[0]),
+          );
 
           GetCountAPI(visiterID)
             .then((res) => {
@@ -201,7 +215,10 @@ export default function LoginWithEmail({ params, searchParams }) {
           // getAllProdData()
           // window.location.reload();
         } else {
-          errors.confirmPassword = "Password is Invalid";
+          setErrors((prev) => ({
+            ...prev,
+            confirmPassword: "Password is Invalid",
+          }));
         }
       })
       .catch((err) => console.log(err));
@@ -252,7 +269,9 @@ export default function LoginWithEmail({ params, searchParams }) {
 
   const handleNavigation = () => {
     sessionStorage.setItem("LoginCodeEmail", "true");
-    navigation("/LoginWithEmailCode", { state: { email: location.state?.email } });
+    navigation("/LoginWithEmailCode", {
+      state: { email: location.state?.email },
+    });
   };
 
   const handleForgotPassword = async () => {
@@ -325,7 +344,13 @@ export default function LoginWithEmail({ params, searchParams }) {
             using {email}
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <TextField
               autoFocus
               id="outlined-confirm-password-input"
@@ -335,7 +360,9 @@ export default function LoginWithEmail({ params, searchParams }) {
               className="smr_loginPasswordBox"
               style={{ margin: "15px" }}
               value={confirmPassword}
-              onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
+              onChange={(e) =>
+                handleInputChange(e, setConfirmPassword, "confirmPassword")
+              }
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
               onKeyDown={(event) => {
@@ -346,7 +373,14 @@ export default function LoginWithEmail({ params, searchParams }) {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("confirmPassword")} onMouseDown={handleMouseDownConfirmPassword} edge="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() =>
+                        handleTogglePasswordVisibility("confirmPassword")
+                      }
+                      onMouseDown={handleMouseDownConfirmPassword}
+                      edge="end"
+                    >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -363,18 +397,28 @@ export default function LoginWithEmail({ params, searchParams }) {
             >
               Login
             </button>
-            <Button style={{ marginTop: "10px", color: "gray" }} onClick={() => navigation(cancelRedireactUrl)}>
+            <Button
+              style={{ marginTop: "10px", color: "gray" }}
+              onClick={() => navigation(cancelRedireactUrl)}
+            >
               CANCEL
             </Button>
 
-            <button type="submit" className="SmilingLoginCodeBtn" onClick={handleNavigation}>
+            <button
+              type="submit"
+              className="SmilingLoginCodeBtn"
+              onClick={handleNavigation}
+            >
               Login With a Code instead on email
             </button>
             <p className="go_pass_fg" style={{ textAlign: "center" }}>
               Go passwordless! we'll send you an email.
             </p>
 
-            <p style={{ color: "blue", cursor: "pointer" }} onClick={handleForgotPassword}>
+            <p
+              style={{ color: "blue", cursor: "pointer" }}
+              onClick={handleForgotPassword}
+            >
               Forgot Password ?
             </p>
           </div>
