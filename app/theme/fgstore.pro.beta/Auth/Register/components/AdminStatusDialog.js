@@ -52,7 +52,7 @@ export default function AdminStatusDialog({ open, type, message, onClose }) {
       </Box>
 
       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "text.primary", fontSize: "1.25rem" }}>
-        {eventConfig?.type}
+        {eventConfig?.title}
       </Typography>
 
       <Typography variant="body2" sx={{ color: "text.secondary", mb: 3, fontSize: "0.9rem", lineHeight: 1.5 }}>

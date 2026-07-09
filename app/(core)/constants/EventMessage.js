@@ -1,6 +1,8 @@
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import PriorityHighRoundedIcon from "@mui/icons-material/PriorityHighRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
+import FmdBadRoundedIcon from "@mui/icons-material/FmdBadRounded";
 
 const eventMessages = [
   {
@@ -20,33 +22,33 @@ const eventMessages = [
     status: "working",
     message:
       "It looks like you're trying to sign in from a location that isn't allowed for your account. Please contact the administrator.",
-    icon: AccessTimeRoundedIcon,
+    icon: FmdBadRoundedIcon,
   },
   {
     eventName: "EcatSuspended",
     status: "working",
     message: "Your account is temporarily suspended. Please contact the admin.",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
   },
   {
     eventName: "LoginOff",
     status: "working",
     message: "You don’t have access to log in. Please contact the admin.",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
   },
   {
     eventName: "EcatOff",
     status: "working",
     message:
       "Your account does not have login access. Please contact the administrator.",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
   },
   {
     eventName: "ProcatOff",
     status: "working",
     message:
       "Your account does not have login access. Please contact the administrator.",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
   },
   {
     eventName: "Active",
@@ -59,7 +61,7 @@ const eventMessages = [
     status: "working",
     message:
       "Your account has been deactivated. Please contact the administrator for assistance.",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
   },
   {
     eventName: "ExpiryReminder",
@@ -141,7 +143,7 @@ export const eventUIMap = {
   Deactive: {
     type: "Deactive",
     title: "Account Inactive",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
     color: "error",
   },
   ExpireAccount: {
@@ -153,25 +155,25 @@ export const eventUIMap = {
   RoamingOff: {
     type: "Roaming Off",
     title: "Access Restricted",
-    icon: AccessTimeRoundedIcon,
+    icon: FmdBadRoundedIcon,
     color: "error",
   },
   EcatSuspended: {
     type: "Ecat Suspended",
     title: "Account Suspended",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
     color: "error",
   },
   EcatOff: {
     type: "Ecat Off",
     title: "Access Restricted",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
     color: "error",
   },
   ProcatOff: {
     type: "Procat Off",
     title: "Access Restricted",
-    icon: AccessTimeRoundedIcon,
+    icon: BlockRoundedIcon,
     color: "error",
   },
   Active: {
