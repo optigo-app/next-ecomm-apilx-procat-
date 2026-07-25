@@ -1,4 +1,4 @@
-import { Poppins } from "next/font/google";
+import { Poppins,DM_Sans } from "next/font/google";
 import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
 import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
@@ -10,13 +10,7 @@ import SWRegistration from "./components/SWRegistration";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
 import { getThemeByDomain } from "./(core)/constants/data";
 import "./globals.css";
-import fs from "fs";
-import path from "path";
 
-// Force dynamic rendering per-request so generateMetadata always reads the
-// correct hostname from request headers. Without this, Next.js may cache the
-// metadata result from one domain (e.g. francisdiamonds) and serve it to
-// another domain (e.g. sakungems).
 export const dynamic = "force-dynamic";
 
 const poppins = Poppins({
@@ -25,6 +19,13 @@ const poppins = Poppins({
   variable: "--font-poppins",
   display: "swap",
 });
+
+const dm_sans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-dm-sans",
+  display: "swap",
+})
 
 const DEFAULT_JEWELRY_DESCRIPTION = "Discover timeless jewelry crafted with precision and elegance. Explore gold, diamond, and silver collections designed for everyday wear and special occasions, with trusted quality and exceptional craftsmanship.";
 const DEFAULT_JEWELRY_KEYWORDS = "jewelry online, gold jewelry, diamond jewelry, silver jewelry, fine jewelry, bridal jewelry, earrings, rings, necklaces, bracelets, luxury jewelry, handcrafted jewelry";
@@ -107,7 +108,7 @@ export default async function RootLayout({ children }) {
         </head>
         <SWRegistration />
         <EmotionRegistry>
-          <body className={`${poppins.variable}`}>
+          <body className={`${dm_sans.variable}`}>
             {/* <StyleInjector styleContent="" /> */}
             <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
               <StoreProvider storeinit={storeInit}>
