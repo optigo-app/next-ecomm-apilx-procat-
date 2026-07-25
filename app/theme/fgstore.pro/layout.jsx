@@ -26,7 +26,7 @@ const layout = async ({ children }) => {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%", overflow: "hidden", position: "relative" }} className="setFullThemeBack animateThemeFill">
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%", overflow: "hidden", position: "relative" }} className="setFullThemeBack_Bg animateThemeFill">
       <Header1 logos={logos} storeinit={storeData} />
       <Box
         sx={{

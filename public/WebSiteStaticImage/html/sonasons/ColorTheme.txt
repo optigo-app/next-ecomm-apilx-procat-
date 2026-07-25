@@ -3,6 +3,10 @@
 background-color: #97b8da!important;
 }
 
+.setFullThemeBack_Bg{
+background-color: #ffffff!important;
+}
+
 .btnColorProCat{
 	background-color: #97b8da!important;
 	color : #323030 !important;

@@ -1,17 +1,36 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./Album.modul.scss";
 import { Get_Procatalog } from "@/app/(core)/utils/API/Home/Get_Procatalog/Get_Procatalog";
 import Cookies from "js-cookie";
-import { Box, CardMedia, Modal, Skeleton } from "@mui/material";
+import {
+  Box,
+  CardMedia,
+  Modal,
+  Skeleton,
+  Grid,
+  Button,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import AlbumSkeleton from "./AlbumSkeleton/AlbumSkeleton";
-import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import { useMaster } from "@/app/(core)/contexts/MasterProvider";
 import { useSearchParams } from "next/navigation";
-import { normalizeALC, buildAlbumCacheKey, getPricingContext, processAlbumImages } from "./CacheBuilder";
+import {
+  normalizeALC,
+  buildAlbumCacheKey,
+  getPricingContext,
+  processAlbumImages,
+} from "./CacheBuilder";
 import { getSession } from "@/app/(core)/utils/FetchSessionData";
 
 const Album = () => {
@@ -53,25 +72,53 @@ const Album = () => {
     };
   }, []);
 
-  const pricingContext = useMemo(() => getPricingContext(loginUserDetail, storeinit, islogin), [loginUserDetail, storeinit, islogin]);
+  const pricingContext = useMemo(
+    () => getPricingContext(loginUserDetail, storeinit, islogin),
+    [loginUserDetail, storeinit, islogin],
+  );
 
   const fetchAndSetAlbumData = useCallback(
     async (value, finalID, precomputedKey) => {
       if (!pricingContext || isFetchingRef.current) {
-        console.log("██████ ALBUM FETCH BLOCKED ██████ pricingContext:", !!pricingContext, "isFetchingRef:", isFetchingRef.current);
+        console.log(
+          "██████ ALBUM FETCH BLOCKED ██████ pricingContext:",
+          !!pricingContext,
+          "isFetchingRef:",
+          isFetchingRef.current,
+        );
         return;
       }
 
       const apiALC = value;
       const keyALC = normalizeALC(value);
-      console.log("██████ ALBUM FETCH START ██████ ALC:", JSON.stringify(apiALC), "finalID:", finalID);
+      console.log(
+        "██████ ALBUM FETCH START ██████ ALC:",
+        JSON.stringify(apiALC),
+        "finalID:",
+        finalID,
+      );
 
-      const { key, meta } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
+      const { key, meta } = buildAlbumCacheKey(
+        "procatalog_album",
+        storeinit,
+        pricingContext,
+        finalID,
+        keyALC,
+      );
       const effectiveKey = precomputedKey || key;
       const eventName = "procatalog_album";
 
       console.log("██████ ALBUM CACHE KEY ██████", effectiveKey);
-      console.log("██████ ALBUM PRICING ██████ PackageId:", pricingContext?.PackageId, "Laboursetid:", pricingContext?.Laboursetid, "diamond:", pricingContext?.diamondpricelistname, "colorstone:", pricingContext?.colorstonepricelistname);
+      console.log(
+        "██████ ALBUM PRICING ██████ PackageId:",
+        pricingContext?.PackageId,
+        "Laboursetid:",
+        pricingContext?.Laboursetid,
+        "diamond:",
+        pricingContext?.diamondpricelistname,
+        "colorstone:",
+        pricingContext?.colorstonepricelistname,
+      );
 
       isFetchingRef.current = true;
       setIsFetching(true);
@@ -87,29 +134,48 @@ const Album = () => {
         if (localCacheRes?.cached) {
           const cacheTime = localCacheRes.meta?.timestamp;
           const twelveHours = 12 * 60 * 60 * 1000;
-          const isExpired = cacheTime ? (Date.now() - cacheTime > twelveHours) : false;
+          const isExpired = cacheTime
+            ? Date.now() - cacheTime > twelveHours
+            : false;
 
           if (isExpired) {
             console.log("██████ ALBUM CACHE EXPIRED ██████ Fetching from API");
-            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(() => { });
-          } else if (Array.isArray(localCacheRes.data) && localCacheRes.data.length > 0) {
-            console.log("██████ ALBUM USING CACHE ██████ Setting", localCacheRes.data.length, "albums from cache");
+            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(
+              () => {},
+            );
+          } else if (
+            Array.isArray(localCacheRes.data) &&
+            localCacheRes.data.length > 0
+          ) {
+            console.log(
+              "██████ ALBUM USING CACHE ██████ Setting",
+              localCacheRes.data.length,
+              "albums from cache",
+            );
             setAlbumData(localCacheRes.data);
-            setFallbackImages(processAlbumImages(localCacheRes.data, storeinit));
+            setFallbackImages(
+              processAlbumImages(localCacheRes.data, storeinit),
+            );
             setImagesReady(true);
             setIsFetching(false);
             isFetchingRef.current = false;
             return localCacheRes.data;
           } else {
-            console.log("██████ ALBUM CACHE EMPTY ██████ Cache exists but data is empty/invalid — DELETING cache and fetching from API");
-            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(() => { });
+            console.log(
+              "██████ ALBUM CACHE EMPTY ██████ Cache exists but data is empty/invalid — DELETING cache and fetching from API",
+            );
+            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(
+              () => {},
+            );
           }
         } else {
           console.log("██████ ALBUM NO LOCAL CACHE ██████ Will fetch from API");
         }
 
         if (!storeinit) {
-          console.log("██████ ALBUM STOREINIT MISSING ██████ Retrying in 500ms");
+          console.log(
+            "██████ ALBUM STOREINIT MISSING ██████ Retrying in 500ms",
+          );
           setTimeout(() => {
             isFetchingRef.current = false;
             setIsFetching(false);
@@ -118,9 +184,27 @@ const Album = () => {
           return;
         }
 
-        console.log("██████ ALBUM API CALL ██████ finalID:", finalID, "apiALC:", JSON.stringify(apiALC));
-        const response = await Get_Procatalog(storeinit, "GET_Procatalog", finalID, apiALC, islogin);
-        console.log("██████ ALBUM API RESPONSE ██████ hasData:", !!response?.Data, "hasRd:", !!response?.Data?.rd, "rdLength:", response?.Data?.rd?.length);
+        console.log(
+          "██████ ALBUM API CALL ██████ finalID:",
+          finalID,
+          "apiALC:",
+          JSON.stringify(apiALC),
+        );
+        const response = await Get_Procatalog(
+          storeinit,
+          "GET_Procatalog",
+          finalID,
+          apiALC,
+          islogin,
+        );
+        console.log(
+          "██████ ALBUM API RESPONSE ██████ hasData:",
+          !!response?.Data,
+          "hasRd:",
+          !!response?.Data?.rd,
+          "rdLength:",
+          response?.Data?.rd?.length,
+        );
 
         if (response?.Data?.rd) {
           const albums = response.Data.rd;
@@ -131,15 +215,22 @@ const Album = () => {
 
             if (retryCountRef.current < MAX_RETRIES) {
               retryCountRef.current += 1;
-              const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
-              console.log(`██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+              const delay =
+                RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+              console.log(
+                `██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`,
+              );
               lastRequestKeyRef.current = "";
               retryTimerRef.current = setTimeout(() => {
-                console.log(`██████ ALBUM RETRY ${retryCountRef.current}/${MAX_RETRIES} ██████ Retrying fetch...`);
+                console.log(
+                  `██████ ALBUM RETRY ${retryCountRef.current}/${MAX_RETRIES} ██████ Retrying fetch...`,
+                );
                 fetchAndSetAlbumData(value, finalID, precomputedKey);
               }, delay);
             } else {
-              console.log("██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — max retries reached, giving up");
+              console.log(
+                "██████ ALBUM API RETURNED EMPTY ARRAY ██████ rd is [] — max retries reached, giving up",
+              );
               lastRequestKeyRef.current = "";
               retryCountRef.current = 0;
               // Dismiss skeleton — we've exhausted retries
@@ -148,7 +239,11 @@ const Album = () => {
             return;
           }
 
-          console.log("██████ ALBUM API SUCCESS ██████ Setting", albums.length, "albums from API");
+          console.log(
+            "██████ ALBUM API SUCCESS ██████ Setting",
+            albums.length,
+            "albums from API",
+          );
           // Reset retry counter on success
           retryCountRef.current = 0;
           if (retryTimerRef.current) {
@@ -164,25 +259,42 @@ const Album = () => {
           isFetchingRef.current = false;
 
           try {
-            console.log("██████ ALBUM CACHING DATA ██████ key:", effectiveKey, "albums:", albums.length);
+            console.log(
+              "██████ ALBUM CACHING DATA ██████ key:",
+              effectiveKey,
+              "albums:",
+              albums.length,
+            );
             const updatedMeta = { ...meta, timestamp: Date.now() };
             fetch("/api/cache", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ key: effectiveKey, data: albums, meta: updatedMeta }),
+              body: JSON.stringify({
+                key: effectiveKey,
+                data: albums,
+                meta: updatedMeta,
+              }),
             }).catch(console.error);
           } catch (cacheErr) {
             console.error("██████ ALBUM CACHE SAVE FAILED ██████", cacheErr);
           }
         } else {
-          console.log("██████ ALBUM API NO DATA ██████ response.Data.rd is:", response?.Data?.rd, "— full response keys:", response ? Object.keys(response) : "null");
+          console.log(
+            "██████ ALBUM API NO DATA ██████ response.Data.rd is:",
+            response?.Data?.rd,
+            "— full response keys:",
+            response ? Object.keys(response) : "null",
+          );
           setIsFetching(false);
           isFetchingRef.current = false;
           // Also retry for completely missing rd (not just empty array)
           if (retryCountRef.current < MAX_RETRIES) {
             retryCountRef.current += 1;
-            const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
-            console.log(`██████ ALBUM API NO DATA — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+            const delay =
+              RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+            console.log(
+              `██████ ALBUM API NO DATA — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`,
+            );
             lastRequestKeyRef.current = "";
             retryTimerRef.current = setTimeout(() => {
               fetchAndSetAlbumData(value, finalID, precomputedKey);
@@ -200,8 +312,11 @@ const Album = () => {
         isFetchingRef.current = false;
         if (retryCountRef.current < MAX_RETRIES) {
           retryCountRef.current += 1;
-          const delay = RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
-          console.log(`██████ ALBUM FETCH ERROR — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`);
+          const delay =
+            RETRY_BASE_DELAY * Math.pow(2, retryCountRef.current - 1);
+          console.log(
+            `██████ ALBUM FETCH ERROR — RETRY ██████ scheduling retry ${retryCountRef.current}/${MAX_RETRIES} in ${delay}ms`,
+          );
           lastRequestKeyRef.current = "";
           retryTimerRef.current = setTimeout(() => {
             fetchAndSetAlbumData(value, finalID, precomputedKey);
@@ -224,13 +339,24 @@ const Album = () => {
     const fetchAlbumData = async () => {
       const visiterID = Cookies.get("visiterId");
       const userId = loginUserDetail?.id;
-      const finalID = storeinit?.IsB2BWebsite === 0 ? (islogin ? userId || "" : visiterID) : userId || "";
+      const finalID =
+        storeinit?.IsB2BWebsite === 0
+          ? islogin
+            ? userId || ""
+            : visiterID
+          : userId || "";
       const rawALC = ALCVAL ? ALCVAL : (getSession("ALCVALUE") ?? "");
       const keyALC = normalizeALC(rawALC);
       if (rawALC) {
         sessionStorage.setItem("ALCVALUE", String(rawALC));
       }
-      const { key } = buildAlbumCacheKey("procatalog_album", storeinit, pricingContext, finalID, keyALC);
+      const { key } = buildAlbumCacheKey(
+        "procatalog_album",
+        storeinit,
+        pricingContext,
+        finalID,
+        keyALC,
+      );
       if (isFetchingRef.current || lastRequestKeyRef.current === key) {
         return;
       }
@@ -239,8 +365,15 @@ const Album = () => {
     };
 
     fetchAlbumData();
-
-  }, [islogin, pricingContext, storeinit, comboReady, ALCVAL, fetchAndSetAlbumData, loginUserDetail?.id]);
+  }, [
+    islogin,
+    pricingContext,
+    storeinit,
+    comboReady,
+    ALCVAL,
+    fetchAndSetAlbumData,
+    loginUserDetail?.id,
+  ]);
 
   const handleNavigate = (data) => {
     const albumName = data?.AlbumName;
@@ -252,7 +385,9 @@ const Album = () => {
     const state = { SecurityKey: securityKey };
     if (data?.IsDual === 1 && Newdata?.length > 1) {
       const finalNewData = Newdata.map((item) => {
-        let imgLink = item?.Image_Name ? `${storeinit?.CDNDesignImageFol}${item?.Image_Name}` : imageNotFound;
+        let imgLink = item?.Image_Name
+          ? `${storeinit?.CDNDesignImageFol}${item?.Image_Name}`
+          : imageNotFound;
         return { ...item, imageKey: imgLink };
       });
 
@@ -260,7 +395,11 @@ const Album = () => {
       setDesignSubData(finalNewData);
     } else {
       sessionStorage.setItem("redirectURL", url);
-      navigate(islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0) ? url : redirectUrl);
+      navigate(
+        islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0)
+          ? url
+          : redirectUrl,
+      );
     }
   };
 
@@ -271,7 +410,11 @@ const Album = () => {
     const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
     const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     sessionStorage.setItem("redirectURL", url);
-    navigate(islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0) ? url : redirectUrl);
+    navigate(
+      islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0)
+        ? url
+        : redirectUrl,
+    );
   };
 
   const handleOpen = () => setOpen(true);
@@ -287,7 +430,10 @@ const Album = () => {
         return fallbackImages[fullImageUrl];
       }
       if (data?.AlbumDetail) {
-        const albumDetails = typeof data.AlbumDetail === "string" ? JSON.parse(data.AlbumDetail) : data.AlbumDetail;
+        const albumDetails =
+          typeof data.AlbumDetail === "string"
+            ? JSON.parse(data.AlbumDetail)
+            : data.AlbumDetail;
         if (albumDetails?.length > 0) {
           return `${storeinit?.CDNDesignImageFol}${albumDetails?.[0]?.Image_Name}`;
         }
@@ -314,9 +460,16 @@ const Album = () => {
     return <AlbumSkeleton />;
   }
 
+  const isB2B = storeinit?.IsB2BWebsite === 1;
+
   return (
     <div className="proCat_alubmMainDiv">
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
         <Box className="proCat_album_box_main">
           <div className="proCat_modalHeader">
             <p className="proCat_modalTitle">{openAlbumName}</p>
@@ -329,7 +482,11 @@ const Album = () => {
             <div className="proCat_modalMasonry">
               {designSubData?.map((data, index) => {
                 return (
-                  <div key={index} className="proCat_modalCard" onClick={() => handleNavigateSub(data)}>
+                  <div
+                    key={index}
+                    className="proCat_modalCard"
+                    onClick={() => handleNavigateSub(data)}
+                  >
                     <div className="proCat_modalCardMedia">
                       <img
                         src={data?.imageKey}
@@ -342,8 +499,16 @@ const Album = () => {
                       {islogin || data?.AlbumSecurityId === 0 ? (
                         ""
                       ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" className="proCat_AlbumLockIcone_popup lock_icon">
-                          <path d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z" fill="#000000"></path>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="#000000"
+                          className="proCat_AlbumLockIcone_popup lock_icon"
+                        >
+                          <path
+                            d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z"
+                            fill="#000000"
+                          ></path>
                         </svg>
                       )}
                     </div>
@@ -357,51 +522,296 @@ const Album = () => {
           <p className="pro_pressESCClose">Press ESC To Close</p>
         </Box>
       </Modal>
-      {albumData?.length !== 0 && (
-        <>
-          {console.log("██████ ALBUM RENDERING ██████ count:", albumData.length)}
-          <p className="proCat_albumTitle">ALBUMS</p>
-          <div className="proCat_albumALL_div">
-            {albumData.map((data, index) => {
-              const isLoading = loadedProducts[index]?.id !== index;
-              const Newdata = data?.AlbumDetail ? JSON.parse(data?.AlbumDetail) : [];
 
-              return (
-                <div key={index} className="smr_AlbumImageMain" onClick={() => handleNavigate(data)}>
-                  <div style={{ position: "relative" }}>
-                    {isLoading ? (
-                      <CardMedia style={{ width: "100%" }} className="cardMainSkeleton">
-                        <Skeleton animation="wave" variant="rect" width={"100%"} height="280px" style={{ backgroundColor: "#e8e8e86e" }} />
-                      </CardMedia>
-                    ) : (
-                      <img
-                        src={loadedProducts[index]?.src}
-                        data-src={loadedProducts[index]?.src}
-                        className="smr_AlbumImageMain_img"
-                        alt={data?.AlbumName}
-                        loading="lazy"
-                        onError={(e) => {
-                          e.target.src = imageNotFound;
+      {albumData?.length !== 0 && (
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 1500,
+            mx: "auto",
+            px: { xs: 2, sm: 3, md: 4 },
+            py: 3,
+          }}
+        >
+          {isB2B ? (
+            /* ======================================= */
+            /* B2B Catalogs & Lookbooks UI Card Grid   */
+            /* ======================================= */
+            <Grid container spacing={1.5}>
+              {albumData.map((data, index) => {
+                const isLoading = loadedProducts[index]?.id !== index;
+                const Newdata = data?.AlbumDetail
+                  ? JSON.parse(data?.AlbumDetail)
+                  : [];
+
+                return (
+                  <Grid
+                    item
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 3,
+                    }}
+                    key={index}
+                  >
+                    <Box
+                      sx={{
+                        borderRadius: "18px",
+                        overflow: "hidden",
+                        border: "1px solid rgba(226, 232, 240, 0.9)",
+                        backgroundColor: "rgba(255, 255, 255, 0.85)",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        boxShadow:
+                          "0 8px 24px -4px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                      }}
+                    >
+                      {/* Image Container */}
+                      <Box
+                        onClick={() => handleNavigate(data)}
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                          height: 240,
+                          backgroundColor: "#f8f9fa",
+                          cursor: "pointer",
+                          overflow: "hidden",
                         }}
-                      />
-                    )}
-                    {data?.IsDual === 1 && Newdata?.length > 1 && <GridIcon />}
-                    {islogin || data?.AlbumSecurityId === 0 ? (
-                      ""
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" className="proCat_AlbumLockIcone lock_icon">
-                        <path d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z" fill="#000000"></path>
-                      </svg>
-                    )}
-                  </div>
-                  <div style={{ marginTop: "3px" }}>
-                    <p className="proCat_albumName">{data?.AlbumName}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
+                      >
+                        {isLoading ? (
+                          <Skeleton
+                            animation="wave"
+                            variant="rectangular"
+                            width="100%"
+                            height="100%"
+                          />
+                        ) : (
+                          <img
+                            src={loadedProducts[index]?.src}
+                            data-src={loadedProducts[index]?.src}
+                            alt={data?.AlbumName}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.src = imageNotFound;
+                            }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                              display: "block",
+                            }}
+                          />
+                        )}
+
+                        {/* Overlays */}
+                        {data?.IsDual === 1 && Newdata?.length > 1 && (
+                          <GridIcon />
+                        )}
+                        {islogin || data?.AlbumSecurityId === 0 ? null : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="#000000"
+                            className="proCat_AlbumLockIcone lock_icon"
+                          >
+                            <path
+                              d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z"
+                              fill="#000000"
+                            ></path>
+                          </svg>
+                        )}
+                      </Box>
+
+                      {/* Content Details */}
+                      <Box
+                        sx={{
+                          p: 2.5,
+                          display: "flex",
+                          flexDirection: "column",
+                          flexGrow: 1,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "1.15rem",
+                            color: "#0F3D4C",
+                            mb: 0.8,
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {data?.AlbumName}
+                        </Typography>
+
+                        {/* Action Buttons */}
+                        <Box sx={{ display: "flex", gap: 1.5, mt: "auto",pt:1 }}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            onClick={() => handleNavigate(data)}
+                            sx={{
+                              borderRadius: "6px",
+                              borderColor: "#0F3D4C",
+                              color: "#0F3D4C",
+                              fontWeight: 600,
+                              fontSize: "0.72rem",
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                              py: 0.9,
+                            }}
+                          >
+                            PREVIEW
+                          </Button>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            onClick={() => handleNavigate(data)}
+                            sx={{
+                              borderRadius: "6px",
+                              backgroundColor: "#000000ff",
+                              color: "#ffffff",
+                              fontWeight: 600,
+                              fontSize: "0.72rem",
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                              py: 0.9,
+                              boxShadow: "none",
+                            }}
+                          >
+                            REQUEST ACCESS
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          ) : (
+            /* ======================================= */
+            /* B2C Glass Edge Card Grid (5 per row)    */
+            /* ======================================= */
+            <Grid container spacing={1.5}>
+              {albumData.map((data, index) => {
+                const isLoading = loadedProducts[index]?.id !== index;
+                const Newdata = data?.AlbumDetail
+                  ? JSON.parse(data?.AlbumDetail)
+                  : [];
+
+                return (
+                  <Grid
+                    item
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 3,
+                    }}
+                      key={index}
+                  >
+                    <Box
+                      onClick={() => handleNavigate(data)}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        cursor: "pointer",
+                        height: "100%",
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(255, 255, 255, 0.85)",
+                        backdropFilter: "blur(12px)",
+                        WebkitBackdropFilter: "blur(12px)",
+                        border: "1px solid rgba(226, 232, 240, 0.9)",
+                        boxShadow:
+                          "0 8px 24px -4px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                      }}
+                    >
+                      {/* Image Box Container */}
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: "100%",
+                        borderRadius: "20px",
+                        borderBottomLeftRadius:'0',
+                        borderBottomRightRadius:'0',
+                          overflow: "hidden",
+                          backgroundColor: "#F8FAFC",
+                          aspectRatio: "1 / 1",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {isLoading ? (
+                          <Skeleton
+                            animation="wave"
+                            variant="rectangular"
+                            width="100%"
+                            height="100%"
+                          />
+                        ) : (
+                          <img
+                            src={loadedProducts[index]?.src}
+                            data-src={loadedProducts[index]?.src}
+                            alt={data?.AlbumName}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.src = imageNotFound;
+                            }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                              display: "block",
+                            }}
+                          />
+                        )}
+
+                        {data?.IsDual === 1 && Newdata?.length > 1 && (
+                          <GridIcon />
+                        )}
+                        {islogin || data?.AlbumSecurityId === 0 ? null : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="#000000"
+                            className="proCat_AlbumLockIcone lock_icon"
+                          >
+                            <path
+                              d="M 12 1 C 8.6761905 1 6 3.6761905 6 7 L 6 8 C 4.9 8 4 8.9 4 10 L 4 20 C 4 21.1 4.9 22 6 22 L 18 22 C 19.1 22 20 21.1 20 20 L 20 10 C 20 8.9 19.1 8 18 8 L 18 7 C 18 3.6761905 15.32381 1 12 1 z M 12 3 C 14.27619 3 16 4.7238095 16 7 L 16 8 L 8 8 L 8 7 C 8 4.7238095 9.7238095 3 12 3 z M 12 13 C 13.1 13 14 13.9 14 15 C 14 16.1 13.1 17 12 17 C 10.9 17 10 16.1 10 15 C 10 13.9 10.9 13 12 13 z"
+                              fill="#000000"
+                            ></path>
+                          </svg>
+                        )}
+                      </Box>
+
+                      {/* Category Title */}
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: { xs: "0.8rem", sm: "0.88rem" },
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          textAlign: "center",
+                          color: "#1E293B",
+                          py: 1.5,
+                          px: 0.5,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {data?.AlbumName}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
+        </Box>
       )}
     </div>
   );
@@ -419,8 +829,16 @@ const GridIcon = () => {
         bgcolor: "#e6e6e6ed",
       }}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width={22} height={22} viewBox="0 0 24 24">
-        <path fill="#4b4b4b" d="M5 11h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m0 10h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m8-16v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2m2 16h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"></path>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={22}
+        height={22}
+        viewBox="0 0 24 24"
+      >
+        <path
+          fill="#4b4b4b"
+          d="M5 11h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m0 10h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2m8-16v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2m2 16h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2"
+        ></path>
       </svg>
     </IconButton>
   );
