@@ -375,14 +375,12 @@ const Album = () => {
     loginUserDetail?.id,
   ]);
 
-  const handleNavigate = (data) => {
+  const handlePreview = (data) => {
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
     const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
-    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     const Newdata = data?.AlbumDetail ? JSON.parse(data?.AlbumDetail) : [];
     setSecurityKey(securityKey);
-    const state = { SecurityKey: securityKey };
     if (data?.IsDual === 1 && Newdata?.length > 1) {
       const finalNewData = Newdata.map((item) => {
         let imgLink = item?.Image_Name
@@ -391,16 +389,26 @@ const Album = () => {
         return { ...item, imageKey: imgLink };
       });
 
+      setOpenAlbumName(albumName);
       handleOpen();
       setDesignSubData(finalNewData);
     } else {
       sessionStorage.setItem("redirectURL", url);
-      navigate(
-        islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0)
-          ? url
-          : redirectUrl,
-      );
+      navigate(url);
     }
+  };
+
+  const handleRequestAccess = (data) => {
+    const albumName = data?.AlbumName;
+    const securityKey = data?.AlbumSecurityId;
+    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+    sessionStorage.setItem("redirectURL", url);
+    navigate(redirectUrl);
+  };
+
+  const handleNavigate = (data) => {
+    handlePreview(data);
   };
 
   const handleNavigateSub = (data) => {
@@ -408,13 +416,8 @@ const Album = () => {
     const securityKey = data?.AlbumSecurityId;
     setSecurityKey(securityKey);
     const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
-    const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     sessionStorage.setItem("redirectURL", url);
-    navigate(
-      islogin || (data?.AlbumSecurityId == 0 && storeinit?.IsB2BWebsite === 0)
-        ? url
-        : redirectUrl,
-    );
+    navigate(url);
   };
 
   const handleOpen = () => setOpen(true);
@@ -527,17 +530,14 @@ const Album = () => {
         <Box
           sx={{
             width: "100%",
-            maxWidth: 1500,
+            maxWidth: isB2B ?  2000 : 1300,
             mx: "auto",
             px: { xs: 2, sm: 3, md: 4 },
             py: 3,
           }}
         >
           {isB2B ? (
-            /* ======================================= */
-            /* B2B Catalogs & Lookbooks UI Card Grid   */
-            /* ======================================= */
-            <Grid container spacing={1.5}>
+            <Grid container spacing={2.5}>
               {albumData.map((data, index) => {
                 const isLoading = loadedProducts[index]?.id !== index;
                 const Newdata = data?.AlbumDetail
@@ -556,7 +556,7 @@ const Album = () => {
                   >
                     <Box
                       sx={{
-                        borderRadius: "18px",
+                        borderRadius: "10px",
                         overflow: "hidden",
                         border: "1px solid rgba(226, 232, 240, 0.9)",
                         backgroundColor: "rgba(255, 255, 255, 0.85)",
@@ -575,7 +575,7 @@ const Album = () => {
                         sx={{
                           position: "relative",
                           width: "100%",
-                          height: 240,
+                          height: 350,
                           backgroundColor: "#f8f9fa",
                           cursor: "pointer",
                           overflow: "hidden",
@@ -600,7 +600,7 @@ const Album = () => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "contain",
+                              objectFit: "cover",
                               display: "block",
                             }}
                           />
@@ -628,7 +628,8 @@ const Album = () => {
                       {/* Content Details */}
                       <Box
                         sx={{
-                          p: 2.5,
+                          px: 2,
+                          py: islogin ? 2 : 3,
                           display: "flex",
                           flexDirection: "column",
                           flexGrow: 1,
@@ -637,54 +638,78 @@ const Album = () => {
                         <Typography
                           variant="h6"
                           sx={{
-                            fontWeight: 700,
-                            fontSize: "1.15rem",
+                            fontWeight: 500,
+                            fontSize: "1.05rem",
                             color: "#0F3D4C",
-                            mb: 0.8,
+                            mb: islogin ? 0 : 0.8,
                             lineHeight: 1.3,
+                            textAlign: "center",
                           }}
                         >
                           {data?.AlbumName}
                         </Typography>
 
                         {/* Action Buttons */}
-                        <Box sx={{ display: "flex", gap: 1.5, mt: "auto",pt:1 }}>
-                          <Button
-                            variant="outlined"
-                            fullWidth
-                            onClick={() => handleNavigate(data)}
+                        {!islogin && (
+                          <Box
                             sx={{
-                              borderRadius: "6px",
-                              borderColor: "#0F3D4C",
-                              color: "#0F3D4C",
-                              fontWeight: 600,
-                              fontSize: "0.72rem",
-                              letterSpacing: "0.08em",
-                              textTransform: "uppercase",
-                              py: 0.9,
+                              display: "flex",
+                              gap: 1.5,
+                              mt: "auto",
+                              pt: 1,
                             }}
                           >
-                            PREVIEW
-                          </Button>
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            onClick={() => handleNavigate(data)}
-                            sx={{
-                              borderRadius: "6px",
-                              backgroundColor: "#000000ff",
-                              color: "#ffffff",
-                              fontWeight: 600,
-                              fontSize: "0.72rem",
-                              letterSpacing: "0.08em",
-                              textTransform: "uppercase",
-                              py: 0.9,
-                              boxShadow: "none",
-                            }}
-                          >
-                            REQUEST ACCESS
-                          </Button>
-                        </Box>
+                            <Button
+                              variant="outlined"
+                              fullWidth
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePreview(data);
+                              }}
+                              sx={{
+                                borderRadius: "6px",
+                                borderColor: "#0F3D4C",
+                                color: "#0F3D4C",
+                                fontWeight: 600,
+                                fontSize: "0.72rem",
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                py: 0.9,
+                                "&:hover": {
+                                  borderColor: "#0A2933",
+                                  backgroundColor: "rgba(15, 61, 76, 0.04)",
+                                },
+                              }}
+                            >
+                              PREVIEW
+                            </Button>
+                            <Button
+                              variant="contained"
+                              fullWidth
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRequestAccess(data);
+                              }}
+                              sx={{
+                                borderRadius: "6px",
+                                backgroundColor: "#000000ff",
+                                color: "#ffffff",
+                                fontWeight: 600,
+                                fontSize: "0.72rem",
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                py: 0.9,
+                                boxShadow: "none",
+                                "&:hover": {
+                                  backgroundColor: "#1a1a1a",
+                                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                                },
+                              }}
+                            >
+                              REQUEST ACCESS
+                            </Button>
+                          </Box>
+                        )}
                       </Box>
                     </Box>
                   </Grid>
@@ -695,7 +720,7 @@ const Album = () => {
             /* ======================================= */
             /* B2C Glass Edge Card Grid (5 per row)    */
             /* ======================================= */
-            <Grid container spacing={1.5}>
+            <Grid container spacing={3}>
               {albumData.map((data, index) => {
                 const isLoading = loadedProducts[index]?.id !== index;
                 const Newdata = data?.AlbumDetail
@@ -710,7 +735,7 @@ const Album = () => {
                       sm: 6,
                       md: 3,
                     }}
-                      key={index}
+                    key={index}
                   >
                     <Box
                       onClick={() => handleNavigate(data)}
@@ -719,29 +744,25 @@ const Album = () => {
                         flexDirection: "column",
                         cursor: "pointer",
                         height: "100%",
-                        borderRadius: "20px",
-                        backgroundColor: "rgba(255, 255, 255, 0.85)",
                         backdropFilter: "blur(12px)",
-                        WebkitBackdropFilter: "blur(12px)",
-                        border: "1px solid rgba(226, 232, 240, 0.9)",
-                        boxShadow:
-                          "0 8px 24px -4px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                       }}
                     >
                       {/* Image Box Container */}
                       <Box
                         sx={{
                           position: "relative",
+                          boxShadow:
+                            " rgba(99, 99, 99, 0.2) 0px 2px 8px 0px                          ",
+                          WebkitBackdropFilter: "blur(12px)",
                           width: "100%",
-                        borderRadius: "20px",
-                        borderBottomLeftRadius:'0',
-                        borderBottomRightRadius:'0',
                           overflow: "hidden",
                           backgroundColor: "#F8FAFC",
                           aspectRatio: "1 / 1",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                        borderRadius: "14px",
+                          height: 350,
                         }}
                       >
                         {isLoading ? (
@@ -763,7 +784,7 @@ const Album = () => {
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "contain",
+                              objectFit: "cover",
                               display: "block",
                             }}
                           />
@@ -796,7 +817,7 @@ const Album = () => {
                           textTransform: "uppercase",
                           textAlign: "center",
                           color: "#1E293B",
-                          py: 1.5,
+                          py: 2,
                           px: 0.5,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
