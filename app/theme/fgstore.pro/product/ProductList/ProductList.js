@@ -5,10 +5,52 @@ import ProductListApi from "@/app/(core)/utils/API/ProductListAPI/ProductListApi
 import { FilterListAPI } from "@/app/(core)/utils/API/FilterAPI/FilterListAPI";
 import { findMetalColor, findMetalType, formatRedirectTitleLine, formatTitleLine } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import ProductListSkeleton, { PageSkeleton } from "./productlist_skeleton/ProductListSkeleton";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CardMedia, Checkbox, Drawer, FormControlLabel, Input, Pagination, PaginationItem, Skeleton, Slider, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Badge,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Checkbox,
+  Chip,
+  Container,
+  Divider,
+  Drawer,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Input,
+  InputLabel,
+  MenuItem,
+  Pagination,
+  PaginationItem,
+  Paper,
+  Select,
+  Skeleton,
+  Slider,
+  Stack,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LocalMallOutlinedIcon from "@mui/icons-material/LocalMallOutlined";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import VideocamOutlinedIcon from "@mui/icons-material/VideocamOutlined";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import CloseIcon from "@mui/icons-material/Close";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { CartAndWishListAPI } from "@/app/(core)/utils/API/CartAndWishList/CartAndWishListAPI";
 import { RemoveCartAndWishAPI } from "@/app/(core)/utils/API/RemoveCartandWishAPI/RemoveCartAndWishAPI";
 import pako from "pako";
@@ -16,12 +58,8 @@ import { MetalTypeComboAPI } from "@/app/(core)/utils/API/Combo/MetalTypeComboAP
 import { DiamondQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/DiamondQualityColorComboAPI";
 import { ColorStoneQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/ColorStoneQualityColorComboAPI";
 import { MetalColorCombo } from "@/app/(core)/utils/API/Combo/MetalColorCombo";
-import CloseIcon from "@mui/icons-material/Close";
 import Cookies from "js-cookie";
-// import { Helmet } from "react-helmet";
 import { IoArrowBack } from "react-icons/io5";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import { toast } from "react-toastify";
 import EditablePagination from "@/app/components/EditablePagination/EditablePagination";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
@@ -1643,19 +1681,83 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           </div>
         )}
 
-        <Slider value={tempSliderValue} onChange={handleSliderChange} min={min} max={max} step={0.001} disableSwap valueLabelDisplay="off" sx={{ marginTop: 1, transition: "all 0.2s ease-out" }} />
+        <Slider
+          value={tempSliderValue}
+          onChange={handleSliderChange}
+          min={min}
+          max={max}
+          step={0.001}
+          disableSwap
+          valueLabelDisplay="off"
+          sx={{
+            marginTop: "12px",
+            color: "#7d7f85",
+            height: 4,
+            p: "12px 0",
+            "& .MuiSlider-thumb": {
+              height: 16,
+              width: 16,
+              backgroundColor: "#7d7f85",
+              border: "2px solid #ffffff",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.18)",
+              "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+                boxShadow: "0 0 0 6px rgba(125, 127, 133, 0.16)",
+              },
+            },
+            "& .MuiSlider-track": { height: 4, border: "none" },
+            "& .MuiSlider-rail": { color: "#E0E0E0", opacity: 1, height: 4 },
+          }}
+        />
 
-        <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
+        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
           {tempSliderValue.map((val, index) => (
-            <Input key={index} value={val} inputRef={inputRefs.current[index]} onKeyDown={handleKeyDown(index)} onChange={handleInputChange(index)} inputProps={{ step: 0.001, min, max, type: "number" }} sx={{ textAlign: "center" }} />
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                bgcolor: "#FAFAFA",
+                border: "1px solid #E5E5E5",
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                width: "46%",
+              }}
+            >
+              <Input
+                disableUnderline
+                value={val}
+                inputRef={inputRefs.current[index]}
+                onKeyDown={handleKeyDown(index)}
+                onChange={handleInputChange(index)}
+                inputProps={{ step: 0.001, min, max, type: "number" }}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#333",
+                  width: "100%",
+                  "& input": { textAlign: "center", py: 0.3 },
+                }}
+              />
+            </Box>
           ))}
-        </div>
+        </Box>
 
-        <Stack direction="row" justifyContent="flex-end" gap={1} mt={1}>
+        <Stack direction="row" justifyContent="flex-end" gap={1} mt={1.5}>
           {show && (
             <Button
+              size="small"
               variant="outlined"
-              sx={{ paddingBottom: "0" }}
+              sx={{
+                borderColor: "#E0E0E0",
+                color: "#666",
+                fontSize: "11px",
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { borderColor: "#999", bgcolor: "#FAFAFA" },
+              }}
               onClick={() =>
                 resetRangeFilter({
                   filterName: "Diamond",
@@ -1670,13 +1772,27 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                   setAppliedRange: setAppliedRange1,
                 })
               }
-              color="error"
             >
               Reset
             </Button>
           )}
           {isShowBtn && (
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleSave}
+              sx={{
+                bgcolor: "#7d7f85",
+                color: "#FFF",
+                fontSize: "11px",
+                fontWeight: 600,
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { bgcolor: "#5a5c60" },
+              }}
+            >
               Apply
             </Button>
           )}
@@ -1823,21 +1939,72 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           step={0.001}
           disableSwap
           sx={{
-            marginTop: "5px",
-            transition: "all 0.2s ease-out",
-            "& .MuiSlider-valueLabel": { display: "none" },
+            marginTop: "12px",
+            color: "#7d7f85",
+            height: 4,
+            p: "12px 0",
+            "& .MuiSlider-thumb": {
+              height: 16,
+              width: 16,
+              backgroundColor: "#7d7f85",
+              border: "2px solid #ffffff",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.18)",
+              "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+                boxShadow: "0 0 0 6px rgba(125, 127, 133, 0.16)",
+              },
+            },
+            "& .MuiSlider-track": { height: 4, border: "none" },
+            "& .MuiSlider-rail": { color: "#E0E0E0", opacity: 1, height: 4 },
           }}
         />
-        <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
+        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
           {tempSliderValue.map((val, index) => (
-            <Input key={index} inputRef={inputRefs.current[index]} onKeyDown={handleKeyDown(index)} value={val} onChange={handleInputChange(index)} inputProps={{ step: 0.001, min, max, type: "number" }} sx={{ textAlign: "center" }} />
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                bgcolor: "#FAFAFA",
+                border: "1px solid #E5E5E5",
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                width: "46%",
+              }}
+            >
+              <Input
+                disableUnderline
+                inputRef={inputRefs.current[index]}
+                onKeyDown={handleKeyDown(index)}
+                value={val}
+                onChange={handleInputChange(index)}
+                inputProps={{ step: 0.001, min, max, type: "number" }}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#333",
+                  width: "100%",
+                  "& input": { textAlign: "center", py: 0.3 },
+                }}
+              />
+            </Box>
           ))}
-        </div>
-        <Stack flexDirection="row" justifyContent="flex-end" gap={1} mt={1}>
+        </Box>
+        <Stack direction="row" justifyContent="flex-end" gap={1} mt={1.5}>
           {show1 && (
             <Button
+              size="small"
               variant="outlined"
-              sx={{ paddingBottom: "0" }}
+              sx={{
+                borderColor: "#E0E0E0",
+                color: "#666",
+                fontSize: "11px",
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { borderColor: "#999", bgcolor: "#FAFAFA" },
+              }}
               onClick={() =>
                 resetRangeFilter({
                   filterName: "NetWt",
@@ -1852,13 +2019,27 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                   setAppliedRange: setAppliedRange2,
                 })
               }
-              color="error"
             >
               Reset
             </Button>
           )}
           {isShowBtn && (
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleSave}
+              sx={{
+                bgcolor: "#7d7f85",
+                color: "#FFF",
+                fontSize: "11px",
+                fontWeight: 600,
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { bgcolor: "#5a5c60" },
+              }}
+            >
               Apply
             </Button>
           )}
@@ -2004,23 +2185,74 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           step={0.001}
           disableSwap
           sx={{
-            marginTop: "5px",
-            transition: "all 0.2s ease-out",
-            "& .MuiSlider-valueLabel": { display: "none" },
+            marginTop: "12px",
+            color: "#7d7f85",
+            height: 4,
+            p: "12px 0",
+            "& .MuiSlider-thumb": {
+              height: 16,
+              width: 16,
+              backgroundColor: "#7d7f85",
+              border: "2px solid #ffffff",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.18)",
+              "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+                boxShadow: "0 0 0 6px rgba(125, 127, 133, 0.16)",
+              },
+            },
+            "& .MuiSlider-track": { height: 4, border: "none" },
+            "& .MuiSlider-rail": { color: "#E0E0E0", opacity: 1, height: 4 },
           }}
         />
 
-        <div style={{ display: "flex", gap: "10px", justifyContent: "space-around" }}>
+        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
           {tempSliderValue.map((val, index) => (
-            <Input key={index} inputRef={inputRefs.current[index]} value={val} onKeyDown={handleKeyDown(index)} onChange={handleInputChange(index)} inputProps={{ step: 0.001, type: "number" }} sx={{ textAlign: "center" }} />
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                bgcolor: "#FAFAFA",
+                border: "1px solid #E5E5E5",
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                width: "46%",
+              }}
+            >
+              <Input
+                disableUnderline
+                inputRef={inputRefs.current[index]}
+                value={val}
+                onKeyDown={handleKeyDown(index)}
+                onChange={handleInputChange(index)}
+                inputProps={{ step: 0.001, type: "number" }}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#333",
+                  width: "100%",
+                  "& input": { textAlign: "center", py: 0.3 },
+                }}
+              />
+            </Box>
           ))}
-        </div>
+        </Box>
 
-        <Stack direction="row" justifyContent="flex-end" gap={1} mt={1}>
+        <Stack direction="row" justifyContent="flex-end" gap={1} mt={1.5}>
           {show2 && (
             <Button
+              size="small"
               variant="outlined"
-              sx={{ paddingBottom: "0" }}
+              sx={{
+                borderColor: "#E0E0E0",
+                color: "#666",
+                fontSize: "11px",
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { borderColor: "#999", bgcolor: "#FAFAFA" },
+              }}
               onClick={() =>
                 resetRangeFilter({
                   filterName: "Gross",
@@ -2035,13 +2267,27 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                   setAppliedRange: setAppliedRange3,
                 })
               }
-              color="error"
             >
               Reset
             </Button>
           )}
           {isShowBtn && (
-            <Button variant="outlined" sx={{ paddingBottom: "0" }} onClick={handleSave} color="success">
+            <Button
+              size="small"
+              variant="contained"
+              onClick={handleSave}
+              sx={{
+                bgcolor: "#7d7f85",
+                color: "#FFF",
+                fontSize: "11px",
+                fontWeight: 600,
+                borderRadius: "16px",
+                px: 2,
+                py: 0.2,
+                textTransform: "none",
+                ":hover": { bgcolor: "#5a5c60" },
+              }}
+            >
               Apply
             </Button>
           )}
@@ -2089,1521 +2335,880 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     return isFilterChecked || isSliderChanged;
   };
 
+  const renderFilterAccordionsList = () => {
+    return filterData?.map((ele) => (
+      <React.Fragment key={ele?.id || ele?.Fil_DisName}>
+        {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
+          <Accordion
+            elevation={0}
+            sx={{
+              borderBottom: "1px solid #ECECEC",
+              borderRadius: 0,
+              boxShadow: "none",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
+              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            >
+              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
+                {ele.Fil_DisName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 0, py: 1.2, maxHeight: "280px", overflowY: "auto" }}>
+              {(JSON.parse(ele?.options) ?? []).map((opt) => (
+                <Box
+                  key={opt?.id}
+                  sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 0.3 }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name={`${ele?.id}${opt?.id}`}
+                        checked={Boolean(filterChecked[`${ele?.id}${opt?.id}`]?.checked)}
+                        onChange={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
+                        size="small"
+                        sx={{
+                          color: "#BBB",
+                          "&.Mui-checked": { color: "#7d7f85" },
+                          p: 0.5,
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: "13px", color: "#333", ml: 0.5, fontWeight: 400 }}>
+                        {opt.Name}
+                      </Typography>
+                    }
+                    sx={{ ml: 0 }}
+                  />
+                </Box>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        )}
+
+        {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
+          <Accordion
+            elevation={0}
+            sx={{
+              borderBottom: "1px solid #ECECEC",
+              borderRadius: 0,
+              boxShadow: "none",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
+              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            >
+              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
+                {ele.Fil_DisName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 0, py: 1.2, maxHeight: "280px", overflowY: "auto" }}>
+              {(JSON.parse(ele?.options) ?? []).map((opt, i) => (
+                <Box
+                  key={i}
+                  sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 0.3 }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name={`Price${i}${i}`}
+                        checked={Boolean(filterChecked[`Price${i}${i}`]?.checked)}
+                        onChange={(e) => handleCheckboxChange(e, ele?.id, opt)}
+                        size="small"
+                        sx={{
+                          color: "#BBB",
+                          "&.Mui-checked": { color: "#7d7f85" },
+                          p: 0.5,
+                        }}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: "13px", color: "#333", ml: 0.5, fontWeight: 400 }}>
+                        {opt?.Minval == 0
+                          ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`
+                          : opt?.Maxval == 0
+                            ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)}`
+                            : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)} - ${formatter.format(opt?.Maxval)}`}
+                      </Typography>
+                    }
+                    sx={{ ml: 0 }}
+                  />
+                </Box>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+        )}
+
+        {ele?.Name?.includes("Diamond") && (
+          <Accordion
+            elevation={0}
+            sx={{
+              borderBottom: "1px solid #ECECEC",
+              borderRadius: 0,
+              boxShadow: "none",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
+              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            >
+              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
+                {ele.Fil_DisName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
+              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
+                <RangeFilterView
+                  ele={ele}
+                  sliderValue={sliderValue}
+                  setSliderValue={setSliderValue}
+                  handleRangeFilterApi={handleRangeFilterApi}
+                  prodListType={prodListType}
+                  cookie={cookie}
+                  show={show}
+                  setShow={setShow}
+                  appliedRange1={appliedRange1}
+                  setAppliedRange1={setAppliedRange1}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
+
+        {ele?.Name?.includes("NetWt") && (
+          <Accordion
+            elevation={0}
+            sx={{
+              borderBottom: "1px solid #ECECEC",
+              borderRadius: 0,
+              boxShadow: "none",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
+              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            >
+              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
+                {ele.Fil_DisName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
+              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
+                <RangeFilterView1
+                  ele={ele}
+                  sliderValue1={sliderValue1}
+                  setSliderValue1={setSliderValue1}
+                  handleRangeFilterApi1={handleRangeFilterApi1}
+                  prodListType={prodListType}
+                  cookie={cookie}
+                  show1={show1}
+                  setShow1={setShow1}
+                  appliedRange2={appliedRange2}
+                  setAppliedRange2={setAppliedRange2}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
+
+        {ele?.Name?.includes("Gross") && (
+          <Accordion
+            elevation={0}
+            sx={{
+              borderBottom: "1px solid #ECECEC",
+              borderRadius: 0,
+              boxShadow: "none",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
+              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            >
+              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
+                {ele.Fil_DisName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
+              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
+                <RangeFilterView2
+                  ele={ele}
+                  sliderValue2={sliderValue2}
+                  setSliderValue2={setSliderValue2}
+                  handleRangeFilterApi2={handleRangeFilterApi2}
+                  prodListType={prodListType}
+                  cookie={cookie}
+                  show2={show2}
+                  setShow2={setShow2}
+                  appliedRange3={appliedRange3}
+                  setAppliedRange3={setAppliedRange3}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
+      </React.Fragment>
+    ));
+  };
+
+  const renderCustomizationCombos = () => {
+    const isMetal = storeInit?.IsMetalCustComb === 1;
+    const isDia = storeInit?.IsDiamondCustComb === 1;
+    const isCs = storeInit?.IsCsCustomization === 1;
+
+    if (!isMetal && !isDia && !isCs) return null;
+
+    return (
+      <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
+        {isMetal && (
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <Select
+              value={selectedMetalId || ""}
+              onChange={(e) => setSelectedMetalId(e.target.value)}
+              sx={{
+                borderRadius: "20px",
+                fontSize: "12px",
+                height: "32px",
+                bgcolor: "#FFF",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+              }}
+            >
+              {metalTypeCombo?.map((metalele) => (
+                <MenuItem key={metalele?.Metalid} value={metalele?.Metalid} sx={{ fontSize: "12px" }}>
+                  {metalele?.metaltype.toUpperCase()}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {isDia && (
+          <FormControl size="small" sx={{ minWidth: 130 }}>
+            <Select
+              value={selectedDiaId || ""}
+              onChange={(e) => setSelectedDiaId(e.target.value)}
+              sx={{
+                borderRadius: "20px",
+                fontSize: "12px",
+                height: "32px",
+                bgcolor: "#FFF",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+              }}
+            >
+              {diaQcCombo?.map((diaQc) => (
+                <MenuItem
+                  key={diaQc?.QualityId}
+                  value={`${diaQc?.QualityId},${diaQc?.ColorId}`}
+                  sx={{ fontSize: "12px" }}
+                >
+                  {`${diaQc.Quality.toUpperCase()}, ${diaQc.color.toLowerCase()}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
+        {isCs && (
+          <FormControl size="small" sx={{ minWidth: 130 }}>
+            <Select
+              value={selectedCsId || ""}
+              onChange={(e) => setSelectedCsId(e.target.value)}
+              sx={{
+                borderRadius: "20px",
+                fontSize: "12px",
+                height: "32px",
+                bgcolor: "#FFF",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+              }}
+            >
+              {csQcCombo?.map((csCombo) => (
+                <MenuItem
+                  key={csCombo?.QualityId}
+                  value={`${csCombo?.QualityId},${csCombo?.ColorId}`}
+                  sx={{ fontSize: "12px" }}
+                >
+                  {`${csCombo.Quality.toUpperCase()}, ${csCombo.color.toLowerCase()}`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Box>
+    );
+  };
+
+  const activeCheckedList = Object.entries(filterChecked).filter(([_, val]) => val?.checked);
+
   return (
     <>
-      {/* <Helmet> */}
       <title>{decodeURI(DynamicListPageTitleLineFunc())}</title>
-      {/* </Helmet> */}
-      <div id="top">
+      <Box id="top" sx={{ minHeight: "100vh", pb: { xs: 6, md: 10 }, mb: 4 }}>
+        {/* Mobile Filter Drawer */}
         <Drawer
           open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false);
-          }}
-          className="smr_filterDrawer"
+          onClose={() => setIsDrawerOpen(false)}
+          PaperProps={{ sx: { width: "85%", maxWidth: "340px", p: 2 } }}
         >
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "end",
-              padding: "8px 8px 0px 0px",
-            }}
-          >
-            <CloseIcon
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            />
-          </div>
-
-          {/* <div
-            style={{
-              marginLeft: "15px",
-              marginBottom: "20px",
-              display: "flex",
-              gap: "5px",
-              flexDirection: "column",
-            }}
-          >
-            <Typography
-              sx={{
-                color: "#7f7d85",
-                fontSize: "16px",
-                fontFamily: "TT Commons Medium",
-                marginTop: "12px",
-              }}
-            >
-              Customization
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1.5, borderBottom: "1px solid #EEE" }}>
+            <Typography sx={{ fontWeight: 700, fontSize: "16px", color: "#222" }}>
+              FILTERS {showClearAllButton() && `(${activeCheckedList.length})`}
             </Typography>
-            {storeInit?.IsMetalCustComb === 1 && <div
-            >
-              <Typography
-                className="label"
-                sx={{
-                  color: "#7f7d85",
-                  fontSize: "14px",
-                  fontFamily: "TT Commons Regular",
-                }}
-              >
-                Metal:&nbsp;
-              </Typography>
-              <select
-                style={{
-                  border: "1px solid #e1e1e1",
-                  borderRadius: "8px",
-                  minWidth: "270px",
-                }}
-                className="select"
-                value={selectedMetalId}
-                onChange={(e) => {
-                  setSelectedMetalId(e.target.value);
-                }}
-              >
-                {metalTypeCombo?.map((metalele) => (
-                  <option
-                    className="option"
-                    key={metalele?.Metalid}
-                    value={metalele?.Metalid}
-                  >
-                    {metalele?.metaltype.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>}
-
-            {storeInit?.IsDiamondCustComb === 1 && (
-              <div
-              >
-                <Typography
-                  className="label"
-                  sx={{
-                    color: "#7f7d85",
-                    fontSize: "14px",
-                    fontFamily: "TT Commons Regular",
-                  }}
-                >
-                  Diamond:&nbsp;
-                </Typography>
-                <select
-                  style={{
-                    border: "1px solid #e1e1e1",
-                    borderRadius: "8px",
-                    minWidth: "270px",
-                  }}
-                  className="select"
-                  value={selectedDiaId}
-                  onChange={(e) => setSelectedDiaId(e.target.value)}
-                >
-                  {diaQcCombo?.map((diaQc) => (
-                    <option
-                      className="option"
-                      key={diaQc?.QualityId}
-                      value={`${diaQc?.QualityId},${diaQc?.ColorId}`}
-                    >
-                      {" "}
-                      {`${diaQc.Quality.toUpperCase()},${diaQc.color.toLowerCase()}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {storeInit?.IsCsCustomization === 1 && (
-              <div
-              >
-                <Typography
-                  className="label"
-                  sx={{
-                    color: "#7f7d85",
-                    fontSize: "14px",
-                    fontFamily: "TT Commons Regular",
-                  }}
-                >
-                  Color Stone:&nbsp;
-                </Typography>
-                <select
-                  style={{
-                    border: "1px solid #e1e1e1",
-                    borderRadius: "8px",
-                    minWidth: "270px",
-                  }}
-                  className="select"
-                  value={selectedCsId}
-                  onChange={(e) => setSelectedCsId(e.target.value)}
-                >
-                  {csQcCombo?.map((csCombo) => (
-                    <option
-                      className="option"
-                      key={csCombo?.QualityId}
-                      value={`${csCombo?.QualityId},${csCombo?.ColorId}`}
-                    >
-                      {" "}
-                      {`${csCombo.Quality.toUpperCase()},${csCombo.color.toLowerCase()}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            <div
-            >
-              <div
-              >
-                <Typography
-                  className="label"
-                  sx={{
-                    color: "#7f7d85",
-                    fontSize: "14px",
-                    fontFamily: "TT Commons Regular",
-                  }}
-                >
-                  Sort By:&nbsp;
-                </Typography>
-                <select
-                  style={{
-                    border: "1px solid #e1e1e1",
-                    borderRadius: "8px",
-                    minWidth: "270px",
-                  }}
-                  className="select"
-                  value={sortBySelect}
-                  onChange={(e) => handleSortby(e)}
-                >
-                  <option className="option" value="Recommended">
-                    Recommended
-                  </option>
-                  <option className="option" value="In Stock">
-                    In stock
-                  </option>
-                  <option className="option" value="PRICE HIGH TO LOW">
-                    Price High To Low
-                  </option>
-                  <option className="option" value="PRICE LOW TO HIGH">
-                    Price Low To High
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div> */}
-          <div className="smr_mobile_filter_portion">
-            {filterData?.length > 0 && (
-              <div className="smr_mobile_filter_portion_outter">
-                <span className="smr_filter_text">
-                  <span>
-                    {!showClearAllButton() ? (
-                      // Object.values(filterChecked).filter((ele) => ele.checked)
-                      //   ?.length === 0
-                      "Filters"
-                    ) : (
-                      <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Product Found: ${afterFilterCount}`}</span>}</>
-                    )}
-                  </span>
-                  <span style={{ cursor: "pointer" }} onClick={() => handelFilterClearAll()}>
-                    {showClearAllButton() ? (
-                      // Object.values(filterChecked).filter((ele) => ele.checked)
-                      //   ?.length > 0
-                      "Clear All"
-                    ) : (
-                      <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Total Products : ${afterFilterCount}`}</span>}</>
-                    )}
-                  </span>
-                </span>
-                <div style={{ marginTop: "12px" }}>
-                  {filterData?.map((ele) => (
-                    <>
-                      {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
-                        <Accordion
-                          elevation={0}
-                          sx={{
-                            borderBottom: "1px solid #c7c8c9",
-                            borderRadius: 0,
-                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                              borderBottomLeftRadius: "0px",
-                              borderBottomRightRadius: "0px",
-                            },
-                            "&.MuiPaper-root.MuiAccordion-root:before": {
-                              background: "none",
-                            },
-                          }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            sx={{
-                              color: "#7d7f85",
-                              borderRadius: 0,
-
-                              "&.MuiAccordionSummary-root": {
-                                padding: 0,
-                              },
-                            }}
-                          >
-                            {ele.Fil_DisName}
-                          </AccordionSummary>
-                          <AccordionDetails
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              minHeight: "fit-content",
-                              maxHeight: "300px",
-                              overflow: "auto",
-                            }}
-                          >
-                            {(JSON.parse(ele?.options) ?? []).map((opt) => (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  gap: "12px",
-                                }}
-                                key={opt?.id}
-                              >
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      name={`${ele?.id}${opt?.id}`}
-                                      checked={filterChecked[`${ele?.id}${opt?.id}`]?.checked === undefined ? false : filterChecked[`${ele?.id}${opt?.id}`]?.checked}
-                                      style={{
-                                        color: "#7f7d85",
-                                        padding: 0,
-                                        width: "10px",
-                                      }}
-                                      onClick={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
-                                      size="small"
-                                    />
-                                  }
-                                  className="smr_mui_checkbox_label"
-                                  label={opt.Name}
-                                />
-                              </div>
-                            ))}
-                          </AccordionDetails>
-                        </Accordion>
-                      )}
-                      {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
-                        <Accordion
-                          elevation={0}
-                          sx={{
-                            borderBottom: "1px solid #c7c8c9",
-                            borderRadius: 0,
-                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                              borderBottomLeftRadius: "0px",
-                              borderBottomRightRadius: "0px",
-                            },
-                            "&.MuiPaper-root.MuiAccordion-root:before": {
-                              background: "none",
-                            },
-                          }}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            sx={{
-                              color: "#7f7d85",
-                              borderRadius: 0,
-
-                              "&.MuiAccordionSummary-root": {
-                                padding: 0,
-                              },
-                            }}
-                            onClick={() => handleScrollHeight()}
-                          >
-                            {ele.Fil_DisName}
-                          </AccordionSummary>
-                          <AccordionDetails
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              minHeight: "fit-content",
-                              maxHeight: "300px",
-                              overflow: "auto",
-                            }}
-                          >
-                            {(JSON.parse(ele?.options) ?? []).map((opt, i) => (
-                              <div
-                                className="formcontroller_box"
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  gap: "12px",
-                                }}
-                                key={i}
-                              >
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      name={`Price${i}${i}`}
-                                      checked={filterChecked[`Price${i}${i}`]?.checked === undefined ? false : filterChecked[`Price${i}${i}`]?.checked}
-                                      style={{
-                                        color: "#7f7d85",
-                                        padding: 0,
-                                        width: "10px",
-                                      }}
-                                      sx={{
-                                        color: "#7f7d85",
-                                        padding: 0,
-                                        width: "10px",
-                                      }}
-                                      onClick={(e) => handleCheckboxChange(e, ele?.id, opt)}
-                                      size="small"
-                                    />
-                                  }
-                                  // .MuiFormControlLabel-root .MuiFormControlLabel-label
-
-                                  className="smr_mui_checkbox_label smr_mui_label_price "
-                                  sx={{ fontSize: "14px" }}
-                                  label={
-                                    <div style={{ fontSize: "0.6vw !important" }}>
-                                      {opt?.Minval == 0
-                                        ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`
-                                        : opt?.Maxval == 0
-                                          ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode}${formatter.format(opt?.Minval)}`
-                                          : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)}
-                                      - ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`}
-                                    </div>
-                                  }
-                                />
-                              </div>
-                            ))}
-                          </AccordionDetails>
-                        </Accordion>
-                      )}
-                      {ele?.Name?.includes("Diamond") && (
-                        <Accordion
-                          elevation={0}
-                          sx={{
-                            borderBottom: "1px solid #c7c8c9",
-                            borderRadius: 0,
-                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                              borderBottomLeftRadius: "0px",
-                              borderBottomRightRadius: "0px",
-                            },
-                            "&.MuiPaper-root.MuiAccordion-root:before": {
-                              background: "none",
-                            },
-                          }}
-                        // expanded={accExpanded}
-                        // defaultExpanded={}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            sx={{
-                              color: "#7f7d85",
-                              borderRadius: 0,
-
-                              "&.MuiAccordionSummary-root": {
-                                padding: 0,
-                              },
-                            }}
-                            // className="filtercategoryLable"
-                            onClick={() => handleScrollHeight()}
-                          >
-                            {/* <span> */}
-                            {ele.Fil_DisName}
-                            {/* </span> */}
-                          </AccordionSummary>
-                          <AccordionDetails
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              minHeight: "fit-content",
-                              maxHeight: "300px",
-                              overflow: "auto",
-                            }}
-                          >
-                            {/* {console.log("RangeEle",JSON?.parse(ele?.options)[0])} */}
-                            <Box sx={{ width: "94%", height: 88 }}>
-                              {/* {RangeFilterView(ele)} */}
-                              <RangeFilterView ele={ele} sliderValue={sliderValue} setSliderValue={setSliderValue} handleRangeFilterApi={handleRangeFilterApi} prodListType={prodListType} cookie={cookie} show={show} setShow={setShow} appliedRange1={appliedRange1} setAppliedRange1={setAppliedRange1} />
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      )}
-                      {ele?.Name?.includes("NetWt") && (
-                        <Accordion
-                          elevation={0}
-                          sx={{
-                            borderBottom: "1px solid #c7c8c9",
-                            borderRadius: 0,
-                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                              borderBottomLeftRadius: "0px",
-                              borderBottomRightRadius: "0px",
-                            },
-                            "&.MuiPaper-root.MuiAccordion-root:before": {
-                              background: "none",
-                            },
-                          }}
-                        // expanded={accExpanded}
-                        // defaultExpanded={}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            sx={{
-                              color: "#7f7d85",
-                              borderRadius: 0,
-
-                              "&.MuiAccordionSummary-root": {
-                                padding: 0,
-                              },
-                            }}
-                            // className="filtercategoryLable"
-                            onClick={() => handleScrollHeight()}
-                          >
-                            {/* <span> */}
-                            {ele.Fil_DisName}
-                            {/* </span> */}
-                          </AccordionSummary>
-                          <AccordionDetails
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              minHeight: "fit-content",
-                              maxHeight: "300px",
-                              overflow: "auto",
-                            }}
-                          >
-                            {/* {console.log("RangeEle",JSON?.parse(ele?.options)[0])} */}
-                            <Box sx={{ width: "94%", height: 88 }}>
-                              {/* {RangeFilterView1(ele)} */}
-                              <RangeFilterView1 ele={ele} sliderValue1={sliderValue1} setSliderValue1={setSliderValue1} handleRangeFilterApi1={handleRangeFilterApi1} prodListType={prodListType} cookie={cookie} show1={show1} setShow1={setShow1} appliedRange2={appliedRange2} setAppliedRange2={setAppliedRange2} />
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      )}
-                      {ele?.Name?.includes("Gross") && (
-                        <Accordion
-                          elevation={0}
-                          sx={{
-                            borderBottom: "1px solid #c7c8c9",
-                            borderRadius: 0,
-                            "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                              borderBottomLeftRadius: "0px",
-                              borderBottomRightRadius: "0px",
-                            },
-                            "&.MuiPaper-root.MuiAccordion-root:before": {
-                              background: "none",
-                            },
-                          }}
-                        // expanded={accExpanded}
-                        // defaultExpanded={}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            sx={{
-                              color: "#7f7d85",
-                              borderRadius: 0,
-
-                              "&.MuiAccordionSummary-root": {
-                                padding: 0,
-                              },
-                            }}
-                            // className="filtercategoryLable"
-                            onClick={() => handleScrollHeight()}
-                          >
-                            {/* <span> */}
-                            {ele.Fil_DisName}
-                            {/* </span> */}
-                          </AccordionSummary>
-                          <AccordionDetails
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              minHeight: "fit-content",
-                              maxHeight: "300px",
-                              overflow: "auto",
-                            }}
-                          >
-                            <Box sx={{ width: "94%", height: 88 }}>
-                              {/* {RangeFilterView2(ele)} */}
-                              <RangeFilterView2 ele={ele} sliderValue2={sliderValue2} setSliderValue2={setSliderValue2} handleRangeFilterApi2={handleRangeFilterApi2} prodListType={prodListType} cookie={cookie} show2={show2} setShow2={setShow2} appliedRange3={appliedRange3} setAppliedRange3={setAppliedRange3} />
-                            </Box>
-                          </AccordionDetails>
-                        </Accordion>
-                      )}
-                    </>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+            <IconButton size="small" onClick={() => setIsDrawerOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            {renderFilterAccordionsList()}
+          </Box>
         </Drawer>
-        <div className="proCat_bodyContain">
-          <div className="proCat_outerContain">
-            <div className="proCat_whiteInnerContain">
-              {isProdLoading ? (
-                <ProductListSkeleton className="pSkelton" />
-              ) : (
-                <>
-                  {!minwidth1201px ? (
-                    <div className="proCat_mobile_prodSorting">
-                      <div className="proCat_empty_sorting_div">
-                        <IoArrowBack
-                          style={{
-                            height: "25px",
-                            width: "25px",
-                            cursor: "pointer",
-                            color: "rgba(143, 140, 139, 0.9019607843)",
-                          }}
-                          onClick={() => navigate.back()}
-                        />
-                      </div>
 
-                      {filterData?.length != 0 && (
-                        <div className="smr_mobile_prodSorting">
-                          <Checkbox sx={{ padding: "0px 9px 0px 9px" }} icon={<FilterAltIcon fontSize="large" />} checkedIcon={<FilterAltOffIcon fontSize="large" style={{ color: "#666666" }} />} checked={isDrawerOpen} onChange={(e) => setIsDrawerOpen(e.target.value)} />
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
+        {/* Top Header Controls Bar */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 1.5, sm: 2 },
+            mb: 2.5,
+            borderRadius: "14px",
+            bgcolor: "#FFFFFF",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5 }}>
+            {/* Title & Back button */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <IconButton size="small" onClick={() => navigate.back()} sx={{ bgcolor: "#F5F5F7", ":hover": { bgcolor: "#EAEAEF" } }}>
+                <IoArrowBack size={18} color="#444" />
+              </IconButton>
+              <Typography sx={{ fontSize: { xs: "16px", sm: "20px" }, fontWeight: 700, color: "#111" }}>
+                {decodeURIComponent(location.pathname?.split("/p/")[1]?.split("/")[0] || DynamicListPageTitleLineFunc() || "Products")}
+              </Typography>
+              {afterFilterCount !== undefined && (
+                <Chip
+                  label={afterCountStatus ? "..." : `${afterFilterCount} Designs`}
+                  size="small"
+                  sx={{ bgcolor: "rgba(125, 127, 133, 0.1)", color: "#7d7f85", fontWeight: 600, fontSize: "12px" }}
+                />
+              )}
+            </Box>
 
-                  <div className="smr_mainPortion">
-                    {filterData?.length > 0 && (
-                      <div className="proCat_filter_portion" style={{ marginTop: "20px" }}>
-                        <div className="proCat_topTitleList" style={{ display: "flex", alignItems: "center" }}>
-                          <div className="proCat_mpty_sorting_div">
-                            <IoArrowBack
-                              style={{
-                                height: "25px",
-                                width: "25px",
-                                cursor: "pointer",
-                                color: "rgba(143, 140, 139, 0.9019607843)",
-                              }}
-                              onClick={() => navigate.push("/")}
-                            />
-                          </div>
-                          <p className="proCat_NameTopShow">{decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}</p>
-                        </div>
-                        {filterData?.length > 0 && (
-                          <div className="proCat_filter_portion_outter">
-                            <span className="smr_filter_text">
-                              <span>
-                                {
-                                  // Object.values(filterChecked).filter(
-                                  //   (ele) => ele.checked
-                                  // )?.length === 0
-                                  !showClearAllButton() ? (
-                                    "Filters"
-                                  ) : (
-                                    // ? <span style={{display:'flex',justifyContent:'space-between'}}><span>{"Filters"}</span> <span>{`Total Products : ${afterFilterCount}`}</span></span>
-                                    <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Product Found: ${afterFilterCount}`}</span>}</>
-                                  )
-                                }
-                              </span>
-                              <span style={{ cursor: "pointer" }} onClick={() => handelFilterClearAll()}>
-                                {showClearAllButton() ? (
-                                  // Object.values(filterChecked).filter(
-                                  //   (ele) => ele.checked
-                                  // )?.length > 0
-                                  "Clear All"
-                                ) : (
-                                  <>{afterCountStatus == true ? <Skeleton variant="rounded" width={140} height={22} className="pSkelton" /> : <span>{`Total Products : ${afterFilterCount}`}</span>}</>
-                                )}
-                              </span>
-                            </span>
-                            <div style={{ marginTop: "12px" }}>
-                              {filterData?.map((ele) => (
-                                <>
-                                  {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
-                                    <Accordion
-                                      elevation={0}
-                                      sx={{
-                                        borderBottom: "1px solid #c7c8c9",
-                                        borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                                          borderBottomLeftRadius: "0px",
-                                          borderBottomRightRadius: "0px",
-                                        },
-                                        "&.MuiPaper-root.MuiAccordion-root:before": {
-                                          background: "none",
-                                        },
-                                      }}
-                                    // expanded={accExpanded}
-                                    // defaultExpanded={}
-                                    >
-                                      <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                                        aria-controls="panel1-content"
-                                        id="panel1-header"
-                                        sx={{
-                                          color: "#7d7f85",
-                                          borderRadius: 0,
+            {/* Customization Combos & Sort Dropdown */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+              {renderCustomizationCombos()}
 
-                                          "&.MuiAccordionSummary-root": {
-                                            padding: 0,
-                                          },
-                                        }}
-                                        // className="filtercategoryLable"
-                                        onClick={() => handleScrollHeight()}
-                                      >
-                                        {/* <span> */}
-                                        {ele.Fil_DisName}
-                                        {/* </span> */}
-                                      </AccordionSummary>
-                                      <AccordionDetails
-                                        sx={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: "4px",
-                                          minHeight: "fit-content",
-                                          maxHeight: "300px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        {(JSON.parse(ele?.options) ?? []).map((opt) => (
-                                          <div
-                                            style={{
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "space-between",
-                                              gap: "12px",
-                                            }}
-                                            key={opt?.id}
-                                          >
-                                            {/* <small
-                                        style={{
-                                          fontFamily: "TT Commons, sans-serif",
-                                          color: "#7f7d85",
-                                        }}
-                                      >
-                                        {opt.Name}
-                                      </small> */}
-                                            <FormControlLabel
-                                              control={
-                                                <Checkbox
-                                                  name={`${ele?.id}${opt?.id}`}
-                                                  // checked={
-                                                  //   filterChecked[`checkbox${index + 1}${i + 1}`]
-                                                  //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
-                                                  //     : false
-                                                  // }
-                                                  checked={filterChecked[`${ele?.id}${opt?.id}`]?.checked === undefined ? false : filterChecked[`${ele?.id}${opt?.id}`]?.checked}
-                                                  style={{
-                                                    color: "#7f7d85 !important",
-                                                    padding: 0,
-                                                    width: "10px",
-                                                  }}
-                                                  onClick={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
-                                                  size="small"
-                                                />
-                                              }
-                                              // sx={{
-                                              //   display: "flex",
-                                              //   justifyContent: "space-between", // Adjust spacing between checkbox and label
-                                              //   width: "100%",
-                                              //   flexDirection: "row-reverse", // Align items to the right
-                                              //   fontFamily:'TT Commons Regular'
-                                              // }}
-                                              className="smr_mui_checkbox_label"
-                                              label={<span style={{ fontSize: "15px" }}>{opt.Name}</span>}
-                                            />
-                                          </div>
-                                        ))}
-                                      </AccordionDetails>
-                                    </Accordion>
-                                  )}
-                                  {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
-                                    <Accordion
-                                      elevation={0}
-                                      sx={{
-                                        borderBottom: "1px solid #c7c8c9",
-                                        borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                                          borderBottomLeftRadius: "0px",
-                                          borderBottomRightRadius: "0px",
-                                        },
-                                        "&.MuiPaper-root.MuiAccordion-root:before": {
-                                          background: "none",
-                                        },
-                                      }}
-                                    // expanded={accExpanded}
-                                    // defaultExpanded={}
-                                    >
-                                      <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                                        aria-controls="panel1-content"
-                                        id="panel1-header"
-                                        sx={{
-                                          color: "#7f7d85",
-                                          borderRadius: 0,
+              {/* Sort By Dropdown */}
+              <FormControl size="small" sx={{ minWidth: 160 }}>
+                <Select
+                  value={sortBySelect || "Recommended"}
+                  onChange={(e) => handleSortby(e)}
+                  sx={{
+                    borderRadius: "20px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    height: "34px",
+                    bgcolor: "#FFF",
+                    color: "#333",
+                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+                  }}
+                >
+                  <MenuItem value="Recommended" sx={{ fontSize: "12px" }}>Sort By: Recommended</MenuItem>
+                  {storeInit?.IsStockWebsite == 1 && (
+                    <MenuItem value="In Stock" sx={{ fontSize: "12px" }}>Sort By: In Stock</MenuItem>
+                  )}
+                  <MenuItem value="PRICE HIGH TO LOW" sx={{ fontSize: "12px" }}>Price: High To Low</MenuItem>
+                  <MenuItem value="PRICE LOW TO HIGH" sx={{ fontSize: "12px" }}>Price: Low To High</MenuItem>
+                </Select>
+              </FormControl>
 
-                                          "&.MuiAccordionSummary-root": {
-                                            padding: 0,
-                                          },
-                                        }}
-                                        // className="filtercategoryLable"
-                                        onClick={() => handleScrollHeight()}
-                                      >
-                                        {/* <span> */}
-                                        {ele.Fil_DisName}
-                                        {/* </span> */}
-                                      </AccordionSummary>
-                                      <AccordionDetails
-                                        sx={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: "4px",
-                                          minHeight: "fit-content",
-                                          maxHeight: "300px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        {(JSON.parse(ele?.options) ?? []).map((opt, i) => (
-                                          <div
-                                            style={{
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "space-between",
-                                              gap: "12px",
-                                            }}
-                                            key={i}
-                                          >
-                                            {/* <small
-                                        style={{
-                                          fontFamily: "TT Commons, sans-serif",
-                                          color: "#7f7d85",
-                                        }}
-                                      >
-                                        {opt.Name}
-                                      </small> */}
-                                            <FormControlLabel
-                                              control={
-                                                <Checkbox
-                                                  name={`Price${i}${i}`}
-                                                  // checked={
-                                                  //   filterChecked[`checkbox${index + 1}${i + 1}`]
-                                                  //     ? filterChecked[`checkbox${index + 1}${i + 1}`]?.checked
-                                                  //     : false
-                                                  // }
-                                                  checked={filterChecked[`Price${i}${i}`]?.checked === undefined ? false : filterChecked[`Price${i}${i}`]?.checked}
-                                                  style={{
-                                                    color: "#7f7d85",
-                                                    padding: 0,
-                                                    width: "10px",
-                                                  }}
-                                                  onClick={(e) => handleCheckboxChange(e, ele?.id, opt)}
-                                                  size="small"
-                                                />
-                                              }
-                                              // sx={{
-                                              //   display: "flex",
-                                              //   justifyContent: "space-between", // Adjust spacing between checkbox and label
-                                              //   width: "100%",
-                                              //   flexDirection: "row-reverse", // Align items to the right
-                                              //   fontFamily:'TT Commons Regular'
-                                              // }}
-                                              className="pro_mui_checkbox_label"
-                                              label={
-                                                <span style={{ fontSize: "13px" }}>
-                                                  {opt?.Minval == 0
-                                                    ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Maxval}`
-                                                    : opt?.Maxval == 0
-                                                      ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Minval}`
-                                                      : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Minval} 
-                                                    - ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${opt?.Maxval}`}
-                                                </span>
-                                              }
-                                              sx={{
-                                                fontSize: "14px", // This applies the font size to the label
-                                              }}
-                                            />
-                                          </div>
-                                        ))}
-                                      </AccordionDetails>
-                                    </Accordion>
-                                  )}
-                                  {ele?.Name?.includes("Diamond") && (
-                                    <Accordion
-                                      elevation={0}
-                                      sx={{
-                                        borderBottom: "1px solid #c7c8c9",
-                                        borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                                          borderBottomLeftRadius: "0px",
-                                          borderBottomRightRadius: "0px",
-                                        },
-                                        "&.MuiPaper-root.MuiAccordion-root:before": {
-                                          background: "none",
-                                        },
-                                      }}
-                                    // expanded={accExpanded}
-                                    // defaultExpanded={}
-                                    >
-                                      <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                                        aria-controls="panel1-content"
-                                        id="panel1-header"
-                                        sx={{
-                                          color: "#7f7d85",
-                                          borderRadius: 0,
+              {/* Mobile Filter Toggle Button */}
+              {filterData?.length > 0 && !minwidth1201px && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<FilterAltIcon sx={{ color: "#7d7f85" }} />}
+                  onClick={() => setIsDrawerOpen(true)}
+                  sx={{
+                    borderRadius: "20px",
+                    borderColor: "#7d7f85",
+                    color: "#7d7f85",
+                    fontWeight: 600,
+                    fontSize: "12px",
+                    height: "34px",
+                  }}
+                >
+                  Filters {showClearAllButton() && `(${activeCheckedList.length})`}
+                </Button>
+              )}
+            </Box>
+          </Box>
 
-                                          "&.MuiAccordionSummary-root": {
-                                            padding: 0,
-                                          },
-                                        }}
-                                      // className="filtercategoryLable"
-                                      >
-                                        {/* <span> */}
-                                        {ele.Fil_DisName}
-                                        {/* </span> */}
-                                      </AccordionSummary>
-                                      <AccordionDetails
-                                        sx={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: "4px",
-                                          minHeight: "fit-content",
-                                          maxHeight: "300px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        {/* {console.log("RangeEle",JSON?.parse(ele?.options)[0])} */}
-                                        <Box sx={SharedStyleForRange}>
-                                          {/* {RangeFilterView(ele)} */}
-                                          <RangeFilterView ele={ele} sliderValue={sliderValue} setSliderValue={setSliderValue} handleRangeFilterApi={handleRangeFilterApi} prodListType={prodListType} cookie={cookie} show={show} setShow={setShow} appliedRange1={appliedRange1} setAppliedRange1={setAppliedRange1} />
-                                        </Box>
-                                      </AccordionDetails>
-                                    </Accordion>
-                                  )}
-                                  {ele?.Name?.includes("NetWt") && (
-                                    <Accordion
-                                      elevation={0}
-                                      sx={{
-                                        borderBottom: "1px solid #c7c8c9",
-                                        borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                                          borderBottomLeftRadius: "0px",
-                                          borderBottomRightRadius: "0px",
-                                        },
-                                        "&.MuiPaper-root.MuiAccordion-root:before": {
-                                          background: "none",
-                                        },
-                                      }}
-                                    // expanded={accExpanded}
-                                    // defaultExpanded={}
-                                    >
-                                      <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                                        aria-controls="panel1-content"
-                                        id="panel1-header"
-                                        sx={{
-                                          color: "#7f7d85",
-                                          borderRadius: 0,
+          {/* Active Applied Filter Tags / Chips */}
+          {(activeCheckedList.length > 0 || showClearAllButton()) && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mt: 1.5, pt: 1.5, borderTop: "1px solid #F0F0F0" }}>
+              <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#777" }}>
+                Applied Filters:
+              </Typography>
+              {activeCheckedList.map(([key, val]) => (
+                <Chip
+                  key={key}
+                  label={val?.value}
+                  onDelete={() => handleCheckboxChange({ target: { checked: false, name: key } }, val?.type, val?.value)}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    borderRadius: "16px",
+                    borderColor: "#7d7f85",
+                    color: "#7d7f85",
+                    bgcolor: "rgba(125, 127, 133, 0.08)",
+                    fontWeight: 500,
+                    fontSize: "11px",
+                    "& .MuiChip-deleteIcon": { color: "#7d7f85", ":hover": { color: "#5a5c60" } },
+                  }}
+                />
+              ))}
+              <Typography
+                onClick={handelFilterClearAll}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "#7d7f85",
+                  cursor: "pointer",
+                  ml: 1,
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                CLEAR ALL
+              </Typography>
+            </Box>
+          )}
+        </Paper>
 
-                                          "&.MuiAccordionSummary-root": {
-                                            padding: 0,
-                                          },
-                                        }}
-                                        // className="filtercategoryLable"
-                                        onClick={() => handleScrollHeight()}
-                                      >
-                                        {/* <span> */}
-                                        {ele.Fil_DisName}
-                                        {/* </span> */}
-                                      </AccordionSummary>
-                                      <AccordionDetails
-                                        sx={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: "4px",
-                                          minHeight: "fit-content",
-                                          maxHeight: "300px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        <Box sx={SharedStyleForRange}>
-                                          {/* {RangeFilterView1(ele)} */}
-                                          <RangeFilterView1 ele={ele} sliderValue1={sliderValue1} setSliderValue1={setSliderValue1} handleRangeFilterApi1={handleRangeFilterApi1} prodListType={prodListType} cookie={cookie} show1={show1} setShow1={setShow1} appliedRange2={appliedRange2} setAppliedRange2={setAppliedRange2} />
-                                        </Box>
-                                      </AccordionDetails>
-                                    </Accordion>
-                                  )}
-                                  {ele?.Name?.includes("Gross") && (
-                                    <Accordion
-                                      elevation={0}
-                                      sx={{
-                                        borderBottom: "1px solid #c7c8c9",
-                                        borderRadius: 0,
-                                        "&.MuiPaper-root.MuiAccordion-root:last-of-type": {
-                                          borderBottomLeftRadius: "0px",
-                                          borderBottomRightRadius: "0px",
-                                        },
-                                        "&.MuiPaper-root.MuiAccordion-root:before": {
-                                          background: "none",
-                                        },
-                                      }}
-                                    // expanded={accExpanded}
-                                    // defaultExpanded={}
-                                    >
-                                      <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon sx={{ width: "20px" }} />}
-                                        aria-controls="panel1-content"
-                                        id="panel1-header"
-                                        sx={{
-                                          color: "#7f7d85",
-                                          borderRadius: 0,
-
-                                          "&.MuiAccordionSummary-root": {
-                                            padding: 0,
-                                          },
-                                        }}
-                                        // className="filtercategoryLable"
-                                        onClick={() => handleScrollHeight()}
-                                      >
-                                        {/* <span> */}
-                                        {ele.Fil_DisName}
-                                        {/* </span> */}
-                                      </AccordionSummary>
-                                      <AccordionDetails
-                                        sx={{
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: "4px",
-                                          minHeight: "fit-content",
-                                          maxHeight: "300px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        <Box sx={SharedStyleForRange}>
-                                          {/* {RangeFilterView2(ele)} */}
-                                          <RangeFilterView2 ele={ele} sliderValue2={sliderValue2} setSliderValue2={setSliderValue2} handleRangeFilterApi2={handleRangeFilterApi2} prodListType={prodListType} cookie={cookie} show2={show2} setShow2={setShow2} appliedRange3={appliedRange3} setAppliedRange3={setAppliedRange3} />
-                                        </Box>
-                                      </AccordionDetails>
-                                    </Accordion>
-                                  )}
-                                </>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    {filterProdListEmpty ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          width: "75%",
-                          alignItems: "center",
-                          height: "500px",
+        {/* Main Grid Layout */}
+        {isProdLoading || isOnlyProdLoading ? (
+          <ProductListSkeleton />
+        ) : (
+          <Grid container spacing={2}>
+            {/* Desktop Left Sidebar Filters Grid Item */}
+            {filterData?.length > 0 && (
+              <Grid
+                size={{ xs: 12, md: 3, lg: 2.8 }}
+                sx={{ display: { xs: "none", md: "block" } }}
+              >
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    borderRadius: "16px",
+                    bgcolor: "#FFFFFF",
+                    position: "sticky",
+                    top: "90px",
+                    maxHeight: "calc(100vh - 110px)",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    "&::-webkit-scrollbar": {
+                      width: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#D1D1D1",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      pb: 1.8,
+                      mb: 1.8,
+                      borderBottom: "1px solid #ECECEC",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 700, fontSize: "16px", color: "#111", letterSpacing: "0.8px" }}>
+                      FILTERS {showClearAllButton() && `(${activeCheckedList.length})`}
+                    </Typography>
+                    {showClearAllButton() && (
+                      <Typography
+                        onClick={handelFilterClearAll}
+                        sx={{
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          color: "#7d7f85",
+                          cursor: "pointer",
+                          "&:hover": { textDecoration: "underline" },
                         }}
                       >
-                        <span className="smr_prod_datanotfound">Products Not found !!!</span>
-                      </div>
-                    ) : (
-                      // <div className="smr_productList" style={{ width: filterData?.length <= 0 && '100%', margin: filterData?.length <= 0 && '20px 50px 0px 65px' }}>
-                      <div className={filterData?.length == 0 ? "procat_productList_Nodata" : "procat_productList"}>
-                        {isOnlyProdLoading ? (
-                          <PageSkeleton fromPage={"Prodlist"} className="pSkelton" />
-                        ) : (
-                          <>
-                            {filterData?.length == 0 && (
-                              <div className="proCat_main_sorting_div_proCat">
-                                <div
-                                  className="proCat_topTitleList"
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <div className="proCat_mpty_sorting_div_NoData">
-                                    <IoArrowBack
-                                      style={{
-                                        height: "25px",
-                                        width: "25px",
-                                        cursor: "pointer",
-                                        color: "rgba(143, 140, 139, 0.9019607843)",
-                                      }}
-                                      onClick={() => navigate.push("/")}
-                                    />
-                                  </div>
-                                  <p className="proCat_NameTopShow">
-                                    {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
-                                  </p>
-                                </div>
-                                <div
-                                  className="proCat_topTitleList_mobile"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <p
-                                    style={{
-                                      margin: "0px",
-                                      width: "100%",
-                                      fontWeight: 600,
-                                      color: "rgba(143, 140, 139, 0.9019607843)",
-                                    }}
-                                  >
-                                    {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
-                                  </p>
-                                </div>
-                                <div className={filterData?.length <= 0 ? "smr_sorting_custom_NoData" : "smr_sorting_custom"}>
-                                  <div className={filterData?.length <= 0 ? "NoDatacontainer" : "container"}>
-                                    <label className="label">Sort By:&nbsp;</label>
-                                    <select className="select" value={sortBySelect} onChange={(e) => handleSortby(e)}>
-                                      <option className="option" value="Recommended">
-                                        Recommended
-                                      </option>
-                                      {/* <option className="option" value="New">
-                                      New
-                                    </option>
-                                    <option className="option" value="Trending">
-                                      Trending
-                                    </option> */}
-                                      {storeInit?.IsStockWebsite == 1 && (
-                                        <option className="option" value="In Stock">
-                                          In stock
-                                        </option>
-                                      )}
-                                      {/* {storeInit?.IsStockWebsite == 1 && ( */}
-                                      {/* <option
-                                        className="option"
-                                        value="In memo"
-                                      >
-                                        In memo
-                                      </option> */}
-                                      {/* for all not needed removed by priyank bhai */}
-                                      {/* <option className="option" value="Bestseller">
-                                        Bestseller
-                                      </option> */}
-                                      {/* )} */}
-                                      <option className="option" value="PRICE HIGH TO LOW">
-                                        Price High To Low
-                                      </option>
-                                      <option className="option" value="PRICE LOW TO HIGH">
-                                        Price Low To High
-                                      </option>
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
-                            {filterData?.length != 0 && (
-                              <div className="proCat_main_sorting_div_proCat_noLength">
-                                <div
-                                  className="proCat_topTitleList_mobile"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    flex: 1,
-                                    margin: 0,
-                                    width: "100%",
-                                    fontWeight: 600,
-                                    color: "rgba(143, 140, 139, 0.9)",
-                                    whiteSpace: "nowrap", // keep text on a single line
-                                    overflow: "hidden", // hide overflowing text
-                                    textOverflow: "ellipsis", // show ...
-                                  }}
-                                >
-                                  <Typography
-                                    sx={{
-                                      margin: 0,
-                                      width: "100%",
-                                      fontWeight: 600,
-                                      color: "rgba(143, 140, 139, 0.9)",
-                                      whiteSpace: "nowrap", // keep text on one line
-                                      overflow: "hidden", // hide overflow
-                                      textOverflow: "ellipsis", // show "..."
-                                      fontSize: {
-                                        xs: 12, // small screens
-                                        sm: 14, // tablets
-                                        md: 16, // desktops
-                                        lg: 18, // large desktops
-                                      },
-                                    }}
-                                  >
-                                    {/* {decodeURI(extractedPart)} */}
-                                    {decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0])}
-                                  </Typography>
-                                </div>
-                                <div
-                                  className={filterData?.length <= 0 ? "smr_sorting_custom_NoData" : "smr_sorting_custom"}
-                                  style={{
-                                    flex: 1,
-                                    margin: 0,
-                                    width: "100%",
-                                    fontWeight: 600,
-                                    color: "rgba(143, 140, 139, 0.9)",
-                                    whiteSpace: "nowrap", // keep text on a single line
-                                    overflow: "hidden", // hide overflowing text
-                                    textOverflow: "ellipsis", // show ...
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "flex-end",
-                                  }}
-                                >
-                                  <div className={filterData?.length <= 0 ? "NoDatacontainer" : "container"}>
-                                    <label className="label">Sort By:&nbsp;</label>
-                                    <select className="select" value={sortBySelect} onChange={(e) => handleSortby(e)}>
-                                      <option className="option" value="Recommended">
-                                        Recommended
-                                      </option>
-                                      {/* <option className="option" value="New">
-                                      New
-                                    </option>
-                                    <option className="option" value="Trending">
-                                      Trending
-                                    </option> */}
-                                      {storeInit?.IsStockWebsite == 1 && (
-                                        <option className="option" value="In Stock">
-                                          In stock
-                                        </option>
-                                      )}
-                                      {/* {storeInit?.IsStockWebsite == 1 && ( */}
-                                      {/* <option
-                                        className="option"
-                                        value="In memo"
-                                      >
-                                        In memo
-                                      </option> */}
-                                      {/* <option className="option" value="Bestseller">
-                                        Bestseller
-                                      </option> */}
-                                      {/* )} */}
-                                      <option className="option" value="PRICE HIGH TO LOW">
-                                        Price High To Low
-                                      </option>
-                                      <option className="option" value="PRICE LOW TO HIGH">
-                                        Price Low To High
-                                      </option>
-                                    </select>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            <div className="smr_outer_portion" id="smr_outer_portion">
-                              <div
-                                className="smr_inner_portion"
-                                style={{
-                                  marginBottom: Math.ceil(afterFilterCount / storeInit.PageSize) <= 1 ? "45px" : "0px",
-                                }}
-                              >
-                                {finalProductListData?.map((productData, i) => {
-                                  return <Product_Card key={i} productData={productData} setIsRollOverVideo={setIsRollOverVideo} handleImgRollover={handleImgRollover} handleMoveToDetail={handleMoveToDetail} i={i} videoUrl={getDynamicVideo(productData.designno, productData.VideoCount, productData.VideoExtension)} RollImageUrl={getDynamicRollImages(productData.designno, productData.ImageCount, productData.ImageExtension)} imageUrl={getDynamicImages(productData.designno, productData.ImageExtension)} handleLeaveImgRolloverImg={handleLeaveImgRolloverImg} isRollOverVideo={isRollOverVideo} storeInit={storeInit} rollOverImgPd={rollOverImgPd} loginUserDetail={loginUserDetail} formatter={formatter} handleCartandWish={handleCartandWish} cartArr={cartArr} />;
-                                })}
-                              </div>
-                            </div>
-                            {isEditablePage === 1 ? (
-                              <>
-                                {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
-                                  <Box
-                                    sx={{
-                                      py: 1,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      width: "100%",
-                                      mb: 3,
-                                    }}
-                                  >
-                                    <EditablePagination currentPage={currPage} totalItems={afterFilterCount || 0} itemsPerPage={storeInit?.PageSize || 60} onPageChange={handelPageChange} inputPage={inputPage} setInputPage={setInputPage} handlePageInputChange={handlePageInputChange} maxwidth464px={maxwidth464px} totalPages={totalPages} currPage={currPage} isShowButton={false} />
-                                  </Box>
-                                )}
-                              </>
-                            ) : (
-                              <>
-                                {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      marginTop: "5%",
-                                      width: "100%",
-                                    }}
-                                    className="smr_pagination_portion"
-                                  >
-                                    <Pagination
-                                      count={Math.ceil(afterFilterCount / storeInit.PageSize)}
-                                      size={maxwidth464px ? "small" : "large"}
-                                      shape="circular"
-                                      onChange={handelPageChange}
-                                      page={currPage}
-                                      showFirstButton
-                                      showLastButton
-                                      disabled={false}
-                                      renderItem={(item) => (
-                                        <PaginationItem
-                                          {...item}
-                                          sx={{
-                                            pointerEvents: item.page === currPage ? "none" : "auto",
-                                          }}
-                                        />
-                                      )}
-                                    />
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </>
-                        )}
-                      </div>
+                        CLEAR ALL
+                      </Typography>
                     )}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          {/* <div className="smr_backtotop">
-              BACK TO TOP
-        </div> */}
-        </div>
-      </div>
+                  </Box>
+                  {renderFilterAccordionsList()}
+                </Paper>
+              </Grid>
+            )}
+
+            {/* Right Product Listing Grid Item */}
+            <Grid size={{ xs: 12, md: filterData?.length > 0 ? 9 : 12, lg: filterData?.length > 0 ? 9.2 : 12 }}>
+              {filterProdListEmpty ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 8,
+                    textAlign: "center",
+                    borderRadius: "16px",
+                    bgcolor: "#FFFFFF",
+                    border: "1px solid #EDEDED",
+                  }}
+                >
+                  <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 600 }}>
+                    No Products Found
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 3 }}>
+                    Try relaxing your search or clear filters to see more results.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    onClick={handelFilterClearAll}
+                    sx={{
+                      bgcolor: "#7d7f85",
+                      borderRadius: "20px",
+                      px: 4,
+                      ":hover": { bgcolor: "#5a5c60" },
+                    }}
+                  >
+                    Clear All Filters
+                  </Button>
+                </Paper>
+              ) : (
+                <Grid container spacing={1.5}>
+                  {finalProductListData?.map((productData, i) => (
+                    <Grid key={i} size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }} sx={{ display: "flex" }}>
+                    <Product_Card
+                      productData={productData}
+                      setIsRollOverVideo={setIsRollOverVideo}
+                      handleImgRollover={handleImgRollover}
+                      handleMoveToDetail={handleMoveToDetail}
+                      i={i}
+                      videoUrl={getDynamicVideo(productData.designno, productData.VideoCount, productData.VideoExtension)}
+                      RollImageUrl={getDynamicRollImages(productData.designno, productData.ImageCount, productData.ImageExtension)}
+                      imageUrl={getDynamicImages(productData.designno, productData.ImageExtension)}
+                      handleLeaveImgRolloverImg={handleLeaveImgRolloverImg}
+                      isRollOverVideo={isRollOverVideo}
+                      storeInit={storeInit}
+                      rollOverImgPd={rollOverImgPd}
+                      loginUserDetail={loginUserDetail}
+                      formatter={formatter}
+                      handleCartandWish={handleCartandWish}
+                      cartArr={cartArr}
+                      wishArr={wishArr}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+
+            {/* Pagination Controls */}
+            {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2, width: "100%" }}>
+                {isEditablePage === 1 ? (
+                  <EditablePagination
+                    currentPage={currPage}
+                    totalItems={afterFilterCount || 0}
+                    itemsPerPage={storeInit?.PageSize || 60}
+                    onPageChange={handelPageChange}
+                    inputPage={inputPage}
+                    setInputPage={setInputPage}
+                    handlePageInputChange={handlePageInputChange}
+                    maxwidth464px={maxwidth464px}
+                    totalPages={totalPages}
+                    currPage={currPage}
+                    isShowButton={false}
+                  />
+                ) : (
+                  <Pagination
+                    count={Math.ceil(afterFilterCount / storeInit.PageSize)}
+                    size={maxwidth464px ? "small" : "large"}
+                    shape="circular"
+                    onChange={handelPageChange}
+                    page={currPage}
+                    showFirstButton
+                    showLastButton
+                    renderItem={(item) => (
+                      <PaginationItem
+                        {...item}
+                        sx={{
+                          "&.Mui-selected": { bgcolor: "#DE0090", color: "#FFF", ":hover": { bgcolor: "#b00072" } },
+                        }}
+                      />
+                    )}
+                  />
+                )}
+              </Box>
+            )}
+          </Grid>
+          </Grid>
+        )}
+      </Box>
     </>
   );
 };
 
 export default memo(ProductList);
 
-const Product_Card = ({ productData, setIsRollOverVideo, handleImgRollover, handleMoveToDetail, i, videoUrl, RollImageUrl, imageUrl, handleLeaveImgRolloverImg, isRollOverVideo, storeInit, rollOverImgPd, loginUserDetail, formatter, handleCartandWish, cartArr }) => {
+const Product_Card = ({
+  productData,
+  setIsRollOverVideo,
+  handleImgRollover,
+  handleMoveToDetail,
+  i,
+  videoUrl,
+  RollImageUrl,
+  imageUrl,
+  handleLeaveImgRolloverImg,
+  isRollOverVideo,
+  storeInit,
+  rollOverImgPd,
+  loginUserDetail,
+  formatter,
+  handleCartandWish,
+  cartArr,
+  wishArr,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isHover, setIsHover] = useState(false);
 
   const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 0;
+  const isWishlisted = Boolean(wishArr?.[productData?.autocode] ?? productData?.IsInWish === 1);
+  const isCarted = Boolean(cartArr?.[productData?.autocode] ?? productData?.IsInCart === 1);
 
   useEffect(() => {
-    const delay = (i + 1) * 150;
-
+    const delay = (i + 1) * 80;
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, delay);
-
     return () => clearTimeout(timer);
   }, [i]);
+
   return (
-    <div className="procat_productCard">
-      {isLoading ? (
-        <CardMedia style={{ width: "100%" }} className="cardMainSkeleton">
+    <Card
+      elevation={0}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      sx={{
+        bgcolor: "#FFFFFF",
+        height: "100%",
+        width: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        borderRadius: "12px",
+        p: 1.5,
+        border: "1px solid #EAEAEA",
+        boxShadow: isHover ? "0 12px 32px rgba(0, 0, 0, 0.14)" : "none",
+        transform: isHover ? "translateY(-6px)" : "none",
+        zIndex: isHover ? 10 : 1,
+        transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+      }}
+    >
+      {/* Top Image Container */}
+      <Box
+        onClick={() => handleMoveToDetail(productData, i)}
+        sx={{
+          position: "relative",
+          width: "100%",
+          pt: "100%", // 1:1 Square aspect ratio like CaratLane
+          bgcolor: "#F8F8F9",
+          cursor: "pointer",
+          overflow: "hidden",
+          borderRadius: "8px",
+          transition: "all 0.3s ease",
+        }}
+      >
+
+        {isLoading ? (
           <Skeleton
             animation="wave"
-            variant="rect"
-            width={"100%"}
-            height="260px"
-            sx={{
-              "@media (max-width: 1750px)": {
-                height: "250px !important",
-              },
-              "@media (max-width: 1700px)": {
-                height: "280px !important",
-              },
-              "@media (max-width: 1500px)": {
-                height: "230px",
-              },
-              "@media (max-width: 1350px)": {
-                height: "210px",
-              },
-              "@media (max-width: 1200px)": {
-                height: "270px",
-              },
-              "@media (max-width: 1100px)": {
-                height: "250px",
-              },
-              "@media (max-width: 1040px)": {
-                height: "270px",
-              },
-              "@media (max-width: 600px)": {
-                height: "250px",
-              },
-              "@media (max-width: 600px)": {
-                height: "500px",
-              },
-            }}
-            style={{ backgroundColor: "#e8e8e86e" }}
+            variant="rectangular"
+            sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
           />
-        </CardMedia>
-      ) : (
-        <div onClick={() => handleMoveToDetail(productData, i)} onMouseMove={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} className="roop_ImgandVideoContainer" style={{ position: "relative", overflow: "hidden" }}>
-          {isLoading ? (
-            <CardMedia style={{ width: "100%", height: "100%" }} className="proCat_productCard_cardMainSkeleton">
-              <Skeleton animation="wave" variant="rect" width="100%" height="100%" style={{ backgroundColor: "#e8e8e86e" }} />
-            </CardMedia>
-          ) : (
-            <>
-              {/* Hover Content (Video or RollImage) */}
-              <div style={{ display: isHover ? "block" : "none", boxSizing: 'border-box' }}>
-                {videoUrl !== undefined ? (
-                  <video
-                    className="proCat_productCard_video"
-                    src={videoUrl}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    onError={(e) => {
-                      e.target.poster = imageNotFound;
-                    }}
-                  />
-                ) : videoUrl === undefined && RollImageUrl !== undefined ? (
-                  <img
-                    className="proCat_productListCard_Image"
-                    src={RollImageUrl}
-                    onError={(e) => {
-                      if (productData?.ImageCount > 0) {
-                        e.target.src = RollImageUrl;
-                      }
-                      e.target.src = imageNotFound;
-                    }}
-                  />
-                ) : null}
-              </div>
-
-              {/* Default Image */}
+        ) : (
+          <>
+            {/* Hover Video / Roll Image */}
+            {isHover && (videoUrl || RollImageUrl) ? (
+              videoUrl ? (
+                <video
+                  src={videoUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  onError={(e) => { e.target.poster = imageNotFound; }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <img
+                  src={RollImageUrl || imageUrl}
+                  alt={productData?.TitleLine || productData?.designno}
+                  onError={(e) => { e.target.src = imageNotFound; }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    padding: "8px",
+                    transition: "transform 0.4s ease",
+                    transform: isHover ? "scale(1.05)" : "scale(1)",
+                  }}
+                />
+              )
+            ) : (
               <img
-                className="proCat_productListCard_Image"
                 src={imageUrl}
+                alt={productData?.TitleLine || productData?.designno}
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.stopPropagation();
                   e.target.src = imageNotFound;
                 }}
                 style={{
-                  display: isHover && (RollImageUrl || videoUrl) ? "none" : "block",
-                  opacity: isHover && (RollImageUrl || videoUrl) ? "0" : "1",
-                  transition: "0s ease-in-out",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  transition: "transform 0.4s ease",
+                  transform: isHover ? "scale(1.04)" : "scale(1)",
                 }}
               />
-            </>
-          )}
-        </div>
-      )}
-
-      <div className="proCat_app_product_label">{productData?.StatusId == 1 ? <span className="proCat_app_instock">In Stock</span> : productData?.StatusId == 2 ? <span className="proCat_app_MEMO">In memo</span> : <span className="proCat_app_Make_to_order">Make To Order</span>}</div>
-
-      <div className="proCat_prod_card_info">
-
-        {/* Design No */}
-        {productData?.designno && (
-          <span className="productTitle designNo">
-            {productData?.designno}
-          </span>
-        )}
-
-        {/* Title Line */}
-        {formatTitleLine(productData?.TitleLine) && (
-          <span className="productTitle titleLine">
-            {productData?.TitleLine}
-          </span>
-        )}
-
-        {/* Price + GWT */}
-        {(productData?.Gwt || storeInit?.IsPriceShow == 1) && (
-          <p className="priceRow">
-            {productData?.Gwt && `GWT - ${productData?.Gwt}`}
-
-            {productData?.Gwt && storeInit?.IsPriceShow == 1 && " / "}
-
-            {storeInit?.IsPriceShow == 1 && (
-              <span className="priceValue">
-                {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) + " "}
-                {formatter.format(productData?.UnitCostWithMarkUp)}
-              </span>
             )}
-          </p>
+          </>
         )}
+      </Box>
 
-      </div>
-
-      {IsMultiVariantCart && (
-        <Box
-          sx={{
-            width: "100%",
-            flex: 1,
-            boxSizing: 'border-box',
-            p: 1
-
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Checkbox
-                icon={
-                  <LocalMallOutlinedIcon
-                    sx={{
-                      fontSize: "22px",
-                    }}
-                    className="btnColorSvg"
-                  />
-                }
-                checkedIcon={
-                  <LocalMallIcon
-                    sx={{
-                      fontSize: "22px",
-                    }}
-                    className="btnColorRemoveSvg"
-                  />
-                  // <LocalMallIcon
-                  //   sx={{
-                  //     fontSize: "22px",
-                  //     color: "red",
-                  //   }}
-                  // />
-                }
-                disableRipple={false}
-                onChange={(e) => handleCartandWish(e, productData, "Cart")}
-                checked={(cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false}
-              />
-            }
-            label={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? <span className="">Add To Cart</span> : <span className="">Remove From Cart</span>}
-            // sx={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center',backgroundColor:'#474747d1',marginLeft:'0px',color:'white'}}
-            className={!((cartArr[productData?.autocode] ?? productData?.IsInCart === 1) ? true : false) ? "procat_cart_btn btnColorProCatProduct" : "procat_cart_btn_alter btnColorProCatProductRemoveCart"}
-          />
-        </Box>)
-      }
-
-      {!IsMultiVariantCart && <Box
+      {/* Product Details Section */}
+      <CardContent
         sx={{
+          p: 0,
+          pt: 1.5,
+          pb: 0.5,
+          "&:last-child": { pb: 0.5 },
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          justifyContent: "space-between",
+          bgcolor: "#FFFFFF",
           width: "100%",
-          flex: 1,
-          boxSizing: 'border-box',
-          paddingBottom: "12px",
-          paddingInline: "12px",
+          boxSizing: "border-box",
         }}
       >
-        <Button
-          className="view_detail_btn setFullThemeBack color_jeweliita"
-          fullWidth
-          onClick={() => handleMoveToDetail(productData, i)}
-          sx={{
-            borderRadius: "0px",
-            px: { xs: 2, sm: 3, md: 4 },
-            py: { xs: 0.6, sm: 0.7, md: 0.85 },
+        <Box onClick={() => handleMoveToDetail(productData, i)} sx={{ cursor: "pointer" }}>
+          {/* Prices */}
+          <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, flexWrap: "wrap" }}>
+            {storeInit?.IsPriceShow == 1 && (
+              <Typography sx={{ fontWeight: 700, fontSize: { xs: "15px", sm: "16px" }, color: "#111111" }}>
+                {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) + " "}
+                {formatter.format(productData?.UnitCostWithMarkUp)}
+              </Typography>
+            )}
+          </Box>
 
-            fontSize: {
-              xs: "11px",
-              sm: "12px",
-              md: "13px",
-              lg: "14px",
-            },
+          {/* Title & Design Number */}
+          <Typography
+            noWrap
+            sx={{
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "#555555",
+              mt: 0.5,
+              lineHeight: 1.3,
+            }}
+          >
+            {productData?.TitleLine || productData?.designno}
+          </Typography>
 
-            fontWeight: 400,
-            letterSpacing: "1px",
-          }}
-        >
-          VIEW DETAILS
-        </Button>
-      </Box>}
-    </div>
+          {/* Gross Weight info if available */}
+          {productData?.Gwt && (
+            <Typography sx={{ fontSize: "11px", color: "#888888", mt: 0.2 }}>
+              Gross Wt: {productData?.Gwt}g
+            </Typography>
+          )}
+        </Box>
+
+        {/* CTA Action Button */}
+        <Box sx={{ mt: 1.5 }}>
+          {IsMultiVariantCart ? (
+            <Button
+              variant={isCarted ? "contained" : "outlined"}
+              fullWidth
+              size="small"
+              startIcon={isCarted ? <LocalMallIcon /> : <LocalMallOutlinedIcon />}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCartandWish({ target: { checked: !isCarted } }, productData, "Cart");
+              }}
+              sx={{
+                borderRadius: "4px",
+                borderColor: "#7d7f85",
+                color: isCarted ? "#FFFFFF" : "#7d7f85",
+                bgcolor: isCarted ? "#7d7f85" : "transparent",
+                fontWeight: 600,
+                fontSize: "11px",
+                py: 0.9,
+                textTransform: "uppercase",
+                ":hover": {
+                  borderColor: "#7d7f85",
+                  bgcolor: isCarted ? "#5a5c60" : "rgba(125, 127, 133, 0.08)",
+                },
+              }}
+            >
+              {isCarted ? "Remove From Cart" : "Add To Cart"}
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              fullWidth
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMoveToDetail(productData, i);
+              }}
+              sx={{
+                borderRadius: "4px",
+                borderColor: "#7d7f85",
+                color: "#7d7f85",
+                fontWeight: 600,
+                fontSize: "11px",
+                py: 0.9,
+                textTransform: "uppercase",
+                ":hover": {
+                  borderColor: "#7d7f85",
+                  bgcolor: "rgba(125, 127, 133, 0.08)",
+                },
+              }}
+            >
+              View Details
+            </Button>
+          )}
+        </Box>
+      </CardContent>
+    </Card>
   );
 };
