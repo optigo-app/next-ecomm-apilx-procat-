@@ -131,8 +131,8 @@ const Header = ({ storeinit, logos }) => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      setIsHeaderFixed(scrollPosition > 100);
-      setIsHeaderFixedDropShow(scrollPosition > 100);
+      setIsHeaderFixed(scrollPosition > 10);
+      setIsHeaderFixedDropShow(scrollPosition > 10);
     };
     window.addEventListener('scroll', handleScroll);
     return () => {

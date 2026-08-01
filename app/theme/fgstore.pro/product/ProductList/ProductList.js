@@ -3,8 +3,15 @@ import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import "./productlist.scss";
 import ProductListApi from "@/app/(core)/utils/API/ProductListAPI/ProductListApi";
 import { FilterListAPI } from "@/app/(core)/utils/API/FilterAPI/FilterListAPI";
-import { findMetalColor, findMetalType, formatRedirectTitleLine, formatTitleLine } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
-import ProductListSkeleton, { PageSkeleton } from "./productlist_skeleton/ProductListSkeleton";
+import {
+  findMetalColor,
+  findMetalType,
+  formatRedirectTitleLine,
+  formatTitleLine,
+} from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
+import ProductListSkeleton, {
+  PageSkeleton,
+} from "./productlist_skeleton/ProductListSkeleton";
 import {
   Accordion,
   AccordionDetails,
@@ -70,16 +77,26 @@ const imageNotFound = "/image-not-found.jpg";
 
 const ProductList = ({ params, searchParams, storeinit }) => {
   const storeInit = storeinit;
-  const { islogin, setCartCountNum, setWishCountNum, SoketData, loginUserDetail } = useStore();
+  const {
+    islogin,
+    setCartCountNum,
+    setWishCountNum,
+    SoketData,
+    loginUserDetail,
+  } = useStore();
 
   useEffect(() => {
     let mtCombo = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
     setMetalTypeCombo(mtCombo);
 
-    let diaQcCombo = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
+    let diaQcCombo = JSON.parse(
+      sessionStorage.getItem("diamondQualityColorCombo"),
+    );
     setDiaQcCombo(diaQcCombo);
 
-    let CsQcCombo = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let CsQcCombo = JSON.parse(
+      sessionStorage.getItem("ColorStoneQualityColorCombo"),
+    );
     setCsQcCombo(CsQcCombo);
   }, []);
 
@@ -108,8 +125,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const [metalTypeCombo, setMetalTypeCombo] = useState([]);
   const [diaQcCombo, setDiaQcCombo] = useState([]);
   const [csQcCombo, setCsQcCombo] = useState([]);
-  const [selectedMetalId, setSelectedMetalId] = useState(loginUserDetail?.MetalId);
-  const [selectedDiaId, setSelectedDiaId] = useState(loginUserDetail?.cmboDiaQCid);
+  const [selectedMetalId, setSelectedMetalId] = useState(
+    loginUserDetail?.MetalId,
+  );
+  const [selectedDiaId, setSelectedDiaId] = useState(
+    loginUserDetail?.cmboDiaQCid,
+  );
   const [selectedCsId, setSelectedCsId] = useState(loginUserDetail?.cmboCSQCid);
   const [IsBreadCumShow, setIsBreadcumShow] = useState(false);
   const [loginInfo, setLoginInfo] = useState();
@@ -149,10 +170,19 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const lastSearchParamsRef = useRef(null);
   const isApiCallInProgressRef = useRef(false);
+  // Tracks whether the initial fetchData has resolved prodListType.
+  // Prevents the metal/dia/cs combo effect from firing an extra API call on first mount.
+  const prodListTypeReadyRef = useRef(false);
+  const isFirstComboRun = useRef(true);
+  const lastFetchedComboRef = useRef(null);
+  const isInitialLoadRef = useRef(true);
   const setCSSVariable = () => {
     const storeInit = JSON.parse(sessionStorage.getItem("storeInit"));
     const backgroundColor = storeInit?.IsPLW == 1 ? "#c4cfdb" : "#c0bbb1";
-    document.documentElement.style.setProperty("--background-color", backgroundColor);
+    document.documentElement.style.setProperty(
+      "--background-color",
+      backgroundColor,
+    );
   };
 
   const isEditablePage = 1;
@@ -172,8 +202,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const callAllApi = () => {
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let diaQcLocal = JSON.parse(
+      sessionStorage.getItem("diamondQualityColorCombo"),
+    );
+    let csQcLocal = JSON.parse(
+      sessionStorage.getItem("ColorStoneQualityColorCombo"),
+    );
     let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
 
     if (!mtTypeLocal || mtTypeLocal?.length === 0) {
@@ -195,7 +229,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem("diamondQualityColorCombo", JSON.stringify(data));
+            sessionStorage.setItem(
+              "diamondQualityColorCombo",
+              JSON.stringify(data),
+            );
             setDiaQcCombo(data);
           }
         })
@@ -209,7 +246,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem("ColorStoneQualityColorCombo", JSON.stringify(data));
+            sessionStorage.setItem(
+              "ColorStoneQualityColorCombo",
+              JSON.stringify(data),
+            );
             setCsQcCombo(data);
           }
         })
@@ -248,11 +288,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   useEffect(() => {
     let param = JSON.parse(sessionStorage.getItem("menuparams"));
-    let securityKey = sessionStorage.getItem("SecurityKey");
+    // Only depends on params — productListData/filterChecked were causing this to
+    // re-run on every API response, producing unnecessary re-renders.
     if (location?.state?.SearchVal === undefined) {
       setMenuParams(param);
     }
-  }, [params, productListData, filterChecked]);
+  }, [params]);
   // },[location?.state?.menu,productListData,filterChecked])
 
   useEffect(() => {
@@ -260,7 +301,15 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const pathSegments = location?.pathname?.split("/") || [];
     const kSegment = pathSegments.find((s) => s.includes("K="));
     const encodedKey = kSegment?.split("?")[0]?.split("K=")[1];
+    const isB2B = storeInit?.IsB2BWebsite === 1;
 
+    // Condition 1: B2B Website restriction for guest users
+    if (isB2B && islogin !== true) {
+      navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
+      return;
+    }
+
+    // Condition 2: Album Security Key restriction for guest users
     if (encodedKey) {
       let decodedKey = null;
       try {
@@ -269,27 +318,32 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         console.warn("Invalid Base64 Key:", encodedKey);
         // If key is invalid but present, and user is guest, treat as restricted to be safe
         if (islogin !== true) {
-          navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
+          navigate.push(
+            `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`,
+          );
         }
         return;
       }
 
-      if (decodedKey > 0 && islogin !== true) {
+      if (Number(decodedKey) > 0 && islogin !== true) {
         navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
       }
     } else {
       // Check query params SK/SecurityKey as well for redirect
       const sk = searchParams?.SK || searchParams?.SecurityKey;
-      if (sk > 0 && islogin !== true) {
+      if (Number(sk) > 0 && islogin !== true) {
         navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
       }
     }
-  }, [params, islogin, searchParams]);
+  }, [params, islogin, searchParams, storeInit]);
 
   useEffect(() => {
     let result = ParseAndDecodeSearchParams(searchParams);
     const currentSearchKey = JSON.stringify(searchParams);
-    if (lastSearchParamsRef.current === currentSearchKey || isApiCallInProgressRef.current) {
+    if (
+      lastSearchParamsRef.current === currentSearchKey ||
+      isApiCallInProgressRef.current
+    ) {
       return;
     }
     lastSearchParamsRef.current = currentSearchKey;
@@ -297,8 +351,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     const fetchData = async () => {
       let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
+      lastFetchedComboRef.current = obj;
       let UrlVal = result;
-      console.log("🚀 ~ fetchData ~ UrlVal:", result);
       let MenuVal = "";
       let MenuKey = "";
       let SearchVar = "";
@@ -405,12 +459,38 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
       setIsProdLoading(true);
       setprodListType(productlisttype);
-      let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-      let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-      let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-      const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-      const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-      const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+      prodListTypeReadyRef.current = true; // mark that prodListType is now resolved
+
+      let diafilter =
+        filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
+          ?.length > 0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+            )[0]
+          : [];
+      let diafilter1 =
+        filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length >
+        0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+            )[0]
+          : [];
+      let diafilter2 =
+        filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length >
+        0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+            )[0]
+          : [];
+      const isDia =
+        JSON.stringify(sliderValue) !==
+        JSON.stringify([diafilter?.Min, diafilter?.Max]);
+      const isNet =
+        JSON.stringify(sliderValue1) !==
+        JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+      const isGross =
+        JSON.stringify(sliderValue2) !==
+        JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
       let DiaRange = {
         DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -427,18 +507,25 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         grossMax: isGross ? (sliderValue2[1] ?? "") : "",
       };
 
-      setDiaRange(DiaRange);
-      setNetRange(netRange);
-      setGrossRange(grossRange);
-
-      // await ProductListApi({}, 1, obj, productlisttype, cookie,sortBySelect ,DiaRange, netRange ,grossRange)
-      await ProductListApi({}, 1, obj, productlisttype, cookie, sortBySelect, DiaRange, netRange, grossRange)
+      await ProductListApi(
+        {},
+        1,
+        obj,
+        productlisttype,
+        cookie,
+        sortBySelect,
+        DiaRange,
+        netRange,
+        grossRange,
+      )
         .then((res) => {
           if (res) {
             setProductListData(res?.pdList);
-            sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
+            sessionStorage.setItem(
+              "deatilSliderData",
+              JSON.stringify(res?.pdList),
+            );
             setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
-            // setIsProdLoading(false);
           }
           return res;
         })
@@ -460,12 +547,43 @@ const ProductList = ({ params, searchParams, storeinit }) => {
             await FilterListAPI(productlisttype, cookie)
               .then((res) => {
                 setFilterData(res);
-                let diafilter = res?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(res?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-                let diafilter1 = res?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(res?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-                let diafilter2 = res?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(res?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-                setSliderValue(diafilter?.Min != null || diafilter?.Max != null ? [diafilter.Min, diafilter.Max] : []);
-                setSliderValue1(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []);
-                setSliderValue2(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
+                let diafilter =
+                  res?.filter((ele) => ele?.Name == "Diamond")[0]?.options
+                    ?.length > 0
+                    ? JSON.parse(
+                        res?.filter((ele) => ele?.Name == "Diamond")[0]
+                          ?.options,
+                      )[0]
+                    : [];
+                let diafilter1 =
+                  res?.filter((ele) => ele?.Name == "NetWt")[0]?.options
+                    ?.length > 0
+                    ? JSON.parse(
+                        res?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+                      )[0]
+                    : [];
+                let diafilter2 =
+                  res?.filter((ele) => ele?.Name == "Gross")[0]?.options
+                    ?.length > 0
+                    ? JSON.parse(
+                        res?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+                      )[0]
+                    : [];
+                setSliderValue(
+                  diafilter?.Min != null || diafilter?.Max != null
+                    ? [diafilter.Min, diafilter.Max]
+                    : [],
+                );
+                setSliderValue1(
+                  diafilter1?.Min != null || diafilter1?.Max != null
+                    ? [diafilter1?.Min, diafilter1?.Max]
+                    : [],
+                );
+                setSliderValue2(
+                  diafilter2?.Min != null || diafilter2?.Max != null
+                    ? [diafilter2?.Min, diafilter2?.Max]
+                    : [],
+                );
                 forWardResp1 = res;
               })
               .catch((err) => console.log("err", err));
@@ -475,7 +593,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         .finally(() => {
           setIsProdLoading(false);
           setIsOnlyProdLoading(false);
-          isApiCallInProgressRef.current = false; // Reset the flag when API call completes
+          isApiCallInProgressRef.current = false;
+          isInitialLoadRef.current = false;
           window.scroll({
             top: 0,
             behavior: "smooth",
@@ -483,7 +602,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         })
         .catch((err) => {
           console.log("err", err);
-          isApiCallInProgressRef.current = false; // Reset the flag on error too
+          isApiCallInProgressRef.current = false;
+          isInitialLoadRef.current = false;
         });
 
       // }
@@ -520,51 +640,19 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     return;
   };
 
-  // useEffect(() => {
-  //   const finalProdWithPrice = productListData.map((product) => {
-  //     let pdImgList = [];
-
-  //     if (product?.ImageCount > 0) {
-  //       for (let i = 1; i <= product?.ImageCount; i++) {
-  //         let imgString =
-  //           storeInit?.CDNDesignImageFol +
-  //           product?.designno +
-  //           "~" +
-  //           i +
-  //           "." +
-  //           product?.ImageExtension;
-  //         pdImgList.push(imgString);
-  //       }
-  //     } else {
-  //       pdImgList.push(imageNotFound);
-  //     }
-
-  //     let images = pdImgList;
-
-  //     let StatusId = product?.StatusId ?? 0;
-
-  //     if (SoketData && SoketData?.length != 0) {
-  //       let filterdata = SoketData?.find(
-  //         (ele) => ele?.designno === product?.designno
-  //       );
-  //       StatusId = filterdata?.StatusId ?? 0;
-  //     }
-
-  //     return {
-  //       ...product,
-  //       images,
-  //       StatusId,
-  //     };
-  //   });
-  //   setFinalProductListData(finalProdWithPrice);
-  // }, [productListData, SoketData]);
 
   const generateImageList = useCallback((product) => {
     let storeInitX = JSON.parse(sessionStorage.getItem("storeInit"));
     let pdImgList = [];
     if (product?.ImageCount > 0) {
       for (let i = 1; i <= product?.ImageCount; i++) {
-        let imgString = storeInitX?.CDNDesignImageFol + product?.designno + "~" + i + "." + product?.ImageExtension;
+        let imgString =
+          storeInitX?.CDNDesignImageFol +
+          product?.designno +
+          "~" +
+          i +
+          "." +
+          product?.ImageExtension;
         pdImgList?.push(imgString);
       }
     } else {
@@ -726,7 +814,13 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     if (pd?.ImageCount > 0) {
       for (let i = 1; i <= pd?.ImageCount; i++) {
-        let imgString = storeInit?.CDNDesignImageFol + pd?.designno + "~" + i + "." + pd?.ImageExtension;
+        let imgString =
+          storeInit?.CDNDesignImageFol +
+          pd?.designno +
+          "~" +
+          i +
+          "." +
+          pd?.ImageExtension;
         pdImgList.push(imgString);
       }
     } else {
@@ -756,9 +850,13 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const FilterValueWithCheckedOnly = () => {
-    let onlyTrueFilterValue = Object.values(filterChecked).filter((ele) => ele.checked);
+    let onlyTrueFilterValue = Object.values(filterChecked).filter(
+      (ele) => ele.checked,
+    );
 
-    const priceValues = onlyTrueFilterValue.filter((item) => item.type === "Price").map((item) => item.value);
+    const priceValues = onlyTrueFilterValue
+      .filter((item) => item.type === "Price")
+      .map((item) => item.value);
 
     const output = {};
 
@@ -781,10 +879,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       }
     }
 
-    // if
-    setCurrPage(1);
-    setInputPage(1);
-
+    // NOTE: page-reset is intentionally NOT done here.
+    // FilterValueWithCheckedOnly is a pure computation helper; callers that
+    // actually need a page reset (filterChecked effect, handelCustomCombo)
+    // call setCurrPage / setInputPage themselves.
     return output;
   };
 
@@ -799,19 +897,45 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const previousChecked = prevFilterChecked.current;
     prevFilterChecked.current = filterChecked;
 
-    if (Object.keys(filterChecked).length > 0 || (previousChecked && JSON.stringify(previousChecked) !== JSON.stringify(filterChecked))) {
+    if (
+      Object.keys(filterChecked).length > 0 ||
+      (previousChecked &&
+        JSON.stringify(previousChecked) !== JSON.stringify(filterChecked))
+    ) {
       setCurrPage(1);
       setInputPage(1);
     }
 
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(sliderValue) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(sliderValue1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(sliderValue2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     //  if(location?.state?.SearchVal === undefined && Object.keys(filterChecked)?.length > 0){
     // console.log("locationkey",location?.key !== locationKey,location?.key,locationKey);
@@ -819,15 +943,37 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     // if (location?.key === locationKey && (Object.keys(filterChecked)?.length > 0 || isClearAllClicked === true)) {
     if (Object.keys(filterChecked)?.length > 0 || isClearAllClicked === true) {
       setIsOnlyProdLoading(true);
-      let DiaRange = { DiaMin: isDia ? sliderValue[0] : "", DiaMax: isDia ? sliderValue[1] : "" };
-      let grossRange = { grossMin: isGross ? sliderValue2[0] : "", grossMax: isGross ? sliderValue2[1] : "" };
-      let netRange = { netMin: isNet ? sliderValue1[0] : "", netMax: isNet ? sliderValue1[1] : "" };
+      let DiaRange = {
+        DiaMin: isDia ? sliderValue[0] : "",
+        DiaMax: isDia ? sliderValue[1] : "",
+      };
+      let grossRange = {
+        grossMin: isGross ? sliderValue2[0] : "",
+        grossMax: isGross ? sliderValue2[1] : "",
+      };
+      let netRange = {
+        netMin: isNet ? sliderValue1[0] : "",
+        netMax: isNet ? sliderValue1[1] : "",
+      };
 
-      ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+      ProductListApi(
+        output,
+        1,
+        obj,
+        prodListType,
+        cookie,
+        sortBySelect,
+        DiaRange,
+        netRange,
+        grossRange,
+      )
         .then((res) => {
           if (res) {
             setProductListData(res?.pdList);
-            sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
+            sessionStorage.setItem(
+              "deatilSliderData",
+              JSON.stringify(res?.pdList),
+            );
             setAfterFilterCount(res?.pdResp?.rd1[0]?.designcount);
             setAfterCountStatus(false);
           }
@@ -861,17 +1007,64 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   }, [filterChecked]);
 
   const handelFilterClearAll = useCallback(() => {
-    const diafilter = filterData?.find((ele) => ele?.Name === "Diamond")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "Diamond")?.options)[0] : [];
-    const diafilter1 = filterData?.find((ele) => ele?.Name === "NetWt")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "NetWt")?.options)[0] : [];
-    const diafilter2 = filterData?.find((ele) => ele?.Name === "Gross")?.options?.length > 0 ? JSON.parse(filterData.find((ele) => ele?.Name === "Gross")?.options)[0] : [];
+    const diafilter =
+      filterData?.find((ele) => ele?.Name === "Diamond")?.options?.length > 0
+        ? JSON.parse(
+            filterData.find((ele) => ele?.Name === "Diamond")?.options,
+          )[0]
+        : [];
+    const diafilter1 =
+      filterData?.find((ele) => ele?.Name === "NetWt")?.options?.length > 0
+        ? JSON.parse(
+            filterData.find((ele) => ele?.Name === "NetWt")?.options,
+          )[0]
+        : [];
+    const diafilter2 =
+      filterData?.find((ele) => ele?.Name === "Gross")?.options?.length > 0
+        ? JSON.parse(
+            filterData.find((ele) => ele?.Name === "Gross")?.options,
+          )[0]
+        : [];
 
-    const isFilterChecked = Object.values(filterChecked).some((ele) => ele.checked);
-    const isSliderChanged = JSON.stringify(sliderValue) !== JSON.stringify(diafilter?.Min != null || diafilter?.Max != null ? [diafilter?.Min, diafilter?.Max] : []) || JSON.stringify(sliderValue1) !== JSON.stringify(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []) || JSON.stringify(sliderValue2) !== JSON.stringify(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
+    const isFilterChecked = Object.values(filterChecked).some(
+      (ele) => ele.checked,
+    );
+    const isSliderChanged =
+      JSON.stringify(sliderValue) !==
+        JSON.stringify(
+          diafilter?.Min != null || diafilter?.Max != null
+            ? [diafilter?.Min, diafilter?.Max]
+            : [],
+        ) ||
+      JSON.stringify(sliderValue1) !==
+        JSON.stringify(
+          diafilter1?.Min != null || diafilter1?.Max != null
+            ? [diafilter1?.Min, diafilter1?.Max]
+            : [],
+        ) ||
+      JSON.stringify(sliderValue2) !==
+        JSON.stringify(
+          diafilter2?.Min != null || diafilter2?.Max != null
+            ? [diafilter2?.Min, diafilter2?.Max]
+            : [],
+        );
 
     if (isFilterChecked || isSliderChanged) {
-      setSliderValue(diafilter?.Min != null || diafilter?.Max != null ? [diafilter.Min, diafilter.Max] : []);
-      setSliderValue1(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []);
-      setSliderValue2(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
+      setSliderValue(
+        diafilter?.Min != null || diafilter?.Max != null
+          ? [diafilter.Min, diafilter.Max]
+          : [],
+      );
+      setSliderValue1(
+        diafilter1?.Min != null || diafilter1?.Max != null
+          ? [diafilter1?.Min, diafilter1?.Max]
+          : [],
+      );
+      setSliderValue2(
+        diafilter2?.Min != null || diafilter2?.Max != null
+          ? [diafilter2?.Min, diafilter2?.Max]
+          : [],
+      );
       setInputDia([diafilter?.Min, diafilter?.Max]);
       setInputNet([diafilter1?.Min, diafilter1?.Max]);
       setInputGross([diafilter2?.Min, diafilter2?.Max]);
@@ -916,12 +1109,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         behavior: "smooth",
       });
     }, 100);
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(sliderValue) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(sliderValue1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(sliderValue2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
       DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -938,7 +1153,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
-    ProductListApi(output, value, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+    ProductListApi(
+      output,
+      value,
+      obj,
+      prodListType,
+      cookie,
+      sortBySelect,
+      DiaRange,
+      netRange,
+      grossRange,
+    )
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -970,7 +1195,8 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       autocode: ele?.autocode,
       Metalid: selectedMetalId ?? ele?.MetalPurityid,
       MetalColorId: ele?.MetalColorid,
-      DiaQCid: selectedDiaId ?? loginInfo?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
+      DiaQCid:
+        selectedDiaId ?? loginInfo?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
       CsQCid: selectedCsId ?? loginInfo?.cmboCSQCid ?? storeInit?.cmboCSQCid,
       Size: ele?.DefaultSize,
       Unitcost: ele?.UnitCost,
@@ -978,7 +1204,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       UnitCostWithmarkup: ele?.UnitCostWithMarkUp,
       Remark: "",
       // AlbumName: decodeURI(extractedPart) ?? ""
-      AlbumName: decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ?? "",
+      AlbumName:
+        decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ??
+        "",
     };
 
     if (e.target.checked == true) {
@@ -1027,16 +1255,41 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   }, [productListData]);
 
   const handelCustomCombo = (obj) => {
+    lastFetchedComboRef.current = obj;
     let output = FilterValueWithCheckedOnly();
 
     if (location?.state?.SearchVal === undefined) {
       setIsOnlyProdLoading(true);
-      let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-      let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-      let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-      const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-      const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-      const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+      let diafilter =
+        filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options
+          ?.length > 0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+            )[0]
+          : [];
+      let diafilter1 =
+        filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length >
+        0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+            )[0]
+          : [];
+      let diafilter2 =
+        filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length >
+        0
+          ? JSON.parse(
+              filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+            )[0]
+          : [];
+      const isDia =
+        JSON.stringify(sliderValue) !==
+        JSON.stringify([diafilter?.Min, diafilter?.Max]);
+      const isNet =
+        JSON.stringify(sliderValue1) !==
+        JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+      const isGross =
+        JSON.stringify(sliderValue2) !==
+        JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
       let DiaRange = {
         DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -1057,7 +1310,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       setInputPage(1);
 
       // , DiaRange, netRange ,grossRange
-      ProductListApi(output, currPage, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+      ProductListApi(
+        output,
+        currPage,
+        obj,
+        prodListType,
+        cookie,
+        sortBySelect,
+        DiaRange,
+        netRange,
+        grossRange,
+      )
         .then((res) => {
           if (res) {
             setProductListData(res?.pdList);
@@ -1098,21 +1361,55 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   // }, [selectedMetalId, selectedDiaId, selectedCsId, storeInit]);
 
   useEffect(() => {
-    const obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
-    const loginInfo = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+    if (!prodListTypeReadyRef.current) return;
+    if (isFirstComboRun.current) {
+      isFirstComboRun.current = false;
+      return;
+    }
+    if (isInitialLoadRef.current) {
+      return;
+    }
 
+    const obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
+
+    if (
+      lastFetchedComboRef.current &&
+      String(lastFetchedComboRef.current.mt) === String(selectedMetalId) &&
+      String(lastFetchedComboRef.current.dia) === String(selectedDiaId) &&
+      String(lastFetchedComboRef.current.cs) === String(selectedCsId)
+    ) {
+      return;
+    }
+
+    lastFetchedComboRef.current = obj;
     sessionStorage.setItem("short_cutCombo_val", JSON.stringify(obj));
 
-    if (loginInfo && Object.keys(loginInfo).length > 0) {
-      if (selectedMetalId != undefined || selectedDiaId != undefined || selectedCsId != undefined) {
-        if (loginInfo.MetalId !== selectedMetalId || loginInfo.cmboDiaQCid !== selectedDiaId) {
-          handelCustomCombo(obj);
+    if (loginUserDetail && Object.keys(loginUserDetail).length > 0) {
+      if (
+        selectedMetalId != undefined ||
+        selectedDiaId != undefined ||
+        selectedCsId != undefined
+      ) {
+        if (
+          String(loginUserDetail.MetalId) !== String(selectedMetalId) ||
+          String(loginUserDetail.cmboDiaQCid) !== String(selectedDiaId) ||
+          String(loginUserDetail.cmboCSQCid) !== String(selectedCsId)
+        ) {
+          obj;
         }
       }
     } else {
       if (storeInit && Object.keys(storeInit).length > 0) {
-        if (selectedMetalId != undefined || selectedDiaId != undefined || selectedCsId != undefined) {
-          if (storeInit?.MetalId !== selectedMetalId || storeInit?.cmboDiaQCid !== selectedDiaId) {
+        if (
+          selectedMetalId != undefined ||
+          selectedDiaId != undefined ||
+          selectedCsId != undefined
+        ) {
+          if (
+            String(storeInit?.MetalId) !== String(selectedMetalId) ||
+            String(storeInit?.cmboDiaQCid) !== String(selectedDiaId) ||
+            String(storeInit?.cmboCSQCid) !== String(selectedCsId)
+          ) {
             handelCustomCombo(obj);
           }
         }
@@ -1161,7 +1458,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   };
 
   const handleMoveToDetail = (productData, i) => {
-    const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+    const logininfoDetail = JSON.parse(
+      sessionStorage.getItem("loginUserDetail"),
+    );
 
     let output = FilterValueWithCheckedOnly();
 
@@ -1173,17 +1472,22 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       imageVideoDetail = [];
     }
 
-    const uniqueNmList = [...new Set(imageVideoDetail?.map((item) => item?.Nm))].filter(Boolean);
+    const uniqueNmList = [
+      ...new Set(imageVideoDetail?.map((item) => item?.Nm)),
+    ].filter(Boolean);
 
     let obj = {
       a: productData?.autocode,
       b: productData?.designno,
       m: selectedMetalId ?? logininfoDetail?.MetalId ?? storeInit?.MetalId,
-      d: selectedDiaId ?? logininfoDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
+      d:
+        selectedDiaId ?? logininfoDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
       c: selectedCsId ?? logininfoDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid,
       f: output,
       // n: decodeURI(extractedPart)
-      n: decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ?? "",
+      n:
+        decodeURIComponent(location.pathname?.split("/p/")[1].split("/")[0]) ??
+        "",
       pl: prodListType ?? "",
       sb: sortBySelect ?? "",
       sk: securityKey,
@@ -1198,7 +1502,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       s: productData?.DefaultSize || "",
     };
     let encodeObj = compressAndEncode(JSON?.stringify(obj));
-    navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
+    navigate.push(
+      `/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`,
+    );
   };
 
   const handleImgRollover = (pd) => {
@@ -1248,9 +1554,21 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     let finalData = { ...KeyObj, ...ValObj };
 
-    const queryParameters1 = [finalData?.FilterKey && `${finalData.FilterVal}`, finalData?.FilterKey1 && `${finalData.FilterVal1}`, finalData?.FilterKey2 && `${finalData.FilterVal2}`].filter(Boolean).join("/");
+    const queryParameters1 = [
+      finalData?.FilterKey && `${finalData.FilterVal}`,
+      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
+      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
+    ]
+      .filter(Boolean)
+      .join("/");
 
-    const queryParameters = [finalData?.FilterKey && `${finalData.FilterVal}`, finalData?.FilterKey1 && `${finalData.FilterVal1}`, finalData?.FilterKey2 && `${finalData.FilterVal2}`].filter(Boolean).join(",");
+    const queryParameters = [
+      finalData?.FilterKey && `${finalData.FilterVal}`,
+      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
+      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
+    ]
+      .filter(Boolean)
+      .join(",");
 
     const otherparamUrl = Object.entries({
       b: finalData?.FilterKey,
@@ -1282,12 +1600,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     setIsOnlyProdLoading(true);
 
     let sortby = e.target?.value;
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(sliderValue) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(sliderValue1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(sliderValue2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
       DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -1308,7 +1648,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     setInputPage(1);
 
     // DiaRange, netRange ,grossRange
-    await ProductListApi(output, currPage, obj, prodListType, cookie, sortby, DiaRange, netRange, grossRange)
+    await ProductListApi(
+      output,
+      currPage,
+      obj,
+      prodListType,
+      cookie,
+      sortby,
+      DiaRange,
+      netRange,
+      grossRange,
+    )
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1343,12 +1693,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
 
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(Rangeval) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(Rangeval) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(sliderValue1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(sliderValue2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
       DiaMin: isDia ? (Rangeval[0] ?? "") : "",
@@ -1365,7 +1737,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
-    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+    await ProductListApi(
+      output,
+      1,
+      obj,
+      prodListType,
+      cookie,
+      sortBySelect,
+      DiaRange,
+      netRange,
+      grossRange,
+    )
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1395,12 +1777,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
 
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(Rangeval1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(sliderValue2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(sliderValue) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(Rangeval1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(sliderValue2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
       DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -1417,7 +1821,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       grossMax: isGross ? (sliderValue2[1] ?? "") : "",
     };
 
-    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+    await ProductListApi(
+      output,
+      1,
+      obj,
+      prodListType,
+      cookie,
+      sortBySelect,
+      DiaRange,
+      netRange,
+      grossRange,
+    )
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1439,12 +1853,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     let output = FilterValueWithCheckedOnly();
     let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
 
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isDia = JSON.stringify(sliderValue) !== JSON.stringify([diafilter?.Min, diafilter?.Max]);
-    const isNet = JSON.stringify(sliderValue1) !== JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
-    const isGross = JSON.stringify(Rangeval2) !== JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isDia =
+      JSON.stringify(sliderValue) !==
+      JSON.stringify([diafilter?.Min, diafilter?.Max]);
+    const isNet =
+      JSON.stringify(sliderValue1) !==
+      JSON.stringify([diafilter1?.Min, diafilter1?.Max]);
+    const isGross =
+      JSON.stringify(Rangeval2) !==
+      JSON.stringify([diafilter2?.Min, diafilter2?.Max]);
 
     let DiaRange = {
       DiaMin: isDia ? (sliderValue[0] ?? "") : "",
@@ -1461,7 +1897,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       grossMax: isGross ? (Rangeval2[1] ?? "") : "",
     };
 
-    await ProductListApi(output, 1, obj, prodListType, cookie, sortBySelect, DiaRange, netRange, grossRange)
+    await ProductListApi(
+      output,
+      1,
+      obj,
+      prodListType,
+      cookie,
+      sortBySelect,
+      DiaRange,
+      netRange,
+      grossRange,
+    )
       .then((res) => {
         if (res) {
           setProductListData(res?.pdList);
@@ -1492,19 +1938,22 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
   const handleInputChange = (index) => (event) => {
     const newSliderValue = [...sliderValue];
-    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] =
+      event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue(newSliderValue);
     handleRangeFilterApi(newSliderValue);
   };
   const handleInputChange1 = (index) => (event) => {
     const newSliderValue = [...sliderValue1];
-    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] =
+      event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue1(newSliderValue);
     handleRangeFilterApi1(newSliderValue);
   };
   const handleInputChange2 = (index) => (event) => {
     const newSliderValue = [...sliderValue2];
-    newSliderValue[index] = event.target.value === "" ? "" : Number(event.target.value);
+    newSliderValue[index] =
+      event.target.value === "" ? "" : Number(event.target.value);
     setSliderValue2(newSliderValue);
     handleRangeFilterApi2(newSliderValue);
   };
@@ -1523,7 +1972,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     },
   };
 
-  const resetRangeFilter = async ({ filterName, setSliderValue, setTempSliderValue, handleRangeFilterApi, prodListType, cookie, setIsShowBtn, show, setShow, setAppliedRange }) => {
+  const resetRangeFilter = async ({
+    filterName,
+    setSliderValue,
+    setTempSliderValue,
+    handleRangeFilterApi,
+    prodListType,
+    cookie,
+    setIsShowBtn,
+    show,
+    setShow,
+    setAppliedRange,
+  }) => {
     try {
       const res1 = await FilterListAPI(prodListType, cookie);
       const optionsRaw = res1?.find((f) => f?.Name === filterName)?.options;
@@ -1544,7 +2004,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }
   };
 
-  const RangeFilterView = ({ ele, sliderValue, setSliderValue, handleRangeFilterApi, prodListType, cookie, setShow, show, setAppliedRange1, appliedRange1 }) => {
+  const RangeFilterView = ({
+    ele,
+    sliderValue,
+    setSliderValue,
+    handleRangeFilterApi,
+    prodListType,
+    cookie,
+    setShow,
+    show,
+    setAppliedRange1,
+    appliedRange1,
+  }) => {
     const parsedOptions = JSON.parse(ele?.options || "[]")?.[0] || {};
     const min = Number(parsedOptions.Min || 0); // Ensure min is a number
     const max = Number(parsedOptions.Max || 100);
@@ -1553,7 +2024,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const inputRefs = useRef([]);
 
     useEffect(() => {
-      inputRefs.current = tempSliderValue.map((_, i) => inputRefs.current[i] ?? React.createRef());
+      inputRefs.current = tempSliderValue.map(
+        (_, i) => inputRefs.current[i] ?? React.createRef(),
+      );
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
@@ -1577,19 +2050,28 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       const updated = [...tempSliderValue];
       updated[index] = value;
       setTempSliderValue(updated);
-      setIsShowBtn(updated[0] !== sliderValue[0] || updated[1] !== sliderValue[1]);
+      setIsShowBtn(
+        updated[0] !== sliderValue[0] || updated[1] !== sliderValue[1],
+      );
     };
 
     const handleSliderChange = (_, newValue) => {
       setTempSliderValue(newValue);
-      setIsShowBtn(newValue[0] !== sliderValue[0] || newValue[1] !== sliderValue[1]);
+      setIsShowBtn(
+        newValue[0] !== sliderValue[0] || newValue[1] !== sliderValue[1],
+      );
     };
 
     const handleSave = () => {
       const [minDiaWt, maxDiaWt] = tempSliderValue;
 
       // Empty or undefined
-      if (minDiaWt == null || maxDiaWt == null || minDiaWt === "" || maxDiaWt === "") {
+      if (
+        minDiaWt == null ||
+        maxDiaWt == null ||
+        minDiaWt === "" ||
+        maxDiaWt === ""
+      ) {
         toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
@@ -1672,10 +2154,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
               width: "100%",
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange1[0] !== "" ? `Min: ${appliedRange1[0]}` : ""}
             </Typography>
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange1[1] !== "" ? `Max: ${appliedRange1[1]}` : ""}
             </Typography>
           </div>
@@ -1709,7 +2199,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           }}
         />
 
-        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "12px",
+            justifyContent: "space-between",
+            mt: 1.5,
+          }}
+        >
           {tempSliderValue.map((val, index) => (
             <Box
               key={index}
@@ -1801,7 +2298,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     );
   };
 
-  const RangeFilterView1 = ({ ele, sliderValue1, setSliderValue1, handleRangeFilterApi1, prodListType, cookie, show1, setShow1, setAppliedRange2, appliedRange2 }) => {
+  const RangeFilterView1 = ({
+    ele,
+    sliderValue1,
+    setSliderValue1,
+    handleRangeFilterApi1,
+    prodListType,
+    cookie,
+    show1,
+    setShow1,
+    setAppliedRange2,
+    appliedRange2,
+  }) => {
     const parsedOptions = JSON.parse(ele?.options || "[]")?.[0] || {};
     const min = parsedOptions.Min || "";
     const max = parsedOptions.Max || "";
@@ -1810,7 +2318,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const inputRefs = useRef([]);
 
     useEffect(() => {
-      inputRefs.current = tempSliderValue.map((_, i) => inputRefs.current[i] ?? React.createRef());
+      inputRefs.current = tempSliderValue.map(
+        (_, i) => inputRefs.current[i] ?? React.createRef(),
+      );
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
@@ -1836,22 +2346,32 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }, [sliderValue1]);
 
     const handleInputChange = (index) => (event) => {
-      const newValue = event.target.value === "" ? "" : Number(event.target.value);
+      const newValue =
+        event.target.value === "" ? "" : Number(event.target.value);
       const updated = [...tempSliderValue];
       updated[index] = newValue;
       setTempSliderValue(updated);
-      setIsShowBtn(updated[0] !== sliderValue1[0] || updated[1] !== sliderValue1[1]);
+      setIsShowBtn(
+        updated[0] !== sliderValue1[0] || updated[1] !== sliderValue1[1],
+      );
     };
 
     const handleSliderChange = (_, newValue) => {
       setTempSliderValue(newValue);
-      setIsShowBtn(newValue[0] !== sliderValue1[0] || newValue[1] !== sliderValue1[1]);
+      setIsShowBtn(
+        newValue[0] !== sliderValue1[0] || newValue[1] !== sliderValue1[1],
+      );
     };
 
     const handleSave = () => {
       const [minNetWt, maxNetWt] = tempSliderValue;
 
-      if (minNetWt == null || maxNetWt == null || minNetWt === "" || maxNetWt === "") {
+      if (
+        minNetWt == null ||
+        maxNetWt == null ||
+        minNetWt === "" ||
+        maxNetWt === ""
+      ) {
         toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
@@ -1920,11 +2440,28 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     return (
       <div style={{ position: "relative" }}>
         {appliedRange2 && (
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: "-12px", width: "100%" }}>
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "4px",
+              position: "absolute",
+              top: "-12px",
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange2[0] !== "" ? `Min: ${appliedRange2[0]}` : ""}
             </Typography>
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange2[1] !== "" ? `Max: ${appliedRange2[1]}` : ""}
             </Typography>
           </div>
@@ -1957,7 +2494,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
             "& .MuiSlider-rail": { color: "#E0E0E0", opacity: 1, height: 4 },
           }}
         />
-        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "12px",
+            justifyContent: "space-between",
+            mt: 1.5,
+          }}
+        >
           {tempSliderValue.map((val, index) => (
             <Box
               key={index}
@@ -2048,7 +2592,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     );
   };
 
-  const RangeFilterView2 = ({ ele, sliderValue2, setSliderValue2, handleRangeFilterApi2, prodListType, cookie, show2, setShow2, setAppliedRange3, appliedRange3 }) => {
+  const RangeFilterView2 = ({
+    ele,
+    sliderValue2,
+    setSliderValue2,
+    handleRangeFilterApi2,
+    prodListType,
+    cookie,
+    show2,
+    setShow2,
+    setAppliedRange3,
+    appliedRange3,
+  }) => {
     const parsedOptions = JSON.parse(ele?.options || "[]")?.[0] || {};
     const min = parsedOptions.Min ?? "";
     const max = parsedOptions.Max ?? "";
@@ -2057,7 +2612,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const inputRefs = useRef([]);
 
     useEffect(() => {
-      inputRefs.current = tempSliderValue.map((_, i) => inputRefs.current[i] ?? React.createRef());
+      inputRefs.current = tempSliderValue.map(
+        (_, i) => inputRefs.current[i] ?? React.createRef(),
+      );
     }, [tempSliderValue]);
 
     const handleKeyDown = (index) => (e) => {
@@ -2077,23 +2634,33 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     }, [sliderValue2]);
 
     const handleInputChange = (index) => (event) => {
-      const newValue = event.target.value === "" ? "" : Number(event.target.value);
+      const newValue =
+        event.target.value === "" ? "" : Number(event.target.value);
       const updated = [...tempSliderValue];
       updated[index] = newValue;
       setTempSliderValue(updated);
-      setIsShowBtn(updated[0] !== sliderValue2[0] || updated[1] !== sliderValue2[1]);
+      setIsShowBtn(
+        updated[0] !== sliderValue2[0] || updated[1] !== sliderValue2[1],
+      );
     };
 
     const handleSliderChange = (_, newValue) => {
       setTempSliderValue(newValue);
-      setIsShowBtn(newValue[0] !== sliderValue2[0] || newValue[1] !== sliderValue2[1]);
+      setIsShowBtn(
+        newValue[0] !== sliderValue2[0] || newValue[1] !== sliderValue2[1],
+      );
     };
 
     const handleSave = () => {
       const [minWeight, maxWeight] = tempSliderValue;
 
       // Validation: Empty or undefined
-      if (minWeight == null || maxWeight == null || minWeight === "" || maxWeight === "") {
+      if (
+        minWeight == null ||
+        maxWeight == null ||
+        minWeight === "" ||
+        maxWeight === ""
+      ) {
         toast.error("Please enter valid range values.", {
           hideProgressBar: true,
           duration: 5000,
@@ -2166,11 +2733,28 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     return (
       <div style={{ position: "relative" }}>
         {appliedRange3 && (
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "4px", position: "absolute", top: "-12px", width: "100%" }}>
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "4px",
+              position: "absolute",
+              top: "-12px",
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange3[0] !== "" ? `Min: ${appliedRange3[0]}` : ""}
             </Typography>
-            <Typography variant="caption" color="text.secondary" fontSize="11px">
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              fontSize="11px"
+            >
               {appliedRange3[1] !== "" ? `Max: ${appliedRange3[1]}` : ""}
             </Typography>
           </div>
@@ -2204,7 +2788,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           }}
         />
 
-        <Box sx={{ display: "flex", gap: "12px", justifyContent: "space-between", mt: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "12px",
+            justifyContent: "space-between",
+            mt: 1.5,
+          }}
+        >
           {tempSliderValue.map((val, index) => (
             <Box
               key={index}
@@ -2314,245 +2905,386 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       return acc;
     }, {});
 
-    const result = Object.entries(updatedBreadCum).reduce((acc, [key, value], index) => {
-      acc[`FilterKey${index === 0 ? "" : index}`] = key.charAt(0).toUpperCase() + key.slice(1);
-      acc[`FilterVal${index === 0 ? "" : index}`] = value;
-      return acc;
-    }, {});
+    const result = Object.entries(updatedBreadCum).reduce(
+      (acc, [key, value], index) => {
+        acc[`FilterKey${index === 0 ? "" : index}`] =
+          key.charAt(0).toUpperCase() + key.slice(1);
+        acc[`FilterVal${index === 0 ? "" : index}`] = value;
+        return acc;
+      },
+      {},
+    );
 
-    result.menuname = decodeURI(location?.pathname).slice(3).slice(0, -1).split("/")[0];
+    result.menuname = decodeURI(location?.pathname)
+      .slice(3)
+      .slice(0, -1)
+      .split("/")[0];
 
     return result;
   };
 
   const showClearAllButton = () => {
-    let diafilter = filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options)[0] : [];
-    let diafilter1 = filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options)[0] : [];
-    let diafilter2 = filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0 ? JSON.parse(filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options)[0] : [];
-    const isFilterChecked = Object.values(filterChecked).some((ele) => ele.checked);
-    const isSliderChanged = JSON.stringify(sliderValue) !== JSON.stringify(diafilter?.Min != null || diafilter?.Max != null ? [diafilter?.Min, diafilter?.Max] : []) || JSON.stringify(sliderValue1) !== JSON.stringify(diafilter1?.Min != null || diafilter1?.Max != null ? [diafilter1?.Min, diafilter1?.Max] : []) || JSON.stringify(sliderValue2) !== JSON.stringify(diafilter2?.Min != null || diafilter2?.Max != null ? [diafilter2?.Min, diafilter2?.Max] : []);
+    let diafilter =
+      filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options?.length >
+      0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Diamond")[0]?.options,
+          )[0]
+        : [];
+    let diafilter1 =
+      filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "NetWt")[0]?.options,
+          )[0]
+        : [];
+    let diafilter2 =
+      filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options?.length > 0
+        ? JSON.parse(
+            filterData?.filter((ele) => ele?.Name == "Gross")[0]?.options,
+          )[0]
+        : [];
+    const isFilterChecked = Object.values(filterChecked).some(
+      (ele) => ele.checked,
+    );
+    const isSliderChanged =
+      JSON.stringify(sliderValue) !==
+        JSON.stringify(
+          diafilter?.Min != null || diafilter?.Max != null
+            ? [diafilter?.Min, diafilter?.Max]
+            : [],
+        ) ||
+      JSON.stringify(sliderValue1) !==
+        JSON.stringify(
+          diafilter1?.Min != null || diafilter1?.Max != null
+            ? [diafilter1?.Min, diafilter1?.Max]
+            : [],
+        ) ||
+      JSON.stringify(sliderValue2) !==
+        JSON.stringify(
+          diafilter2?.Min != null || diafilter2?.Max != null
+            ? [diafilter2?.Min, diafilter2?.Max]
+            : [],
+        );
 
     return isFilterChecked || isSliderChanged;
   };
+
+  const FilterOptionsList = memo(
+    ({ options, eleId, filterChecked, handleCheckboxChange }) => {
+      const [showMore, setShowMore] = useState(false);
+      const INITIAL_COUNT = 5;
+
+      const displayOptions = showMore
+        ? options
+        : options?.slice(0, INITIAL_COUNT);
+      const hasMore = options?.length > INITIAL_COUNT;
+
+      return (
+        <Box>
+          {displayOptions?.map((opt) => (
+            <Box
+              key={opt?.id}
+              sx={{ display: "flex", alignItems: "center", py: 0.15 }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name={`${eleId}${opt?.id}`}
+                    checked={Boolean(
+                      filterChecked[`${eleId}${opt?.id}`]?.checked,
+                    )}
+                    onChange={(e) => handleCheckboxChange(e, eleId, opt?.Name)}
+                    size="small"
+                    sx={{
+                      color: "#A0A0A0",
+                      "&.Mui-checked": { color: "#000000" },
+                      p: 0.4,
+                    }}
+                  />
+                }
+                label={
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      color: "#222",
+                      ml: 0.6,
+                      fontWeight: 450,
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {opt.Name}
+                  </Typography>
+                }
+                sx={{ ml: -0.4, mr: 0, my: 0.1 }}
+              />
+            </Box>
+          ))}
+          {hasMore && (
+            <Box sx={{ pt: 0.8, pl: 0.4 }}>
+              <Typography
+                onClick={() => setShowMore(!showMore)}
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#E26B00",
+                  cursor: "pointer",
+                  display: "inline-block",
+                  userSelect: "none",
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                {showMore ? "View Less" : "View More"}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      );
+    },
+  );
+  FilterOptionsList.displayName = "FilterOptionsList";
+
+  const FilterPriceList = memo(
+    ({
+      options,
+      eleId,
+      filterChecked,
+      handleCheckboxChange,
+      loginUserDetail,
+      storeInit,
+      formatter,
+    }) => {
+      const [showMore, setShowMore] = useState(false);
+      const INITIAL_COUNT = 5;
+
+      const displayOptions = showMore
+        ? options
+        : options?.slice(0, INITIAL_COUNT);
+      const hasMore = options?.length > INITIAL_COUNT;
+
+      return (
+        <Box>
+          {displayOptions?.map((opt, i) => (
+            <Box
+              key={i}
+              sx={{ display: "flex", alignItems: "center", py: 0.15 }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name={`Price${i}${i}`}
+                    checked={Boolean(filterChecked[`Price${i}${i}`]?.checked)}
+                    onChange={(e) => handleCheckboxChange(e, eleId, opt)}
+                    size="small"
+                    sx={{
+                      color: "#A0A0A0",
+                      "&.Mui-checked": { color: "#000000" },
+                      p: 0.4,
+                    }}
+                  />
+                }
+                label={
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      color: "#222",
+                      ml: 0.6,
+                      fontWeight: 450,
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {opt?.Minval == 0
+                      ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`
+                      : opt?.Maxval == 0
+                        ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)}`
+                        : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)} - ${formatter.format(opt?.Maxval)}`}
+                  </Typography>
+                }
+                sx={{ ml: -0.4, mr: 0, my: 0.1 }}
+              />
+            </Box>
+          ))}
+          {hasMore && (
+            <Box sx={{ pt: 0.8, pl: 0.4 }}>
+              <Typography
+                onClick={() => setShowMore(!showMore)}
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#E26B00",
+                  cursor: "pointer",
+                  display: "inline-block",
+                  userSelect: "none",
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                {showMore ? "View Less" : "View More"}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      );
+    },
+  );
+  FilterPriceList.displayName = "FilterPriceList";
 
   const renderFilterAccordionsList = () => {
     return filterData?.map((ele) => (
       <React.Fragment key={ele?.id || ele?.Fil_DisName}>
         {!ele?.id?.includes("Range") && !ele?.id?.includes("Price") && (
-          <Accordion
+          <Paper
             elevation={0}
             sx={{
-              borderBottom: "1px solid #ECECEC",
-              borderRadius: 0,
-              boxShadow: "none",
-              "&:before": { display: "none" },
+              p: 1.6,
+              mb: 1.4,
+              borderRadius: "12px",
+              bgcolor: "#FFFFFF",
+              border: "1px solid #000000",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
             }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
-              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            <Typography
+              sx={{ fontSize: "15px", fontWeight: 600, color: "#222", mb: 1 }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
-                {ele.Fil_DisName}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, py: 1.2, maxHeight: "280px", overflowY: "auto" }}>
-              {(JSON.parse(ele?.options) ?? []).map((opt) => (
-                <Box
-                  key={opt?.id}
-                  sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 0.3 }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name={`${ele?.id}${opt?.id}`}
-                        checked={Boolean(filterChecked[`${ele?.id}${opt?.id}`]?.checked)}
-                        onChange={(e) => handleCheckboxChange(e, ele?.id, opt?.Name)}
-                        size="small"
-                        sx={{
-                          color: "#BBB",
-                          "&.Mui-checked": { color: "#7d7f85" },
-                          p: 0.5,
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography sx={{ fontSize: "13px", color: "#333", ml: 0.5, fontWeight: 400 }}>
-                        {opt.Name}
-                      </Typography>
-                    }
-                    sx={{ ml: 0 }}
-                  />
-                </Box>
-              ))}
-            </AccordionDetails>
-          </Accordion>
+              {ele.Fil_DisName}
+            </Typography>
+            <FilterOptionsList
+              options={JSON.parse(ele?.options) ?? []}
+              eleId={ele?.id}
+              filterChecked={filterChecked}
+              handleCheckboxChange={handleCheckboxChange}
+            />
+          </Paper>
         )}
 
         {storeInit?.IsPriceShow == 1 && ele?.id?.includes("Price") && (
-          <Accordion
+          <Paper
             elevation={0}
             sx={{
-              borderBottom: "1px solid #ECECEC",
-              borderRadius: 0,
-              boxShadow: "none",
-              "&:before": { display: "none" },
+              p: 1.6,
+              mb: 1.4,
+              borderRadius: "12px",
+              bgcolor: "#FFFFFF",
+              border: "1px solid #000000",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
             }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
-              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            <Typography
+              sx={{ fontSize: "15px", fontWeight: 600, color: "#222", mb: 1 }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
-                {ele.Fil_DisName}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, py: 1.2, maxHeight: "280px", overflowY: "auto" }}>
-              {(JSON.parse(ele?.options) ?? []).map((opt, i) => (
-                <Box
-                  key={i}
-                  sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", py: 0.3 }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        name={`Price${i}${i}`}
-                        checked={Boolean(filterChecked[`Price${i}${i}`]?.checked)}
-                        onChange={(e) => handleCheckboxChange(e, ele?.id, opt)}
-                        size="small"
-                        sx={{
-                          color: "#BBB",
-                          "&.Mui-checked": { color: "#7d7f85" },
-                          p: 0.5,
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography sx={{ fontSize: "13px", color: "#333", ml: 0.5, fontWeight: 400 }}>
-                        {opt?.Minval == 0
-                          ? `Under ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Maxval)}`
-                          : opt?.Maxval == 0
-                            ? `Over ${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)}`
-                            : `${loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode} ${formatter.format(opt?.Minval)} - ${formatter.format(opt?.Maxval)}`}
-                      </Typography>
-                    }
-                    sx={{ ml: 0 }}
-                  />
-                </Box>
-              ))}
-            </AccordionDetails>
-          </Accordion>
+              {ele.Fil_DisName}
+            </Typography>
+            <FilterPriceList
+              options={JSON.parse(ele?.options) ?? []}
+              eleId={ele?.id}
+              filterChecked={filterChecked}
+              handleCheckboxChange={handleCheckboxChange}
+              loginUserDetail={loginUserDetail}
+              storeInit={storeInit}
+              formatter={formatter}
+            />
+          </Paper>
         )}
 
         {ele?.Name?.includes("Diamond") && (
-          <Accordion
+          <Paper
             elevation={0}
             sx={{
-              borderBottom: "1px solid #ECECEC",
-              borderRadius: 0,
-              boxShadow: "none",
-              "&:before": { display: "none" },
+              p: 1.6,
+              mb: 1.4,
+              borderRadius: "12px",
+              bgcolor: "#FFFFFF",
+              border: "1px solid #000000",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
             }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
-              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            <Typography
+              sx={{ fontSize: "15px", fontWeight: 600, color: "#222", mb: 1 }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
-                {ele.Fil_DisName}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
-              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
-                <RangeFilterView
-                  ele={ele}
-                  sliderValue={sliderValue}
-                  setSliderValue={setSliderValue}
-                  handleRangeFilterApi={handleRangeFilterApi}
-                  prodListType={prodListType}
-                  cookie={cookie}
-                  show={show}
-                  setShow={setShow}
-                  appliedRange1={appliedRange1}
-                  setAppliedRange1={setAppliedRange1}
-                />
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+              {ele.Fil_DisName}
+            </Typography>
+            <Box sx={{ width: "100%", pt: 0.5 }}>
+              <RangeFilterView
+                ele={ele}
+                sliderValue={sliderValue}
+                setSliderValue={setSliderValue}
+                handleRangeFilterApi={handleRangeFilterApi}
+                prodListType={prodListType}
+                cookie={cookie}
+                show={show}
+                setShow={setShow}
+                appliedRange1={appliedRange1}
+                setAppliedRange1={setAppliedRange1}
+              />
+            </Box>
+          </Paper>
         )}
 
         {ele?.Name?.includes("NetWt") && (
-          <Accordion
+          <Paper
             elevation={0}
             sx={{
-              borderBottom: "1px solid #ECECEC",
-              borderRadius: 0,
-              boxShadow: "none",
-              "&:before": { display: "none" },
+              p: 1.6,
+              mb: 1.4,
+              borderRadius: "12px",
+              bgcolor: "#FFFFFF",
+              border: "1px solid #000000",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
             }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
-              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            <Typography
+              sx={{ fontSize: "15px", fontWeight: 600, color: "#222", mb: 1 }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
-                {ele.Fil_DisName}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
-              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
-                <RangeFilterView1
-                  ele={ele}
-                  sliderValue1={sliderValue1}
-                  setSliderValue1={setSliderValue1}
-                  handleRangeFilterApi1={handleRangeFilterApi1}
-                  prodListType={prodListType}
-                  cookie={cookie}
-                  show1={show1}
-                  setShow1={setShow1}
-                  appliedRange2={appliedRange2}
-                  setAppliedRange2={setAppliedRange2}
-                />
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+              {ele.Fil_DisName}
+            </Typography>
+            <Box sx={{ width: "100%", pt: 0.5 }}>
+              <RangeFilterView1
+                ele={ele}
+                sliderValue1={sliderValue1}
+                setSliderValue1={setSliderValue1}
+                handleRangeFilterApi1={handleRangeFilterApi1}
+                prodListType={prodListType}
+                cookie={cookie}
+                show1={show1}
+                setShow1={setShow1}
+                appliedRange2={appliedRange2}
+                setAppliedRange2={setAppliedRange2}
+              />
+            </Box>
+          </Paper>
         )}
 
         {ele?.Name?.includes("Gross") && (
-          <Accordion
+          <Paper
             elevation={0}
             sx={{
-              borderBottom: "1px solid #ECECEC",
-              borderRadius: 0,
-              boxShadow: "none",
-              "&:before": { display: "none" },
+              p: 2,
+              mb: 1.8,
+              borderRadius: "12px",
+              bgcolor: "#FFFFFF",
+              border: "1px solid #000000",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
             }}
           >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon sx={{ fontSize: 20, color: "#555" }} />}
-              sx={{ px: 0, py: 1, minHeight: 48, "& .MuiAccordionSummary-content": { m: 0 } }}
+            <Typography
+              sx={{ fontSize: "15px", fontWeight: 600, color: "#222", mb: 1 }}
             >
-              <Typography sx={{ fontSize: "14px", fontWeight: 600, color: "#222", letterSpacing: "0.2px" }}>
-                {ele.Fil_DisName}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, py: 1.5 }}>
-              <Box sx={{ width: "100%", pt: 0.5, pb: 1 }}>
-                <RangeFilterView2
-                  ele={ele}
-                  sliderValue2={sliderValue2}
-                  setSliderValue2={setSliderValue2}
-                  handleRangeFilterApi2={handleRangeFilterApi2}
-                  prodListType={prodListType}
-                  cookie={cookie}
-                  show2={show2}
-                  setShow2={setShow2}
-                  appliedRange3={appliedRange3}
-                  setAppliedRange3={setAppliedRange3}
-                />
-              </Box>
-            </AccordionDetails>
-          </Accordion>
+              {ele.Fil_DisName}
+            </Typography>
+            <Box sx={{ width: "100%", pt: 0.5 }}>
+              <RangeFilterView2
+                ele={ele}
+                sliderValue2={sliderValue2}
+                setSliderValue2={setSliderValue2}
+                handleRangeFilterApi2={handleRangeFilterApi2}
+                prodListType={prodListType}
+                cookie={cookie}
+                show2={show2}
+                setShow2={setShow2}
+                appliedRange3={appliedRange3}
+                setAppliedRange3={setAppliedRange3}
+              />
+            </Box>
+          </Paper>
         )}
       </React.Fragment>
     ));
@@ -2566,22 +3298,41 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     if (!isMetal && !isDia && !isCs) return null;
 
     return (
-      <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1.2,
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
         {isMetal && (
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+          <FormControl size="small" sx={{ minWidth: 110 }}>
             <Select
               value={selectedMetalId || ""}
               onChange={(e) => setSelectedMetalId(e.target.value)}
               sx={{
-                borderRadius: "20px",
+                borderRadius: "8px",
                 fontSize: "12px",
-                height: "32px",
-                bgcolor: "#FFF",
-                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+                fontWeight: 600,
+                height: "36px",
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#000000",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#222222",
+                },
               }}
             >
               {metalTypeCombo?.map((metalele) => (
-                <MenuItem key={metalele?.Metalid} value={metalele?.Metalid} sx={{ fontSize: "12px" }}>
+                <MenuItem
+                  key={metalele?.Metalid}
+                  value={metalele?.Metalid}
+                  sx={{ fontSize: "12px" }}
+                >
                   {metalele?.metaltype.toUpperCase()}
                 </MenuItem>
               ))}
@@ -2590,16 +3341,24 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         )}
 
         {isDia && (
-          <FormControl size="small" sx={{ minWidth: 130 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
               value={selectedDiaId || ""}
               onChange={(e) => setSelectedDiaId(e.target.value)}
               sx={{
-                borderRadius: "20px",
+                borderRadius: "8px",
                 fontSize: "12px",
-                height: "32px",
-                bgcolor: "#FFF",
-                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+                fontWeight: 600,
+                height: "36px",
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#000000",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#222222",
+                },
               }}
             >
               {diaQcCombo?.map((diaQc) => (
@@ -2616,16 +3375,24 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         )}
 
         {isCs && (
-          <FormControl size="small" sx={{ minWidth: 130 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
               value={selectedCsId || ""}
               onChange={(e) => setSelectedCsId(e.target.value)}
               sx={{
-                borderRadius: "20px",
+                borderRadius: "8px",
                 fontSize: "12px",
-                height: "32px",
-                bgcolor: "#FFF",
-                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+                fontWeight: 600,
+                height: "36px",
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#000000",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#222222",
+                },
               }}
             >
               {csQcCombo?.map((csCombo) => (
@@ -2644,7 +3411,9 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     );
   };
 
-  const activeCheckedList = Object.entries(filterChecked).filter(([_, val]) => val?.checked);
+  const activeCheckedList = Object.entries(filterChecked).filter(
+    ([_, val]) => val?.checked,
+  );
 
   return (
     <>
@@ -2656,17 +3425,25 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           onClose={() => setIsDrawerOpen(false)}
           PaperProps={{ sx: { width: "85%", maxWidth: "340px", p: 2 } }}
         >
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pb: 1.5, borderBottom: "1px solid #EEE" }}>
-            <Typography sx={{ fontWeight: 700, fontSize: "16px", color: "#222" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              pb: 1.5,
+              borderBottom: "1px solid #EEE",
+            }}
+          >
+            <Typography
+              sx={{ fontWeight: 700, fontSize: "16px", color: "#222" }}
+            >
               FILTERS {showClearAllButton() && `(${activeCheckedList.length})`}
             </Typography>
             <IconButton size="small" onClick={() => setIsDrawerOpen(false)}>
               <CloseIcon />
             </IconButton>
           </Box>
-          <Box sx={{ mt: 2 }}>
-            {renderFilterAccordionsList()}
-          </Box>
+          <Box sx={{ mt: 2 }}>{renderFilterAccordionsList()}</Box>
         </Drawer>
 
         {/* Top Header Controls Bar */}
@@ -2675,30 +3452,69 @@ const ProductList = ({ params, searchParams, storeinit }) => {
           sx={{
             p: { xs: 1.5, sm: 2 },
             mb: 2.5,
-            borderRadius: "14px",
             bgcolor: "#FFFFFF",
+            borderTop: "0",
+            position: "sticky",
+            top: "90px",
+            zIndex: 100,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 1.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 1.5,
+            }}
+          >
             {/* Title & Back button */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <IconButton size="small" onClick={() => navigate.back()} sx={{ bgcolor: "#F5F5F7", ":hover": { bgcolor: "#EAEAEF" } }}>
+              <IconButton
+                size="small"
+                onClick={() => navigate.back()}
+                sx={{ bgcolor: "#F5F5F7", ":hover": { bgcolor: "#EAEAEF" } }}
+              >
                 <IoArrowBack size={18} color="#444" />
               </IconButton>
-              <Typography sx={{ fontSize: { xs: "16px", sm: "20px" }, fontWeight: 700, color: "#111" }}>
-                {decodeURIComponent(location.pathname?.split("/p/")[1]?.split("/")[0] || DynamicListPageTitleLineFunc() || "Products")}
+              <Typography
+                sx={{
+                  fontSize: { xs: "16px", sm: "20px" },
+                  fontWeight: 700,
+                  color: "#111",
+                }}
+              >
+                {decodeURIComponent(
+                  location.pathname?.split("/p/")[1]?.split("/")[0] ||
+                    DynamicListPageTitleLineFunc() ||
+                    "Products",
+                )}
               </Typography>
               {afterFilterCount !== undefined && (
                 <Chip
-                  label={afterCountStatus ? "..." : `${afterFilterCount} Designs`}
+                  label={
+                    afterCountStatus ? "..." : `${afterFilterCount} Designs`
+                  }
                   size="small"
-                  sx={{ bgcolor: "rgba(125, 127, 133, 0.1)", color: "#7d7f85", fontWeight: 600, fontSize: "12px" }}
+                  sx={{
+                    bgcolor: "rgba(125, 127, 133, 0.1)",
+                    color: "#7d7f85",
+                    fontWeight: 600,
+                    fontSize: "12px",
+                  }}
                 />
               )}
             </Box>
 
             {/* Customization Combos & Sort Dropdown */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                flexWrap: "wrap",
+              }}
+            >
               {renderCustomizationCombos()}
 
               {/* Sort By Dropdown */}
@@ -2707,21 +3523,35 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                   value={sortBySelect || "Recommended"}
                   onChange={(e) => handleSortby(e)}
                   sx={{
-                    borderRadius: "20px",
+                    borderRadius: "8px",
                     fontSize: "12px",
                     fontWeight: 600,
-                    height: "34px",
-                    bgcolor: "#FFF",
-                    color: "#333",
-                    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E0E0E0" },
+                    height: "36px",
+                    bgcolor: "#000000",
+                    color: "#FFFFFF",
+                    "& .MuiSelect-icon": { color: "#FFFFFF" },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#000000",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#222222",
+                    },
                   }}
                 >
-                  <MenuItem value="Recommended" sx={{ fontSize: "12px" }}>Sort By: Recommended</MenuItem>
+                  <MenuItem value="Recommended" sx={{ fontSize: "12px" }}>
+                    Sort By: Recommended
+                  </MenuItem>
                   {storeInit?.IsStockWebsite == 1 && (
-                    <MenuItem value="In Stock" sx={{ fontSize: "12px" }}>Sort By: In Stock</MenuItem>
+                    <MenuItem value="In Stock" sx={{ fontSize: "12px" }}>
+                      Sort By: In Stock
+                    </MenuItem>
                   )}
-                  <MenuItem value="PRICE HIGH TO LOW" sx={{ fontSize: "12px" }}>Price: High To Low</MenuItem>
-                  <MenuItem value="PRICE LOW TO HIGH" sx={{ fontSize: "12px" }}>Price: Low To High</MenuItem>
+                  <MenuItem value="PRICE HIGH TO LOW" sx={{ fontSize: "12px" }}>
+                    Price: High To Low
+                  </MenuItem>
+                  <MenuItem value="PRICE LOW TO HIGH" sx={{ fontSize: "12px" }}>
+                    Price: Low To High
+                  </MenuItem>
                 </Select>
               </FormControl>
 
@@ -2730,18 +3560,19 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                 <Button
                   variant="outlined"
                   size="small"
-                  startIcon={<FilterAltIcon sx={{ color: "#7d7f85" }} />}
+                  startIcon={<FilterAltIcon sx={{ color: "#000000" }} />}
                   onClick={() => setIsDrawerOpen(true)}
                   sx={{
-                    borderRadius: "20px",
-                    borderColor: "#7d7f85",
-                    color: "#7d7f85",
+                    borderRadius: "8px",
+                    borderColor: "#000000",
+                    color: "#000000",
                     fontWeight: 600,
                     fontSize: "12px",
-                    height: "34px",
+                    height: "36px",
                   }}
                 >
-                  Filters {showClearAllButton() && `(${activeCheckedList.length})`}
+                  Filters{" "}
+                  {showClearAllButton() && `(${activeCheckedList.length})`}
                 </Button>
               )}
             </Box>
@@ -2749,28 +3580,69 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
           {/* Active Applied Filter Tags / Chips */}
           {(activeCheckedList.length > 0 || showClearAllButton()) && (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mt: 1.5, pt: 1.5, borderTop: "1px solid #F0F0F0" }}>
-              <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#777" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                flexWrap: "wrap",
+                mt: 1.5,
+                pt: 1.5,
+                borderTop: "1px solid #F0F0F0",
+              }}
+            >
+              <Typography
+                sx={{ fontSize: "12px", fontWeight: 600, color: "#777" }}
+              >
                 Applied Filters:
               </Typography>
-              {activeCheckedList.map(([key, val]) => (
-                <Chip
-                  key={key}
-                  label={val?.value}
-                  onDelete={() => handleCheckboxChange({ target: { checked: false, name: key } }, val?.type, val?.value)}
-                  size="small"
-                  variant="outlined"
-                  sx={{
-                    borderRadius: "16px",
-                    borderColor: "#7d7f85",
-                    color: "#7d7f85",
-                    bgcolor: "rgba(125, 127, 133, 0.08)",
-                    fontWeight: 500,
-                    fontSize: "11px",
-                    "& .MuiChip-deleteIcon": { color: "#7d7f85", ":hover": { color: "#5a5c60" } },
-                  }}
-                />
-              ))}
+              {activeCheckedList.map(([key, val]) => {
+                let chipLabel = "";
+                if (typeof val?.value === "object" && val?.value !== null) {
+                  const { Minval, Maxval } = val.value;
+                  const currency = loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode ?? "";
+                  if (Minval !== undefined && Maxval !== undefined) {
+                    if (Number(Minval) === 0) {
+                      chipLabel = `Under ${currency} ${formatter.format(Maxval)}`;
+                    } else if (Number(Maxval) === 0) {
+                      chipLabel = `Over ${currency} ${formatter.format(Minval)}`;
+                    } else {
+                      chipLabel = `${currency} ${formatter.format(Minval)} - ${formatter.format(Maxval)}`;
+                    }
+                  } else {
+                    chipLabel = JSON.stringify(val.value);
+                  }
+                } else {
+                  chipLabel = String(val?.value ?? "");
+                }
+                return (
+                  <Chip
+                    key={key}
+                    label={chipLabel}
+                    onDelete={() =>
+                      handleCheckboxChange(
+                        { target: { checked: false, name: key } },
+                        val?.type,
+                        val?.value,
+                      )
+                    }
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      borderRadius: "16px",
+                      borderColor: "#7d7f85",
+                      color: "#7d7f85",
+                      bgcolor: "rgba(125, 127, 133, 0.08)",
+                      fontWeight: 500,
+                      fontSize: "11px",
+                      "& .MuiChip-deleteIcon": {
+                        color: "#7d7f85",
+                        ":hover": { color: "#5a5c60" },
+                      },
+                    }}
+                  />
+                );
+              })}
               <Typography
                 onClick={handelFilterClearAll}
                 sx={{
@@ -2787,7 +3659,6 @@ const ProductList = ({ params, searchParams, storeinit }) => {
             </Box>
           )}
         </Paper>
-
         {/* Main Grid Layout */}
         {isProdLoading || isOnlyProdLoading ? (
           <ProductListSkeleton />
@@ -2796,20 +3667,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
             {/* Desktop Left Sidebar Filters Grid Item */}
             {filterData?.length > 0 && (
               <Grid
-                size={{ xs: 12, md: 3, lg: 2.8 }}
+                size={{ xs: 12, md: 2.6, lg: 2.2 }}
                 sx={{ display: { xs: "none", md: "block" } }}
               >
-                <Paper
-                  elevation={0}
+                <Box
                   sx={{
-                    p: 3,
-                    borderRadius: "16px",
-                    bgcolor: "#FFFFFF",
                     position: "sticky",
-                    top: "90px",
-                    maxHeight: "calc(100vh - 110px)",
+                    top: "170px",
+                    maxHeight: "100vh",
                     overflowY: "auto",
                     overflowX: "hidden",
+                    pr: 0.5,
+                    transition: "top 0.25s ease, max-height 0.25s ease",
                     "&::-webkit-scrollbar": {
                       width: "4px",
                     },
@@ -2820,20 +3689,34 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                     "&::-webkit-scrollbar-track": {
                       backgroundColor: "transparent",
                     },
+                           pl:2,
                   }}
                 >
-                  <Box
+                  <Paper
+                    elevation={0}
                     sx={{
+                      p: 1.6,
+                      mb: 1.4,
+                      borderRadius: "12px",
+                      bgcolor: "#FFFFFF",
+                      border: "1px solid #000000",
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      pb: 1.8,
-                      mb: 1.8,
-                      borderBottom: "1px solid #ECECEC",
+               
                     }}
                   >
-                    <Typography sx={{ fontWeight: 700, fontSize: "16px", color: "#111", letterSpacing: "0.8px" }}>
-                      FILTERS {showClearAllButton() && `(${activeCheckedList.length})`}
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "15px",
+                        color: "#111",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      FILTERS{" "}
+                      {showClearAllButton() && `(${activeCheckedList.length})`}
                     </Typography>
                     {showClearAllButton() && (
                       <Typography
@@ -2841,7 +3724,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         sx={{
                           fontSize: "12px",
                           fontWeight: 700,
-                          color: "#7d7f85",
+                          color: "#E26B00",
                           cursor: "pointer",
                           "&:hover": { textDecoration: "underline" },
                         }}
@@ -2849,14 +3732,18 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                         CLEAR ALL
                       </Typography>
                     )}
-                  </Box>
+                  </Paper>
                   {renderFilterAccordionsList()}
-                </Paper>
+                </Box>
               </Grid>
             )}
-
-            {/* Right Product Listing Grid Item */}
-            <Grid size={{ xs: 12, md: filterData?.length > 0 ? 9 : 12, lg: filterData?.length > 0 ? 9.2 : 12 }}>
+            <Grid
+              size={{
+                xs: 12,
+                md: filterData?.length > 0 ? 9.4 : 12,
+                lg: filterData?.length > 0 ? 9.8 : 12,
+              }}
+            >
               {filterProdListEmpty ? (
                 <Paper
                   elevation={0}
@@ -2868,11 +3755,20 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                     border: "1px solid #EDEDED",
                   }}
                 >
-                  <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  <Typography
+                    variant="h6"
+                    color="text.secondary"
+                    sx={{ fontWeight: 600 }}
+                  >
                     No Products Found
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 3 }}>
-                    Try relaxing your search or clear filters to see more results.
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mt: 1, mb: 3 }}
+                  >
+                    Try relaxing your search or clear filters to see more
+                    results.
                   </Typography>
                   <Button
                     variant="contained"
@@ -2890,70 +3786,98 @@ const ProductList = ({ params, searchParams, storeinit }) => {
               ) : (
                 <Grid container spacing={1.5}>
                   {finalProductListData?.map((productData, i) => (
-                    <Grid key={i} size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }} sx={{ display: "flex" }}>
-                    <Product_Card
-                      productData={productData}
-                      setIsRollOverVideo={setIsRollOverVideo}
-                      handleImgRollover={handleImgRollover}
-                      handleMoveToDetail={handleMoveToDetail}
-                      i={i}
-                      videoUrl={getDynamicVideo(productData.designno, productData.VideoCount, productData.VideoExtension)}
-                      RollImageUrl={getDynamicRollImages(productData.designno, productData.ImageCount, productData.ImageExtension)}
-                      imageUrl={getDynamicImages(productData.designno, productData.ImageExtension)}
-                      handleLeaveImgRolloverImg={handleLeaveImgRolloverImg}
-                      isRollOverVideo={isRollOverVideo}
-                      storeInit={storeInit}
-                      rollOverImgPd={rollOverImgPd}
-                      loginUserDetail={loginUserDetail}
-                      formatter={formatter}
-                      handleCartandWish={handleCartandWish}
-                      cartArr={cartArr}
-                      wishArr={wishArr}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            )}
+                    <Grid
+                      key={i}
+                      size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }}
+                      sx={{ display: "flex" }}
+                    >
+                      <Product_Card
+                        productData={productData}
+                        setIsRollOverVideo={setIsRollOverVideo}
+                        handleImgRollover={handleImgRollover}
+                        handleMoveToDetail={handleMoveToDetail}
+                        i={i}
+                        videoUrl={getDynamicVideo(
+                          productData.designno,
+                          productData.VideoCount,
+                          productData.VideoExtension,
+                        )}
+                        RollImageUrl={getDynamicRollImages(
+                          productData.designno,
+                          productData.ImageCount,
+                          productData.ImageExtension,
+                        )}
+                        imageUrl={getDynamicImages(
+                          productData.designno,
+                          productData.ImageExtension,
+                        )}
+                        handleLeaveImgRolloverImg={handleLeaveImgRolloverImg}
+                        isRollOverVideo={isRollOverVideo}
+                        storeInit={storeInit}
+                        rollOverImgPd={rollOverImgPd}
+                        loginUserDetail={loginUserDetail}
+                        formatter={formatter}
+                        handleCartandWish={handleCartandWish}
+                        cartArr={cartArr}
+                        wishArr={wishArr}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
 
-            {/* Pagination Controls */}
-            {storeInit?.IsProductListPagination == 1 && Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2, width: "100%" }}>
-                {isEditablePage === 1 ? (
-                  <EditablePagination
-                    currentPage={currPage}
-                    totalItems={afterFilterCount || 0}
-                    itemsPerPage={storeInit?.PageSize || 60}
-                    onPageChange={handelPageChange}
-                    inputPage={inputPage}
-                    setInputPage={setInputPage}
-                    handlePageInputChange={handlePageInputChange}
-                    maxwidth464px={maxwidth464px}
-                    totalPages={totalPages}
-                    currPage={currPage}
-                    isShowButton={false}
-                  />
-                ) : (
-                  <Pagination
-                    count={Math.ceil(afterFilterCount / storeInit.PageSize)}
-                    size={maxwidth464px ? "small" : "large"}
-                    shape="circular"
-                    onChange={handelPageChange}
-                    page={currPage}
-                    showFirstButton
-                    showLastButton
-                    renderItem={(item) => (
-                      <PaginationItem
-                        {...item}
-                        sx={{
-                          "&.Mui-selected": { bgcolor: "#DE0090", color: "#FFF", ":hover": { bgcolor: "#b00072" } },
-                        }}
+              {/* Pagination Controls */}
+              {storeInit?.IsProductListPagination == 1 &&
+                Math.ceil(afterFilterCount / storeInit.PageSize) > 1 && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      mt: 4,
+                      mb: 2,
+                      width: "100%",
+                    }}
+                  >
+                    {isEditablePage === 1 ? (
+                      <EditablePagination
+                        currentPage={currPage}
+                        totalItems={afterFilterCount || 0}
+                        itemsPerPage={storeInit?.PageSize || 60}
+                        onPageChange={handelPageChange}
+                        inputPage={inputPage}
+                        setInputPage={setInputPage}
+                        handlePageInputChange={handlePageInputChange}
+                        maxwidth464px={maxwidth464px}
+                        totalPages={totalPages}
+                        currPage={currPage}
+                        isShowButton={false}
+                      />
+                    ) : (
+                      <Pagination
+                        count={Math.ceil(afterFilterCount / storeInit.PageSize)}
+                        size={maxwidth464px ? "small" : "large"}
+                        shape="circular"
+                        onChange={handelPageChange}
+                        page={currPage}
+                        showFirstButton
+                        showLastButton
+                        renderItem={(item) => (
+                          <PaginationItem
+                            {...item}
+                            sx={{
+                              "&.Mui-selected": {
+                                bgcolor: "#DE0090",
+                                color: "#FFF",
+                                ":hover": { bgcolor: "#b00072" },
+                              },
+                            }}
+                          />
+                        )}
                       />
                     )}
-                  />
+                  </Box>
                 )}
-              </Box>
-            )}
-          </Grid>
+            </Grid>
           </Grid>
         )}
       </Box>
@@ -2986,8 +3910,12 @@ const Product_Card = ({
   const [isHover, setIsHover] = useState(false);
 
   const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 0;
-  const isWishlisted = Boolean(wishArr?.[productData?.autocode] ?? productData?.IsInWish === 1);
-  const isCarted = Boolean(cartArr?.[productData?.autocode] ?? productData?.IsInCart === 1);
+  const isWishlisted = Boolean(
+    wishArr?.[productData?.autocode] ?? productData?.IsInWish === 1,
+  );
+  const isCarted = Boolean(
+    cartArr?.[productData?.autocode] ?? productData?.IsInCart === 1,
+  );
 
   useEffect(() => {
     const delay = (i + 1) * 80;
@@ -3033,12 +3961,17 @@ const Product_Card = ({
           transition: "all 0.3s ease",
         }}
       >
-
         {isLoading ? (
           <Skeleton
             animation="wave"
             variant="rectangular"
-            sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+            }}
           />
         ) : (
           <>
@@ -3051,7 +3984,9 @@ const Product_Card = ({
                   muted
                   loop
                   playsInline
-                  onError={(e) => { e.target.poster = imageNotFound; }}
+                  onError={(e) => {
+                    e.target.poster = imageNotFound;
+                  }}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -3065,7 +4000,9 @@ const Product_Card = ({
                 <img
                   src={RollImageUrl || imageUrl}
                   alt={productData?.TitleLine || productData?.designno}
-                  onError={(e) => { e.target.src = imageNotFound; }}
+                  onError={(e) => {
+                    e.target.src = imageNotFound;
+                  }}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -3119,12 +4056,29 @@ const Product_Card = ({
           boxSizing: "border-box",
         }}
       >
-        <Box onClick={() => handleMoveToDetail(productData, i)} sx={{ cursor: "pointer" }}>
+        <Box
+          onClick={() => handleMoveToDetail(productData, i)}
+          sx={{ cursor: "pointer" }}
+        >
           {/* Prices */}
-          <Box sx={{ display: "flex", alignItems: "baseline", gap: 1, flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 1,
+              flexWrap: "wrap",
+            }}
+          >
             {storeInit?.IsPriceShow == 1 && (
-              <Typography sx={{ fontWeight: 700, fontSize: { xs: "15px", sm: "16px" }, color: "#111111" }}>
-                {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) + " "}
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: "15px", sm: "16px" },
+                  color: "#111111",
+                }}
+              >
+                {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) +
+                  " "}
                 {formatter.format(productData?.UnitCostWithMarkUp)}
               </Typography>
             )}
@@ -3159,10 +4113,16 @@ const Product_Card = ({
               variant={isCarted ? "contained" : "outlined"}
               fullWidth
               size="small"
-              startIcon={isCarted ? <LocalMallIcon /> : <LocalMallOutlinedIcon />}
+              startIcon={
+                isCarted ? <LocalMallIcon /> : <LocalMallOutlinedIcon />
+              }
               onClick={(e) => {
                 e.stopPropagation();
-                handleCartandWish({ target: { checked: !isCarted } }, productData, "Cart");
+                handleCartandWish(
+                  { target: { checked: !isCarted } },
+                  productData,
+                  "Cart",
+                );
               }}
               sx={{
                 borderRadius: "4px",

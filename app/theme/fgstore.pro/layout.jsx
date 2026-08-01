@@ -26,7 +26,22 @@ const layout = async ({ children }) => {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", width: "100%", overflow: "hidden", position: "relative" }} className="setFullThemeBack_Bg animateThemeFill">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        width: "100%",
+        overflowX: "clip",
+        position: "relative",
+        backgroundImage: "url('/Assets/soft-grey-organic-leaves-background-with-text-space__1017-60373.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+      className="setFullThemeBack_Bg animateThemeFill"
+    >
       <Header1 logos={logos} storeinit={storeData} />
       <Box
         sx={{
@@ -43,10 +58,16 @@ const layout = async ({ children }) => {
             marginInline: "0",
             minHeight: 400,
           },
+          borderRadius: "24px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
         className="theme-content"
       >
-        {children}
+        <Box sx={{ flexGrow: 1 }}>
+          {children}
+        </Box>
         <FooterNew list={FooterList} socialMediaData={parsedSocialLinks} companyInfoData={companyInfoData} storeData={storeData} logos={logos} />
       </Box>
       <BackToTop />

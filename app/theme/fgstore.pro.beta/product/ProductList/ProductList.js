@@ -269,7 +269,15 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     const pathSegments = location?.pathname?.split("/") || [];
     const kSegment = pathSegments.find(s => s.includes("K="));
     const encodedKey = kSegment?.split("?")[0]?.split("K=")[1];
+    const isB2B = storeInit?.IsB2BWebsite === 1;
 
+    // Condition 1: B2B Website restriction for guest users
+    if (isB2B && islogin !== true) {
+      navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
+      return;
+    }
+
+    // Condition 2: Album Security Key restriction for guest users
     if (encodedKey) {
       let decodedKey = null;
       try {
@@ -283,17 +291,17 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         return;
       }
 
-      if (decodedKey > 0 && islogin !== true) {
+      if (Number(decodedKey) > 0 && islogin !== true) {
         navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
       }
     } else {
       // Check query params SK/SecurityKey as well for redirect
       const sk = searchParams?.SK || searchParams?.SecurityKey;
-      if (sk > 0 && islogin !== true) {
+      if (Number(sk) > 0 && islogin !== true) {
         navigate.push(`/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`);
       }
     }
-  }, [params, islogin, searchParams]);
+  }, [params, islogin, searchParams, storeInit]);
 
 
 
