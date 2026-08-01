@@ -1,4 +1,4 @@
-import { Poppins,DM_Sans } from "next/font/google";
+import { Poppins,DM_Sans ,Quicksand } from "next/font/google";
 import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
 import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
@@ -26,6 +26,13 @@ const dm_sans = DM_Sans({
   variable: "--font-dm-sans",
   display: "swap",
 })
+
+const quick_sand = Quicksand({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-quicksand",
+  display: "swap",
+});
 
 const DEFAULT_JEWELRY_DESCRIPTION = "Discover timeless jewelry crafted with precision and elegance. Explore gold, diamond, and silver collections designed for everyday wear and special occasions, with trusted quality and exceptional craftsmanship.";
 const DEFAULT_JEWELRY_KEYWORDS = "jewelry online, gold jewelry, diamond jewelry, silver jewelry, fine jewelry, bridal jewelry, earrings, rings, necklaces, bracelets, luxury jewelry, handcrafted jewelry";
@@ -91,9 +98,7 @@ export default async function RootLayout({ children }) {
   const storeInit = await getStoreInit();
   const myAccountFlags = await getMyAccountFlags();
   const { hostname } = await getDomainInfo();
-  console.log(hostname, "hostname")
   const ACTIVE_THEME = getThemeByDomain(hostname);
-  console.log(ACTIVE_THEME, "ACTIVE_THEME")
 
   const [{ default: LayoutComponent }, { default: StyleInjector }] = await Promise.all([
     import(`@/app/theme/${ACTIVE_THEME}/layout.jsx`),
@@ -108,7 +113,7 @@ export default async function RootLayout({ children }) {
         </head>
         <SWRegistration />
         <EmotionRegistry>
-          <body className={`${dm_sans.variable}`}>
+          <body className={`${quick_sand.variable}`}>
             {/* <StyleInjector styleContent="" /> */}
             <MasterProvider getCompanyInfoData={companyInfo} getStoreInit={storeInit} getMyAccountFlags={myAccountFlags}>
               <StoreProvider storeinit={storeInit}>

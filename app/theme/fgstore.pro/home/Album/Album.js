@@ -32,6 +32,7 @@ import {
   processAlbumImages,
 } from "./CacheBuilder";
 import { getSession } from "@/app/(core)/utils/FetchSessionData";
+import { readCache, writeCache } from "@/app/(core)/cache_utility/cacheActions";
 
 const Album = () => {
   const { islogin, loginUserDetail, storeinit } = useStore();
@@ -107,67 +108,39 @@ const Album = () => {
       );
       const effectiveKey = precomputedKey || key;
       const eventName = "procatalog_album";
-
-      console.log("██████ ALBUM CACHE KEY ██████", effectiveKey);
-      console.log(
-        "██████ ALBUM PRICING ██████ PackageId:",
-        pricingContext?.PackageId,
-        "Laboursetid:",
-        pricingContext?.Laboursetid,
-        "diamond:",
-        pricingContext?.diamondpricelistname,
-        "colorstone:",
-        pricingContext?.colorstonepricelistname,
-      );
+      // console.log("██████ ALBUM CACHE KEY ██████", effectiveKey);
+      // console.log(
+      //   "██████ ALBUM PRICING ██████ PackageId:",
+      //   pricingContext?.PackageId,
+      //   "Laboursetid:",
+      //   pricingContext?.Laboursetid,
+      //   "diamond:",
+      //   pricingContext?.diamondpricelistname,
+      //   "colorstone:",
+      //   pricingContext?.colorstonepricelistname,
+      // );
 
       isFetchingRef.current = true;
       setIsFetching(true);
 
       try {
-        const localCacheRes = await fetch(`/api/cache?key=${effectiveKey}`)
-          .then((res) => res.json())
-          .catch((err) => {
-            console.log("██████ ALBUM LOCAL CACHE FAILED ██████", err);
-            return { cached: false };
-          });
+        const localCacheRes = await readCache(effectiveKey);
 
-        if (localCacheRes?.cached) {
-          const cacheTime = localCacheRes.meta?.timestamp;
-          const twelveHours = 12 * 60 * 60 * 1000;
-          const isExpired = cacheTime
-            ? Date.now() - cacheTime > twelveHours
-            : false;
-
-          if (isExpired) {
-            console.log("██████ ALBUM CACHE EXPIRED ██████ Fetching from API");
-            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(
-              () => {},
-            );
-          } else if (
-            Array.isArray(localCacheRes.data) &&
-            localCacheRes.data.length > 0
-          ) {
-            console.log(
-              "██████ ALBUM USING CACHE ██████ Setting",
-              localCacheRes.data.length,
-              "albums from cache",
-            );
-            setAlbumData(localCacheRes.data);
-            setFallbackImages(
-              processAlbumImages(localCacheRes.data, storeinit),
-            );
-            setImagesReady(true);
-            setIsFetching(false);
-            isFetchingRef.current = false;
-            return localCacheRes.data;
-          } else {
-            console.log(
-              "██████ ALBUM CACHE EMPTY ██████ Cache exists but data is empty/invalid — DELETING cache and fetching from API",
-            );
-            fetch(`/api/cache?key=${effectiveKey}`, { method: "DELETE" }).catch(
-              () => {},
-            );
-          }
+        if (localCacheRes?.cached && Array.isArray(localCacheRes.data) && localCacheRes.data.length > 0) {
+          console.log(
+            "██████ ALBUM USING SERVER ACTION CACHE ██████ Setting",
+            localCacheRes.data.length,
+            "albums from cache",
+          );
+          console.log('localCacheRes.data', localCacheRes.data)
+          setAlbumData(localCacheRes.data);
+          setFallbackImages(
+            processAlbumImages(localCacheRes.data, storeinit),
+          );
+          setImagesReady(true);
+          setIsFetching(false);
+          isFetchingRef.current = false;
+          return localCacheRes.data;
         } else {
           console.log("██████ ALBUM NO LOCAL CACHE ██████ Will fetch from API");
         }
@@ -260,21 +233,14 @@ const Album = () => {
 
           try {
             console.log(
-              "██████ ALBUM CACHING DATA ██████ key:",
+              "██████ ALBUM CACHING DATA VIA SERVER ACTION ██████ key:",
               effectiveKey,
               "albums:",
               albums.length,
             );
-            const updatedMeta = { ...meta, timestamp: Date.now() };
-            fetch("/api/cache", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                key: effectiveKey,
-                data: albums,
-                meta: updatedMeta,
-              }),
-            }).catch(console.error);
+            writeCache(effectiveKey, albums).catch((err) =>
+              console.error("██████ ALBUM CACHE SAVE FAILED ██████", err)
+            );
           } catch (cacheErr) {
             console.error("██████ ALBUM CACHE SAVE FAILED ██████", cacheErr);
           }
@@ -378,9 +344,19 @@ const Album = () => {
   const handlePreview = (data) => {
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
-    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && Number(securityKey) > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
     const Newdata = data?.AlbumDetail ? JSON.parse(data?.AlbumDetail) : [];
     setSecurityKey(securityKey);
+
+    const isB2B = storeinit?.IsB2BWebsite === 1;
+    const isSecurityKeyProtected = securityKey && Number(securityKey) > 0;
+    if (!islogin && (isB2B || isSecurityKeyProtected)) {
+      const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+      sessionStorage.setItem("redirectURL", url);
+      navigate(redirectUrl);
+      return;
+    }
+
     if (data?.IsDual === 1 && Newdata?.length > 1) {
       const finalNewData = Newdata.map((item) => {
         let imgLink = item?.Image_Name
@@ -401,7 +377,7 @@ const Album = () => {
   const handleRequestAccess = (data) => {
     const albumName = data?.AlbumName;
     const securityKey = data?.AlbumSecurityId;
-    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && Number(securityKey) > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
     const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
     sessionStorage.setItem("redirectURL", url);
     navigate(redirectUrl);
@@ -412,10 +388,20 @@ const Album = () => {
   };
 
   const handleNavigateSub = (data) => {
-    const albumName = data?.AlbumName;
-    const securityKey = data?.AlbumSecurityId;
-    setSecurityKey(securityKey);
-    const url = `/p/${encodeURIComponent(data?.AlbumName)}/${securityKey && securityKey > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+    const albumName = data?.AlbumName || openAlbumName;
+    const secKey = securityKey || data?.AlbumSecurityId;
+    setSecurityKey(secKey);
+    const url = `/p/${encodeURIComponent(albumName)}/${secKey && Number(secKey) > 0 ? `K=${btoa(String(secKey))}/` : ""}?A=${btoa(`AlbumName=${albumName}`)}`;
+
+    const isB2B = storeinit?.IsB2BWebsite === 1;
+    const isSecurityKeyProtected = secKey && Number(secKey) > 0;
+    if (!islogin && (isB2B || isSecurityKeyProtected)) {
+      const redirectUrl = `/LoginOption/?LoginRedirect=${encodeURIComponent(url)}`;
+      sessionStorage.setItem("redirectURL", url);
+      navigate(redirectUrl);
+      return;
+    }
+
     sessionStorage.setItem("redirectURL", url);
     navigate(url);
   };
@@ -475,7 +461,13 @@ const Album = () => {
       >
         <Box className="proCat_album_box_main">
           <div className="proCat_modalHeader">
-            <p className="proCat_modalTitle">{openAlbumName}</p>
+            <p className="proCat_modalTitle">
+              {openAlbumName}{" "}
+              {designSubData?.length > 0 &&
+                `(${designSubData.length} ${
+                  designSubData.length === 1 ? "Design" : "Designs"
+                })`}
+            </p>
             <IconButton onClick={handleClose} className="proCat_modalCloseBtn">
               <CloseIcon />
             </IconButton>
@@ -530,7 +522,7 @@ const Album = () => {
         <Box
           sx={{
             width: "100%",
-            maxWidth: isB2B ?  2000 : 1300,
+            maxWidth: isB2B ? 2000 : 1300,
             mx: "auto",
             px: { xs: 2, sm: 3, md: 4 },
             py: 3,
@@ -540,6 +532,7 @@ const Album = () => {
             <Grid container spacing={2.5}>
               {albumData.map((data, index) => {
                 const isLoading = loadedProducts[index]?.id !== index;
+                const Icount = data?.TotalDesignCnt || 0;
                 const Newdata = data?.AlbumDetail
                   ? JSON.parse(data?.AlbumDetail)
                   : [];
@@ -549,9 +542,10 @@ const Album = () => {
                     item
                     size={{
                       xs: 12,
-                      sm: 6,
+                      sm: 4,
                       md: 3,
                     }}
+
                     key={index}
                   >
                     <Box
@@ -575,7 +569,7 @@ const Album = () => {
                         sx={{
                           position: "relative",
                           width: "100%",
-                          height: 350,
+                          aspectRatio: "1 / 1",
                           backgroundColor: "#f8f9fa",
                           cursor: "pointer",
                           overflow: "hidden",
@@ -624,8 +618,6 @@ const Album = () => {
                           </svg>
                         )}
                       </Box>
-
-                      {/* Content Details */}
                       <Box
                         sx={{
                           px: 2,
@@ -659,30 +651,29 @@ const Album = () => {
                               pt: 1,
                             }}
                           >
-                            <Button
-                              variant="outlined"
-                              fullWidth
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePreview(data);
-                              }}
+                            <Box
                               sx={{
                                 borderRadius: "6px",
-                                borderColor: "#0F3D4C",
+                                border: "1.5px solid #0F3D4C",
                                 color: "#0F3D4C",
                                 fontWeight: 600,
                                 fontSize: "0.72rem",
                                 letterSpacing: "0.08em",
                                 textTransform: "uppercase",
                                 py: 0.9,
-                                "&:hover": {
-                                  borderColor: "#0A2933",
-                                  backgroundColor: "rgba(15, 61, 76, 0.04)",
-                                },
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexGrow: 1,
+                                width: "100%",
+                                userSelect: "none",
                               }}
                             >
-                              PREVIEW
-                            </Button>
+                              {/* {data?.IsDual === 1 && Newdata?.length > 1
+                                ? `${Newdata?.length} Designs`
+                                : "View Album"} */}
+                                {Icount} Designs
+                            </Box>
                             <Button
                               variant="contained"
                               fullWidth
@@ -717,9 +708,6 @@ const Album = () => {
               })}
             </Grid>
           ) : (
-            /* ======================================= */
-            /* B2C Glass Edge Card Grid (5 per row)    */
-            /* ======================================= */
             <Grid container spacing={3}>
               {albumData.map((data, index) => {
                 const isLoading = loadedProducts[index]?.id !== index;
@@ -733,7 +721,7 @@ const Album = () => {
                     size={{
                       xs: 12,
                       sm: 6,
-                      md: 3,
+                      md: 4,
                     }}
                     key={index}
                   >
@@ -761,8 +749,7 @@ const Album = () => {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                        borderRadius: "14px",
-                          height: 350,
+                          borderRadius: "14px",
                         }}
                       >
                         {isLoading ? (

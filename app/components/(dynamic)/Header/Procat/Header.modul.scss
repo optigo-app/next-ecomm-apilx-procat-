@@ -2,7 +2,7 @@
 
 .ProCat_headerMain_div {
   .smiling_Top_header {
-    height: 110px;
+    height: 90px;
     // background-color: $backgroundColor;
   }
 
@@ -28,7 +28,7 @@
   // Normal header logo — constrained to header height so it never overflows or gets cut
   .smr_logo_header {
     display: block;
-    max-height: 100px; // slightly less than the 110px header so it has breathing room
+    max-height: 75px; // slightly less than the 90px header so it has breathing room
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -96,19 +96,20 @@
   }
 
   .nav_li_smining_Fixed_Icone {
-    color: #7d7f85;
-    font-size: 13px;
+    color: black;
+    font-size: $fontSize2;
     font-weight: 500;
     position: relative;
     display: inline-block;
   }
 
   .nav_li_smining_Fixed {
-    color: #7d7f85;
-    font-size: 13px;
+    color: black;
+    font-size: $fontSize2;
     font-weight: 500;
     position: relative;
     display: inline-block;
+    font-family: $primaryFontFamily;
   }
 
   .nav_li_smining_Fixed::before {
@@ -118,7 +119,7 @@
     right: 0;
     width: 0%;
     height: 1px;
-    background-color: #7d7f85;
+    background-color: white;
     transition: width 0.3s ease-out;
   }
 
@@ -129,10 +130,10 @@
     transition: width 0.3s ease-out;
   }
 
-  // Sticky header logo — must fit inside the 80px fixed bar
+  // Sticky header logo — matches normal logo size
   .smr_logo_header_Fixed {
     display: block;
-    max-height: 80px; // fits comfortably within the 80px sticky header
+    max-height: 75px; // matches normal logo max-height
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -145,7 +146,8 @@
     align-items: center;
     text-align: center;
     transform: translateY(-200px);
-    height: 80px;
+    height: 90px; // matches normal header height
+    background-color: #fff;
   }
 
   .Smining-Top-Header-fixed-main.fixed {
@@ -155,7 +157,8 @@
     z-index: 1000;
     transform: translateY(0px);
     transition: all 0.4s ease;
-    height: 80px;
+    height: 90px; // matches normal header height
+    background-color: #fff;
   }
 
   /// open dropdownList
@@ -183,12 +186,11 @@
 
   .shop-dropdown.open.fixed {
     position: fixed;
-    top: 0;
+    top: 90px;
     box-shadow: 0 2px 5px rgba(20, 19, 19, 0.1);
     z-index: 1000;
     transform: translateY(0px);
     transition: all 0.4s ease;
-    height: 60px;
   }
 
   .muilistMenutext {

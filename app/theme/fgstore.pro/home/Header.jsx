@@ -19,9 +19,8 @@ const theme = createTheme({
   },
 });
 
-// Client Configurable Theme Object (Easily update colors, gradients, and fonts per client)
+
 export const clientThemeConfig = {
-  // Metallic Gold Color Palette
   goldLight: "#FAF0C5",
   goldMedium: "#9E7429",
   goldDark: "#9E7429",
@@ -46,7 +45,7 @@ const MainContainer = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  padding: theme.spacing(4, 2),
+  padding: theme.spacing(3, 2, 0, 2),
   margin: "0 auto",
 }));
 
@@ -65,98 +64,15 @@ export default function JewelryHeader({
       <MainContainer sx={sx} className={`${playfair.variable} ${playfair.className}`}>
         <Box
           sx={{
-            position: "relative",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            width: "90%",
-            maxWidth: 820,
+            width: "100%",
             margin: "0 auto",
-            py: 1,
-            px: { xs: 5, sm: 6.5 },
+            py: 0.5,
           }}
         >
-          {/* Left Decorative Wing End Cap */}
-          <svg
-            width="48"
-            height="100%"
-            viewBox="0 0 48 64"
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: "48px",
-              height: "100%",
-              pointerEvents: "none",
-            }}
-          >
-            <defs>
-              <linearGradient
-                id="gold-wing-left"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop
-                  offset="0%"
-                  stopColor={mergedConfig.gradientStops.stop0}
-                />
-                <stop
-                  offset="50%"
-                  stopColor={mergedConfig.gradientStops.stop50}
-                />
-                <stop
-                  offset="100%"
-                  stopColor={mergedConfig.gradientStops.stop100}
-                />
-              </linearGradient>
-            </defs>
-            <path
-              d="M 48 0 L 30 0 C 20 0 14 18 10 25 C 6 30 0 32 0 32 C 0 32 6 34 10 39 C 14 46 20 64 30 64 L 48 64"
-              stroke="url(#gold-wing-left)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke"
-            />
-            <polygon
-              points="0,32 5,28 10,32 5,36"
-              fill="url(#gold-wing-left)"
-            />
-          </svg>
-
-          {/* Top Border Line */}
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: "30px",
-              right: "30px",
-              height: "1.5px",
-              background: `linear-gradient(90deg, ${mergedConfig.gradientStops.stop0} 0%, ${mergedConfig.gradientStops.stop20} 25%, ${mergedConfig.gradientStops.stop50} 50%, ${mergedConfig.gradientStops.stop80} 75%, ${mergedConfig.gradientStops.stop100} 100%)`,
-            }}
-          />
-          {/* Top Center Diamond Notch */}
-          <Box
-            sx={{
-              position: "absolute",
-              top: "-3.5px",
-              left: "50%",
-              transform: "translateX(-50%) rotate(45deg)",
-              width: "8px",
-              height: "8px",
-              backgroundColor: mergedConfig.goldMedium,
-              border: `1px solid ${mergedConfig.goldLight}`,
-              zIndex: 1,
-            }}
-          />
-
           {/* Header Title */}
           <Typography
             component="h2"
@@ -198,87 +114,6 @@ export default function JewelryHeader({
               {subtitle}
             </Typography>
           )}
-
-          {/* Bottom Center Diamond Notch */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: "-3.5px",
-              left: "50%",
-              transform: "translateX(-50%) rotate(45deg)",
-              width: "8px",
-              height: "8px",
-              backgroundColor: mergedConfig.goldMedium,
-              border: `1px solid ${mergedConfig.goldLight}`,
-              zIndex: 1,
-            }}
-          />
-          {/* Bottom Border Line */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              left: "30px",
-              right: "30px",
-              height: "1.5px",
-              background: `linear-gradient(90deg, ${mergedConfig.gradientStops.stop0} 0%, ${mergedConfig.gradientStops.stop20} 25%, ${mergedConfig.gradientStops.stop50} 50%, ${mergedConfig.gradientStops.stop80} 75%, ${mergedConfig.gradientStops.stop100} 100%)`,
-            }}
-          />
-
-          {/* Right Decorative Wing End Cap */}
-          <svg
-            width="48"
-            height="100%"
-            viewBox="0 0 48 64"
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width: "48px",
-              height: "100%",
-              transform: "scaleX(-1)",
-              pointerEvents: "none",
-            }}
-          >
-            <defs>
-              <linearGradient
-                id="gold-wing-right"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop
-                  offset="0%"
-                  stopColor={mergedConfig.gradientStops.stop0}
-                />
-                <stop
-                  offset="50%"
-                  stopColor={mergedConfig.gradientStops.stop50}
-                />
-                <stop
-                  offset="100%"
-                  stopColor={mergedConfig.gradientStops.stop100}
-                />
-              </linearGradient>
-            </defs>
-            <path
-              d="M 48 0 L 30 0 C 20 0 14 18 10 25 C 6 30 0 32 0 32 C 0 32 6 34 10 39 C 14 46 20 64 30 64 L 48 64"
-              stroke="url(#gold-wing-right)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke"
-            />
-            <polygon
-              points="0,32 5,28 10,32 5,36"
-              fill="url(#gold-wing-right)"
-            />
-          </svg>
         </Box>
       </MainContainer>
     </ThemeProvider>
