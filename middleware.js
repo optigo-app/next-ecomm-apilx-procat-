@@ -11,6 +11,12 @@ const domainMap = {
 
 export default async function middleware(req) {
   try {
+
+    const isRsc = req.headers.get("rsc") === "1" || req.nextUrl.searchParams.has("_rsc") || req.headers.has("next-action");
+    if (isRsc) {
+      return NextResponse.next();
+    }
+
     const { cookies, nextUrl } = req;
     const host = req.headers.get("host");
     console.log(host, "host")

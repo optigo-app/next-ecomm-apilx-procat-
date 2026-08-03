@@ -708,7 +708,7 @@ const Album = () => {
               })}
             </Grid>
           ) : (
-            <Grid container spacing={3}>
+            <Grid container spacing={2.5}>
               {albumData.map((data, index) => {
                 const isLoading = loadedProducts[index]?.id !== index;
                 const Newdata = data?.AlbumDetail
@@ -720,8 +720,8 @@ const Album = () => {
                     item
                     size={{
                       xs: 12,
-                      sm: 6,
-                      md: 4,
+                      sm: 4,
+                      md: 3,
                     }}
                     key={index}
                   >
