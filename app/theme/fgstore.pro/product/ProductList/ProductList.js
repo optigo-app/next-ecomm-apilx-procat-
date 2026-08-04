@@ -670,17 +670,24 @@ const ProductList = ({ params, searchParams, storeinit }) => {
 
     setFinalProductListData(initialProducts);
 
-    // const timer = setTimeout(() => {
-    const updateData = productListData?.map((product) => ({
-      ...product,
-      images: generateImageList(product),
-      loading: false,
-    }));
+    const updateData = productListData?.map((product) => {
+      // let StatusId = product?.StatusId;
+      // if (SoketData && SoketData?.length > 0) {
+      //   let filterdata = SoketData?.find(
+      //     (ele) => ele?.designno === product?.designno
+      //   );
+      //   if (filterdata?.StatusId !== undefined) {
+      //     StatusId = filterdata?.StatusId;
+      //   }
+      // }
+      return {
+        ...product,
+        images: generateImageList(product),
+        loading: false
+      };
+    });
 
     setFinalProductListData(updateData);
-    // }, 150);
-
-    // return () => clearTimeout(timer);
   }, [productListData, generateImageList]);
 
   // useEffect(() => {
@@ -1312,7 +1319,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
       // , DiaRange, netRange ,grossRange
       ProductListApi(
         output,
-        currPage,
+        1,
         obj,
         prodListType,
         cookie,
@@ -1384,36 +1391,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     lastFetchedComboRef.current = obj;
     sessionStorage.setItem("short_cutCombo_val", JSON.stringify(obj));
 
-    if (loginUserDetail && Object.keys(loginUserDetail).length > 0) {
-      if (
-        selectedMetalId != undefined ||
-        selectedDiaId != undefined ||
-        selectedCsId != undefined
-      ) {
-        if (
-          String(loginUserDetail.MetalId) !== String(selectedMetalId) ||
-          String(loginUserDetail.cmboDiaQCid) !== String(selectedDiaId) ||
-          String(loginUserDetail.cmboCSQCid) !== String(selectedCsId)
-        ) {
-          obj;
-        }
-      }
-    } else {
-      if (storeInit && Object.keys(storeInit).length > 0) {
-        if (
-          selectedMetalId != undefined ||
-          selectedDiaId != undefined ||
-          selectedCsId != undefined
-        ) {
-          if (
-            String(storeInit?.MetalId) !== String(selectedMetalId) ||
-            String(storeInit?.cmboDiaQCid) !== String(selectedDiaId) ||
-            String(storeInit?.cmboCSQCid) !== String(selectedCsId)
-          ) {
-            handelCustomCombo(obj);
-          }
-        }
-      }
+    if (
+      selectedMetalId !== undefined ||
+      selectedDiaId !== undefined ||
+      selectedCsId !== undefined
+    ) {
+      handelCustomCombo(obj);
     }
   }, [selectedMetalId, selectedDiaId, selectedCsId]);
 
@@ -4036,6 +4019,16 @@ const Product_Card = ({
                 }}
               />
             )}
+            {/* Status Badge: In Stock / In Memo / Make To Order */}
+            <div className="proCat_app_product_label" style={{ zIndex: 2 }}>
+              {productData?.StatusId == 1 ? (
+                <span className="proCat_app_instock">In Stock</span>
+              ) : productData?.StatusId == 2 ? (
+                <span className="proCat_app_MEMO">In memo</span>
+              ) : (
+                <span className="proCat_app_Make_to_order">Make To Order</span>
+              )}
+            </div>
           </>
         )}
       </Box>

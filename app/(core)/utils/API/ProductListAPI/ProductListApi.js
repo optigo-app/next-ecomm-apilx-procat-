@@ -5,96 +5,64 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", visiterId, sortby = "", diaRange = {}, netWt = {}, gross = {}, Shape = "", dno = "", album = "") => {
 
   let MenuParams = {};
-  let serachVar = ""
+  let serachVar = "";
+
+  const safeAtob = (str) => {
+    if (!str || str === "undefined" || str === "null") return "";
+    try {
+      return atob(str);
+    } catch (e) {
+      return str;
+    }
+  };
 
   if (Array.isArray(mainData)) {
     if (mainData?.length > 0) {
       Object.values(mainData[0])?.forEach((ele, index) => {
         let keyName = `FilterKey${index === 0 ? '' : index}`;
-        MenuParams[keyName] = ele.replace(/%20/g, ' ')
-      })
+        MenuParams[keyName] = typeof ele === "string" ? ele.replace(/%20/g, ' ') : ele;
+      });
 
       Object.values(mainData[1])?.forEach((ele, index) => {
         let keyName = `FilterVal${index === 0 ? '' : index}`;
-        MenuParams[keyName] = ele.replace(/%20/g, ' ')
-      })
+        MenuParams[keyName] = typeof ele === "string" ? ele.replace(/%20/g, ' ') : ele;
+      });
     }
-  } else {
-    if (mainData !== "") {
+  } else if (mainData && typeof mainData === "object") {
+    MenuParams = { ...mainData };
+  } else if (typeof mainData === "string" && mainData !== "") {
+    const prefix = mainData?.split("=")[0]?.toUpperCase();
+    const payloadStr = mainData?.includes("=") ? mainData?.substring(mainData.indexOf("=") + 1) : mainData;
 
-      const safeAtob = (str) => {
-        if (!str || str === "undefined" || str === "null") return "";
-        try {
-          return atob(str);
-        } catch (e) {
-          console.error("Error decoding base64:", str, e);
-          return "";
-        }
-      };
-
-      if (mainData?.split("=")[0] == "S") {
-        serachVar = JSON.parse(safeAtob(mainData?.split("=")[1]) || "{}")
+    if (prefix === "S") {
+      serachVar = JSON.parse(safeAtob(payloadStr) || "{}");
+    } else {
+      const decoded = safeAtob(prefix === "A" ? payloadStr : mainData);
+      if (decoded?.includes("=")) {
+        const parts = decoded.split("=");
+        MenuParams.FilterKey = parts[0];
+        MenuParams.FilterVal = parts.slice(1).join("=");
       } else {
-        MenuParams.FilterKey = safeAtob(mainData)
-        MenuParams.FilterVal = safeAtob(mainData)
+        MenuParams.FilterKey = decoded;
+        MenuParams.FilterVal = decoded;
       }
-
-      if (mainData?.split("=")[0] !== "S") {
-        const decoded = safeAtob(mainData);
-        if (decoded?.split("=")[0] == "AlbumName") {
-          MenuParams.FilterKey = decoded?.split("=")[0]
-          MenuParams.FilterVal = decoded?.split("=")[1]
-        } else {
-          MenuParams.FilterKey = decoded
-          MenuParams.FilterVal = decoded
-        }
-      }
-
-
     }
   }
 
-
   let storeinit = window.__STORE_INIT__ || getSession("storeInit");
-  console.log(window.__STORE_INIT__, "storeinit")
   let loginInfo = getSession("loginUserDetail");
   let menuparam = getSession("menuparams");
 
+  if ((!MenuParams?.FilterKey || MenuParams?.FilterKey === "") && menuparam) {
+    if (typeof menuparam === "object") {
+      MenuParams = { ...menuparam, ...MenuParams };
+    }
+  }
+
   const islogin = getSession("LoginUser") ?? false;
-
-
 
   const customerId = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.id ?? 0;
   const customerEmail = (storeinit?.IsB2BWebsite == 0 && islogin == false) || islogin == null ? visiterId : loginInfo?.userid ?? "";
-
-  // let diaQc = findDiaQcId(obj?.dia ?? loginInfo?.cmboDiaQCid)[0]
-  // let csQc = findCsQcId(obj?.cs ?? loginInfo?.cmboCSQCid)[0]
-  // let mtiddd =  obj?.mt === undefined ? loginInfo?.cmboMetalType : obj?.mt
-  // let mtid = findMetal(loginInfo?.cmboMetalType)[0]?.Metalid
-  // console.log("diaa prod api",mtid);
-
-  //   {
-  //     PackageId: "1",
-  //     autocode: "0000081",
-  //     designno: "D24705E",
-  //     FrontEnd_RegNo: "80kgizbiduw5e7gg",
-  //     Customerid: "10",
-  //     FilterKey: "Album",
-  //     FilterVal: "P15",
-  //     PageNo: "1",
-  //     PageSize: "50",
-  //     SortBy: "In Stock",
-  //     Laboursetid: "1",
-  //     diamondpricelistname: "Priyankdiam",
-  //     colorstonepricelistname: "Priyankcs",
-  //     SettingPriceUniqueNo: "1",
-  //     Metalid: "1",
-  //     DiaQCid: "1,2",
-  //     CsQCid": "7,4",
-  //     IsStockWebsite: "0",
-  //     Size: "9mm",
-  //     IsFromDesDet: "1"
-  // }
 
   let diaQc = (obj?.dia === undefined ? (loginInfo?.cmboDiaQCid ?? storeinit?.cmboDiaQCid) : obj?.dia)
   let csQc = (obj?.cs === undefined ? (loginInfo?.cmboCSQCid ?? storeinit?.cmboCSQCid) : obj?.cs)
@@ -107,15 +75,12 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
     ? filterObj.find(item => item.dropdownIndex === 4) || {}
     : [];
 
-  // const caratData = filterObj.find(item => item.dropdownIndex === 5);
-  // const ProductType = filterObj.find(item => item.dropdownIndex === 6);
-
   let foreveryPrice = priceData?.value
     ? { Minval: priceData.value[0], Maxval: priceData.value[1] }
     : {};
 
-  const hasValidMin = filterObj.PriceMin !== null && filterObj.PriceMin !== undefined;
-  const hasValidMax = filterObj.PriceMax !== null && filterObj.PriceMax !== undefined;
+  const hasValidMin = filterObj?.PriceMin !== null && filterObj?.PriceMin !== undefined;
+  const hasValidMax = filterObj?.PriceMax !== null && filterObj?.PriceMax !== undefined;
 
   const elveePrice = (hasValidMin || hasValidMax)
     ? {
@@ -126,6 +91,17 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
 
   const isNonEmptyObject = (obj) => obj && Object.keys(obj).length > 0;
 
+  const getFilterVal = (key) => {
+    if (!filterObj || typeof filterObj !== "object") return "";
+    const lowerKey = key.toLowerCase();
+    const lowerKeyId = `${lowerKey}id`;
+    const foundKey = Object.keys(filterObj).find((k) => {
+      const lk = k.toLowerCase();
+      return lk === lowerKey || lk === lowerKeyId;
+    });
+    return foundKey ? filterObj[foundKey] : "";
+  };
+
   const data = {
     PackageId: `${(loginInfo?.PackageId ?? storeinit?.PackageId) ?? ''}`,
     autocode: '',
@@ -133,8 +109,8 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
     Customerid: `${customerId ?? 0}`,
     designno: dno ?? '',
     Shape: `${Shape ?? ''}`,
-    FilterKey: `${MenuParams?.FilterKey ?? ""}`,
-    FilterVal: `${MenuParams?.FilterVal ?? ""}`,
+    FilterKey: `${MenuParams?.FilterKey ?? getFilterVal("filterkey") ?? ""}`,
+    FilterVal: `${MenuParams?.FilterVal ?? getFilterVal("filterval") ?? ""}`,
     FilterKey1: `${MenuParams?.FilterKey1 ?? ""}`,
     FilterVal1: `${MenuParams?.FilterVal1 ?? ""}`,
     FilterKey2: `${MenuParams?.FilterKey2 ?? ""}`,
@@ -145,14 +121,15 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
     Metalid: `${mtid ?? ''}`,
     DiaQCid: `${diaQc ?? ''}`,
     CsQCid: `${csQc ?? '0,0'}`,
-    Collectionid: `${filterObj?.collection ?? ""}`,
-    Categoryid: `${filterObj?.category ?? ""}`,
-    SubCategoryid: `${filterObj?.subcategory ?? ""}`,
-    Brandid: `${filterObj?.brand ?? ""}`,
-    Genderid: `${filterObj?.gender ?? ""}`,
-    Ocassionid: `${filterObj?.ocassion ?? ""}`,
-    Themeid: `${filterObj?.theme ?? ""}`,
-    Producttypeid: `${filterObj?.producttype ?? ""}`,
+    Collectionid: `${getFilterVal("collection")}`,
+    Categoryid: `${getFilterVal("category")}`,
+    SubCategoryid: `${getFilterVal("subcategory")}`,
+    Brandid: `${getFilterVal("brand")}`,
+    Genderid: `${getFilterVal("gender")}`,
+    Ocassionid: `${getFilterVal("ocassion") || getFilterVal("occasion")}`,
+    Themeid: `${getFilterVal("theme")}`,
+    Producttypeid: `${getFilterVal("producttype")}`,
+    Styleid: `${getFilterVal("style")}`,
     Min_DiaWeight: `${diaRange?.DiaMin ?? ""}`,
     Max_DiaWeight: `${diaRange?.DiaMax ?? ""}`,
     Min_GrossWeight: `${gross?.grossMin ?? ""}`,
@@ -192,7 +169,7 @@ const ProductListApi = async (filterObj = {}, page, obj = {}, mainData = "", vis
     IsFromDesDet: "",
     IsPLW: `${storeinit?.IsPLW ?? ''}`,
     DomainForNo: `${storeinit?.DomainForNo ?? ""}`,
-    AlbumName: album ?? "",
+    AlbumName: album || (MenuParams?.FilterKey === "AlbumName" ? MenuParams?.FilterVal : "") || "",
     TaxId: loginInfo?.TaxId || 0,
     "WebDiscount": islogin ? `${loginInfo?.WebDiscount ?? 0}` : `${0}`,
     IsZeroPriceProductShow: `${storeinit?.IsZeroPriceProductShow ?? 0}`,

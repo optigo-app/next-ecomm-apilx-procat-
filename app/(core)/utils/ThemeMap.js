@@ -38,4 +38,10 @@ export const themeMap = {
   "procatalog.web": {
     page: "fgstore.pro",
   },
+  "sonasons.procatalog.in": {
+    page: "fgstore.pro",
+  },
+  "laado.procatalog.in": {
+    page: "fgstore.pro",
+  }
 };
