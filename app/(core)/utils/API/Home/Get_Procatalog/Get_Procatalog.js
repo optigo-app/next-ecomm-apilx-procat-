@@ -1,8 +1,8 @@
 import { getSession } from "../../../FetchSessionData";
 import { CommonAPI } from "../../CommonAPI/CommonAPI";
 
-export const Get_Procatalog = async (storeinit, mode, customerID, ALCID, islogin) => {
-
+export const Get_Procatalog = async (storeinit, customerID, ALCID, islogin) => {
+    let  mode = "GET_Procatalog";
     let response;
     const ALCID_Value = ALCID > 0 ? ALCID : "";
     try {

@@ -165,7 +165,6 @@ const Album = () => {
         );
         const response = await Get_Procatalog(
           storeinit,
-          "GET_Procatalog",
           finalID,
           apiALC,
           islogin,

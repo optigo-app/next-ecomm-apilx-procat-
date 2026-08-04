@@ -1,5 +1,7 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import Cookies from "js-cookie";
+import { GetCountAPI } from "../utils/API/GetCount/GetCountAPI";
 import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -43,6 +45,24 @@ export function StoreProvider({ children, storeinit }) {
     }
   }, []);
 
+  const refreshCount = useCallback(async () => {
+    try {
+      const visiterId = Cookies.get("visiterId");
+      const res = await GetCountAPI(visiterId);
+      if (res) {
+        setCartCountNum(res.cartcount ?? 0);
+        setWishCountNum(res.wishcount ?? 0);
+      }
+    } catch (err) {
+      console.error("Error fetching count in StoreProvider:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    refreshCount();
+  }, [islogin, refreshCount, storeinit]);
+
   const value = {
     user,
     setUser,
@@ -51,6 +71,7 @@ export function StoreProvider({ children, storeinit }) {
     setCartCountNum,
     wishCountNum,
     setWishCountNum,
+    refreshCount,
     setislogin,
     loginUserDetail,
     setLoginUserDetail,
