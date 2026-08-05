@@ -1,12 +1,12 @@
-import { getThemeByDomain } from "../../(core)/constants/data";
+import { getThemeByDomain } from "@/app/(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
+import { resolveRefundPolicy } from "@/app/(core)/utils/ThemeRouteResolver";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
-  const { default: RefundPolicyComponent } = await import(`@/app/theme/${ACTIVE_THEME}/refundpolicy/page.js`);
-  return <RefundPolicyComponent hostname={hostname} />;
+  const RefundPolicyComponent = await resolveRefundPolicy(ACTIVE_THEME);
+  return <RefundPolicyComponent />;
 }
-

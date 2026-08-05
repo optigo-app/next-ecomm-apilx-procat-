@@ -163,3 +163,86 @@ export async function resolveContinueWithMobile(themePage) {
       return (await import("@/app/theme/fgstore.pro/Auth/ContinueWithMobile/page.js")).default;
   }
 }
+
+// --- Static / Marketing Pages ---
+
+export async function resolveAboutUs(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/AboutUs/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/AboutUs/page.js")).default;
+  }
+}
+
+export async function resolveContactUs(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/contactUs/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/contactUs/page.js")).default;
+  }
+}
+
+export async function resolvePrivacyPolicy(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/privacyPolicy/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/privacyPolicy/page.js")).default;
+  }
+}
+
+export async function resolveRefundPolicy(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/refundpolicy/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/refundpolicy/page.js")).default;
+  }
+}
+
+export async function resolveShippingPolicy(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/shippingPolicy/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/shippingPolicy/page.js")).default;
+  }
+}
+
+export async function resolveTermsAndConditions(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/TermsAndConditions/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/TermsAndConditions/page.js")).default;
+  }
+}
+
+export async function resolveAppointment(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/appointment/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/appointment/page.js")).default;
+  }
+}
+
+export async function resolveBespokeJewelry(themePage) {
+  switch (themePage) {
+    case "fgstore.pro.beta":
+      return (await import("@/app/theme/fgstore.pro.beta/bespoke-jewelry/page.js")).default;
+    case "fgstore.pro":
+    default:
+      return (await import("@/app/theme/fgstore.pro/bespoke-jewelry/page.js")).default;
+  }
+}
+
