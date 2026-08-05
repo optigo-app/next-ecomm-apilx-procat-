@@ -1,13 +1,13 @@
-import { getThemeByDomain } from "./(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
+import { getThemeByDomain } from "./(core)/constants/data";
+import { resolveHome } from "@/app/(core)/utils/ThemeRouteResolver";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
-  console.log('ACTIVE_THEME: ', ACTIVE_THEME);
-  const { default: HomeComponent } = await import(`@/app/theme/${ACTIVE_THEME}/home/page.jsx`);
+  const HomeComponent = await resolveHome(ACTIVE_THEME);
   return <HomeComponent />;
 }
 
