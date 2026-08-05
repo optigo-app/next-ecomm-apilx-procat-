@@ -1,4 +1,5 @@
-import { Poppins,DM_Sans ,Quicksand } from "next/font/google";
+import { Quicksand } from "next/font/google";
+// import { Poppins,DM_Sans ,Quicksand } from "next/font/google";
 import { getCompanyInfoData, getMyAccountFlags, getStoreInit } from "@/app/(core)/utils/GlobalFunctions/GlobalFunctions";
 import { MasterProvider } from "@/app/(core)/contexts/MasterProvider";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
@@ -13,19 +14,19 @@ import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
+// const poppins = Poppins({
+//   subsets: ["latin"],
+//   weight: ["300", "400", "500", "600", "700"],
+//   variable: "--font-poppins",
+//   display: "swap",
+// });
 
-const dm_sans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-dm-sans",
-  display: "swap",
-})
+// const dm_sans = DM_Sans({
+//   subsets: ["latin"],
+//   weight: ["300", "400", "500", "600", "700"],
+//   variable: "--font-dm-sans",
+//   display: "swap",
+// })
 
 const quick_sand = Quicksand({
   subsets: ["latin"],

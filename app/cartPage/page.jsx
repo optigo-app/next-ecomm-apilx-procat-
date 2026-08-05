@@ -1,5 +1,6 @@
 import { getThemeByDomain } from "../(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
+import { resolveCart } from "@/app/(core)/utils/ThemeRouteResolver";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,7 @@ export default async function Page({ params, searchParams }) {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
-  const { default: CartComponent } = await import(`@/app/theme/${ACTIVE_THEME}/cart/page.jsx`);
+  const CartComponent = await resolveCart(ACTIVE_THEME);
   return <CartComponent params={awaitedParams} searchParams={awaitedSearchParams} />;
 }
 

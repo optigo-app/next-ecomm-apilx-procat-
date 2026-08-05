@@ -1,5 +1,6 @@
-import { getThemeByDomain } from "../../(core)/constants/data";
+import { getThemeByDomain } from "@/app/(core)/constants/data";
 import { getDomainInfo } from "@/app/(core)/utils/getDomainInfo";
+import { resolveLoginOption } from "@/app/(core)/utils/ThemeRouteResolver";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,7 @@ const page = async ({ params, searchParams }) => {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const [awaitedParams, awaitedSearchParams] = await Promise.all([params, searchParams]);
-  const { default: LoginOptionComponent } = await import(`@/app/theme/${ACTIVE_THEME}/Auth/LoginOption/page.js`);
+  const LoginOptionComponent = await resolveLoginOption(ACTIVE_THEME);
   return <LoginOptionComponent params={awaitedParams} searchParams={awaitedSearchParams} />;
 };
 
