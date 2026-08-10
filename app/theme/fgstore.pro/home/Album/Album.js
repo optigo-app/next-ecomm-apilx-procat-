@@ -696,7 +696,7 @@ const Album = () => {
                                 },
                               }}
                             >
-                              REQUEST ACCESS
+                              ACCESS
                             </Button>
                           </Box>
                         )}

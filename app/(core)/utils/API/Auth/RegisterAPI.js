@@ -6,7 +6,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const RegisterAPI = async (firstName, lastName, email, mobileNo, hashedPassword, code, shortCode) => {
 
     let response;
-    const domainname = wesbiteDomainName;
+    const domainname = (typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName) || (typeof window !== 'undefined' ? window.location.host : '');
     try {
         const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
         const domainForNo = storeInit?.DomainForNo ?? "";
@@ -18,10 +18,6 @@ export const RegisterAPI = async (firstName, lastName, email, mobileNo, hashedPa
         // const combinedValue = JSON.stringify({
         //     firstname: `${firstName}`, lastname: `${lastName}`, userid: `${(email).toLocaleLowerCase()}`, country_code: code ?? "", mobileno: `${mobileNo}`, pass: `${hashedPassword}`, IsB2BWebsite: `${IsB2BWebsite}`, FrontEnd_RegNo: `${FrontEnd_RegNo}`, Customerid: '0', DomainForNo: domainForNo, domainname: domainname , Countrycodestate : shortCode ?? "IND"
         // });
-
-
-
-
 
         const encodedCombinedValue = btoa(combinedValue);
         const body = {

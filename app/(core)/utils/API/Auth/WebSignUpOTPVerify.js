@@ -4,7 +4,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const WebSignUpOTPVerify = async (userid, mobileno, OTP) => {
 
     let response;
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     try {
         const dp = {
             userid: userid || '',

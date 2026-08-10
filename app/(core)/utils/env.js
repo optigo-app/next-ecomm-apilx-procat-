@@ -22,6 +22,7 @@ export const PROCATALOG_DOMAINS = {
   JEWELIITA: "jeweliita.procatalog.in",
   FRANCISDIAMOND: "francisdiamonds.procatalog.in",
   SAKUNA: 'sakungems.procatalog.in',
+  LAADO: 'laado.procatalog.in',
   LOCAL: 'localhost:8012'
 };
 

@@ -6,7 +6,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const ForgotPasswordEmailAPI = async (Domian, email) => {
 
     let response
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     const storeInit = getSession('storeInit');
     const { FrontEnd_RegNo } = storeInit;
 

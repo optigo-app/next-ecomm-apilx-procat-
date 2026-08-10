@@ -2,7 +2,7 @@ import { wesbiteDomainName } from "../../Glob_Functions/GlobalFunction";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const BookAppointment = async (obj = {}) => {
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     const data = {
         "firstname": obj?.firstname || "",
         "lastname": obj?.lastname || "",

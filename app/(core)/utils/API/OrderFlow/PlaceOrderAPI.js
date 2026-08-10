@@ -3,7 +3,7 @@ import { wesbiteDomainName } from "../../Glob_Functions/GlobalFunction";
 import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const handlePaymentAPI = async (visiterId, islogin, mode) => {
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     try {
         const selectedAddressId = getSession('selectedAddressId');
         let storeInit = getSession("storeInit")
