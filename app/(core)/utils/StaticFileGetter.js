@@ -25,6 +25,7 @@ export const domainHtmlMap = {
   "francisdiamonds.procatalog.in": "francisdiamond",
   "sakungems.procatalog.in": "sakuna",
   "sonasons.procatalog.in": "sonasons",
+  "laado.procatalog.in": "sonasons",
 };
 
 const pageFileMap = {

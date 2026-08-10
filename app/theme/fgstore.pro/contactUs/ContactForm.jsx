@@ -15,7 +15,7 @@ export default function ContactForm() {
     InQuirySubject: "",
     Be_In_Message: "",
     Themeno: "1",
-    domainname: wesbiteDomainName,
+    domainname: typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName,
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -66,7 +66,7 @@ export default function ContactForm() {
           InQuirySubject: "",
           Be_In_Message: "",
           Themeno: "1",
-          domainname: wesbiteDomainName,
+          domainname: typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName,
         });
       } else {
         toast.error("Something went wrong");

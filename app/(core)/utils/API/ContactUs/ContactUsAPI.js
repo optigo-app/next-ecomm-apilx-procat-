@@ -2,7 +2,7 @@ import { wesbiteDomainName } from "../../Glob_Functions/GlobalFunction";
 import { CommonFileAPI } from "../CommonAPI/CommonFileAPI";
 
 export const ContactUsAPI = async (obj = {}) => {
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     const data = {
         "FullName": obj?.FullName || "",
         "InQuiryCompanyName": obj?.InQuiryCompanyName || '',

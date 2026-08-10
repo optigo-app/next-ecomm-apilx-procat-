@@ -7,7 +7,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const ContimueWithMobileAPI = async (mobileNo, code) => {
 
     let response;
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     try {
         const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
         const { FrontEnd_RegNo } = storeInit;

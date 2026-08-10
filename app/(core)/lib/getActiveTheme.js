@@ -5,7 +5,6 @@ export async function getActiveTheme() {
   const { hostname } = await getDomainInfo();
   
   const cleanHost = hostname.split(":")[0];
-  console.log("🚀 ~ getActiveTheme ~ cleanHost:", cleanHost)
 
   const isLocalhost = cleanHost === "localhost" || cleanHost === "127.0.0.1" || cleanHost.endsWith(".localhost");
   if (isLocalhost) {

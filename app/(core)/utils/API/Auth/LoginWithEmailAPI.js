@@ -5,7 +5,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 
 export const LoginWithEmailAPI = async (email, mobileNo, hashedPassword, ismobiletoke, userCookie, visiterId) => {
     let response
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     try {
         const storeInit = (typeof window !== 'undefined' && window.__STORE_INIT__) ? window.__STORE_INIT__ : getSession('storeInit');
         const combinedValue = JSON.stringify({

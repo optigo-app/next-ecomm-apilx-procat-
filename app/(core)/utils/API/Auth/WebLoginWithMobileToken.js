@@ -4,7 +4,7 @@ import { CommonAPI } from "../CommonAPI/CommonAPI";
 export const WebLoginWithMobileToken = async (ismobiletoke) => {
 
     let response
-    const domainname = wesbiteDomainName;
+    const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
     try {
         const combinedValue = JSON.stringify({
             userid: '', mobileno: '', pass: '', mobiletoken: `${ismobiletoke}`, FrontEnd_RegNo: '', domainname: domainname

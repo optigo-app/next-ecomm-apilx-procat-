@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Francis Diamonds | Contact Us</title>
+    <meta name="description" content="Contact Francis Diamonds, a trusted manufacturer of elegant diamond jewellery in Thrissur.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        .main-content {
+            display: flex;
+            justify-content: center;
+        }
+
+        .content-card {
+            background-color: #ffffff;
+            width: 100%;
+        }
+
+        /* Page Title Banner */
+        .page-banner {
+            background-color: #f7f7f7;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .page-banner h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.3px;
+        }
+
+        /* Contact Section Grid */
+        .contact-section {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Map Styles */
+        .map-wrapper {
+            width: 100%;
+            height: 450px;
+            background-color: #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        /* Contact Info Styles */
+        .contact-info-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+
+        .info-value {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #111;
+            font-weight: 500;
+        }
+
+        .info-value a {
+            color: #111;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .info-value a:hover {
+            color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .map-button-wrapper {
+            grid-column: 1 / -1; /* Make button span full width if needed, or just normal */
+            display: flex;
+        }
+
+        .map-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 14px 28px;
+            background-color: #111;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s ease;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .map-button:hover {
+            background-color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .contact-section {
+                padding: 40px;
+            }
+            .map-wrapper {
+                height: 350px;
+            }
+            .contact-info-wrapper {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0 20px 40px 20px;
+            }
+            .contact-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="content-card">
+            <!-- Contact Grid Layout -->
+            <section class="contact-section">
+                
+                <!-- Top Row: Full Embedded Map -->
+                <div class="map-wrapper">
+                    <!-- Generic Thrissur Embed Map (Used as placeholder, perfectly fits the UI) -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15693.307238260215!2d76.2166!3d10.5276!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7ee15ed42d1bb%3A0x82e45aa016ca7db!2sThrissur%2C%20Kerala%2C%20India!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+
+                <!-- Bottom Row: Contact Details in 2x2 Grid -->
+                <div class="contact-info-wrapper">
+                    
+                    <div class="info-block">
+                        <span class="info-label">Company Name</span>
+                        <span class="info-value">Francis Diamonds</span>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value">
+                            <a href="mailto:charles@francisdiamonds.com">charles@francisdiamonds.com</a>
+                        </span>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-label">Phone Number</span>
+                        <span class="info-value">
+                            <a href="tel:04872444916">0487 244 4916</a>
+                        </span>
+                    </div>
+
+                    <div class="info-block">
+                        <span class="info-label">Office Address</span>
+                        <span class="info-value">
+                            Francis Diamonds, 27/1169/5,6,7,<br>
+                            Pallikunnan Square, Ancheri Chira<br>
+                            Thrissur - 680006
+                        </span>
+                    </div>
+                </div>
+
+            </section>
+            
+        </div>
+    </main>
+
+</body>
+</html>

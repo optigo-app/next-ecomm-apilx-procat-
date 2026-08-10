@@ -66,7 +66,8 @@ export const domainHtmlMap = {
     "localhost:8012": FRANCIS_FOOTER_LINKS,
     "francisdiamonds.procatalog.in": FRANCIS_FOOTER_LINKS,
     'sakungems.procatalog.in': DEFAULT_FOOTER_LINKS,
-    "sonasons.procatalog.in": DEFAULT_FOOTER_LINKS
+    "sonasons.procatalog.in": DEFAULT_FOOTER_LINKS,
+    "laado.procatalog.in": DEFAULT_FOOTER_LINKS
 };
 
 export function getFooterLinks(host) {

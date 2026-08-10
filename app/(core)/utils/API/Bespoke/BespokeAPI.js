@@ -3,7 +3,7 @@ import { CommonFileAPI } from "../CommonAPI/CommonFileAPI";
 
 export const BespokeAPI = async (obj = {}, fileMeta = {},ukey) => {
 
-  const domainname = wesbiteDomainName;
+  const domainname = typeof wesbiteDomainName === 'function' ? wesbiteDomainName() : wesbiteDomainName;
 
   const data = {
     FullName: obj?.FullName || "",
