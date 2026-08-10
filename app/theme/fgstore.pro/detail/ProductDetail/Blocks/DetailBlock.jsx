@@ -93,7 +93,7 @@ const DetailBlock = ({
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
     const IsMultiVariantCart = storeInit?.IsMultiVariantCart == 1;
-    const IsRemarkOnProductDetail = storeInit?.IsRemarkOnProductDetail == 1;
+    const IsRemarkOnProductDetail = storeInit?.IsRemarkOnProductDetail != 1;
 
     const checkScrollability = () => {
         const el = thumbScrollRef.current;
