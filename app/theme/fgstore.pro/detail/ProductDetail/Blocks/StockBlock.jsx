@@ -1,232 +1,308 @@
-import { Checkbox, FormControlLabel } from "@mui/material";
-import LocalMallOutlinedIcon from "@mui/icons-material/LocalMallOutlined";
-import LocalMallIcon from "@mui/icons-material/LocalMall";
+"use client";
+import React from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Chip,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 
-const StockBlock = ({ stockItemArr = [], storeInit, loginInfo, imageStates, imageNotFound, isPriceloading, formatter, cartArr, handleCartandWish }) => {
+const StockBlock = ({
+  stockItemArr = [],
+  storeInit,
+  loginInfo,
+  imageStates = {},
+  imageNotFound,
+  isPriceloading,
+  formatter,
+  cartArr = {},
+  handleCartandWish,
+}) => {
+  if (
+    !stockItemArr?.length ||
+    stockItemArr?.[0]?.stat_code == 1005 ||
+    storeInit?.IsStockWebsite !== 1
+  ) {
+    return null;
+  }
+
+  const formatPrice = (val) => {
+    if (val == null) return "0";
+    if (typeof formatter?.format === "function") {
+      return formatter.format(val);
+    }
+    if (typeof formatter === "function") {
+      return formatter(val);
+    }
+    return Number(val).toLocaleString();
+  };
+
+  const currencyCode = loginInfo?.CurrencyCode ?? storeInit?.CurrencyCode ?? "INR";
+
   return (
-    <>
-      {stockItemArr?.length > 0 && stockItemArr?.[0]?.stat_code != 1005 && storeInit?.IsStockWebsite === 1 && (
-        <div className="proCat_stockItem_div">
-          <p className="proCat_details_title"> Stock Items </p>
-          <div className="proCat_stockitem_container">
-            <div className="proCat_stock_item_card">
-              {stockItemArr?.map((ele) => (
-                <div className="proCat_stockItemCard">
-                  <div className="cart_and_wishlist_icon"></div>
-                  <img
-                    className="procat_productCard_Image"
-                    // src={
-                    //   storeInit?.CDNDesignImageFol +
-                    //   ele?.designno +
-                    //   "~" +
-                    //   "1" +
-                    //   "." +
-                    //   ele?.ImageExtension
-                    // }
-                    src={imageStates[ele.StockId] || imageNotFound}
-                    alt={""}
-                    onError={(e) => (e.target.src = imageNotFound)}
-                  />
-                  <div
-                    className="proCat_stockutem_shortinfo"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
+    <Box sx={{ mt: 6, mb: 4, width: "100%" }}>
+      {/* Section Title */}
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontSize: "20px",
+            fontWeight: 700,
+            color: "#111111",
+            letterSpacing: "0.5px",
+            textTransform: "uppercase",
+          }}
+        >
+          Stock Items
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#777777", fontSize: "13px", mt: 0.5 }}>
+          Available pieces ready for instant delivery
+        </Typography>
+      </Box>
+
+      {/* Stock Cards Grid */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+          gap: 2.5,
+        }}
+      >
+        {stockItemArr.map((ele) => {
+          const isInCart = Boolean(cartArr[ele?.StockId] ?? ele?.IsInCart === 1);
+          const imgSrc = imageStates[ele?.StockId] || imageNotFound;
+
+          return (
+            <Box
+              key={ele?.StockId || ele?.StockBarcode}
+              sx={{
+                position: "relative",
+                borderRadius: "16px",
+                border: "1.5px solid #E5E5E5",
+                bgcolor: "#FFFFFF",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                "&:hover": {
+                  border: "1.5px solid #000000",
+                  boxShadow: "0 0 0 1px #000000, 0 8px 24px rgba(0, 0, 0, 0.08)",
+                  transform: "translateY(-4px)",
+                  "& .stock-card-img": {
+                    transform: "scale(1.05)",
+                  },
+                },
+              }}
+            >
+              {/* Product Image Container */}
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "100%",
+                  pt: "100%", // 1:1 Aspect ratio
+                  bgcolor: "#FAFAFA",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  component="img"
+                  className="stock-card-img"
+                  src={imgSrc}
+                  alt={ele?.designno || "Stock Item"}
+                  onError={(e) => {
+                    e.target.src = imageNotFound;
+                  }}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    transition: "transform 0.3s ease",
+                  }}
+                />
+
+                {/* Quick Add To Cart Icon Badge */}
+                <Tooltip title={isInCart ? "Remove from cart" : "Add to cart"}>
+                  <IconButton
+                    onClick={(e) => handleCartandWish?.(e, ele, "Cart")}
+                    sx={{
+                      position: "absolute",
+                      top: 12,
+                      right: 12,
+                      bgcolor: isInCart ? "#000000" : "rgba(255, 255, 255, 0.9)",
+                      color: isInCart ? "#FFFFFF" : "#111111",
+                      backdropFilter: "blur(4px)",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                      "&:hover": {
+                        bgcolor: isInCart ? "#222222" : "#FFFFFF",
+                      },
+                    }}
+                    size="small"
+                  >
+                    {isInCart ? (
+                      <ShoppingBagIcon sx={{ fontSize: 18 }} />
+                    ) : (
+                      <ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </Box>
+
+              {/* Card Details Content */}
+              <Box
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                  gap: 1.2,
+                }}
+              >
+                {/* Design No & Stock Barcode */}
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "#111111",
+                      lineHeight: 1.2,
                     }}
                   >
-                    <span className="proCat_prod_designno">{ele?.designno + "  " + "(" + ele?.StockBarcode + ")"}</span>
-                    <div className="proCat_prod_Allwt">
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <span className="proCat_prod_wt">
-                          <span
-                            className="proCat_d_keys"
-                            style={{
-                              fontSize: "12px",
-                            }}
-                          >
-                            NWT:
-                          </span>
-                          <span
-                            className="proCat_d_val"
-                            style={{
-                              fontSize: "12px",
-                            }}
-                          >
-                            {ele?.NetWt}
-                          </span>
-                        </span>
-
-                        {storeInit?.IsGrossWeight == 1 && Number(ele?.GrossWt) !== 0 && (
-                          <>
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                padding: "0 2px",
-                              }}
-                            >
-                              |
-                            </span>
-                            <span className="proCat_prod_wt">
-                              <span
-                                className="proCat_d_keys"
-                                style={{
-                                  fontSize: "12px",
-                                }}
-                              >
-                                GWT:
-                              </span>
-                              <span className="proCat_d_val">{ele?.GrossWt}</span>
-                            </span>
-                          </>
-                        )}
-                        {storeInit?.IsDiamondWeight == 1 && Number(ele?.DiaWt) !== 0 && (
-                          <>
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                padding: "0 2px",
-                              }}
-                            >
-                              |
-                            </span>
-                            <span className="proCat_prod_wt">
-                              <span
-                                className="proCat_d_keys"
-                                style={{
-                                  fontSize: "12px",
-                                }}
-                              >
-                                DWT:
-                              </span>
-                              <span
-                                className="proCat_d_val"
-                                style={{
-                                  fontSize: "12px",
-                                }}
-                              >
-                                {ele?.DiaWt}
-                                {storeInit?.IsDiamondPcs === 1 ? `/${ele?.DiaPcs}` : null}
-                              </span>
-                            </span>
-                          </>
-                        )}
-
-                        {storeInit?.IsStoneWeight == 1 && Number(ele?.CsWt) !== 0 && (
-                          <>
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                padding: "0 2px",
-                              }}
-                            >
-                              |
-                            </span>
-                            <span className="proCat_prod_wt">
-                              <span
-                                className="proCat_d_keys"
-                                style={{
-                                  fontSize: "12px",
-                                }}
-                              >
-                                CWT:
-                              </span>
-                              <span
-                                className="proCat_d_val"
-                                style={{
-                                  fontSize: "12px",
-                                }}
-                              >
-                                {ele?.CsWt}
-                                {storeInit?.IsStonePcs === 1 ? `/${ele?.CsPcs}` : null}
-                              </span>
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
+                    {ele?.designno || "Job No."}
+                  </Typography>
+                  {ele?.StockBarcode && (
+                    <Typography
+                      sx={{
+                        fontSize: "11px",
+                        color: "#777777",
+                        fontWeight: 500,
+                        mt: 0.2,
                       }}
-                      className="proCat_stockItem_price_type_mt"
                     >
-                      {storeInit?.IsMetalTypeWithColor == 1 ? `${ele?.metalPurity}-${ele?.MetalColorName}` : ""}{" "}
-                      <span
-                        style={{
-                          padding: "0 4px",
-                        }}
-                      >
-                        /
-                      </span>
-                      {storeInit?.IsPriceShow == 1 && (
-                        <div
-                          style={{
-                            fontWeight: "600",
-                          }}
-                        >
-                          {isPriceloading ? "" : <span className="proCat_currencyFont">{loginInfo?.CurrencyCode ?? storeInit?.CurrencyCode}</span>}
-                          &nbsp;
-                          {formatter.format(ele?.Amount)}
-                        </div>
-                      )}
-                    </div>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          icon={
-                            <LocalMallOutlinedIcon
-                              sx={{
-                                fontSize: "22px",
-                                color: "#594646",
-                              }}
-                              className="btnColorSvg"
-                            />
-                          }
-                          checkedIcon={
-                            <LocalMallIcon
-                              sx={{
-                                fontSize: "22px",
-                                color: "#474747d1",
-                              }}
-                              className="btnColorRemoveSvg"
-                            />
-                          }
-                          disableRipple={false}
-                          onChange={(e) => handleCartandWish(e, ele, "Cart")}
-                          checked={(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? true : false}
-                        />
-                      }
-                      label={(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? <span className="color_jeweliita__footer">Remove From Cart</span> : <span className="">Add To Cart</span>}
-                      // For pink one
-                      // className={`${ele?.IsInCart === 1 ? 'btnColorProCatProductRemoveCart' : 'btnColorProCatProduct'} procat_cart_btn`}
-                      style={{
-                        marginInline: 0,
-                      }}
-                      // For blue one
-                      className={`
-                                  ${(cartArr[ele?.StockId] ?? ele?.IsInCart === 1) ? "btnColorProCatProductRemoveCart" : "btnColorProCatProduct"}
-                                    procat_cart_btn
-                                    `}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+                      Barcode: {ele?.StockBarcode}
+                    </Typography>
+                  )}
+                </Box>
+
+                {/* Metal Purity & Color */}
+                {(ele?.metalPurity || ele?.MetalColorName) && (
+                  <Chip
+                    label={`${ele?.metalPurity || ""}${
+                      ele?.metalPurity && ele?.MetalColorName ? " - " : ""
+                    }${ele?.MetalColorName || ""}`}
+                    size="small"
+                    sx={{
+                      alignSelf: "flex-start",
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: "#F2F4F7",
+                      color: "#344054",
+                      borderRadius: "6px",
+                    }}
+                  />
+                )}
+
+                {/* Weight Details Row */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 0.8,
+                    fontSize: "11px",
+                    color: "#555555",
+                    fontWeight: 500,
+                    bgcolor: "#FAF9F6",
+                    p: 1,
+                    borderRadius: "8px",
+                  }}
+                >
+                  {ele?.NetWt != null && (
+                    <Box>
+                      <strong style={{ color: "#111" }}>NWT:</strong> {ele?.NetWt}
+                    </Box>
+                  )}
+
+                  {storeInit?.IsGrossWeight === 1 &&
+                    Number(ele?.GrossWt) !== 0 && (
+                      <Box>
+                        | <strong style={{ color: "#111" }}>GWT:</strong> {ele?.GrossWt}
+                      </Box>
+                    )}
+
+                  {storeInit?.IsDiamondWeight === 1 &&
+                    Number(ele?.DiaWt) !== 0 && (
+                      <Box>
+                        | <strong style={{ color: "#111" }}>DWT:</strong> {ele?.DiaWt}
+                        {storeInit?.IsDiamondPcs === 1 ? `/${ele?.DiaPcs}` : ""}
+                      </Box>
+                    )}
+
+                  {storeInit?.IsStoneWeight === 1 &&
+                    Number(ele?.CsWt) !== 0 && (
+                      <Box>
+                        | <strong style={{ color: "#111" }}>CWT:</strong> {ele?.CsWt}
+                        {storeInit?.IsStonePcs === 1 ? `/${ele?.CsPcs}` : ""}
+                      </Box>
+                    )}
+                </Box>
+
+                {/* Price Display */}
+                {storeInit?.IsPriceShow === 1 && (
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      color: "#000000",
+                      mt: "auto",
+                      pt: 0.5,
+                    }}
+                  >
+                    <span className="elv_currencyFont">{currencyCode}</span>{" "}
+                    {formatPrice(ele?.Amount)}
+                  </Typography>
+                )}
+
+                {/* Action Button */}
+                <Button
+                  fullWidth
+                  variant={isInCart ? "contained" : "outlined"}
+                  onClick={(e) => handleCartandWish?.(e, ele, "Cart")}
+                  sx={{
+                    mt: 1,
+                    height: 38,
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    bgcolor: isInCart ? "#000000" : "transparent",
+                    color: isInCart ? "#FFFFFF" : "#000000",
+                    borderColor: "#000000",
+                    "&:hover": {
+                      bgcolor: isInCart ? "#222222" : "#F5F5F5",
+                      borderColor: "#000000",
+                    },
+                  }}
+                >
+                  {isInCart ? "Remove from cart" : "Add to cart"}
+                </Button>
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
   );
 };
 

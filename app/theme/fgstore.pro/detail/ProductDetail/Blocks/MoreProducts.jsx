@@ -34,9 +34,11 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
           sx={{
             mb: 4,
             textAlign: "center",
-            color: "#7d7f85",
-            fontSize: "30px",
-            fontWeight: 400,
+            color: "#111111",
+            fontSize: "24px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
           }}
         >
           More Products
@@ -78,39 +80,92 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
             style={{ paddingBottom: "20px" }}
           >
             {filteredImageData.map((ele, index) => (
-              <SwiperSlide key={ele?.autocode}>
-                <Box sx={{ py: 1 }}>
+              <SwiperSlide key={ele?.autocode || index}>
+                <Box sx={{ py: 1, px: 0.5 }}>
                   <Card
                     elevation={0}
                     sx={{
-                      borderRadius: 3,
-                      transition: "0.3s ease",
-                      border: singleProd?.designno === ele?.designno ? "1px solid #d8a4a4" : "1px solid transparent",
-                      bgcolor: "#bebebe3b",
+                      borderRadius: "16px",
+                      border: singleProd?.designno === ele?.designno ? "2px solid #000000" : "1.5px solid #E5E5E5",
+                      bgcolor: "#FFFFFF",
+                      overflow: "hidden",
+                      transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                      "&:hover": {
+                        border: "1.5px solid #000000",
+                        boxShadow: "0 0 0 1px #000000, 0 8px 24px rgba(0, 0, 0, 0.08)",
+                        transform: "translateY(-4px)",
+                        "& .more-product-img": {
+                          transform: "scale(1.05)",
+                        },
+                      },
                     }}
                   >
-                    <CardActionArea onClick={() => {
-                      const originalIndex = imageData.findIndex((item) => item.designno === ele.designno);
-                      handleMoveToDetail(ele, originalIndex !== -1 ? originalIndex : index);
-                    }}>
-                      <CardMedia
-                        component="img"
-                        image={ele?.imageSrc}
-                        alt={ele?.TitleLine}
-                        loading="eager"
-                        onError={(e) => {
-                          e.target.src = imageNotFound;
-                        }}
+                    <CardActionArea
+                      onClick={() => {
+                        const originalIndex = imageData.findIndex((item) => item.designno === ele.designno);
+                        handleMoveToDetail(ele, originalIndex !== -1 ? originalIndex : index);
+                      }}
+                    >
+                      <Box
                         sx={{
-                          aspectRatio: "1 / 1",
-                          objectFit: "cover",
+                          position: "relative",
+                          width: "100%",
+                          pt: "100%",
+                          bgcolor: "#FAFAFA",
+                          overflow: "hidden",
                         }}
-                      />
+                      >
+                        <Box
+                          component="img"
+                          className="more-product-img"
+                          src={ele?.imageSrc}
+                          alt={ele?.TitleLine || ele?.designno}
+                          loading="eager"
+                          onError={(e) => {
+                            e.target.src = imageNotFound;
+                          }}
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            transition: "transform 0.3s ease",
+                          }}
+                        />
+                      </Box>
 
-                      <CardContent sx={{ textAlign: "center", py: 2 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                      <CardContent sx={{ textAlign: "center", py: 2, px: 1.5, bgcolor: "#FFFFFF" }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "14px",
+                            color: "#111111",
+                            letterSpacing: "0.3px",
+                            textTransform: "uppercase",
+                          }}
+                        >
                           {ele?.designno}
                         </Typography>
+                        {ele?.TitleLine && (
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              display: "block",
+                              color: "#777777",
+                              fontSize: "12px",
+                              fontWeight: 500,
+                              mt: 0.3,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {ele?.TitleLine}
+                          </Typography>
+                        )}
                       </CardContent>
                     </CardActionArea>
                   </Card>

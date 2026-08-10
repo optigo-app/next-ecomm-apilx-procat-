@@ -4,7 +4,18 @@ import "./Productdetail.scss";
 import Pako from "pako";
 import { SingleProdListAPI } from "@/app/(core)/utils/API/SingleProdListAPI/SingleProdListAPI";
 import { SingleFullProdPriceAPI } from "@/app/(core)/utils/API/SingleFullProdPriceAPI/SingleFullProdPriceAPI";
-import { Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControlLabel, Skeleton, Typography, useMediaQuery } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Skeleton,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { MetalTypeComboAPI } from "@/app/(core)/utils/API/Combo/MetalTypeComboAPI";
 import { DiamondQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/DiamondQualityColorComboAPI";
 import { ColorStoneQualityColorComboAPI } from "@/app/(core)/utils/API/Combo/ColorStoneQualityColorComboAPI";
@@ -23,7 +34,14 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 
-import { Navigation, Pagination, Scrollbar, A11y, FreeMode, Keyboard } from "swiper/modules";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  FreeMode,
+  Keyboard,
+} from "swiper/modules";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -41,7 +59,11 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { GoChevronLeft } from "react-icons/go";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { HiOutlineChevronLeft } from "react-icons/hi2";
-import { formatRedirectTitleLine, formatTitleLine, storImagePath } from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
+import {
+  formatRedirectTitleLine,
+  formatTitleLine,
+  storImagePath,
+} from "@/app/(core)/utils/Glob_Functions/GlobalFunction";
 import { SaveLastViewDesign } from "@/app/(core)/utils/API/SaveLastViewDesign/SaveLastViewDesign";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import { useMaster } from "@/app/(core)/contexts/MasterProvider";
@@ -53,11 +75,20 @@ import DetailBlock from "./Blocks/DetailBlock";
 import { getSession } from "@/app/(core)/utils/FetchSessionData";
 import { updateQuantity } from "@/app/(core)/utils/API/CartAPI/QuantityAPI";
 import { handleProductRemark } from "@/app/(core)/utils/API/CartAPI/ProductRemarkAPIData";
+import DetailBreadcrumb from "./Blocks/DetailBreadcrumb";
+import LeftSide from "./Blocks/LeftSide";
+import RightSide from "./Blocks/RightSide";
 
 const imageNotFound = "/image-not-found.jpg";
 
 const ProductDetail = ({ params, searchParams, storeInit }) => {
-  const { islogin, setCartCountNum, setWishCountNum, SoketData, loginUserDetail } = useStore();
+  const {
+    islogin,
+    setCartCountNum,
+    setWishCountNum,
+    SoketData,
+    loginUserDetail,
+  } = useStore();
   const { comboReady } = useMaster();
   let location = useNextRouterLikeRR();
   let navigate = useNextRouterLikeRR();
@@ -110,6 +141,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const [cartArr, setCartArr] = useState({});
   let cookie = Cookies.get("visiterId");
   const [isImageLoaded, setIsImageLoaded] = useState(true);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const [SelectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const decodeAndDecompress = (encodedString) => {
     try {
@@ -125,7 +158,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       const base64 = decoded.replace(/-/g, "+").replace(/_/g, "/");
 
-      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+      const padded = base64.padEnd(
+        base64.length + ((4 - (base64.length % 4)) % 4),
+        "=",
+      );
 
       const binaryString = atob(padded);
 
@@ -149,7 +185,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let result = [];
     try {
       // Path 1: Next.js 15 resolved searchParams object — direct key access
-      if (searchParams && typeof searchParams === "object" && !searchParams.value) {
+      if (
+        searchParams &&
+        typeof searchParams === "object" &&
+        !searchParams.value
+      ) {
         let pValue = searchParams?.p;
         if (pValue) {
           pValue = String(pValue).replace(/ /g, "+");
@@ -163,12 +203,22 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       try {
         parsed = JSON.parse(searchParams.value);
       } catch (jsonError) {
-        console.error("❌ Invalid JSON in searchParams.value:", searchParams.value, jsonError);
+        console.error(
+          "❌ Invalid JSON in searchParams.value:",
+          searchParams.value,
+          jsonError,
+        );
         return result;
       }
       if (!parsed || typeof parsed !== "object") return result;
       result = Object.entries(parsed)
-        .filter(([key, value]) => value !== undefined && value !== null && value !== "undefined" && value !== "null")
+        .filter(
+          ([key, value]) =>
+            value !== undefined &&
+            value !== null &&
+            value !== "undefined" &&
+            value !== "null",
+        )
         .map(([key, rawValue]) => {
           try {
             let fixed = String(rawValue).replace(/ /g, "+");
@@ -182,11 +232,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             const reEncoded = btoa(decoded);
             return `${key}=${reEncoded}`;
           } catch (err) {
-            console.error(`❌ Error decoding key "${key}" with value "${rawValue}":`, err);
+            console.error(
+              `❌ Error decoding key "${key}" with value "${rawValue}":`,
+              err,
+            );
             return null;
           }
         })
-        .filter(item => item !== null);
+        .filter((item) => item !== null);
     } catch (err) {
       console.error("❌ parseSearchParams failed:", err);
     }
@@ -195,7 +248,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const result = parseSearchParams();
-  let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+  let navVal = result[0]
+    ? result[0].substring(result[0].indexOf("=") + 1)
+    : undefined;
   let decodeobj = decodeAndDecompress(navVal);
 
   const innerSwiperRef = useRef(null);
@@ -227,7 +282,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     const checkTextOverflow = () => {
       const descriptionElement = descriptionRef.current;
       if (descriptionElement) {
-        const isOverflowing = descriptionElement.scrollHeight > descriptionElement.clientHeight;
+        const isOverflowing =
+          descriptionElement.scrollHeight > descriptionElement.clientHeight;
         setIsClamped(isOverflowing);
       }
     };
@@ -278,14 +334,29 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       if (!allListData) {
         const result = parseSearchParams();
-        let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+        let navVal = result[0]
+          ? result[0].substring(result[0].indexOf("=") + 1)
+          : undefined;
         let decodeobj = decodeAndDecompress(navVal);
         let obj = { mt: decodeobj?.m, dia: decodeobj?.d, cs: decodeobj?.c };
 
         try {
-          const res = await ProductListApi(decodeobj?.f, 1, obj, decodeobj?.pl, cookie, decodeobj?.sb, decodeobj?.di, decodeobj?.ne, decodeobj?.gr);
-          console.log(res, "266 detail alldata")
-          let data = sessionStorage.setItem("deatilSliderData", JSON.stringify(res?.pdList));
+          const res = await ProductListApi(
+            decodeobj?.f,
+            1,
+            obj,
+            decodeobj?.pl,
+            cookie,
+            decodeobj?.sb,
+            decodeobj?.di,
+            decodeobj?.ne,
+            decodeobj?.gr,
+          );
+          console.log(res, "266 detail alldata");
+          let data = sessionStorage.setItem(
+            "deatilSliderData",
+            JSON.stringify(res?.pdList),
+          );
           if (data) {
             allListData = sessionStorage.getItem("deatilSliderData");
           }
@@ -297,7 +368,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       if (allListData) {
         try {
           allListData = JSON.parse(allListData);
-          console.log(allListData, "266 detail alldata")
+          console.log(allListData, "266 detail alldata");
 
           if (Array.isArray(allListData) && allListData.length > 0) {
             // console.log("Valid array data:", allListData);
@@ -321,7 +392,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
         if (product?.ImageCount > 0) {
           for (let i = 1; i <= product?.ImageCount; i++) {
-            pdImgList.push(`${storeInit?.CDNDesignImageFol}${product?.designno}~${i}.${product?.ImageExtension}`);
+            pdImgList.push(
+              `${storeInit?.CDNDesignImageFol}${product?.designno}~${i}.${product?.ImageExtension}`,
+            );
           }
         } else {
           pdImgList.push(imageNotFound);
@@ -330,7 +403,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         let StatusId = product?.StatusId ?? 0;
 
         if (SoketData && SoketData?.length !== 0) {
-          const filterdata = SoketData?.find((ele) => ele?.designno === product?.designno);
+          const filterdata = SoketData?.find(
+            (ele) => ele?.designno === product?.designno,
+          );
           StatusId = filterdata?.StatusId ?? 0;
         }
 
@@ -343,7 +418,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       // Process image data asynchronously
       const fetchImageData = async () => {
-        if (!Array.isArray(finalProdWithPrice) || finalProdWithPrice.length === 0) {
+        if (
+          !Array.isArray(finalProdWithPrice) ||
+          finalProdWithPrice.length === 0
+        ) {
           console.error("finalProdWithPrice is not a valid array or is empty");
           return;
         }
@@ -384,7 +462,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     // Check if the `singleProd?.designno` matches any slide's designno
-    const matchingIndex = imageData.findIndex((ele) => ele?.designno === singleProd?.designno);
+    const matchingIndex = imageData.findIndex(
+      (ele) => ele?.designno === singleProd?.designno,
+    );
 
     // If there's a match, programmatically slide to that slide
     if (matchingIndex !== -1) {
@@ -399,13 +479,23 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let storeinitInside = storeInit;
     let logininfoInside = loginUserDetail;
 
-    let metal = metalTypeCombo?.filter((ele) => ele?.metaltype == selectMtType)[0];
+    let metal = metalTypeCombo?.filter(
+      (ele) => ele?.metaltype == selectMtType,
+    )[0];
     // ??
     // metalTypeCombo[0];
-    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc?.split(",")[0] && ele?.color == selectDiaQc?.split(",")[1]);
+    let dia = diaQcCombo?.filter(
+      (ele) =>
+        ele?.Quality == selectDiaQc?.split(",")[0] &&
+        ele?.color == selectDiaQc?.split(",")[1],
+    );
     // ??
     // diaQcCombo[0];
-    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1]);
+    let cs = csQcCombo?.filter(
+      (ele) =>
+        ele?.Quality == selectCsQc?.split(",")[0] &&
+        ele?.color == selectCsQc?.split(",")[1],
+    );
     // ??
     // csQcCombo[0];
 
@@ -417,20 +507,29 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       if (selectMtColor) {
         return ele?.colorcode == selectMtColor;
       } else {
-        return ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid);
+        return (
+          ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid)
+        );
       }
     })[0];
 
     let prodObj = {
       autocode: singleProd1?.autocode ?? singleProd?.autocode,
-      Metalid: metal?.Metalid ? metal?.Metalid : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
+      Metalid: metal?.Metalid
+        ? metal?.Metalid
+        : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
       MetalColorId: mcArr?.id ?? singleProd?.MetalColorid,
-      DiaQCid: dia?.length ? `${dia[0]?.QualityId},${dia[0]?.ColorId}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
-      CsQCid: cs?.length ? `${cs[0]?.QualityId},${cs[0]?.ColorId}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
+      DiaQCid: dia?.length
+        ? `${dia[0]?.QualityId},${dia[0]?.ColorId}`
+        : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
+      CsQCid: cs?.length
+        ? `${cs[0]?.QualityId},${cs[0]?.ColorId}`
+        : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
       Size: sizeData ?? singleProd1?.DefaultSize ?? singleProd?.DefaultSize,
       Unitcost: singleProd1?.UnitCost ?? singleProd?.UnitCost,
       markup: singleProd1?.DesignMarkUp ?? singleProd?.DesignMarkUp,
-      UnitCostWithmarkup: singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
+      UnitCostWithmarkup:
+        singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
       Remark: remarks,
       AlbumName: decodeUrl?.n ?? "",
       Quantity: quantity,
@@ -439,15 +538,19 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (cartflag) {
       CartAndWishListAPI("Cart", prodObj, cookie)
         .then((res) => {
-          console.log(res, "res")
+          console.log(res, "res");
           let cartC = res?.Data?.rd[0]?.Cartlistcount;
           let wishC = res?.Data?.rd[0]?.Wishlistcount;
           let cartId = res?.Data?.rd[0]?.CartId;
           setWishCountNum(wishC);
           setCartCountNum(cartC);
           if (cartId) {
-            setSingleProd(prev => ({ ...prev, CartId: cartId, IsInCart: 1 }));
-            setSingleProd1(prev => ({ ...prev, CartId: cartId, IsInCart: 1 }));
+            setSingleProd((prev) => ({ ...prev, CartId: cartId, IsInCart: 1 }));
+            setSingleProd1((prev) => ({
+              ...prev,
+              CartId: cartId,
+              IsInCart: 1,
+            }));
           }
         })
         .catch((err) => console.log("err", err))
@@ -462,8 +565,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
           let wishC = res?.Data?.rd[0]?.Wishlistcount;
           setWishCountNum(wishC);
           setCartCountNum(cartC);
-          setSingleProd(prev => ({ ...prev, IsInCart: 0, CartId: null }));
-          setSingleProd1(prev => ({ ...prev, IsInCart: 0, CartId: null }));
+          setSingleProd((prev) => ({ ...prev, IsInCart: 0, CartId: null }));
+          setSingleProd1((prev) => ({ ...prev, IsInCart: 0, CartId: null }));
         })
         .catch((err) => console.log("err", err))
         .finally(() => {
@@ -476,10 +579,25 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   const handleWishList = (e, ele) => {
     setWishListFlag(e?.target?.checked);
 
-    let metal = metalTypeCombo?.filter((ele) => ele?.metaltype == selectMtType)[0] ?? metalTypeCombo[0];
-    let dia = diaQcCombo?.filter((ele) => ele?.Quality == selectDiaQc?.split(",")[0] && ele?.color == selectDiaQc?.split(",")[1])[0] ?? diaQcCombo[0];
-    let cs = csQcCombo?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1])[0] ?? csQcCombo[0];
-    let mcArr = metalColorCombo?.filter((ele) => ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid))[0];
+    let metal =
+      metalTypeCombo?.filter((ele) => ele?.metaltype == selectMtType)[0] ??
+      metalTypeCombo[0];
+    let dia =
+      diaQcCombo?.filter(
+        (ele) =>
+          ele?.Quality == selectDiaQc?.split(",")[0] &&
+          ele?.color == selectDiaQc?.split(",")[1],
+      )[0] ?? diaQcCombo[0];
+    let cs =
+      csQcCombo?.filter(
+        (ele) =>
+          ele?.Quality == selectCsQc?.split(",")[0] &&
+          ele?.color == selectCsQc?.split(",")[1],
+      )[0] ?? csQcCombo[0];
+    let mcArr = metalColorCombo?.filter(
+      (ele) =>
+        ele?.id == (singleProd1?.MetalColorid ?? singleProd?.MetalColorid),
+    )[0];
 
     let prodObj = {
       autocode: singleProd?.autocode,
@@ -490,7 +608,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       Size: sizeData ?? singleProd1?.DefaultSize ?? singleProd?.DefaultSize,
       Unitcost: singleProd1?.UnitCost ?? singleProd?.UnitCost,
       markup: singleProd1?.DesignMarkUp ?? singleProd?.DesignMarkUp,
-      UnitCostWithmarkup: singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
+      UnitCostWithmarkup:
+        singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp,
       Remark: "",
       AlbumName: decodeUrl?.n ?? "",
     };
@@ -537,13 +656,19 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     // let navVal = location?.search.split("?p=")[1];
     // let decodeobj = decodeAndDecompress(navVal);
     const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0]
+      ? result[0].substring(result[0].indexOf("=") + 1)
+      : undefined;
     let decodeobj = decodeAndDecompress(navVal);
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
 
-    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
+    let diaQcLocal = JSON.parse(
+      sessionStorage.getItem("diamondQualityColorCombo"),
+    );
 
-    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let csQcLocal = JSON.parse(
+      sessionStorage.getItem("ColorStoneQualityColorCombo"),
+    );
 
     setTimeout(() => {
       if (decodeUrl) {
@@ -555,15 +680,51 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         let logininfoInside = loginUserDetail;
 
         if (mtTypeLocal?.length) {
-          metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == (decodeUrl?.m ? decodeUrl?.m : (logininfoInside?.MetalId ?? storeinitInside?.MetalId)))[0];
+          metalArr = mtTypeLocal?.filter(
+            (ele) =>
+              ele?.Metalid ==
+              (decodeUrl?.m
+                ? decodeUrl?.m
+                : (logininfoInside?.MetalId ?? storeinitInside?.MetalId)),
+          )[0];
         }
 
         if (diaQcLocal?.length) {
-          diaArr = diaQcLocal?.filter((ele) => ele?.QualityId == (decodeUrl?.d ? decodeUrl?.d?.split(",")[0] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[0]) && ele?.ColorId == (decodeUrl?.d ? decodeUrl?.d?.split(",")[1] : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid).split(",")[1]))[0];
+          diaArr = diaQcLocal?.filter(
+            (ele) =>
+              ele?.QualityId ==
+                (decodeUrl?.d
+                  ? decodeUrl?.d?.split(",")[0]
+                  : (
+                      logininfoInside?.cmboDiaQCid ??
+                      storeinitInside?.cmboDiaQCid
+                    ).split(",")[0]) &&
+              ele?.ColorId ==
+                (decodeUrl?.d
+                  ? decodeUrl?.d?.split(",")[1]
+                  : (
+                      logininfoInside?.cmboDiaQCid ??
+                      storeinitInside?.cmboDiaQCid
+                    ).split(",")[1]),
+          )[0];
         }
 
         if (csQcLocal?.length) {
-          csArr = csQcLocal?.filter((ele) => ele?.QualityId == (decodeUrl?.c ? decodeUrl?.c?.split(",")[0] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[0]) && ele?.ColorId == (decodeUrl?.c ? decodeUrl?.c?.split(",")[1] : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid).split(",")[1]))[0];
+          csArr = csQcLocal?.filter(
+            (ele) =>
+              ele?.QualityId ==
+                (decodeUrl?.c
+                  ? decodeUrl?.c?.split(",")[0]
+                  : (
+                      logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid
+                    ).split(",")[0]) &&
+              ele?.ColorId ==
+                (decodeUrl?.c
+                  ? decodeUrl?.c?.split(",")[1]
+                  : (
+                      logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid
+                    ).split(",")[1]),
+          )[0];
         }
 
         if (metalArr) setSelectMtType(metalArr?.metaltype);
@@ -579,19 +740,22 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0]
+      ? result[0].substring(result[0].indexOf("=") + 1)
+      : undefined;
     const mtColorLocal = getSession("MetalColorCombo");
     let decodeobj = decodeAndDecompress(navVal);
     if (!Array.isArray(mtColorLocal) || mtColorLocal.length === 0) {
       setSelectMtColor(null);
-      setSelectMtColorName(null)
+      setSelectMtColorName(null);
       return;
     }
 
-    const metalColorId = decodeobj?.i || singleProd?.MetalColorid || singleProd1?.MetalColorid;
+    const metalColorId =
+      decodeobj?.i || singleProd?.MetalColorid || singleProd1?.MetalColorid;
 
     const matchedColor = mtColorLocal.find(
-      (ele) => String(ele?.id) === String(metalColorId)
+      (ele) => String(ele?.id) === String(metalColorId),
     );
     const finalColor = matchedColor || mtColorLocal[0];
 
@@ -600,11 +764,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     console.log("finalColor", finalColor);
   }, [singleProd?.autocode]);
 
-
   const callAllApi = () => {
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
-    let diaQcLocal = JSON.parse(sessionStorage.getItem("diamondQualityColorCombo"));
-    let csQcLocal = JSON.parse(sessionStorage.getItem("ColorStoneQualityColorCombo"));
+    let diaQcLocal = JSON.parse(
+      sessionStorage.getItem("diamondQualityColorCombo"),
+    );
+    let csQcLocal = JSON.parse(
+      sessionStorage.getItem("ColorStoneQualityColorCombo"),
+    );
     let mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo"));
 
     if (!mtTypeLocal || mtTypeLocal?.length === 0) {
@@ -626,7 +793,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem("diamondQualityColorCombo", JSON.stringify(data));
+            sessionStorage.setItem(
+              "diamondQualityColorCombo",
+              JSON.stringify(data),
+            );
             setDiaQcCombo(data);
           }
         })
@@ -640,7 +810,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         .then((response) => {
           if (response?.Data?.rd) {
             let data = response?.Data?.rd;
-            sessionStorage.setItem("ColorStoneQualityColorCombo", JSON.stringify(data));
+            sessionStorage.setItem(
+              "ColorStoneQualityColorCombo",
+              JSON.stringify(data),
+            );
             setCsQcCombo(data);
           }
         })
@@ -669,7 +842,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     setLoginInfo(logininfo);
   }, []);
 
-
   useEffect(() => {
     callAllApi();
   }, [storeInit]);
@@ -689,7 +861,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   useEffect(() => {
     const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0]
+      ? result[0].substring(result[0].indexOf("=") + 1)
+      : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -718,11 +892,18 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let url = `${location?.pathname}${location?.search}`;
 
     const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0]
+      ? result[0].substring(result[0].indexOf("=") + 1)
+      : undefined;
 
     let decodeobj = decodeAndDecompress(navVal);
 
-    const securityKey = decodeobj?.sk || searchParams?.SK || searchParams?.SecurityKey || location?.state?.SecurityKey || "";
+    const securityKey =
+      decodeobj?.sk ||
+      searchParams?.SK ||
+      searchParams?.SecurityKey ||
+      location?.state?.SecurityKey ||
+      "";
     const state = { SecurityKey: securityKey };
 
     if (state?.SecurityKey > 0) {
@@ -745,7 +926,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
     let storeinitInside = storeInit;
     const result = parseSearchParams();
-    let navVal = result[0] ? result[0].substring(result[0].indexOf("=") + 1) : undefined;
+    let navVal = result[0]
+      ? result[0].substring(result[0].indexOf("=") + 1)
+      : undefined;
     let decodeobj = decodeAndDecompress(navVal);
 
     if (decodeobj) {
@@ -758,7 +941,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setDecodeUrl(decodeobj);
       alName = decodeobj?.n;
     }
-
 
     let mtTypeLocal = getSession("metalTypeCombo");
 
@@ -774,20 +956,30 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let MetalColorArr;
 
     if (mtTypeLocal?.length) {
-      metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == decodeobj?.m)[0]?.Metalid;
+      metalArr = mtTypeLocal?.filter((ele) => ele?.Metalid == decodeobj?.m)[0]
+        ?.Metalid;
     }
 
     if (diaQcLocal) {
-      diaArr = diaQcLocal?.filter((ele) => ele?.QualityId == decodeobj?.d?.split(",")[0] && ele?.ColorId == decodeobj?.d?.split(",")[1])[0];
+      diaArr = diaQcLocal?.filter(
+        (ele) =>
+          ele?.QualityId == decodeobj?.d?.split(",")[0] &&
+          ele?.ColorId == decodeobj?.d?.split(",")[1],
+      )[0];
     }
 
     if (csQcLocal) {
-      csArr = csQcLocal?.filter((ele) => ele?.QualityId == decodeobj?.c?.split(",")[0] && ele?.ColorId == decodeobj?.c?.split(",")[1])[0];
+      csArr = csQcLocal?.filter(
+        (ele) =>
+          ele?.QualityId == decodeobj?.c?.split(",")[0] &&
+          ele?.ColorId == decodeobj?.c?.split(",")[1],
+      )[0];
     }
 
-
     if (MetalColorLocal) {
-      MetalColorArr = MetalColorLocal?.filter((ele) => ele?.id == decodeobj?.i)[0];
+      MetalColorArr = MetalColorLocal?.filter(
+        (ele) => ele?.id == decodeobj?.i,
+      )[0];
     }
     // console.log(JSON.stringify(decodeobj, null, 2));
 
@@ -804,15 +996,25 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       let obj1 = {
         mt: logininfoInside?.MetalId ?? storeinitInside?.MetalId,
-        diaQc: diaArr ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
-        csQc: csArr ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
+        diaQc: diaArr
+          ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}`
+          : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
+        csQc: csArr
+          ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}`
+          : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
       };
 
       let obj = {
-        mt: metalArr ? metalArr : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
-        diaQc: diaArr ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}` : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
-        csQc: csArr ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}` : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
-        MetalColorId: MetalColorArr ? MetalColorArr?.id : ''
+        mt: metalArr
+          ? metalArr
+          : (logininfoInside?.MetalId ?? storeinitInside?.MetalId),
+        diaQc: diaArr
+          ? `${diaArr?.QualityId ?? 0},${diaArr?.ColorId ?? 0}`
+          : (logininfoInside?.cmboDiaQCid ?? storeinitInside?.cmboDiaQCid),
+        csQc: csArr
+          ? `${csArr?.QualityId ?? 0},${csArr?.ColorId ?? 0}`
+          : (logininfoInside?.cmboCSQCid ?? storeinitInside?.cmboCSQCid),
+        MetalColorId: MetalColorArr ? MetalColorArr?.id : "",
       };
 
       setProdLoading(true);
@@ -820,7 +1022,13 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setisPriceLoading(true);
       setQuantity(1);
 
-      await SingleProdListAPI(decodeobj, decodeobj?.s ?? sizeData, obj, cookie, alName)
+      await SingleProdListAPI(
+        decodeobj,
+        decodeobj?.s ?? sizeData,
+        obj,
+        cookie,
+        alName,
+      )
         .then(async (res) => {
           if (res) {
             setSingleProd(res?.pdList[0]);
@@ -851,7 +1059,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
             let prod = res?.pdList[0];
 
-            let initialsize = prod && prod.DefaultSize !== "" ? prod?.DefaultSize : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)?.sizename === undefined ? SizeCombo?.rd[0]?.sizename : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)?.sizename;
+            let initialsize =
+              prod && prod.DefaultSize !== ""
+                ? prod?.DefaultSize
+                : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)
+                      ?.sizename === undefined
+                  ? SizeCombo?.rd[0]?.sizename
+                  : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)
+                      ?.sizename;
             setSizeData(initialsize);
 
             // await SingleFullProdPriceAPI(decodeobj).then((res) => {
@@ -866,7 +1081,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             await getSizeData(resp?.pdList[0], cookie)
               .then((res) => {
                 // console.log("Sizeres",res)
-                console.log(res?.Data, "res?.Data")
+                console.log(res?.Data, "res?.Data");
                 setSizeCombo(res?.Data);
               })
               .catch((err) => console.log("SizeErr", err));
@@ -880,7 +1095,12 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             }
 
             if (storeinitInside?.IsProductDetailSimilarDesign === 1) {
-              await StockItemApi(resp?.pdList[0]?.autocode, "similarbrand", obj, cookie)
+              await StockItemApi(
+                resp?.pdList[0]?.autocode,
+                "similarbrand",
+                obj,
+                cookie,
+              )
                 .then((res) => {
                   setSimilarBrandArr(res?.Data?.rd);
                 })
@@ -896,7 +1116,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
             //     .catch((err) => console.log("designsetErr", err));
             // }
 
-            await SaveLastViewDesign(cookie, resp?.pdList[0]?.autocode, resp?.pdList[0]?.designno)
+            await SaveLastViewDesign(
+              cookie,
+              resp?.pdList[0]?.autocode,
+              resp?.pdList[0]?.designno,
+            )
               .then((res) => {
                 setSaveLastView(res?.Data?.rd);
               })
@@ -968,13 +1192,15 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const ProdCardImageFunc = async () => {
-    const mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo")) || [];
+    const mtColorLocal =
+      JSON.parse(sessionStorage.getItem("MetalColorCombo")) || [];
     const imageVideoDetail = singleProd?.ImageVideoDetail;
     const pd = singleProd;
 
     let parsedData = [];
     try {
-      parsedData = imageVideoDetail === "0" ? [] : JSON.parse(imageVideoDetail || "[]");
+      parsedData =
+        imageVideoDetail === "0" ? [] : JSON.parse(imageVideoDetail || "[]");
     } catch (err) {
       console.error("Invalid JSON in ImageVideoDetail:", err);
       return;
@@ -1000,18 +1226,29 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       }, {});
     };
 
-    const maxColorCount = Math.max(...Object.values(getMaxCountByColor(colorImages)), 0);
-    const normalImageCount = normalImages.length ? Math.max(...normalImages.map((i) => i.Nm)) : 0;
+    const maxColorCount = Math.max(
+      ...Object.values(getMaxCountByColor(colorImages)),
+      0,
+    );
+    const normalImageCount = normalImages.length
+      ? Math.max(...normalImages.map((i) => i.Nm))
+      : 0;
 
     // Get metal color code
-    const mcArr = mtColorLocal.find((ele) => ele.id === singleProd?.MetalColorid);
+    const mcArr = mtColorLocal.find(
+      (ele) => ele.id === singleProd?.MetalColorid,
+    );
     setSelectedMetalColor(mcArr?.colorcode);
 
     const buildImageURL = (i, isColor = false) => {
       const base = storeInit?.CDNDesignImageFol;
-      const extension = isColor ? colorImages[i - 1]?.Ex : normalImages[i - 1]?.Ex;
+      const extension = isColor
+        ? colorImages[i - 1]?.Ex
+        : normalImages[i - 1]?.Ex;
 
-      const imageUrl = isColor ? `${base}${pd.designno}~${i}~${mcArr?.colorcode}.${colorImages[i - 1]?.Ex}` : `${base}${pd.designno}~${i}.${normalImages[i - 1]?.Ex}`;
+      const imageUrl = isColor
+        ? `${base}${pd.designno}~${i}~${mcArr?.colorcode}.${colorImages[i - 1]?.Ex}`
+        : `${base}${pd.designno}~${i}.${normalImages[i - 1]?.Ex}`;
 
       return { imageUrl, extension };
     };
@@ -1022,7 +1259,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       // Asynchronously populate pdImgList with color images
       for (let i = 1; i <= maxColorCount; i++) {
         const colorImageUrl = buildImageURL(i, true);
-        const isColorImageAvailable = await checkImageAvailability(colorImageUrl?.imageUrl);
+        const isColorImageAvailable = await checkImageAvailability(
+          colorImageUrl?.imageUrl,
+        );
 
         // Only push the image if it is available
         if (isColorImageAvailable) {
@@ -1073,10 +1312,15 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     // Video processing
     const buildVideoURL = (video, isColor = false) => {
       const base = storeInit?.CDNVPath;
-      return isColor ? `${base}${pd.designno}~${video.Nm}~${video.CN}.${video.Ex}` : `${base}${pd.designno}~${video.Nm}.${video.Ex}`;
+      return isColor
+        ? `${base}${pd.designno}~${video.Nm}~${video.CN}.${video.Ex}`
+        : `${base}${pd.designno}~${video.Nm}.${video.Ex}`;
     };
 
-    const pdvideoList = [...colorVideos.map((v) => buildVideoURL(v, true)), ...normalVideos.map((v) => buildVideoURL(v))];
+    const pdvideoList = [
+      ...colorVideos.map((v) => buildVideoURL(v, true)),
+      ...normalVideos.map((v) => buildVideoURL(v)),
+    ];
 
     setPdVideoArr(pdvideoList.length ? pdvideoList : []);
 
@@ -1112,7 +1356,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       if (!Array.isArray(mtColorLocal) || !selectMtColor) return null;
 
       const selectedColor = mtColorLocal.find(
-        (item) => String(item?.colorcode) === String(selectMtColor)
+        (item) => String(item?.colorcode) === String(selectMtColor),
       );
 
       return selectedColor?.metalcolorname ?? null;
@@ -1121,7 +1365,6 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       return null;
     }
   };
-
 
   useEffect(() => {
     try {
@@ -1140,8 +1383,12 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   const handleMetalWiseColorImg = async (e) => {
     const selectedColorCode = e.target.value;
-    const mtColorLocal = JSON.parse(sessionStorage.getItem("MetalColorCombo") || "[]");
-    const mcArr = mtColorLocal.find((ele) => ele?.colorcode === selectedColorCode);
+    const mtColorLocal = JSON.parse(
+      sessionStorage.getItem("MetalColorCombo") || "[]",
+    );
+    const mcArr = mtColorLocal.find(
+      (ele) => ele?.colorcode === selectedColorCode,
+    );
 
     const prod = singleProd ?? singleProd1;
     const { designno, ImageExtension } = prod || {};
@@ -1157,7 +1404,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     // Parse image/video data
     let parsedData = [];
     try {
-      parsedData = prod?.ImageVideoDetail && prod.ImageVideoDetail !== "0" ? JSON.parse(prod.ImageVideoDetail) : [];
+      parsedData =
+        prod?.ImageVideoDetail && prod.ImageVideoDetail !== "0"
+          ? JSON.parse(prod.ImageVideoDetail)
+          : [];
     } catch (err) {
       console.error("Invalid JSON in ImageVideoDetail:", err);
       return;
@@ -1189,7 +1439,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       ),
     );
 
-    const normalImageCount = normalImgs.length > 0 ? Math.max(...normalImgs.map((item) => item.Nm)) : 0;
+    const normalImageCount =
+      normalImgs.length > 0
+        ? Math.max(...normalImgs.map((item) => item.Nm))
+        : 0;
 
     // Build image URLs
     const buildColorImageList = () =>
@@ -1220,7 +1473,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
           ? tempColorList.slice(0, 3) // Optional cap for performance
           : tempColorList;
 
-      const availabilityChecks = await Promise.all(checkImages.map((url) => checkImageAvailability(url?.imageUrl)));
+      const availabilityChecks = await Promise.all(
+        checkImages.map((url) => checkImageAvailability(url?.imageUrl)),
+      );
 
       colorImagesAvailable = availabilityChecks.some(Boolean);
       if (colorImagesAvailable) {
@@ -1244,7 +1499,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       setPdThumbImg(thumbImagePath);
 
-      const safeIndex = thumbImgIndex < pdImgListCol.length ? thumbImgIndex : pdImgListCol.length - 1;
+      const safeIndex =
+        thumbImgIndex < pdImgListCol.length
+          ? thumbImgIndex
+          : pdImgListCol.length - 1;
       const mainImg = pdImgListCol[safeIndex];
       console.log("TCL: ProductDetail -> mainImg", mainImg);
       // setSelectedThumbImg({ link: mainImg, type: 'img' });
@@ -1261,7 +1519,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       setMetalWiseColorImg(defaultMainImg);
     } else if (pdImgList.length > 0) {
       const thumbImagePath = pdImgList.map((url) => {
-        const fileName = url?.imageUrl?.split("Design_Image/")[1]?.split(".")[0];
+        const fileName = url?.imageUrl
+          ?.split("Design_Image/")[1]
+          ?.split(".")[0];
         const thumbImageUrl = `${thumbCDN}${fileName}.jpg`;
         const originalImageExtension = url?.extension;
         return { thumbImageUrl, originalImageExtension };
@@ -1269,7 +1529,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
       setPdThumbImg(thumbImagePath);
 
-      const safeIndex = thumbImgIndex < pdImgList.length ? thumbImgIndex : pdImgListCol.length - 1;
+      const safeIndex =
+        thumbImgIndex < pdImgList.length
+          ? thumbImgIndex
+          : pdImgListCol.length - 1;
       const fallbackImg = pdImgList[safeIndex];
       // setSelectedThumbImg({ link: fallbackImg, type: 'img' });
       setSelectedThumbImg({
@@ -1364,9 +1627,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const handleMoveToDetail = (productData, index) => {
-    console.log(productData, "mian obj for router")
+    console.log(productData, "mian obj for router");
     setNextIndex(index);
-    const logininfoDetail = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+    const logininfoDetail = JSON.parse(
+      sessionStorage.getItem("loginUserDetail"),
+    );
 
     let obj = {
       a: productData?.autocode,
@@ -1387,10 +1652,12 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       i: productData?.MetalColorid,
       l: productData?.ImageExtension,
       count: productData?.ImageCount,
-      s: productData?.DefaultSize || ""
+      s: productData?.DefaultSize || "",
     };
     let encodeObj = compressAndEncode(JSON.stringify(obj));
-    navigate.push(`/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`);
+    navigate.push(
+      `/d/${formatRedirectTitleLine(productData?.TitleLine)}${productData?.designno}?p=${encodeObj}`,
+    );
     setProdLoading(true);
     setImagePromise(true);
     // setIsImageLoad(true)
@@ -1413,16 +1680,26 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     let MetalColorLocal = getSession("MetalColorCombo");
 
     if (type === "mt") {
-      metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == e.target.value)[0]?.Metalid;
+      metalArr = mtTypeLocal?.filter(
+        (ele) => ele?.metaltype == e.target.value,
+      )[0]?.Metalid;
       setSelectMtType(e.target.value);
     }
     if (type === "dia") {
       setSelectDiaQc(e.target.value);
-      diaArr = diaQcLocal?.filter((ele) => ele?.Quality == e.target.value?.split(",")[0] && ele?.color == e.target.value?.split(",")[1])[0];
+      diaArr = diaQcLocal?.filter(
+        (ele) =>
+          ele?.Quality == e.target.value?.split(",")[0] &&
+          ele?.color == e.target.value?.split(",")[1],
+      )[0];
     }
     if (type === "cs") {
       setSelectCsQc(e.target.value);
-      csArr = csQcLocal?.filter((ele) => ele?.Quality == e.target.value?.split(",")[0] && ele?.color == e.target.value?.split(",")[1])[0];
+      csArr = csQcLocal?.filter(
+        (ele) =>
+          ele?.Quality == e.target.value?.split(",")[0] &&
+          ele?.color == e.target.value?.split(",")[1],
+      )[0];
     }
     if (type === "sz") {
       setSizeData(e.target.value);
@@ -1432,25 +1709,33 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       const Value = e.target.value;
       mtColor = MetalColorLocal?.filter((ele) => {
         return ele?.colorcode == Value;
-      })
+      });
     }
 
-
     if (metalArr == undefined) {
-      metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == selectMtType)[0]?.Metalid;
+      metalArr = mtTypeLocal?.filter((ele) => ele?.metaltype == selectMtType)[0]
+        ?.Metalid;
     }
 
     if (diaArr == undefined) {
-      diaArr = diaQcLocal?.filter((ele) => ele?.Quality == selectDiaQc?.split(",")[0] && ele?.color == selectDiaQc?.split(",")[1])[0];
+      diaArr = diaQcLocal?.filter(
+        (ele) =>
+          ele?.Quality == selectDiaQc?.split(",")[0] &&
+          ele?.color == selectDiaQc?.split(",")[1],
+      )[0];
     }
 
     if (csArr == undefined) {
-      csArr = csQcLocal?.filter((ele) => ele?.Quality == selectCsQc?.split(",")[0] && ele?.color == selectCsQc?.split(",")[1])[0];
+      csArr = csQcLocal?.filter(
+        (ele) =>
+          ele?.Quality == selectCsQc?.split(",")[0] &&
+          ele?.color == selectCsQc?.split(",")[1],
+      )[0];
     }
     if (mtColor == undefined) {
       mtColor = MetalColorLocal?.filter((ele) => {
         return ele?.colorcode?.toLowerCase() == selectMtColor?.toLowerCase();
-      })
+      });
     }
 
     let obj = {
@@ -1472,14 +1757,13 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         setSingleProd1(res?.pdList[0]);
 
         if (res?.pdList?.length > 0) {
-          console.log(res, "res")
+          console.log(res, "res");
           setisPriceLoading(false);
           setAddToCartFlag(res?.pdList[0]?.IsInCart !== 0);
           const qty = res?.pdList?.[0]?.CartQuantity;
           const remarks = res?.pdList?.[0]?.Remarks;
           setQuantity(qty && qty > 0 ? qty : 1);
           setRemarks(remarks ?? "");
-
         }
         setDiaList(res?.pdResp?.rd3);
         setCsList(res?.pdResp?.rd4);
@@ -1504,7 +1788,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         setIsQtyLoading(true);
         try {
           const response = await updateQuantity(id, value, cookie);
-          console.log("🚀 ~ handleCartQuantity ~ response:", response)
+          console.log("🚀 ~ handleCartQuantity ~ response:", response);
         } catch (error) {
           console.error("Error updating quantity:", error);
         } finally {
@@ -1515,7 +1799,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   };
 
   const countWords = (str) => {
-    if (!str || typeof str !== 'string') return 0;
+    if (!str || typeof str !== "string") return 0;
     return str.match(/\S+/g)?.length || 0;
   };
 
@@ -1534,10 +1818,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         try {
           const prodObj = {
             id: singleProd1?.CartId ?? singleProd?.CartId,
-            autocode: singleProd1?.autocode ?? singleProd?.autocode
-          }
+            autocode: singleProd1?.autocode ?? singleProd?.autocode,
+          };
           const response = await handleProductRemark(prodObj, value, cookie);
-          console.log("🚀 ~ handleRemarkChange ~ response:", response)
+          console.log("🚀 ~ handleRemarkChange ~ response:", response);
         } catch (error) {
           console.error("Error updating remarks:", error);
         } finally {
@@ -1579,72 +1863,62 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     const imageLink = await checkImageAvailability(selectedData?.images?.[0]);
 
     if (imageLink === undefined || imageLink === false) {
-      setSelectedThumbImg({ link: { imageUrl: imageNotFound, extension: "" }, type: "img" });
+      setSelectedThumbImg({
+        link: { imageUrl: imageNotFound, extension: "" },
+        type: "img",
+      });
     } else {
-      setSelectedThumbImg({ link: { imageUrl: imageLink, extension: "" }, type: "img" });
+      setSelectedThumbImg({
+        link: { imageUrl: imageLink, extension: "" },
+        type: "img",
+      });
     }
   };
 
   const handleNext = async () => {
-    console.log(allListDataSlide, "allListDataSlide")
-    const nextIndex = (nextindex + 1) % allListDataSlide?.length;
-    setNextIndex(nextIndex);
-    swiperMainRef?.current.swiper.slideTo(nextIndex);
-
-    const innerSwiper = innerSwiperRef?.current?.swiper;
-    if (innerSwiper && imageData?.length) {
-      console.log("inn", innerSwiper);
-      const slidesPerView = innerSwiper.params.slidesPerView;
-      const currentSlide = innerSwiper.activeIndex;
-
-      if (nextIndex >= currentSlide + slidesPerView) {
-        innerSwiper.slideTo(nextIndex - slidesPerView + 1);
-      } else if (nextIndex < currentSlide) {
-        innerSwiper.slideTo(nextIndex);
-      }
-    }
-
-    // Fetch image data only if it's a new index
-    if (nextIndex !== nextindex) {
-      await fetchImageData(nextIndex);
-      handleProductDetail(nextIndex);
-      setProdLoading(true);
-      // setIsImageLoad(true);
+    const list = imageData?.length ? imageData : allListDataSlide;
+    if (!list?.length) return;
+    const currentIdx = list.findIndex(
+      (item) => item?.designno === singleProd?.designno,
+    );
+    const safeCurrentIdx = currentIdx !== -1 ? currentIdx : nextindex || 0;
+    const nextIdx = (safeCurrentIdx + 1) % list.length;
+    const nextProd = list[nextIdx];
+    if (nextProd) {
+      handleMoveToDetail(nextProd, nextIdx);
     }
   };
 
   const handlePrev = async () => {
-    const prevIndex = (nextindex - 1 + allListDataSlide?.length) % allListDataSlide?.length;
-    setPrevIndex(prevIndex);
-    swiperMainRef?.current.swiper.slideTo(prevIndex);
-
-    const innerSwiper = innerSwiperRef?.current?.swiper;
-    if (innerSwiper && imageData?.length) {
-      const slidesPerView = innerSwiper.params.slidesPerView;
-      const currentSlide = innerSwiper.activeIndex;
-
-      if (prevIndex < currentSlide) {
-        innerSwiper.slideTo(prevIndex);
-      } else if (prevIndex >= currentSlide + slidesPerView) {
-        innerSwiper.slideTo(prevIndex - slidesPerView + 1);
-      }
+    const list = imageData?.length ? imageData : allListDataSlide;
+    if (!list?.length) return;
+    const currentIdx = list.findIndex(
+      (item) => item?.designno === singleProd?.designno,
+    );
+    const safeCurrentIdx = currentIdx !== -1 ? currentIdx : nextindex || 0;
+    const prevIdx = (safeCurrentIdx - 1 + list.length) % list.length;
+    const prevProd = list[prevIdx];
+    if (prevProd) {
+      handleMoveToDetail(prevProd, prevIdx);
     }
+  };
 
-    // Fetch image data only if it's a new index
-    if (prevIndex !== nextindex) {
-      await fetchImageData(prevIndex);
-      handleProductDetail(prevIndex);
-      setProdLoading(true);
-      // setIsImageLoad(true);
-    }
+  const HandleImageDialogOpen = (index) => {
+    setSelectedImageIndex(index);
+    setIsImageDialogOpen(true);
+  };
+
+  const HandleImageDialogClose = () => {
+    setSelectedImageIndex(null);
+    setIsImageDialogOpen(false);
   };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "ArrowRight") {
-        if (allListDataSlide.length) handleNext();
+        handleNext();
       } else if (event.key === "ArrowLeft") {
-        if (allListDataSlide.length) handlePrev();
+        handlePrev();
       }
     };
 
@@ -1652,7 +1926,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [allListDataSlide, nextindex]);
+  }, [imageData, allListDataSlide, singleProd, nextindex]);
 
   useEffect(() => {
     const checkImages = async () => {
@@ -1674,7 +1948,13 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
   return (
     <>
-      <title>{formatTitleLine(singleProd?.TitleLine) ? `${singleProd.TitleLine} - ${singleProd?.designno ?? ""}` : singleProd?.TitleLine || singleProd?.designno ? `${singleProd?.designno ?? ""}` : "loading..."}</title>
+      <title>
+        {formatTitleLine(singleProd?.TitleLine)
+          ? `${singleProd.TitleLine} - ${singleProd?.designno ?? ""}`
+          : singleProd?.TitleLine || singleProd?.designno
+            ? `${singleProd?.designno ?? ""}`
+            : "loading..."}
+      </title>
       <div
         className="proCat_prodDetail_bodyContain"
         style={{
@@ -1697,107 +1977,196 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
               </div>
             ) : (
               <>
+                <Box
+                  sx={{
+                    color: "#000",
+                    pb: 6,
+                    display: "flex",
+                    minHeight: "100vh",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      pt: { xs: 2, md: 4 },
+                      px: { sm: 2, xs: 1, md: 8 },
+                      width: "100%",
+                      boxSizing:'border-box'
+                    }}
+                  >
+                    <DetailBreadcrumb
+                      searchParams={searchParams}
+                      singleProd={singleProd}
+                      singleProd1={singleProd1}
+                      loadingdata={false}
+                    />
 
-                <DetailBlock
-                  swiperMainRef={swiperMainRef}
-                  onSlideChange={onSlideChange}
-                  handlePrev={handlePrev}
-                  handleNext={handleNext}
-                  navigate={navigate}
+                    <Grid container spacing={{ xs: 1, md: 1 }}>
+                      <LeftSide
+                        loading={!isImageload || !imagePromise}
+                        media={(
+                          [
+                            ...(pdThumbImg?.length
+                              ? pdThumbImg.map((item) => ({
+                                  type: "image",
+                                  src: item?.thumbImageUrl || item?.imageUrl || item?.src,
+                                }))
+                              : selectedThumbImg?.link?.imageUrl
+                              ? [{ type: "image", src: selectedThumbImg.link.imageUrl }]
+                              : (singleProd1?.imageSrc || singleProd?.imageSrc)
+                              ? [{ type: "image", src: singleProd1?.imageSrc || singleProd?.imageSrc }]
+                              : []),
+                            ...(filteredVideos?.map((item) => ({
+                              type: "video",
+                              src: item,
+                            })) || []),
+                          ] || []
+                        ).filter(
+                          (item) => item.src && !item.src.includes("undefined"),
+                        )}
+                        isMediaReady={true}
+                        mediaBuildDone={true}
+                        HandleImageDialogOpen={HandleImageDialogOpen}
+                      />
 
-                  selectedThumbImg={selectedThumbImg}
-                  pdThumbImg={pdThumbImg}
-                  pdVideoArr={pdVideoArr}
-                  filteredVideos={filteredVideos}
-                  imageNotFound={imageNotFound}
-                  isImageload={isImageload}
-                  imagePromise={imagePromise}
-                  setImagePromise={setImagePromise}
-                  setSelectedThumbImg={setSelectedThumbImg}
-                  setThumbImgIndex={setThumbImgIndex}
+                       <RightSide
+                         TitleLine={
+                  formatTitleLine(singleProd?.TitleLine) &&
+                  singleProd?.TitleLine
+                }
+                        designno={singleProd?.designno ?? ""}
+                        collection={singleProd?.collection}
+                        description={singleProd?.description}
+                        singleProd={singleProd}
+                        singleProd1={singleProd1}
+                        stockItemArr={stockItemArr}
+                        metalType={selectMtType}
+                        metalColor={selectMtColor}
+                        storeInit={storeInit}
+                        diaQcCombo={diaQcCombo}
+                        diaList={diaList}
+                        selectDiaQc={selectDiaQc}
+                        SizeSorting={SizeSorting}
+                        handleCustomChange={handleCustomChange}
+                        SizeCombo={SizeCombo}
+                        sizeData={sizeData}
+                        metalTypeCombo={metalTypeCombo}
+                        metalColorCombo={metalColorCombo}
+                        handleMetalWiseColorImg={handleMetalWiseColorImg}
+                        selectCsQc={selectCsQc}
+                        csList={csList}
+                        csQcCombo={csQcCombo}
+                        loginData={loginUserDetail}
+                        loadingdata={prodLoading || !singleProd}
+                        isPriceloading={isPriceloading}
+                        pdLoadImage={false}
+                        handleCart={handleCart}
+                        addToCardFlag={addToCartFlag}
+                        quantity={quantity}
+                        handleCartQuantity={handleCartQuantity}
+                        isQtyLoading={isQtyLoading}
+                        remarks={remarks}
+                        handleRemarkChange={handleRemarkChange}
+                        isRemarkLoading={isRemarkLoading}
+                        handlePrev={handlePrev}
+                        handleNext={handleNext}
+                        currentIndex={
+                          imageData?.findIndex((item) => item?.designno === singleProd?.designno) !== -1
+                            ? imageData?.findIndex((item) => item?.designno === singleProd?.designno)
+                            : nextindex
+                        }
+                        totalDesigns={imageData?.length || allListDataSlide?.length || 0}
+                      />
+                    </Grid>
+                    {/* <DetailBlock
+                      swiperMainRef={swiperMainRef}
+                      onSlideChange={onSlideChange}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      navigate={navigate}
+                      selectedThumbImg={selectedThumbImg}
+                      pdThumbImg={pdThumbImg}
+                      pdVideoArr={pdVideoArr}
+                      filteredVideos={filteredVideos}
+                      imageNotFound={imageNotFound}
+                      isImageload={isImageload}
+                      imagePromise={imagePromise}
+                      setImagePromise={setImagePromise}
+                      setSelectedThumbImg={setSelectedThumbImg}
+                      setThumbImgIndex={setThumbImgIndex}
+                      setProdLoading={setProdLoading}
+                      nextindex={nextindex}
+                      singleProd={
+                        singleProd1?.autocode ? singleProd1 : singleProd
+                      }
+                      singleProd1={singleProd1}
+                      storeInit={storeInit}
+                      selectMtColorName={selectMtColorName}
+                      metalTypeCombo={metalTypeCombo}
+                      metalColorCombo={metalColorCombo}
+                      diaQcCombo={diaQcCombo}
+                      csQcCombo={csQcCombo}
+                      diaList={diaList}
+                      csList={csList}
+                      SizeCombo={SizeCombo}
+                      sizeData={sizeData}
+                      selectMtType={selectMtType}
+                      selectMtColor={selectMtColor}
+                      selectDiaQc={selectDiaQc}
+                      selectCsQc={selectCsQc}
+                      handleCustomChange={handleCustomChange}
+                      handleMetalWiseColorImg={handleMetalWiseColorImg}
+                      metalColorName={metalColorName}
+                      SizeSorting={SizeSorting}
+                      Almacarino={Almacarino}
+                      descriptionText={descriptionText}
+                      isExpanded={isExpanded}
+                      isClamped={isClamped}
+                      toggleText={toggleText}
+                      descriptionRef={descriptionRef}
+                      formatter={formatter}
+                      isPriceloading={isPriceloading}
+                      loginInfo={loginInfo}
+                      quantity={quantity}
+                      handleCartQuantity={handleCartQuantity}
+                      isQtyLoading={isQtyLoading}
+                      prodLoading={prodLoading}
+                      remarks={remarks}
+                      handleRemarkChange={handleRemarkChange}
+                      isRemarkLoading={isRemarkLoading}
+                      addToCartFlag={addToCartFlag}
+                      handleCart={handleCart}
+                    /> */}
 
-                  setProdLoading={setProdLoading}
-                  nextindex={nextindex}
+                    <StockBlock
+                      stockItemArr={stockItemArr}
+                      storeInit={storeInit}
+                      loginInfo={loginInfo}
+                      imageStates={imageStates}
+                      imageNotFound={imageNotFound}
+                      isPriceloading={isPriceloading}
+                      formatter={formatter}
+                      cartArr={cartArr}
+                      handleCartandWish={handleCartandWish}
+                    />
 
-                  singleProd={singleProd1?.autocode ? singleProd1 : singleProd}
-                  singleProd1={singleProd1}
-                  storeInit={storeInit}
+                    <MoreProducts
+                      ref={innerSwiperRef}
+                      imageData={imageData}
+                      handleMoveToDetail={handleMoveToDetail}
+                      singleProd={singleProd}
+                      imageNotFound={imageNotFound}
+                    />
 
-                  selectMtColorName={selectMtColorName}
-                  metalTypeCombo={metalTypeCombo}
-                  metalColorCombo={metalColorCombo}
-                  diaQcCombo={diaQcCombo}
-                  csQcCombo={csQcCombo}
-                  diaList={diaList}
-                  csList={csList}
-                  SizeCombo={SizeCombo}
-                  sizeData={sizeData}
-                  selectMtType={selectMtType}
-                  selectMtColor={selectMtColor}
-                  selectDiaQc={selectDiaQc}
-                  selectCsQc={selectCsQc}
-                  handleCustomChange={handleCustomChange}
-                  handleMetalWiseColorImg={handleMetalWiseColorImg}
-                  metalColorName={metalColorName}
-                  SizeSorting={SizeSorting}
-                  Almacarino={Almacarino}
-
-                  descriptionText={descriptionText}
-                  isExpanded={isExpanded}
-                  isClamped={isClamped}
-                  toggleText={toggleText}
-                  descriptionRef={descriptionRef}
-
-                  formatter={formatter}
-                  isPriceloading={isPriceloading}
-                  loginInfo={loginInfo}
-
-                  quantity={quantity}
-                  handleCartQuantity={handleCartQuantity}
-                  isQtyLoading={isQtyLoading}
-                  prodLoading={prodLoading}
-
-                  remarks={remarks}
-                  handleRemarkChange={handleRemarkChange}
-                  isRemarkLoading={isRemarkLoading}
-
-                  addToCartFlag={addToCartFlag}
-                  handleCart={handleCart}
-                />
-
-                <ProductDetailsSection
-                  diaList={diaList}
-                  csList={csList}
-                />
-
-                <StockBlock
-                  stockItemArr={stockItemArr}
-                  storeInit={storeInit}
-                  loginInfo={loginInfo}
-                  imageStates={imageStates}
-                  imageNotFound={imageNotFound}
-                  isPriceloading={isPriceloading}
-                  formatter={formatter}
-                  cartArr={cartArr}
-                  handleCartandWish={handleCartandWish}
-                />
-
-                <MoreProducts
-                  ref={innerSwiperRef}
-                  imageData={imageData}
-                  handleMoveToDetail={handleMoveToDetail}
-                  singleProd={singleProd}
-                  imageNotFound={imageNotFound}
-                />
-
-                <SimilarDesigns
-                  storeInit={storeInit}
-                  SimilarBrandArr={SimilarBrandArr}
-                  handleMoveToDetail={handleMoveToDetail}
-                  imageNotFound={imageNotFound}
-                  loginInfo={loginInfo}
-                  formatter={formatter}
-                />
+                    <SimilarDesigns
+                      storeInit={storeInit}
+                      SimilarBrandArr={SimilarBrandArr}
+                      handleMoveToDetail={handleMoveToDetail}
+                      imageNotFound={imageNotFound}
+                      loginInfo={loginInfo}
+                      formatter={formatter}
+                    />
+                  </Box>
+                </Box>
               </>
             )}
           </div>
