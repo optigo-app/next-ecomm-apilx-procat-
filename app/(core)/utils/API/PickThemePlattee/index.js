@@ -4,9 +4,8 @@ import path from "path";
 import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
 
 const API_URL = "http://newnextjs.web/api/report";
-// window.location.hostname === "localhost"
-//   ? "http://newnextjs.web/api/report"
-//   : "https://apix.optigoapps.com/api/report";
+// const API_URL = "https://apix.optigoapps.com/api/report
+
 
 const sv = process.env.NODE_ENV === "production" ? "1" : "0";
 const version = "beta";
@@ -85,29 +84,34 @@ export const updateColorThemeFile = async ({ host, styleContent, storeInitData }
 
     const cssContent = `
 .setFullThemeBack{
-background-color: ${styleContent.primary_theme_color || '#98b8d9'} !important;
+background-color: ${styleContent.primary_theme_color } !important;
 }
 
 ${styleContent.primary_theme_bg ? `.setFullThemeBack_Bg{
-background-color: ${styleContent.primary_theme_bg} !important;
+background-color: ${styleContent.primary_theme_color} !important;
 }
 ` : ''}
 .btnColorProCat{
-	background-color: ${styleContent.btn_main_bg || '#98b8d9'} !important;
-	color: ${styleContent.btn_main_text || '#ffffff'} !important;
-	border: 1px solid ${styleContent.btn_main_border || '#98b8d9'} !important;
+	background-color: ${styleContent.btn_main_bg } !important;
+	color: ${styleContent.btn_main_text } !important;
+	border: 1px solid ${styleContent.btn_main_border } !important;
+}
+
+.badgeColor .MuiBadge-badge, .badgeColorFix .MuiBadge-badge {
+	background-color: ${styleContent.btn_main_bg } !important;
+	color: ${styleContent.btn_main_text } !important;
 }
 
 .btnColorProCatProduct{
-	background-color: ${styleContent.btn_product_bg || '#98b8d9'} !important;
-	color: ${styleContent.btn_product_text || '#594646'} !important;
-	border: 1px solid ${styleContent.btn_product_border || '#98b8d9'} !important;
+	background-color: ${styleContent.btn_product_bg } !important;
+	color: ${styleContent.btn_product_text } !important;
+	border: 1px solid ${styleContent.btn_product_border } !important;
 ${styleContent.btn_product_border_radius ? `\tborder-radius: ${styleContent.btn_product_border_radius} !important;\n` : ''}}
 
 .btnColorProCatProductRemoveCart {
-	background-color: ${styleContent.btn_remove_cart_bg || '#CBE5FF'} !important;
-	color: ${styleContent.btn_remove_cart_text || '#474747D1'} !important;
-	border: 1px solid ${styleContent.btn_remove_cart_border || '#CBE5FF'} !important;
+	background-color: ${styleContent.btn_remove_cart_bg } !important;
+	color: ${styleContent.btn_remove_cart_text } !important;
+	border: 1px solid ${styleContent.btn_remove_cart_border } !important;
 ${styleContent.btn_remove_cart_border_radius ? `\tborder-radius: ${styleContent.btn_remove_cart_border_radius} !important;\n` : ''}}
 
 ${styleContent.icon_color ? `.btnColorSvg{
@@ -121,9 +125,16 @@ ${styleContent.icon_remove_color ? `.btnColorRemoveSvg{
 }
 ` : ''}
 
-{
-background-color: ${styleContent.sticky_header_bg || '#ffffff'} !important;
+.tab_color : {
+	background-color: ${styleContent.btn_main_bg } !important;
+  background : ${styleContent.btn_main_bg } !important;
 }
+
+
+.sticky_part_header_pk{
+	background-color:  ${styleContent.primary_theme_bg }!important;
+}
+
 `;
 
     let jsonBlock = `{

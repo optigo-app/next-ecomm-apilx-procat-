@@ -106,11 +106,13 @@ export default async function RootLayout({ children }) {
     import(`@/app/theme/${ACTIVE_THEME}/StyleInjector.jsx`),
   ]);
 
+  console.log(hostname, "hostname----->")
+
   return (
     <>
       <html lang="en">
         <head>
-          <link rel="stylesheet" href={`/api/theme-style?host=${hostname}&v=${storeInit?.token || ""}`} />
+          <link rel="stylesheet" href={`/api/theme-style?host=${hostname}`} />
         </head>
         <SWRegistration />
         <EmotionRegistry>

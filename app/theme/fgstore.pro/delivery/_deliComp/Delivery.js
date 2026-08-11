@@ -63,10 +63,8 @@ const AddressManagement = () => {
 
           <Button
             variant="contained"
+            className="btnColorProCat"
             size="large"
-            sx={{
-                bgcolor:'black'
-            }}
             onClick={() => proceedToOrder(navigate)}
           >
             Continue
@@ -101,10 +99,7 @@ const AddressManagement = () => {
             variant="outlined"
             size="large"
             onClick={() => handleOpen(null)}
-             sx={{
-                bgcolor:'black',
-                color:"#fff"
-            }}
+              className="btnColorProCat"
           >
             Add New Address
           </Button>

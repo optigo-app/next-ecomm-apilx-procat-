@@ -665,24 +665,19 @@ const Album = () => {
                             <Button
                               variant="contained"
                               fullWidth
+                              className="btnColorProCat"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleRequestAccess(data);
                               }}
                               sx={{
                                 borderRadius: "6px",
-                                backgroundColor: "#000000ff",
-                                color: "#ffffff",
                                 fontWeight: 600,
                                 fontSize: "0.72rem",
                                 letterSpacing: "0.08em",
                                 textTransform: "uppercase",
                                 py: 0.9,
                                 boxShadow: "none",
-                                "&:hover": {
-                                  backgroundColor: "#1a1a1a",
-                                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                                },
                               }}
                             >
                               REQUEST ACCESS

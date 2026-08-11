@@ -41,13 +41,12 @@ export async function GET(req) {
     // Without a version token, use a shorter cache to avoid stale styles.
     const cacheControl = version
       ? "public, max-age=31536000, immutable"       // 1 year — browser won't re-request until token changes
-      : "public, max-age=3600, stale-while-revalidate=600"; // 1 hour fallback
+  : "public, max-age=1, stale-while-revalidate=600";
 
     return new NextResponse(styleContent, {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
-        "Cache-Control": cacheControl,
-        ...(version ? { "ETag": `"${version}"` } : {}),
+        // ...(version ? { "ETag": `"${version}"` } : {}),
       },
     });
   } catch (error) {

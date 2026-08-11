@@ -317,7 +317,7 @@ const ManageAddress = () => {
       <div className="address_Account_SMR">
         <p className="savedAddress btnColorProCat">Saved Addresses</p>
         <Box sx={{ paddingLeft: "15px" }}>
-          <Button className="muiSmilingRocksBtnManage savedAddressManageBtn" variant="contained" sx={{ background: "#7d7f85", padding: "6px 15px", textAlign: "end", fontSize: "0.9rem", marginBottom: "10px", marginTop: "18px", borderRadius: "0" }} onClick={() => handleOpen("", null, "add")}>
+          <Button className="muiSmilingRocksBtnManage savedAddressManageBtn btnColorProCat" variant="contained" sx={{ background: "#7d7f85", padding: "6px 15px", textAlign: "end", fontSize: "0.9rem", marginBottom: "10px", marginTop: "18px", borderRadius: "0" }} onClick={() => handleOpen("", null, "add")}>
             ADD NEW ADDRESS
           </Button>
         </Box>
@@ -363,7 +363,7 @@ const ManageAddress = () => {
 
                       <Box className="addresDetailsTg addresDetailsBtn" sx={{ borderTop: "1px solid rgba(0, 0, 0, 0.04) !important", display: "flex", flexWrap: "wrap", paddingTop: "20px", position: "absolute", bottom: 0, left: "15px", width: "calc( 100% - 30px)" }}>
                         <Button
-                          className="muiSmilingRocksBtnManageEdit"
+                          className="btnColorProCat muiSmilingRocksBtnManageEdit"
                           variant="contained"
                           sx={{
                             background: "#7d7f85",
@@ -381,7 +381,7 @@ const ManageAddress = () => {
                         </Button>
                         {item.isdefault !== 1 && (
                           <Button
-                            className="muiSmilingRocksBtnManageEdit"
+                            className="btnColorProCat muiSmilingRocksBtnManageEdit"
                             variant="contained"
                             sx={{
                               background: "#7d7f85",

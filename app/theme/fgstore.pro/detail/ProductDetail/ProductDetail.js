@@ -1569,23 +1569,20 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
   // console.log("stock",stockItemArr,SimilarBrandArr);
 
   const handleCartandWish = (e, ele, type) => {
-    // console.log("event", e.target.checked, ele, type);
     let loginInfo = loginUserDetail;
 
     let prodObj = {
       StockId: ele?.StockId,
-      // "autocode": ele?.autocode,
-      // "Metalid": ele?.MetalPurityid,
-      // "MetalColorId": ele?.MetalColorid,
-      // "DiaQCid": loginInfo?.cmboDiaQCid,
-      // "CsQCid": loginInfo?.cmboCSQCid,
-      // "Size": ele?.Size,
       Unitcost: ele?.Amount,
-      // "UnitCostWithmarkup": ele?.Amount,
-      // "Remark": ""
     };
 
-    if (e.target.checked == true) {
+    const isInCart = Boolean(cartArr[ele?.StockId] ?? ele?.IsInCart === 1);
+    const isAdding =
+      typeof e?.target?.checked === "boolean"
+        ? Boolean(e.target.checked)
+        : !isInCart;
+
+    if (isAdding) {
       CartAndWishListAPI(type, prodObj, cookie)
         .then((res) => {
           let cartC = res?.Data?.rd[0]?.Cartlistcount;
@@ -1608,7 +1605,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (type === "Cart") {
       setCartArr((prev) => ({
         ...prev,
-        [ele?.StockId]: e.target.checked,
+        [ele?.StockId]: isAdding ? 1 : 0,
       }));
     }
   };

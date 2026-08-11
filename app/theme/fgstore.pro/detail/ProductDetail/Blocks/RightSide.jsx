@@ -689,6 +689,7 @@ const RightSide = ({
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
                 {/* ADD / REMOVE TO CART */}
                 <MotionButton
+                className={isAddedToCart? "btnColorProCatProductRemoveCart" : "btnColorProCatProduct"}
                   fullWidth
                   variant="outlined"
                   whileTap={{ scale: 0.98 }}
@@ -893,16 +894,17 @@ const RightSide = ({
               >
                 {/* Tab Header Bar */}
                 <Box
+                className="tab_color"
                   sx={{
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 1fr)",
                     borderBottom: "1px solid #E5E5E5",
-                    backgroundColor: "#F5F5F5",
                   }}
                 >
                   <Button
                     disableRipple
                     onClick={() => setActiveTab("details")}
+                    className={activeTab === "details" ? "btnColorProCat" : ""}
                     sx={{
                       py: 1.2,
                       px: 1,
@@ -912,11 +914,11 @@ const RightSide = ({
                       letterSpacing: "0.5px",
                       textTransform: "uppercase",
                       backgroundColor:
-                        activeTab === "details" ? "#000000" : "transparent",
-                      color: activeTab === "details" ? "#ffffff" : "#000000",
+                        activeTab === "details" ? undefined : "transparent",
+                      color: activeTab === "details" ? undefined : "#000000",
                       "&:hover": {
                         backgroundColor:
-                          activeTab === "details" ? "#000000" : "#e0e0e0",
+                          activeTab === "details" ? undefined : "#e0e0e0",
                       },
                     }}
                   >
@@ -925,6 +927,7 @@ const RightSide = ({
                   <Button
                     disableRipple
                     onClick={() => setActiveTab("care")}
+                    className={activeTab === "care" ? "btnColorProCat" : ""}
                     sx={{
                       py: 1.2,
                       px: 1,
@@ -936,11 +939,11 @@ const RightSide = ({
                       borderLeft: "1px solid #E5E5E5",
                       borderRight: "1px solid #E5E5E5",
                       backgroundColor:
-                        activeTab === "care" ? "#000000" : "transparent",
-                      color: activeTab === "care" ? "#ffffff" : "#000000",
+                        activeTab === "care" ? undefined : "transparent",
+                      color: activeTab === "care" ? undefined : "#000000",
                       "&:hover": {
                         backgroundColor:
-                          activeTab === "care" ? "#000000" : "#e0e0e0",
+                          activeTab === "care" ? undefined : "#e0e0e0",
                       },
                     }}
                   >
@@ -949,6 +952,11 @@ const RightSide = ({
                   <Button
                     disableRipple
                     onClick={() => setActiveTab("pricebreakup")}
+                    className={
+                      activeTab === "pricebreakup" || activeTab === "shipping"
+                        ? "btnColorProCat"
+                        : ""
+                    }
                     sx={{
                       py: 1.2,
                       px: 1,
@@ -959,16 +967,16 @@ const RightSide = ({
                       textTransform: "uppercase",
                       backgroundColor:
                         activeTab === "pricebreakup" || activeTab === "shipping"
-                          ? "#000000"
+                          ? undefined
                           : "transparent",
                       color:
                         activeTab === "pricebreakup" || activeTab === "shipping"
-                          ? "#ffffff"
+                          ? undefined
                           : "#000000",
                       "&:hover": {
                         backgroundColor:
                           activeTab === "pricebreakup" || activeTab === "shipping"
-                            ? "#000000"
+                            ? undefined
                             : "#e0e0e0",
                       },
                     }}

@@ -147,7 +147,7 @@
     text-align: center;
     transform: translateY(-200px);
     height: 90px; // matches normal header height
-    background-color: #fff;
+    // background-color: #fff;
   }
 
   .Smining-Top-Header-fixed-main.fixed {
@@ -158,7 +158,7 @@
     transform: translateY(0px);
     transition: all 0.4s ease;
     height: 90px; // matches normal header height
-    background-color: #fff;
+    // background-color: #fff;
   }
 
   /// open dropdownList
@@ -331,12 +331,13 @@
   }
 
   .badgeColor .MuiBadge-badge {
-    background-color: #c0bbb1 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
   .badgeColorFix .MuiBadge-badge {
-    background-color: rgb(214 204 204) !important;
-    color: black !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
     margin-left: 10px !important;
   }
 

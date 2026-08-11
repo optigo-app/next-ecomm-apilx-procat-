@@ -55,8 +55,8 @@ const AddressCard = ({
               position: "absolute",
               top: 12,
               right: 12 ,
-              bgcolor:"black"
             }}
+              className="btnColorProCat"
           />
         )}
 
