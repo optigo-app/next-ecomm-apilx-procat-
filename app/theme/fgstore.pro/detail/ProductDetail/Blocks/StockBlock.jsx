@@ -44,22 +44,26 @@ const StockBlock = ({
   const currencyCode = loginInfo?.CurrencyCode ?? storeInit?.CurrencyCode ?? "INR";
 
   return (
-    <Box sx={{ mt: 6, mb: 4, width: "100%" }}>
+    <Box sx={{ px: { xs: 2, sm: 4 }, py: 6, width: "100%" ,mt:4 }}>
       {/* Section Title */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 4, textAlign: "center" }}>
         <Typography
           variant="h6"
           sx={{
-            fontSize: "20px",
+            fontSize: "24px",
             fontWeight: 700,
             color: "#111111",
             letterSpacing: "0.5px",
             textTransform: "uppercase",
+            textAlign: "center",
           }}
         >
           Stock Items
         </Typography>
-        <Typography variant="body2" sx={{ color: "#777777", fontSize: "13px", mt: 0.5 }}>
+        <Typography
+          variant="body2"
+          sx={{ color: "#777777", fontSize: "13px", mt: 0.5, textAlign: "center" }}
+        >
           Available pieces ready for instant delivery
         </Typography>
       </Box>
@@ -67,13 +71,10 @@ const StockBlock = ({
       {/* Stock Cards Grid */}
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(1, 1fr)",
-            sm: "repeat(2, 1fr)",
-            md: "repeat(3, 1fr)",
-            lg: "repeat(4, 1fr)",
-          },
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "stretch",
+          flexWrap: "wrap",
           gap: 2.5,
         }}
       >
@@ -86,6 +87,8 @@ const StockBlock = ({
               key={ele?.StockId || ele?.StockBarcode}
               sx={{
                 position: "relative",
+                width: { xs: "100%", sm: "240px" },
+                maxWidth: "260px",
                 borderRadius: "16px",
                 border: "1.5px solid #E5E5E5",
                 bgcolor: "#FFFFFF",
@@ -138,12 +141,11 @@ const StockBlock = ({
                     onClick={(e) => handleCartandWish?.(e, ele, "Cart")}
                     sx={{
                       position: "absolute",
-                      top: 12,
-                      right: 12,
+                      top: 8,
+                      right: 8,
                       bgcolor: isInCart ? "#000000" : "rgba(255, 255, 255, 0.9)",
                       color: isInCart ? "#FFFFFF" : "#111111",
-                      backdropFilter: "blur(4px)",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
                       "&:hover": {
                         bgcolor: isInCart ? "#222222" : "#FFFFFF",
                       },
@@ -151,9 +153,9 @@ const StockBlock = ({
                     size="small"
                   >
                     {isInCart ? (
-                      <ShoppingBagIcon sx={{ fontSize: 18 }} />
+                      <ShoppingBagIcon sx={{ fontSize: 16 }} />
                     ) : (
-                      <ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />
+                      <ShoppingBagOutlinedIcon sx={{ fontSize: 16 }} />
                     )}
                   </IconButton>
                 </Tooltip>
@@ -162,18 +164,18 @@ const StockBlock = ({
               {/* Card Details Content */}
               <Box
                 sx={{
-                  p: 2,
+                  p: 1.5,
                   display: "flex",
                   flexDirection: "column",
                   flexGrow: 1,
-                  gap: 1.2,
+                  gap: 0.8,
                 }}
               >
                 {/* Design No & Stock Barcode */}
                 <Box>
                   <Typography
                     sx={{
-                      fontSize: "14px",
+                      fontSize: "13px",
                       fontWeight: 700,
                       color: "#111111",
                       lineHeight: 1.2,
@@ -184,7 +186,7 @@ const StockBlock = ({
                   {ele?.StockBarcode && (
                     <Typography
                       sx={{
-                        fontSize: "11px",
+                        fontSize: "10px",
                         color: "#777777",
                         fontWeight: 500,
                         mt: 0.2,
@@ -204,12 +206,12 @@ const StockBlock = ({
                     size="small"
                     sx={{
                       alignSelf: "flex-start",
-                      height: 22,
-                      fontSize: "11px",
+                      height: 20,
+                      fontSize: "10px",
                       fontWeight: 600,
                       bgcolor: "#F2F4F7",
                       color: "#344054",
-                      borderRadius: "6px",
+                      borderRadius: "4px",
                     }}
                   />
                 )}
@@ -219,32 +221,32 @@ const StockBlock = ({
                   sx={{
                     display: "flex",
                     flexWrap: "wrap",
-                    gap: 0.8,
-                    fontSize: "11px",
+                    gap: 0.6,
+                    fontSize: "10px",
                     color: "#555555",
                     fontWeight: 500,
                     bgcolor: "#FAF9F6",
-                    p: 1,
-                    borderRadius: "8px",
+                    p: 0.8,
+                    borderRadius: "6px",
                   }}
                 >
                   {ele?.NetWt != null && (
                     <Box>
-                      <strong style={{ color: "#111" }}>NWT:</strong> {ele?.NetWt}
+                      <strong style={{ color: "#111" }}>NWt:</strong> {ele?.NetWt}
                     </Box>
                   )}
 
                   {storeInit?.IsGrossWeight === 1 &&
                     Number(ele?.GrossWt) !== 0 && (
                       <Box>
-                        | <strong style={{ color: "#111" }}>GWT:</strong> {ele?.GrossWt}
+                        | <strong style={{ color: "#111" }}>GWt:</strong> {ele?.GrossWt}
                       </Box>
                     )}
 
                   {storeInit?.IsDiamondWeight === 1 &&
                     Number(ele?.DiaWt) !== 0 && (
                       <Box>
-                        | <strong style={{ color: "#111" }}>DWT:</strong> {ele?.DiaWt}
+                        | <strong style={{ color: "#111" }}>DWt:</strong> {ele?.DiaWt}
                         {storeInit?.IsDiamondPcs === 1 ? `/${ele?.DiaPcs}` : ""}
                       </Box>
                     )}
@@ -252,7 +254,7 @@ const StockBlock = ({
                   {storeInit?.IsStoneWeight === 1 &&
                     Number(ele?.CsWt) !== 0 && (
                       <Box>
-                        | <strong style={{ color: "#111" }}>CWT:</strong> {ele?.CsWt}
+                        | <strong style={{ color: "#111" }}>CWt:</strong> {ele?.CsWt}
                         {storeInit?.IsStonePcs === 1 ? `/${ele?.CsPcs}` : ""}
                       </Box>
                     )}
@@ -262,11 +264,11 @@ const StockBlock = ({
                 {storeInit?.IsPriceShow === 1 && (
                   <Typography
                     sx={{
-                      fontSize: "16px",
+                      fontSize: "14px",
                       fontWeight: 700,
                       color: "#000000",
                       mt: "auto",
-                      pt: 0.5,
+                      pt: 0.3,
                     }}
                   >
                     <span className="elv_currencyFont">{currencyCode}</span>{" "}
@@ -277,22 +279,19 @@ const StockBlock = ({
                 {/* Action Button */}
                 <Button
                   fullWidth
-                  variant={isInCart ? "contained" : "outlined"}
+                  className={
+                    isInCart
+                      ? "btnColorProCatProductRemoveCart"
+                      : "btnColorProCatProduct"
+                  }
                   onClick={(e) => handleCartandWish?.(e, ele, "Cart")}
                   sx={{
-                    mt: 1,
-                    height: 38,
-                    borderRadius: "8px",
-                    fontSize: "12px",
+                    mt: 0.8,
+                    height: 32,
+                    borderRadius: "6px",
+                    fontSize: "11px",
                     fontWeight: 600,
                     textTransform: "none",
-                    bgcolor: isInCart ? "#000000" : "transparent",
-                    color: isInCart ? "#FFFFFF" : "#000000",
-                    borderColor: "#000000",
-                    "&:hover": {
-                      bgcolor: isInCart ? "#222222" : "#F5F5F5",
-                      borderColor: "#000000",
-                    },
                   }}
                 >
                   {isInCart ? "Remove from cart" : "Add to cart"}

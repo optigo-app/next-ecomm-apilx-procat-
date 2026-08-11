@@ -3292,6 +3292,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         {isMetal && (
           <FormControl size="small" sx={{ minWidth: 110 }}>
             <Select
+              className="btnColorProCat"
               value={selectedMetalId || ""}
               onChange={(e) => setSelectedMetalId(e.target.value)}
               sx={{
@@ -3299,14 +3300,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                 fontSize: "12px",
                 fontWeight: 600,
                 height: "36px",
-                bgcolor: "#000000",
-                color: "#FFFFFF",
-                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiSelect-icon": { color: "inherit" },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#000000",
+                  borderColor: "transparent",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#222222",
+                  borderColor: "transparent",
                 },
               }}
             >
@@ -3326,6 +3325,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         {isDia && (
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
+              className="btnColorProCat"
               value={selectedDiaId || ""}
               onChange={(e) => setSelectedDiaId(e.target.value)}
               sx={{
@@ -3333,14 +3333,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                 fontSize: "12px",
                 fontWeight: 600,
                 height: "36px",
-                bgcolor: "#000000",
-                color: "#FFFFFF",
-                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiSelect-icon": { color: "inherit" },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#000000",
+                  borderColor: "transparent",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#222222",
+                  borderColor: "transparent",
                 },
               }}
             >
@@ -3360,6 +3358,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
         {isCs && (
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <Select
+              className="btnColorProCat"
               value={selectedCsId || ""}
               onChange={(e) => setSelectedCsId(e.target.value)}
               sx={{
@@ -3367,14 +3366,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                 fontSize: "12px",
                 fontWeight: 600,
                 height: "36px",
-                bgcolor: "#000000",
-                color: "#FFFFFF",
-                "& .MuiSelect-icon": { color: "#FFFFFF" },
+                "& .MuiSelect-icon": { color: "inherit" },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#000000",
+                  borderColor: "transparent",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#222222",
+                  borderColor: "transparent",
                 },
               }}
             >
@@ -3503,6 +3500,7 @@ const ProductList = ({ params, searchParams, storeinit }) => {
               {/* Sort By Dropdown */}
               <FormControl size="small" sx={{ minWidth: 160 }}>
                 <Select
+                  className="btnColorProCat"
                   value={sortBySelect || "Recommended"}
                   onChange={(e) => handleSortby(e)}
                   sx={{
@@ -3510,14 +3508,12 @@ const ProductList = ({ params, searchParams, storeinit }) => {
                     fontSize: "12px",
                     fontWeight: 600,
                     height: "36px",
-                    bgcolor: "#000000",
-                    color: "#FFFFFF",
-                    "& .MuiSelect-icon": { color: "#FFFFFF" },
+                    "& .MuiSelect-icon": { color: "inherit" },
                     "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#000000",
+                      borderColor: "transparent",
                     },
                     "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#222222",
+                      borderColor: "transparent",
                     },
                   }}
                 >

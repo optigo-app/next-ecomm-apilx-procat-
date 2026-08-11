@@ -226,10 +226,12 @@ const OrderForm = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ backgroundColor: COLORS.bg, minHeight: "100vh", pt: { xs: 4, md: 8 }, pb: 10 }}>
+      <Box className="setFullThemeBack" sx={{  minHeight: "100vh", pt: { xs: 4, md: 8 }, pb: 10 }}>
         <Container maxWidth="lg">
-          <Box sx={{
-            backgroundColor: COLORS.black,
+          <Box 
+          className="btnColorProCat"
+          sx={{
+         
             p: { xs: 3, sm: 4 },
             textAlign: "center",
             boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
@@ -238,7 +240,7 @@ const OrderForm = () => {
             <Typography variant="h4" sx={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: 2, mb: 1 }}>
               Custom Order Form
             </Typography>
-            <Typography variant="body1" sx={{ color: '#ccc', mt: 1, maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}>
+            <Typography variant="body1" sx={{  mt: 1, maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}>
               Place your unique Jewelry request here. Our artisans will bring your vision to life.
               If this order was placed by mistake, please contact us immediately.
             </Typography>
@@ -445,10 +447,9 @@ const OrderForm = () => {
                     size="large"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
+                    className="btnColorProCat"
                     sx={{
                       py: 2,
-                      backgroundColor: COLORS.black,
-                      color: '#fff',
                       fontWeight: 700,
                       fontSize: "1rem",
                       letterSpacing: 2,

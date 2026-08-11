@@ -79,7 +79,7 @@ const Confirmation = ({ storeinit }) => {
                                 <p>Comming soon...</p>
                             </div>
                         }
-                        <button className="smr_continueShoppingBtns" onClick={handleNavigate}>Continue Shopping</button>
+                        <button className=" btnColorProCat smr_continueShoppingBtns" onClick={handleNavigate}>Continue Shopping</button>
                     </div>
                 </div>
             </div>
