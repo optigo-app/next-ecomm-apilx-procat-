@@ -395,6 +395,7 @@ const RightSide = ({
           </Box>
 
           {/* Material Description */}
+          {TitleLine  && (
           <Typography
             variant="body2"
             sx={{
@@ -404,32 +405,15 @@ const RightSide = ({
               lineHeight: 1.5,
             }}
           >
-            {description?.length > 0 && (
               <>
                 <div
                   className={`elv_prod_description ${isExpanded ? "show-more" : ""}`}
                 >
-                  <p className="description-text">{description}</p>
-                  <Typography
-                    className="toggle-text"
-                    onClick={toggleText}
-                    variant="body2"
-                    sx={{
-                      color: "#1976d2 !important",
-                      fontSize: "13px",
-                      cursor: "pointer",
-                      fontWeight: 500,
-                      "&:hover": {
-                        textDecoration: "underline",
-                      },
-                    }}
-                  >
-                    {isExpanded ? "Show Less" : "Show More"}
-                  </Typography>
+                  <p className="description-text">{TitleLine}</p>
                 </div>
               </>
-            )}
           </Typography>
+            )}
 
           {/* Price */}
           {storeInit?.IsPriceShow == 1 && (
