@@ -174,95 +174,6 @@ const DetailBreadcrumb = ({
 
       <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
 
-      {/* Dynamic decoded menu parameters */}
-      {decodedMenuData ? (
-        <>
-          {decodedMenuData.menuname && (
-            <>
-              <Typography
-                component="span"
-                sx={breadcrumbLinkStyle}
-                onClick={() => handleBreadcrumbClick(0, decodedMenuData.menuname)}
-              >
-                {decodedMenuData.menuname}
-              </Typography>
-              <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-            </>
-          )}
-
-          {decodedMenuData.valArr?.map((val, idx) => {
-            if (!val || idx === 0) return null;
-            return (
-              <React.Fragment key={idx}>
-                <Typography
-                  component="span"
-                  sx={breadcrumbLinkStyle}
-                  onClick={() => handleBreadcrumbClick(idx, decodedMenuData.menuname)}
-                >
-                  {val}
-                </Typography>
-                <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-              </React.Fragment>
-            );
-          })}
-        </>
-      ) : (
-        /* Special Search / Type filter or Fallback Category */
-        <>
-          {firstChar === "N" && (
-            <>
-              <Typography
-                component="span"
-                sx={breadcrumbLinkStyle}
-                onClick={() => navigate.push("/p/NewArrival/?N=1")}
-              >
-                New Arrival
-              </Typography>
-              <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-            </>
-          )}
-
-          {firstChar === "T" && (
-            <>
-              <Typography
-                component="span"
-                sx={breadcrumbLinkStyle}
-                onClick={() => navigate.push("/p/Trending/?T=1")}
-              >
-                Trending
-              </Typography>
-              <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-            </>
-          )}
-
-          {firstChar === "B" && (
-            <>
-              <Typography
-                component="span"
-                sx={breadcrumbLinkStyle}
-                onClick={() => navigate.push("/p/BestSeller/?B=1")}
-              >
-                Best Seller
-              </Typography>
-              <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-            </>
-          )}
-
-          {categoryFallback && !["N", "T", "B"].includes(firstChar) && (
-            <>
-              <Typography
-                component="span"
-                sx={breadcrumbLinkStyle}
-                onClick={() => navigate.push(`/p/${encodeURIComponent(categoryFallback)}/`)}
-              >
-                {categoryFallback}
-              </Typography>
-              <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-            </>
-          )}
-        </>
-      )}
-
       {/* Active Product Name / SKU */}
       <Typography
         component="span"
@@ -282,3 +193,93 @@ const DetailBreadcrumb = ({
 };
 
 export default DetailBreadcrumb;
+
+
+
+    // {decodedMenuData ? (
+    //     <>
+    //       {decodedMenuData.menuname && (
+    //         <>
+    //           <Typography
+    //             component="span"
+    //             sx={breadcrumbLinkStyle}
+    //             onClick={() => handleBreadcrumbClick(0, decodedMenuData.menuname)}
+    //           >
+    //             {decodedMenuData.menuname}
+    //           </Typography>
+    //           <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //         </>
+    //       )}
+
+    //       {decodedMenuData.valArr?.map((val, idx) => {
+    //         if (!val || idx === 0) return null;
+    //         return (
+    //           <React.Fragment key={idx}>
+    //             <Typography
+    //               component="span"
+    //               sx={breadcrumbLinkStyle}
+    //               onClick={() => handleBreadcrumbClick(idx, decodedMenuData.menuname)}
+    //             >
+    //               {val}
+    //             </Typography>
+    //             <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //           </React.Fragment>
+    //         );
+    //       })}
+    //     </>
+    //   ) : (
+    //     /* Special Search / Type filter or Fallback Category */
+    //     <>
+    //       {firstChar === "N" && (
+    //         <>
+    //           <Typography
+    //             component="span"
+    //             sx={breadcrumbLinkStyle}
+    //             onClick={() => navigate.push("/p/NewArrival/?N=1")}
+    //           >
+    //             New Arrival
+    //           </Typography>
+    //           <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //         </>
+    //       )}
+
+    //       {firstChar === "T" && (
+    //         <>
+    //           <Typography
+    //             component="span"
+    //             sx={breadcrumbLinkStyle}
+    //             onClick={() => navigate.push("/p/Trending/?T=1")}
+    //           >
+    //             Trending
+    //           </Typography>
+    //           <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //         </>
+    //       )}
+
+    //       {firstChar === "B" && (
+    //         <>
+    //           <Typography
+    //             component="span"
+    //             sx={breadcrumbLinkStyle}
+    //             onClick={() => navigate.push("/p/BestSeller/?B=1")}
+    //           >
+    //             Best Seller
+    //           </Typography>
+    //           <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //         </>
+    //       )}
+
+    //       {categoryFallback && !["N", "T", "B"].includes(firstChar) && (
+    //         <>
+    //           <Typography
+    //             component="span"
+    //             sx={breadcrumbLinkStyle}
+    //             onClick={() => navigate.push(`/p/${encodeURIComponent(categoryFallback)}/`)}
+    //           >
+    //             {categoryFallback}
+    //           </Typography>
+    //           <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+    //         </>
+    //       )}
+    //     </>
+    //   )}
