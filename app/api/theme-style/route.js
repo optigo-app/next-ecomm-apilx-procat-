@@ -4,27 +4,31 @@ import fs from "fs";
 import path from "path";
 
 // ─── Server-side in-memory cache (per domain) ─────────────────────────────────
-// Keyed by hostname. Cleared on process restart (i.e. new deployment).
-// This means each domain's CSS is read from disk at most ONCE per server lifetime.
-const _styleCache = new Map(); // Map<host, string>
+// Keyed by hostname: Map<host, { content: string, mtimeMs: number }>
+const _styleCache = new Map();
 
 async function getStyleForHost(host) {
-  // Return from memory if already loaded for this host.
-  if (_styleCache.has(host)) {
-    return _styleCache.get(host);
-  }
-
   const ht = await getStaticHtmlPages(host);
   const filePath = path.join(process.cwd(), ht.pages.styleContent);
 
   if (!fs.existsSync(filePath)) {
-    _styleCache.set(host, "/* Style file not found */");
-    return _styleCache.get(host);
+    _styleCache.delete(host);
+    return "/* Style file not found */";
   }
 
+  const stat = await fs.promises.stat(filePath);
+  const mtimeMs = stat.mtimeMs;
+
+  // Return cached content if file has not been modified/recreated
+  const cached = _styleCache.get(host);
+  if (cached && cached.mtimeMs === mtimeMs) {
+    return cached.content;
+  }
+
+  // Re-read file content when created/modified timestamp changes
   const styleContent = await fs.promises.readFile(filePath, "utf-8");
-  _styleCache.set(host, styleContent);
-  console.log(`🎨 [THEME STYLE CACHED] ${host} → ${ht.pages.styleContent}`);
+  _styleCache.set(host, { content: styleContent, mtimeMs });
+  console.log(`🎨 [THEME STYLE UPDATED/CACHED] ${host} → ${ht.pages.styleContent} (mtime: ${mtimeMs})`);
   return styleContent;
 }
 
@@ -32,21 +36,13 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const host = searchParams.get("host") || "";
-    const version = searchParams.get("v") || "";
 
     const styleContent = await getStyleForHost(host);
-
-    // If a version token (?v=TOKEN) is present, the URL is content-addressed —
-    // safe to cache for a very long time in the browser (1 year).
-    // Without a version token, use a shorter cache to avoid stale styles.
-    const cacheControl = version
-      ? "public, max-age=31536000, immutable"       // 1 year — browser won't re-request until token changes
-  : "public, max-age=1, stale-while-revalidate=600";
 
     return new NextResponse(styleContent, {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
-        // ...(version ? { "ETag": `"${version}"` } : {}),
+        "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
       },
     });
   } catch (error) {

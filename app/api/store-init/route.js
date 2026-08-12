@@ -2,31 +2,40 @@
 import { NextResponse } from "next/server";
 import { fetchStoreInitData } from "@/app/(core)/utils/fetchStoreInit";
 import { NEXT_APP_WEB } from "@/app/(core)/utils/env";
-import { SyncProcatTheme, updateColorThemeFile } from "@/app/(core)/utils/API/PickThemePlattee";
+import { SyncProcatTheme, updateColorThemeFile, shouldUpdateColorTheme } from "@/app/(core)/utils/API/PickThemePlattee";
 
 export async function GET(req) {
     try {
         const host = req.headers.get("host") || "";
         const storeName = NEXT_APP_WEB; 
         const data = await fetchStoreInitData(storeName);
-        const StyleContenet = await SyncProcatTheme({
-            domainName: data?.rd?.[0]?.domain,
-            yearCode: data?.rd?.[0]?.YearCode,
+        const storeInit = data?.rd?.[0] || {};
+
+        const needsUpdate = await shouldUpdateColorTheme({
+            host,
+            storeInitData: storeInit,
         });
 
-        if (StyleContenet) {
-            await updateColorThemeFile({
-                host,
-                styleContent: StyleContenet,
-                storeInitData: data?.rd?.[0],
+        if (needsUpdate) {
+            const StyleContenet = await SyncProcatTheme({
+                domainName: storeInit?.domain,
+                yearCode: storeInit?.YearCode,
             });
+
+            if (StyleContenet) {
+                await updateColorThemeFile({
+                    host,
+                    styleContent: StyleContenet,
+                    storeInitData: storeInit,
+                });
+            }
         }
 
-        const storeInit = data?.rd?.[0] || {};
         return NextResponse.json(storeInit, {
             status: 200,
         });
     } catch (error) {
+        console.error("Error in store-init API:", error);
         return NextResponse.json(
             { error: "Failed to fetch storeInit" },
             { status: 500 }

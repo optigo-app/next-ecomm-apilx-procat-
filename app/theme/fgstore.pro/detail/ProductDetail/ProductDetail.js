@@ -1131,6 +1131,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         .finally(() => {
           // setIsImageLoad(false);
           setProdLoading(false);
+          setisPriceLoading(false);
         });
     };
 
@@ -1768,6 +1769,9 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       })
       .catch((err) => {
         console.log("customProdDetailErr", err);
+      })
+      .finally(() => {
+        setisPriceLoading(false);
       });
   };
 

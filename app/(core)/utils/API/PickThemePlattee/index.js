@@ -47,6 +47,31 @@ export const SyncProcatTheme = async ({ domainName, yearCode }) => {
   }
 };
 
+export const shouldUpdateColorTheme = async ({ host, storeInitData }) => {
+  try {
+    const fileCreateDateStr = storeInitData?.FileCreateDate;
+    if (!fileCreateDateStr) return true;
+
+    const ht = await getStaticHtmlPages(host);
+    const filePath = path.join(process.cwd(), ht.pages.styleContent);
+
+    if (!fs.existsSync(filePath)) return true;
+
+    const existingContent = await fs.promises.readFile(filePath, "utf-8");
+    const headerLine = `/* FileCreateDate: ${fileCreateDateStr} */`;
+
+    if (existingContent.startsWith(headerLine)) {
+      console.log(`🎨 [ColorTheme.txt] FileCreateDate (${fileCreateDateStr}) unchanged. Skipping update.`);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error checking color theme update status:", error);
+    return true;
+  }
+};
+
 export const updateColorThemeFile = async ({ host, styleContent, storeInitData }) => {
   try {
     if (!styleContent) return;
@@ -55,35 +80,10 @@ export const updateColorThemeFile = async ({ host, styleContent, storeInitData }
     const filePath = path.join(process.cwd(), ht.pages.styleContent);
     const exists = fs.existsSync(filePath);
 
-    const TWELVE_HOURS_MS = 0;
-    let shouldUpdate = !exists;
+    const fileCreateDateStr = storeInitData?.FileCreateDate || styleContent?.updated_at || styleContent?.created_at || "";
+    const headerLine = fileCreateDateStr ? `/* FileCreateDate: ${fileCreateDateStr} */\n` : "";
 
-    if (exists) {
-      const stats = fs.statSync(filePath);
-      const lastModifiedMs = stats.mtimeMs;
-      const now = Date.now();
-      const fileAgeMs = now - lastModifiedMs;
-
-      const fileCreateDateStr = storeInitData?.FileCreateDate || styleContent?.updated_at || styleContent?.created_at;
-      if (fileCreateDateStr) {
-        const backendTime = new Date(fileCreateDateStr).getTime();
-        if (!isNaN(backendTime) && backendTime > lastModifiedMs) {
-          shouldUpdate = true;
-        }
-      }
-
-      if (fileAgeMs >= TWELVE_HOURS_MS) {
-        shouldUpdate = true;
-      }
-    }
-
-    if (!shouldUpdate) {
-      console.log(`🎨 [ColorTheme.txt] Up to date (within 12h threshold): ${filePath}`);
-      return;
-    }
-
-    const cssContent = `
-.setFullThemeBack{
+    const cssContent = `${headerLine}.setFullThemeBack{
 background-color: ${styleContent.primary_theme_color } !important;
 }
 
@@ -173,7 +173,7 @@ ${styleContent.icon_remove_color ? `.btnColorRemoveSvg{
     }
 
     await fs.promises.writeFile(filePath, fullFileContent, "utf-8");
-    console.log(`✅ [ColorTheme.txt] Successfully updated style content in ${filePath}`);
+    console.log(`✅ [ColorTheme.txt] Successfully updated style content in ${filePath} (FileCreateDate: ${fileCreateDateStr})`);
   } catch (error) {
     console.error("❌ Error updating ColorTheme.txt:", error);
   }
