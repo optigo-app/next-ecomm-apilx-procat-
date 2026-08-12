@@ -1,3 +1,4 @@
+/* FileCreateDate: 2026-08-12T10:48:50.39 */
 .setFullThemeBack{
 background-color: #fff !important;
 }
@@ -18,8 +19,8 @@ background-color: #fff !important;
 }
 
 .btnColorProCatProduct{
-	background-color: #98b8d9 !important;
-	color: #594646 !important;
+	background-color: #a29bfe !important;
+	color: #fff !important;
 	border: 1px solid #98b8d9 !important;
 	border-radius: 5px !important;
 }
@@ -49,7 +50,7 @@ background-color: #fff !important;
 
 
 .sticky_part_header_pk{
-	background-color:  #ddd!important;
+	background-color:  #fff!important;
 }
 
 {
