@@ -6,15 +6,34 @@ const domainMap = {
   localhost: NEXT_APP_WEB,
 };
 
-
-
+const applyCorsHeaders = (response, origin) => {
+  if (!response) return response;
+  const allowOrigin = origin || "*";
+  response.headers.set("Access-Control-Allow-Origin", allowOrigin);
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Version");
+  if (origin) {
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+  }
+  return response;
+};
 
 export default async function middleware(req) {
   try {
+    const origin = req.headers.get("origin") || "";
+
+    if (req.method === "OPTIONS") {
+      const response = new NextResponse(null, { status: 204 });
+      applyCorsHeaders(response, origin);
+      response.headers.set("Access-Control-Max-Age", "86400");
+      return response;
+    }
 
     const isRsc = req.headers.get("rsc") === "1" || req.nextUrl.searchParams.has("_rsc") || req.headers.has("next-action");
     if (isRsc) {
-      return NextResponse.next();
+      const response = NextResponse.next();
+      applyCorsHeaders(response, origin);
+      return response;
     }
 
     const { cookies, nextUrl } = req;
@@ -28,6 +47,7 @@ export default async function middleware(req) {
     }
 
     const response = NextResponse.next();
+    applyCorsHeaders(response, origin);
     response.cookies.set("x-store-data", JSON.stringify(storeData?.rd?.[0] || {}), { httpOnly: false, path: "/" });
     response.cookies.set("x-myAccountFlags-data", JSON.stringify(storeData?.rd1 || []), { httpOnly: false, path: "/" });
     response.cookies.set("x-CompanyInfoData-data", JSON.stringify(storeData?.rd2?.[0] || {}), { httpOnly: false, path: "/" });
@@ -39,7 +59,7 @@ export default async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|favicon.ico).*)"],
+  matcher: ["/((?!_next|favicon.ico).*)"],
   runtime: "nodejs",
 };
 
