@@ -1,8 +1,5 @@
-import React from "react";
-import CacheManager from "./Main";
-
 export const metadata = {
-  title: "Server Cache Manager",
+  title: "Debug & Config Manager",
   robots: {
     index: false,
     follow: false,
@@ -18,13 +15,6 @@ export const metadata = {
   },
 };
 
-const page = () => {
-  return (
-    <>
-      <CacheManager />
-    </>
-  );
-};
-
-export default page;
-
+export default function DebugConfigLayout({ children }) {
+  return <>{children}</>;
+}

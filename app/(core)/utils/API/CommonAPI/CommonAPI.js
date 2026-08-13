@@ -12,26 +12,80 @@ let SV_Token = null;
 let SV_version = null;
 let storeInitCache = null;
 let initPromise = null;
+let memoryCachedIp = null;
+let pendingIpPromise = null;
 
+const fetchWithTimeout = async (url, options = {}, timeoutMs = 2500) => {
+  let timeoutId = null;
 
-export const getClientIpAddress = async () => {
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Request timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
   try {
+    const res = await Promise.race([
+      fetch(url, options),
+      timeoutPromise,
+    ]);
+    if (timeoutId) clearTimeout(timeoutId);
+    return res;
+  } catch (err) {
+    if (timeoutId) clearTimeout(timeoutId);
+    throw err;
+  }
+};
+
+export const getClientIpAddress = async (timeoutMs = 2500) => {
+  try {
+    if (memoryCachedIp) return memoryCachedIp;
+
     if (typeof window !== "undefined") {
       const cachedIp = sessionStorage.getItem("clientIpAddress");
-      if (cachedIp) return cachedIp;
+      if (cachedIp) {
+        memoryCachedIp = cachedIp;
+        return cachedIp;
+      }
     }
 
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    const ip = data?.ip || "";
+    if (pendingIpPromise) return await pendingIpPromise;
 
-    if (typeof window !== "undefined" && ip) {
-      sessionStorage.setItem("clientIpAddress", ip);
-    }
-    return ip;
+    pendingIpPromise = (async () => {
+      let ip = "";
+      try {
+        // 1. Primary: Internal Next.js API route
+        const res = await fetchWithTimeout("/api/get-client-ip", {}, timeoutMs);
+        if (res && res.ok) {
+          const data = await res.json();
+          ip = data?.ip || "";
+        }
+      } catch (error) {
+        // 2. Secondary fallback: Try local ipconfig.json
+        try {
+          const fallbackRes = await fetchWithTimeout("/ipconfig.json", {}, 1000);
+          if (fallbackRes && fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json();
+            ip = fallbackData?.ip || "";
+          }
+        } catch (e) {
+          // Ignore secondary fallback error
+        }
+      }
+
+      if (typeof window !== "undefined" && ip) {
+        sessionStorage.setItem("clientIpAddress", ip);
+      }
+      if (ip) memoryCachedIp = ip;
+      return ip;
+    })();
+
+    const result = await pendingIpPromise;
+    pendingIpPromise = null;
+    return result;
   } catch (error) {
     console.error("Error fetching IP address:", error);
-    return "";
+    return memoryCachedIp || "";
   }
 };
 
