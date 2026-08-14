@@ -1,0 +1,384 @@
+"use client";
+
+import React from "react";
+import {
+  Container,
+  Grid,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useRouter } from "next/navigation";
+import { handelOpenMenu } from "@/app/(core)/utils/Glob_Functions/Cart_Wishlist/handleOpenMenu";
+
+import { useTestCheckout } from "../hooks/useTestCheckout";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ShoppingBagList from "./ShoppingBagList";
+import CheckoutPanel from "./CheckoutPanel";
+import ItemCustomizationPanel from "./ItemCustomizationPanel";
+import OrderProcessingBackdrop from "./OrderProcessingBackdrop";
+import "../styles/testCheckout.scss";
+
+export default function TestCheckoutMain({ storeinit }) {
+  const router = useRouter();
+  const checkout = useTestCheckout(storeinit);
+
+  const {
+    cartItems,
+    isLoadingCart,
+    isPriceLoading,
+    // Order Summary & Tax
+    subtotal,
+    estimatedTax,
+    totalAmount,
+    isLoadingTax,
+    currencyCode,
+    formatter,
+
+    // Edit Mode
+    editingItem,
+    customizingItem,
+    editQty,
+    sizeCombo,
+    metalTypeCombo,
+    metalColorCombo,
+    diamondQualityColorCombo,
+    colorStoneCombo,
+    handleStartEdit,
+    handleCancelEdit,
+    handleCustomizationChange,
+    handleEditQtyChange,
+    handleApplyCustomization,
+
+    // Cart Actions
+    handleRemoveItem,
+    handleSaveProductRemark,
+    handleMoveToDetail,
+
+    // Address
+    addressList,
+    selectedAddress,
+    isLoadingAddress,
+    handleSelectAddress,
+    handleAddNewAddress,
+
+    // Order Remarks
+    orderRemark,
+    handleSaveOrderRemark,
+
+    // Payment & Checkout
+    paymentMethods,
+    selectedPaymentMethod,
+    setSelectedPaymentMethod,
+    isPlacingOrder,
+    isOrderSuccess,
+    orderNumber,
+    handleCheckout,
+  } = checkout;
+
+  const theme = useTheme();
+  const isMobileOrTablet = useMediaQuery(theme.breakpoints.down("lg"));
+
+  const isEmptyCart = !isLoadingCart && (!cartItems || cartItems.length === 0);
+
+  const handleBrowseCollection = async () => {
+    try {
+      const url = await handelOpenMenu();
+      if (url && url !== "/") {
+        router.push(url);
+      } else {
+        const firstUrl = typeof window !== "undefined" ? sessionStorage.getItem("firstAlbumUrl") : null;
+        if (firstUrl) {
+          router.push(firstUrl);
+        } else {
+          router.push("/");
+        }
+      }
+    } catch (e) {
+      console.error("Browse collection error:", e);
+      router.push("/");
+    }
+  };
+
+  return (
+    <div className="testCheckout_wrapper">
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+        {/* Header Navigation */}
+        <Box
+          sx={{
+            py: { xs: 2.5, md: 3.5 },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            position: "relative",
+            mb: { xs: 2, md: 3 },
+            borderBottom: "1px solid #f0f0f0",
+          }}
+        >
+          {/* Back to Home / Collection Button on Left */}
+          <IconButton
+            onClick={handleBrowseCollection}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#333",
+              border: "1px solid #eee",
+              borderRadius: "50%",
+              width: 38,
+              height: 38,
+              "&:hover": {
+                bgcolor: "#f5f5f5",
+                borderColor: "#ccc",
+              },
+            }}
+          >
+            <ArrowBackIcon fontSize="small" />
+          </IconButton>
+
+          {/* Centered Modern Header Title */}
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1.4rem", sm: "1.75rem", md: "2rem" },
+              letterSpacing: { xs: "1px", sm: "1.5px" },
+              color: "#111",
+              fontFamily: "inherit",
+              textAlign: "center",
+            }}
+          >
+            My Shopping Bag
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#777",
+              mt: 0.5,
+              fontSize: { xs: "0.8rem", sm: "0.88rem" },
+              fontWeight: 300,
+              letterSpacing: "0.5px",
+            }}
+          >
+            {cartItems?.length || 0} items in your bag
+          </Typography>
+        </Box>
+
+        {/* When Bag is Empty: Full-width Clean Centered Empty State (Hides checkout panel) */}
+        {isEmptyCart ? (
+          <Box
+            sx={{
+              py: { xs: 8, sm: 10, md: 12 },
+              px: 3,
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "45vh",
+            }}
+          >
+            <Box
+              sx={{
+                width: 76,
+                height: 76,
+                borderRadius: "50%",
+                bgcolor: "#f9fafb",
+                border: "1px solid #f3f4f6",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mb: 2.5,
+              }}
+            >
+              <ShoppingBagOutlinedIcon sx={{ fontSize: 38, color: "#9ca3af" }} />
+            </Box>
+
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 600,
+                fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                letterSpacing: "0.3px",
+                color: "#111827",
+                fontFamily: "inherit",
+                mb: 1,
+              }}
+            >
+              Your shopping bag is empty
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#6b7280",
+                fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                maxWidth: 420,
+                mb: 3.5,
+                lineHeight: 1.6,
+              }}
+            >
+              Explore our collection and add your favorite pieces to the cart.
+            </Typography>
+
+            <Button
+              variant="contained"
+              onClick={handleBrowseCollection}
+              sx={{
+                bgcolor: "#004d40",
+                color: "#fff",
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: "0.95rem",
+                letterSpacing: "0.3px",
+                px: 4.5,
+                py: 1.25,
+                borderRadius: "6px",
+                boxShadow: "none",
+                "&:hover": {
+                  bgcolor: "#00332c",
+                  boxShadow: "0 4px 12px rgba(0, 77, 64, 0.15)",
+                },
+              }}
+            >
+              Browse Our Collection
+            </Button>
+          </Box>
+        ) : (
+          /* Main Content Layout with Cart & Checkout Panels */
+          <Grid container spacing={{ xs: 3, md: 4, lg: 5 }} alignItems="flex-start">
+            {/* Left Column: Cart Items List */}
+            <Grid
+              size={{
+                xs: 12,
+                lg: 7,
+                xl: 7.5,
+              }}
+            >
+              <Box
+                sx={{
+                  bgcolor: "#fff",
+                  borderRadius: "8px",
+                  border: "1px solid #eee",
+                  overflow: "hidden",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.02)",
+                }}
+              >
+                <ShoppingBagList
+                  cartItems={cartItems}
+                  isLoading={isLoadingCart}
+                  storeinit={storeinit}
+                  currencyCode={currencyCode}
+                  formatter={formatter}
+                  editingItem={editingItem}
+                  onStartEdit={handleStartEdit}
+                  onRemoveItem={handleRemoveItem}
+                  onSaveProductRemark={handleSaveProductRemark}
+                  handleMoveToDetail={handleMoveToDetail}
+                />
+              </Box>
+            </Grid>
+
+            {/* Right Column: Checkout Panel OR Customization Panel - Sticky */}
+            <Grid
+              size={{
+                xs: 12,
+                lg: 5,
+                xl: 4.5,
+              }}
+              sx={{
+                position: { lg: "sticky" },
+                top: { lg: "80px" },
+                alignSelf: "flex-start",
+                zIndex: 10,
+              }}
+            >
+              <Box>
+                {/* On Desktop: Show Customization inline when editing, else CheckoutPanel */}
+                {!isMobileOrTablet && editingItem ? (
+                  <ItemCustomizationPanel
+                    isDrawer={false}
+                    customizingItem={customizingItem}
+                    storeinit={storeinit}
+                    currencyCode={currencyCode}
+                    formatter={formatter}
+                    isPriceLoading={isPriceLoading}
+                    metalTypeCombo={metalTypeCombo}
+                    metalColorCombo={metalColorCombo}
+                    diamondQualityColorCombo={diamondQualityColorCombo}
+                    colorStoneCombo={colorStoneCombo}
+                    sizeCombo={sizeCombo}
+                    editQty={editQty}
+                    onCustomizationChange={handleCustomizationChange}
+                    onEditQtyChange={handleEditQtyChange}
+                    onApply={handleApplyCustomization}
+                    onCancel={handleCancelEdit}
+                    handleMoveToDetail={handleMoveToDetail}
+                  />
+                ) : (
+                  <CheckoutPanel
+                    storeinit={storeinit}
+                    currencyCode={currencyCode}
+                    formatter={formatter}
+                    subtotal={subtotal}
+                    estimatedTax={estimatedTax}
+                    totalAmount={totalAmount}
+                    isLoadingCart={isLoadingCart}
+                    isLoadingTax={isLoadingTax || isLoadingCart}
+                    addressList={addressList}
+                    selectedAddress={selectedAddress}
+                    isLoadingAddress={isLoadingAddress || isLoadingCart}
+                    onSelectAddress={handleSelectAddress}
+                    onAddNewAddress={handleAddNewAddress}
+                    orderRemark={orderRemark}
+                    onSaveOrderRemark={handleSaveOrderRemark}
+                    paymentMethods={paymentMethods}
+                    selectedPaymentMethod={selectedPaymentMethod}
+                    onSelectPaymentMethod={setSelectedPaymentMethod}
+                    isPlacingOrder={isPlacingOrder}
+                    onCheckout={handleCheckout}
+                  />
+                )}
+              </Box>
+            </Grid>
+          </Grid>
+        )}
+
+        {/* Mobile Slide-Over Drawer for Customization */}
+        {isMobileOrTablet && editingItem && (
+          <ItemCustomizationPanel
+            isDrawer={true}
+            open={Boolean(editingItem)}
+            customizingItem={customizingItem}
+            storeinit={storeinit}
+            currencyCode={currencyCode}
+            formatter={formatter}
+            isPriceLoading={isPriceLoading}
+            metalTypeCombo={metalTypeCombo}
+            metalColorCombo={metalColorCombo}
+            diamondQualityColorCombo={diamondQualityColorCombo}
+            colorStoneCombo={colorStoneCombo}
+            sizeCombo={sizeCombo}
+            editQty={editQty}
+            onCustomizationChange={handleCustomizationChange}
+            onEditQtyChange={handleEditQtyChange}
+            onApply={handleApplyCustomization}
+            onCancel={handleCancelEdit}
+            handleMoveToDetail={handleMoveToDetail}
+          />
+        )}
+        {/* Full-Screen Order Processing & Success Backdrop Overlay */}
+        <OrderProcessingBackdrop
+          open={isPlacingOrder || isOrderSuccess}
+          isSuccess={isOrderSuccess}
+          orderNumber={orderNumber}
+        />
+      </Container>
+    </div>
+  );
+}
