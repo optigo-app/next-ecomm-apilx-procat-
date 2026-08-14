@@ -1,0 +1,298 @@
+"use client";
+
+import React, { useState } from "react";
+import { Box, Typography, IconButton, Button } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import ProductRemarkModal from "./ProductRemarkModal";
+import ConfirmationDialog from "@/app/(core)/utils/Glob_Functions/ConfirmationDialog/ConfirmationDialog";
+
+const noImageFound = "/image-not-found.jpg";
+
+export default function ShoppingBagItem({
+  item,
+  storeinit,
+  currencyCode,
+  formatter,
+  isEditing,
+  onStartEdit,
+  onRemoveItem,
+  onSaveProductRemark,
+  handleMoveToDetail,
+}) {
+  const [isRemarkOpen, setIsRemarkOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const CDNDesignImageFolThumb = storeinit?.CDNDesignImageFolThumb;
+  const CDNDesignImageFol = storeinit?.CDNDesignImageFol;
+  const fullImagePath = `${CDNDesignImageFolThumb}${item?.designno}~1.jpg`;
+  const fullImagePathHd = `${CDNDesignImageFol}${item?.designno}~1.${item?.ImageExtension || "jpg"}`;
+
+  // Check if MRP-based product
+  const isMrpProduct = item?.IsMrpBase === 1 || item?.isMrpBase === 1 || item?.StockId !== 0;
+
+  const itemPrice = item?.FinalCost || item?.UnitCostWithMarkUp || 0;
+
+  return (
+    <Box
+      className={`testCheckout_itemCard ${isEditing ? "testCheckout_itemCard--editing" : ""}`}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: { xs: 2, sm: 3 },
+        borderBottom: "1px solid #f2f2f2",
+        position: "relative",
+        transition: "background-color 0.2s ease",
+        "&:hover": {
+          bgcolor: "#fafafa",
+        },
+      }}
+    >
+      {/* Product Image - Full edge-to-edge box with click-to-detail */}
+      <Box
+        className="testCheckout_itemImageWrapper"
+        onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
+        sx={{
+          width: 180,
+          height: "100%",
+          flexShrink: 0,
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+        }}
+      >
+        <img
+          src={item?.images || fullImagePath}
+          alt={item?.TitleLine || item?.designno}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={(e) => {
+            const imgEl = e.target;
+            if (!imgEl.dataset.triedFullImage && fullImagePath) {
+              imgEl.src = fullImagePath;
+              imgEl.dataset.triedFullImage = "true";
+            } else if (!imgEl.dataset.triedNoImage) {
+              imgEl.src = noImageFound;
+              imgEl.dataset.triedNoImage = "true";
+            }
+          }}
+          loading="lazy"
+        />
+      </Box>
+
+      {/* Product Details - Clean Light Aesthetic */}
+      <Box sx={{ flex: 1, minWidth: 0, pr: { xs: 3, sm: 4 },
+        p: { xs: 2, sm: 2.5 },
+     }}>
+        <Typography
+          variant="subtitle1"
+          onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
+          sx={{
+            fontWeight: 500,
+            fontSize: { xs: "0.95rem", sm: "1.05rem" },
+            color: "#222",
+            mb: 0.5,
+            letterSpacing: "0.2px",
+            cursor: "pointer",
+            "&:hover": {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          {item?.designno} {item?.StockNo ? `(${item?.StockNo})` : ""}
+        </Typography>
+
+        {/* Weights Specs */}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px 12px",
+            fontSize: "0.8rem",
+            color: "#777",
+            mb: 0.6,
+          }}
+        >
+          {storeinit?.IsGrossWeight === 1 && (
+            <span>GWT: {(item?.Gwt || 0).toFixed(3)}</span>
+          )}
+          {storeinit?.IsMetalWeight === 1 && Number(item?.Nwt) !== 0 && (
+            <span>NWT: {(item?.Nwt || 0).toFixed(3)}</span>
+          )}
+          {storeinit?.IsDiamondWeight === 1 &&
+            (item?.Dwt !== "0" || item?.Dpcs !== "0") && (
+              <span>
+                DWT: {(item?.Dwt || 0).toFixed(3)} / {item?.Dpcs || 0}
+              </span>
+            )}
+          {storeinit?.IsStoneWeight === 1 &&
+            (item?.CSwt !== "0" || item?.CSpcs !== "0") && (
+              <span>
+                CWT: {(item?.CSwt || 0).toFixed(3)} / {item?.CSpcs || 0}
+              </span>
+            )}
+        </Box>
+
+        {/* Customization Specs */}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "6px",
+            fontSize: "0.8rem",
+            color: "#555",
+            mb: 0.8,
+          }}
+        >
+          {item?.metaltypename && (
+            <span>
+              {item?.metaltypename} {item?.metalcolorname ? `(${item?.metalcolorname})` : ""}
+            </span>
+          )}
+          {item?.diamondquality && (
+            <span> | {item?.diamondquality}</span>
+          )}
+          {item?.colorstonequality && (
+            <span>, {item?.colorstonequality}</span>
+          )}
+          {item?.Size && <span> | Size: {item?.Size}</span>}
+          <span> | Qty: {item?.Quantity || 1}</span>
+        </Box>
+
+        {/* Price */}
+        {storeinit?.IsPriceShow === 1 && (
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: { xs: "0.95rem", sm: "1.05rem" },
+              color: "#1a1a1a",
+              mt: 0.3,
+              mb: 0.8,
+            }}
+          >
+            {currencyCode} {formatter(itemPrice)}
+          </Typography>
+        )}
+
+        {/* Remarks display if present */}
+        {item?.Remarks && (
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "0.8rem",
+              color: "#777",
+              fontStyle: "italic",
+              mb: 1,
+            }}
+          >
+            Remark: {item.Remarks}
+          </Typography>
+        )}
+
+        {/* Action Buttons: EDIT (Hidden for MRP) & Add/Update Remark */}
+        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.2, mt: 1 }}>
+          {!isMrpProduct && (
+            <Button
+              size="small"
+              startIcon={<ModeEditOutlineOutlinedIcon sx={{ fontSize: "14px !important" }} />}
+              onClick={() => onStartEdit(item)}
+              sx={{
+                px: 1.5,
+                py: 0.35,
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                letterSpacing: "0.4px",
+                textTransform: "uppercase",
+                borderRadius: "4px",
+                border: "1px solid #004d40",
+                color: "#004d40",
+                bgcolor: isEditing ? "#004d40" : "#f4f9f7",
+                color: isEditing ? "#fff" : "#004d40",
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  bgcolor: "#004d40",
+                  color: "#fff",
+                },
+              }}
+            >
+              Edit
+            </Button>
+          )}
+
+          <Button
+            size="small"
+            startIcon={<RateReviewOutlinedIcon sx={{ fontSize: "14px !important" }} />}
+            onClick={() => setIsRemarkOpen(true)}
+            sx={{
+              px: 1.4,
+              py: 0.35,
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              letterSpacing: "0.2px",
+              textTransform: "none",
+              borderRadius: "4px",
+              border: "1px solid #e0e0e0",
+              color: "#555",
+              bgcolor: "#fff",
+              transition: "all 0.15s ease",
+              "&:hover": {
+                borderColor: "#999",
+                color: "#111",
+                bgcolor: "#f7f7f7",
+              },
+            }}
+          >
+            {item?.Remarks ? "Edit Note" : "Add Note"}
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Remove [X] Button */}
+      <IconButton
+        aria-label="remove item"
+        size="small"
+        onClick={() => setIsDeleteModalOpen(true)}
+        sx={{
+          position: "absolute",
+          top: 12,
+          right: 12,
+          color: "#999",
+          border: "1px solid #eee",
+          borderRadius: "4px",
+          width: 28,
+          height: 28,
+          p: 0,
+          "&:hover": {
+            color: "#e53935",
+            borderColor: "#e53935",
+            bgcolor: "#fff5f5",
+          },
+        }}
+      >
+        <CloseIcon sx={{ fontSize: 16 }} />
+      </IconButton>
+
+      {/* Product Remark Modal */}
+      <ProductRemarkModal
+        open={isRemarkOpen}
+        onClose={() => setIsRemarkOpen(false)}
+        initialRemark={item?.Remarks}
+        onSave={(remarkText) => onSaveProductRemark(item, remarkText)}
+      />
+
+      {/* Confirmation Dialog before Removal */}
+      <ConfirmationDialog
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => {
+          setIsDeleteModalOpen(false);
+          onRemoveItem(item);
+        }}
+        title="Remove Item"
+        content="Are you sure you want to remove this item from your bag?"
+      />
+    </Box>
+  );
+}

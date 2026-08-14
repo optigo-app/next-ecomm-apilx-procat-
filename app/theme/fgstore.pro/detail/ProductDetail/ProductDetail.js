@@ -960,20 +960,26 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
         ?.Metalid;
     }
 
-    if (diaQcLocal) {
-      diaArr = diaQcLocal?.filter(
-        (ele) =>
-          ele?.QualityId == decodeobj?.d?.split(",")[0] &&
-          ele?.ColorId == decodeobj?.d?.split(",")[1],
-      )[0];
+    if (diaQcLocal && decodeobj?.d !== undefined && decodeobj?.d !== null) {
+      const dStr = String(decodeobj.d);
+      const dParts = dStr.includes(",") ? dStr.split(",") : [dStr, ""];
+      diaArr = diaQcLocal?.filter((ele) => {
+        if (dParts[1]) {
+          return ele?.QualityId == dParts[0] && ele?.ColorId == dParts[1];
+        }
+        return ele?.QualityId == dParts[0] || `${ele?.QualityId},${ele?.ColorId}` == dStr;
+      })[0];
     }
 
-    if (csQcLocal) {
-      csArr = csQcLocal?.filter(
-        (ele) =>
-          ele?.QualityId == decodeobj?.c?.split(",")[0] &&
-          ele?.ColorId == decodeobj?.c?.split(",")[1],
-      )[0];
+    if (csQcLocal && decodeobj?.c !== undefined && decodeobj?.c !== null) {
+      const cStr = String(decodeobj.c);
+      const cParts = cStr.includes(",") ? cStr.split(",") : [cStr, ""];
+      csArr = csQcLocal?.filter((ele) => {
+        if (cParts[1]) {
+          return ele?.QualityId == cParts[0] && ele?.ColorId == cParts[1];
+        }
+        return ele?.QualityId == cParts[0] || `${ele?.QualityId},${ele?.ColorId}` == cStr;
+      })[0];
     }
 
     if (MetalColorLocal) {

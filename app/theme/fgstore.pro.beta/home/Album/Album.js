@@ -349,13 +349,27 @@ const Album = () => {
   }, [albumData, ImageMaking]);
 
   useEffect(() => {
-    if (albumData.length > 0 && !imagesReady) {
-      setImagesReady(true);
+    if (albumData.length > 0) {
+      if (!imagesReady) {
+        setImagesReady(true);
+      }
+      try {
+        const firstAlbum = albumData[0];
+        if (firstAlbum) {
+          const albumName = firstAlbum?.AlbumName;
+          const securityKey = firstAlbum?.AlbumSecurityId;
+          const firstUrl = `/p/${encodeURIComponent(albumName || "")}/${securityKey && Number(securityKey) > 0 ? `K=${btoa(String(securityKey))}/` : ""}?A=${btoa(`AlbumName=${albumName || ""}`)}`;
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("firstAlbumUrl", firstUrl);
+          }
+        }
+      } catch (err) {
+        console.error("Error setting firstAlbumUrl:", err);
+      }
     }
-  }, [albumData]);
+  }, [albumData, imagesReady]);
 
   if (!imagesReady) {
-    console.log("██████ ALBUM RENDER SKELETON ██████ albumData.length:", albumData.length, "imagesReady:", imagesReady);
     return <AlbumSkeleton />;
   }
 

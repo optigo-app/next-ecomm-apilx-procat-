@@ -767,63 +767,94 @@ const useCart = () => {
   };
 
   const handleMoveToDetail = (cartData) => {
-    const logindata = JSON.parse(sessionStorage.getItem("loginUserDetail"));
+    const logindata = JSON.parse(sessionStorage.getItem("loginUserDetail")) || {};
+    const storeInitData = JSON.parse(sessionStorage.getItem("storeInit")) || storeinit || {};
+
     const createAndNavigate = (obj) => {
       const encodedObj = compressAndEncode(JSON.stringify(obj));
-      // navigate(`/d/${ ? cartData?.TitleLine.replace(/\s+/g, `_`) + (cartData?.TitleLine?.length > 0 ? "_" : "") : ""}${}?p=${}`);
       navigate(`/d/${formatRedirectTitleLine(cartData?.TitleLine)}${cartData?.designno}?p=${encodedObj}`);
+    };
+
+    const metalId =
+      cartData?.metaltypeid ||
+      cartData?.Metalid ||
+      logindata?.MetalId ||
+      storeInitData?.MetalId;
+
+    const metalColorId =
+      cartData?.metalcolorid ||
+      cartData?.MetalColorId ||
+      cartData?.MetalColorid ||
+      "";
+
+    let diaQc = "";
+    if (cartData?.diamondqualityid && cartData?.diamondcolorid) {
+      diaQc = `${cartData.diamondqualityid},${cartData.diamondcolorid}`;
+    } else if (cartData?.diamondqualityid) {
+      diaQc = `${cartData.diamondqualityid}`;
+    } else {
+      diaQc = logindata?.cmboDiaQCid || storeInitData?.cmboDiaQCid || "0,0";
+    }
+
+    let csQc = "";
+    if (cartData?.colorstonequalityid && cartData?.colorstonecolorid) {
+      csQc = `${cartData.colorstonequalityid},${cartData.colorstonecolorid}`;
+    } else if (cartData?.colorstonequalityid) {
+      csQc = `${cartData.colorstonequalityid}`;
+    } else {
+      csQc = logindata?.cmboCSQCid || storeInitData?.cmboCSQCid || "0,0";
     }
 
     if (storeinit?.IsMultiVariantCart == 1) {
       let obj = {
         a: cartData?.autocode,
         b: cartData?.designno,
-        m: cartData?.metaltypeid,
-        d: cartData?.diamondqualityid,
-        c: cartData?.colorstonequalityid,
+        m: metalId,
+        d: diaQc,
+        c: csQc,
         f: {},
         g: [["", ""], ["", "", ""]],
-        i: cartData?.metalcolorid,
-        l: cartData?.ImageExtension,
-        count: cartData?.ImageCount,
-        s: cartData?.Size,
-        type: "IsMultiVariant"
+        i: metalColorId,
+        l: cartData?.ImageExtension || "",
+        count: cartData?.ImageCount || 0,
+        s: cartData?.Size || "",
+        type: "IsMultiVariant",
       };
       createAndNavigate(obj);
+      return;
     }
 
-    if (cartData?.StockNo !== "") {
+    if (cartData?.StockNo && String(cartData.StockNo).trim() !== "") {
       let obj = {
         a: cartData?.autocode,
         b: cartData?.designno,
-        m: logindata?.MetalId,
-        d: logindata?.cmboDiaQCid,
-        c: logindata?.cmboCSQCid,
+        m: logindata?.MetalId || metalId,
+        d: logindata?.cmboDiaQCid || diaQc,
+        c: logindata?.cmboCSQCid || csQc,
         f: {},
         g: [["", ""], ["", "", ""]],
-        i: cartData?.metalcolorid,
-        l: cartData?.ImageExtension,
-        count: cartData?.ImageCount,
-        s: cartData?.Size,
+        i: metalColorId,
+        l: cartData?.ImageExtension || "",
+        count: cartData?.ImageCount || 0,
+        s: cartData?.Size || "",
       };
       createAndNavigate(obj);
     } else {
       let obj = {
         a: cartData?.autocode,
         b: cartData?.designno,
-        m: cartData?.metaltypeid,
-        d: `${cartData?.diamondqualityid},${cartData?.diamondcolorid}`,
-        c: `${cartData?.colorstonequalityid},${cartData?.colorstonecolorid}`,
+        m: metalId,
+        d: diaQc,
+        c: csQc,
         f: {},
         g: [["", ""], ["", "", ""]],
-        i: cartData?.metalcolorid,
-        l: cartData?.ImageExtension,
-        count: cartData?.ImageCount,
-        s: cartData?.Size,
+        i: metalColorId,
+        l: cartData?.ImageExtension || "",
+        count: cartData?.ImageCount || 0,
+        s: cartData?.Size || "",
       };
       createAndNavigate(obj);
     }
-
   };
 
 

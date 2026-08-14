@@ -35,10 +35,11 @@ export async function resolveProductDetail(themePage) {
 export async function resolveCart(themePage) {
   switch (themePage) {
     case "fgstore.pro.beta":
+      return (await import("@/app/testcheckout/page.jsx")).default;
       return (await import("@/app/theme/fgstore.pro.beta/cart/page.jsx")).default;
     case "fgstore.pro":
     default:
-      return (await import("@/app/theme/fgstore.pro/cart/page.jsx")).default;
+      return (await import("@/app/testcheckout/page.jsx")).default;
   }
 }
 

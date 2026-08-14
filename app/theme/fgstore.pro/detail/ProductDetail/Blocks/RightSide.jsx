@@ -116,15 +116,15 @@ const RightSide = ({
   const isPriceLoadingState =
     (isPriceloading || pdLoadImage || loadingdata || !singleProd) &&
     !activeArticle &&
-    !singleProd?.UnitCostWithmarkup &&
-    !singleProd?.UnitCostWithMarkUp &&
-    !singleProd1?.UnitCostWithMarkUp;
+    singleProd?.UnitCostWithmarkup === undefined &&
+    singleProd?.UnitCostWithMarkUp === undefined &&
+    singleProd1?.UnitCostWithMarkUp === undefined;
   const isNetWeightLoadingState =
     isLoading &&
     !activeArticle?.NetWeight &&
-    !singleProd?.NetWeight &&
-    !singleProd?.Nwt &&
-    !singleProd1?.NetWeight;
+    singleProd?.NetWeight === undefined &&
+    singleProd?.Nwt === undefined &&
+    singleProd1?.NetWeight === undefined;
 
   // Derive default diamond quality from rd2 for the activeArticle ArticleId
   const defaultDiaStone =
@@ -435,14 +435,7 @@ const RightSide = ({
             >
               {isPriceloading ||
               isPriceLoadingState ||
-              isLoading ||
-              getCost(
-                activeArticle?.UnitCostWithmarkup ??
-                  activeArticle?.TotalUnitCost ??
-                  singleProd1?.UnitCostWithMarkUp ??
-                  singleProd?.UnitCostWithmarkup ??
-                  singleProd?.UnitCostWithMarkUp,
-              ) === 0 ? (
+              isLoading ? (
                 <Skeleton
                   variant="rounded"
                   width={160}
@@ -458,12 +451,13 @@ const RightSide = ({
                   />
                   <span>
                     {formatter(
-                      activeArticle?.UnitCostWithmarkup ??
-                        activeArticle?.TotalUnitCost ??
-                        singleProd1?.UnitCostWithMarkUp ??
-                        singleProd?.UnitCostWithmarkup ??
-                        singleProd?.UnitCostWithMarkUp ??
-                        0,
+                      getCost(
+                        activeArticle?.UnitCostWithmarkup ??
+                          activeArticle?.TotalUnitCost ??
+                          singleProd1?.UnitCostWithMarkUp ??
+                          singleProd?.UnitCostWithmarkup ??
+                          singleProd?.UnitCostWithMarkUp,
+                      ),
                     )}
                   </span>
                 </>
@@ -546,12 +540,12 @@ const RightSide = ({
                 <Typography sx={{ fontSize: "15px", fontWeight: 600 }}>
                   {isPriceloading ||
                   isLoading ||
-                  !(
+                  (
                     singleProd1?.NetWeight ??
                     singleProd1?.Nwt ??
                     singleProd?.NetWeight ??
                     singleProd?.Nwt
-                  ) ? (
+                  ) === undefined ? (
                     <Skeleton variant="text" width={50} />
                   ) : (
                     (

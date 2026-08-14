@@ -85,6 +85,12 @@ export function AuthProvider({ children, storeInit }) {
       decodeError = true;
     }
 
+    // Block direct access to /testcheckout for anyone (never allow direct access)
+    if (pathname === "/testcheckout" || pathname.startsWith("/testcheckout/")) {
+      router.replace("/cartPage");
+      return;
+    }
+
     if (pathname === "/p" || pathname.startsWith("/p/")) {
       if (islogin !== true) {
         if (decodeError || (albumSecurityId !== null && albumSecurityId > 0)) {
@@ -164,7 +170,7 @@ export function AuthProvider({ children, storeInit }) {
     }
   }, [isLoading, islogin, pathname, searchParams, storeInit, router]);
 
-  if (isLoading) {
+  if (isLoading || pathname === "/testcheckout" || pathname?.startsWith("/testcheckout/")) {
     return <div></div>;
   }
 
