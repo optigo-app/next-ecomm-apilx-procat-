@@ -8,5 +8,6 @@ export default async function Page() {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const TermsAndConditionsComponent = await resolveTermsAndConditions(ACTIVE_THEME);
-  return <TermsAndConditionsComponent />;
+  return <TermsAndConditionsComponent hostname={hostname} />;
 }
+

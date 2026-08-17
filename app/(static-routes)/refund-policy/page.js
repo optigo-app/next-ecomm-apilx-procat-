@@ -8,5 +8,6 @@ export default async function Page() {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const RefundPolicyComponent = await resolveRefundPolicy(ACTIVE_THEME);
-  return <RefundPolicyComponent />;
+  return <RefundPolicyComponent hostname={hostname} />;
 }
+

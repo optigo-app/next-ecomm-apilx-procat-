@@ -44,28 +44,41 @@ const SimilarDesigns = ({
         sx={{
           mb: 4,
           textAlign: "center",
-          color: "#7d7f85",
-          fontSize: "30px",
-          fontWeight: 400
+          color: "#111111",
+          fontSize: "24px",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.5px",
         }}
       >
         Similar Designs
       </Typography>
 
       <Box position="relative">
-        {/* Only show Left Arrow if more than 5 items */}
+        {/* Only show Left Arrow if more than 1 item */}
         {showNavigation && (
           <IconButton
             onClick={() => swiperRef.current?.slidePrev()}
+            aria-label="Previous Similar Designs"
             sx={{
               position: "absolute",
-              left: -20,
+              left: { xs: -8, sm: -14, md: -22 },
               top: "50%",
               transform: "translateY(-50%)",
               zIndex: 10,
-              background: "#fff",
-              boxShadow: 2,
-              "&:hover": { background: "#f5f5f5" }
+              width: 40,
+              height: 40,
+              bgcolor: "#FFFFFF",
+              color: "#111111",
+              border: "1px solid #E8E8EC",
+              boxShadow: "0 4px 14px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06)",
+              transition: "all 0.2s ease-in-out",
+              "&:hover": {
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
+                transform: "translateY(-50%) scale(1.06)",
+              },
             }}
           >
             <ChevronLeftIcon />
@@ -153,19 +166,30 @@ const SimilarDesigns = ({
           })}
         </Swiper>
 
-        {/* Only show Right Arrow if more than 5 items */}
+        {/* Only show Right Arrow if more than 1 item */}
         {showNavigation && (
           <IconButton
             onClick={() => swiperRef.current?.slideNext()}
+            aria-label="Next Similar Designs"
             sx={{
               position: "absolute",
-              right: -20,
+              right: { xs: -8, sm: -14, md: -22 },
               top: "50%",
               transform: "translateY(-50%)",
               zIndex: 10,
-              background: "#fff",
-              boxShadow: 2,
-              "&:hover": { background: "#f5f5f5" }
+              width: 40,
+              height: 40,
+              bgcolor: "#FFFFFF",
+              color: "#111111",
+              border: "1px solid #E8E8EC",
+              boxShadow: "0 4px 14px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06)",
+              transition: "all 0.2s ease-in-out",
+              "&:hover": {
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
+                transform: "translateY(-50%) scale(1.06)",
+              },
             }}
           >
             <ChevronRightIcon />

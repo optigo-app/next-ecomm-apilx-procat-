@@ -1,17 +1,8 @@
-import fs from "fs";
-import path from "path";
 import "./PrivacyPolicy.scss";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter";
 
 const PrivacyPolicy = async ({ hostname }) => {
-  const ht = await getStaticHtmlPages(hostname);
-  console.log(ht, "ht")
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.privacy
-  );
-
-  const htmlContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = getStaticHtmlContent("privacy", hostname);
 
   return (
     <div className="main_warrpper_pro">
@@ -35,3 +26,4 @@ const Banner = ({ title = "Privacy Policy" }) => {
     </div>
   );
 };
+

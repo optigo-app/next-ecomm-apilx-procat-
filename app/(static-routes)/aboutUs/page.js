@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const { hostname } = await getDomainInfo();
+  console.log(hostname  , "AboutUsComponent")
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const AboutUsComponent = await resolveAboutUs(ACTIVE_THEME);
   return <AboutUsComponent hostname={hostname} />;

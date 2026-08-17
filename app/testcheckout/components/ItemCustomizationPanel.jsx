@@ -122,22 +122,63 @@ export default function ItemCustomizationPanel({
     (customizingItem?.UnitCostWithMarkUp || 0) * editQty;
 
   const hasDiamonds =
-    (customizingItem?.Dwt !== "0" &&
-      customizingItem?.Dwt !== 0 &&
-      customizingItem?.Dwt !== undefined) ||
-    (customizingItem?.Dpcs !== "0" &&
-      customizingItem?.Dpcs !== 0 &&
-      customizingItem?.Dpcs !== undefined);
+    storeinit?.IsDiamondCustomization == 1 &&
+    (Number(customizingItem?.Dwt) > 0 || Number(customizingItem?.Dpcs) > 0);
 
   const hasColorStones =
-    (customizingItem?.CSwt !== "0" &&
-      customizingItem?.CSwt !== 0 &&
-      customizingItem?.CSwt !== undefined) ||
-    (customizingItem?.CSpcs !== "0" &&
-      customizingItem?.CSpcs !== 0 &&
-      customizingItem?.CSpcs !== undefined);
+    storeinit?.IsCsCustomization == 1 &&
+    (Number(customizingItem?.CSwt) > 0 || Number(customizingItem?.CSpcs) > 0);
 
   const hasSize = sizeCombo?.rd?.length > 0 && customizingItem?.IsSize !== 0;
+
+  // Accurately resolve selected values with case-insensitivity and ID matching
+  const selectedMetalVal = (() => {
+    if (!customizingItem) return "";
+    const match = metalTypeCombo?.find(
+      (m) =>
+        (customizingItem.metaltypeid && m.Metalid === customizingItem.metaltypeid) ||
+        m.metaltypename?.trim().toLowerCase() === customizingItem.metaltypename?.trim().toLowerCase() ||
+        m.metaltype?.trim().toLowerCase() === customizingItem.metaltypename?.trim().toLowerCase()
+    );
+    return match ? match.metaltypename : customizingItem?.metaltypename || "";
+  })();
+
+  const selectedMetalColorVal = (() => {
+    if (!customizingItem) return "";
+    const match = metalColorCombo?.find(
+      (c) =>
+        (customizingItem.metalcolorid && c.id === customizingItem.metalcolorid) ||
+        c.colorname?.trim().toLowerCase() === customizingItem.metalcolorname?.trim().toLowerCase() ||
+        c.metalcolorname?.trim().toLowerCase() === customizingItem.metalcolorname?.trim().toLowerCase()
+    );
+    return match ? (match.colorname || match.metalcolorname) : customizingItem?.metalcolorname || "";
+  })();
+
+  const selectedDiaVal = (() => {
+    if (!customizingItem) return "";
+    const match = diamondQualityColorCombo?.find(
+      (opt) =>
+        (customizingItem.diamondqualityid && opt.QualityId === customizingItem.diamondqualityid && customizingItem.diamondcolorid && opt.ColorId === customizingItem.diamondcolorid) ||
+        (opt.Quality?.trim().toLowerCase() === customizingItem.diamondquality?.trim().toLowerCase() &&
+         opt.color?.trim().toLowerCase() === customizingItem.diamondcolor?.trim().toLowerCase())
+    );
+    return match
+      ? `${match.Quality},${match.color}`
+      : `${customizingItem?.diamondquality || ""},${customizingItem?.diamondcolor || ""}`;
+  })();
+
+  const selectedCsVal = (() => {
+    if (!customizingItem) return "";
+    const match = colorStoneCombo?.find(
+      (opt) =>
+        (customizingItem.colorstonequalityid && opt.QualityId === customizingItem.colorstonequalityid && customizingItem.colorstonecolorid && opt.ColorId === customizingItem.colorstonecolorid) ||
+        (opt.Quality?.trim().toLowerCase() === customizingItem.colorstonequality?.trim().toLowerCase() &&
+         opt.color?.trim().toLowerCase() === customizingItem.colorstonecolor?.trim().toLowerCase())
+    );
+    return match
+      ? `${match.Quality},${match.color}`
+      : `${customizingItem?.colorstonequality || ""},${customizingItem?.colorstonecolor || ""}`;
+  })();
 
   // Inner Content Element
   const panelContent = (
@@ -269,7 +310,7 @@ export default function ItemCustomizationPanel({
         <Box sx={{ mb: 2 }}>
           <Grid container spacing={2}>
             {/* 1. Metal Type */}
-            {metalTypeCombo?.length > 0 && (
+            {storeinit?.IsMetalCustomization == 1 && metalTypeCombo?.length > 0 && (
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
                   <FormLabel
@@ -286,7 +327,7 @@ export default function ItemCustomizationPanel({
                     Metal Type
                   </FormLabel>
                   <select
-                    value={customizingItem?.metaltypename || ""}
+                    value={selectedMetalVal}
                     onChange={(e) =>
                       onCustomizationChange("metalType", e.target.value)
                     }
@@ -313,7 +354,7 @@ export default function ItemCustomizationPanel({
             )}
 
             {/* 2. Metal Color */}
-            {metalColorCombo?.length > 0 && (
+            {storeinit?.IsMetalCustomization == 1 && metalColorCombo?.length > 0 && (
               <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth>
                   <FormLabel
@@ -330,7 +371,7 @@ export default function ItemCustomizationPanel({
                     Metal Color
                   </FormLabel>
                   <select
-                    value={customizingItem?.metalcolorname || ""}
+                    value={selectedMetalColorVal}
                     onChange={(e) =>
                       onCustomizationChange("metalColor", e.target.value)
                     }
@@ -347,8 +388,8 @@ export default function ItemCustomizationPanel({
                     }}
                   >
                     {metalColorCombo.map((opt) => (
-                      <option key={opt.id} value={opt.colorname}>
-                        {opt.colorname}
+                      <option key={opt.id} value={opt.colorname || opt.metalcolorname}>
+                        {opt.colorname || opt.metalcolorname}
                       </option>
                     ))}
                   </select>
@@ -374,7 +415,7 @@ export default function ItemCustomizationPanel({
                     Diamond Quality
                   </FormLabel>
                   <select
-                    value={`${customizingItem?.diamondquality || ""},${customizingItem?.diamondcolor || ""}`}
+                    value={selectedDiaVal}
                     onChange={(e) =>
                       onCustomizationChange("diamond", e.target.value)
                     }
@@ -395,7 +436,7 @@ export default function ItemCustomizationPanel({
                         key={`${opt.QualityId},${opt.ColorId}`}
                         value={`${opt.Quality},${opt.color}`}
                       >
-                        {opt.Quality} - {opt.color}
+                        {opt.Quality},{opt.color}
                       </option>
                     ))}
                   </select>
@@ -421,7 +462,7 @@ export default function ItemCustomizationPanel({
                     Color Stone
                   </FormLabel>
                   <select
-                    value={`${customizingItem?.colorstonequality || ""},${customizingItem?.colorstonecolor || ""}`}
+                    value={selectedCsVal}
                     onChange={(e) =>
                       onCustomizationChange("colorstone", e.target.value)
                     }
@@ -442,7 +483,7 @@ export default function ItemCustomizationPanel({
                         key={`${opt.QualityId},${opt.ColorId}`}
                         value={`${opt.Quality},${opt.color}`}
                       >
-                        {opt.Quality} - {opt.color}
+                        {opt.Quality},{opt.color}
                       </option>
                     ))}
                   </select>
@@ -493,7 +534,7 @@ export default function ItemCustomizationPanel({
             )}
 
             {/* 6. Quantity Selector */}
-            <Grid size={{ xs: 12, sm: hasSize ? 6 : 12 }}>
+            <Grid size={{ xs: 6 }}>
               <FormControl fullWidth>
                 <FormLabel
                   sx={{
@@ -522,21 +563,43 @@ export default function ItemCustomizationPanel({
                   <IconButton
                     size="small"
                     onClick={() => onEditQtyChange(-1)}
-                    disabled={editQty <= 1}
+                    disabled={Number(editQty) <= 1}
                     sx={{ color: "#555", p: 0.8 }}
                   >
                     <RemoveIcon sx={{ fontSize: 16 }} />
                   </IconButton>
-                  <Typography
-                    sx={{
+                  <input
+                    type="number"
+                    min="1"
+                    value={editQty}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        onEditQtyChange("", true);
+                      } else {
+                        const parsed = parseInt(val, 10);
+                        if (!isNaN(parsed)) {
+                          onEditQtyChange(parsed, true);
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      if (!editQty || Number(editQty) < 1) {
+                        onEditQtyChange(1, true);
+                      }
+                    }}
+                    style={{
                       fontWeight: 600,
                       fontSize: "0.9rem",
                       color: "#222",
                       textAlign: "center",
+                      width: "60px",
+                      border: "none",
+                      outline: "none",
+                      backgroundColor: "transparent",
+                      MozAppearance: "textfield",
                     }}
-                  >
-                    {editQty}
-                  </Typography>
+                  />
                   <IconButton
                     size="small"
                     onClick={() => onEditQtyChange(1)}

@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
-import { Box, Typography, Skeleton, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Skeleton, useTheme, useMediaQuery, IconButton } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRightRounded";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { usePathname } from "next/navigation";
 import { ParseAndDecodeSearchParams } from "@/app/(core)/utils/GlobalFunctions/Parser";
@@ -31,6 +33,10 @@ const DetailBreadcrumb = ({
   singleProd,
   singleProd1,
   loadingdata = false,
+  handlePrev,
+  handleNext,
+  currentIndex = 0,
+  totalDesigns = 0,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -100,33 +106,32 @@ const DetailBreadcrumb = ({
       }
     }
 
-    let finalData = { ...KeyObj, ...ValObj };
+    let queryParameters1 = "";
+    Object.keys(KeyObj).forEach((key, index) => {
+      if (index === 0) {
+        queryParameters1 += `${KeyObj[key]}=${ValObj[`FilterVal${index === 0 ? "" : index}`]}`;
+      } else {
+        queryParameters1 += `/${KeyObj[key]}=${ValObj[`FilterVal${index === 0 ? "" : index}`]}`;
+      }
+    });
 
-    const queryParameters1 = [
-      finalData?.FilterKey && `${finalData.FilterVal}`,
-      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
-      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
-    ]
-      .filter(Boolean)
-      .join("/");
+    let queryParameters = "";
+    Object.keys(KeyObj).forEach((key, index) => {
+      if (index === 0) {
+        queryParameters += `${KeyObj[key]}=${ValObj[`FilterVal${index === 0 ? "" : index}`]}`;
+      } else {
+        queryParameters += `,${KeyObj[key]}=${ValObj[`FilterVal${index === 0 ? "" : index}`]}`;
+      }
+    });
 
-    const queryParameters = [
-      finalData?.FilterKey && `${finalData.FilterVal}`,
-      finalData?.FilterKey1 && `${finalData.FilterVal1}`,
-      finalData?.FilterKey2 && `${finalData.FilterVal2}`,
-    ]
-      .filter(Boolean)
-      .join(",");
-
-    const otherparamUrl = Object.entries({
-      b: finalData?.FilterKey,
-      g: finalData?.FilterKey1,
-      c: finalData?.FilterKey2,
-    })
-      .filter(([_, value]) => value !== undefined)
-      .map(([_, value]) => value)
-      .filter(Boolean)
-      .join(",");
+    let otherparamUrl = "";
+    Object.keys(ValObj).forEach((key, index) => {
+      if (index === 0) {
+        otherparamUrl += `${ValObj[key]}`;
+      } else {
+        otherparamUrl += `,${ValObj[key]}`;
+      }
+    });
 
     let menuEncoded = `${queryParameters}/${otherparamUrl}`;
     const targetMenu = menuname || decodedMenuData.menuname || "product";
@@ -137,62 +142,149 @@ const DetailBreadcrumb = ({
 
   if (loadingdata) {
     return (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, my: 1.5 }}>
-        <Skeleton variant="text" width={50} height={20} />
-        <ChevronRightIcon sx={{ fontSize: 16, color: "#ccc" }} />
-        <Skeleton variant="text" width={80} height={20} />
-        <ChevronRightIcon sx={{ fontSize: 16, color: "#ccc" }} />
-        <Skeleton variant="text" width={100} height={20} />
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", my: 1.5 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Skeleton variant="text" width={50} height={20} />
+          <ChevronRightIcon sx={{ fontSize: 16, color: "#ccc" }} />
+          <Skeleton variant="text" width={80} height={20} />
+          <ChevronRightIcon sx={{ fontSize: 16, color: "#ccc" }} />
+          <Skeleton variant="text" width={100} height={20} />
+        </Box>
       </Box>
     );
   }
-
-  // Check special search parameters
-  const firstChar = windowSearch?.charAt(1) || "";
-  const categoryFallback = product?.Categoryname || product?.category || product?.collection || "";
 
   return (
     <Box
       sx={{
         display: "flex",
         alignItems: "center",
-        flexWrap: "wrap",
-        gap: 0.5,
+        justifyContent: "space-between",
+        width: "100%",
         mt: 1,
         mb: 2,
-        px: { xs: 0, sm: 0 },
+        gap: 1.5,
       }}
     >
-      {/* Home Link */}
-      <Typography
-        component="span"
-        sx={breadcrumbLinkStyle}
-        onClick={() => navigate.push("/")}
-      >
-        Home
-      </Typography>
-
-      <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
-
-      {/* Active Product Name / SKU */}
-      <Typography
-        component="span"
+      {/* Left: Breadcrumbs */}
+      <Box
         sx={{
-          ...breadcrumbActiveStyle,
-          maxWidth: isMobile ? 180 : 350,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 0.5,
+          minWidth: 0,
         }}
-        title={productLabel}
       >
-        {productLabel}
-      </Typography>
+        {/* Home Link */}
+        <Typography
+          component="span"
+          sx={breadcrumbLinkStyle}
+          onClick={() => navigate.push("/")}
+        >
+          Home
+        </Typography>
+
+        <ChevronRightIcon sx={{ fontSize: 16, color: "#999", mx: 0.2 }} />
+
+        {/* Active Product Name / SKU */}
+        <Typography
+          component="span"
+          sx={{
+            ...breadcrumbActiveStyle,
+            maxWidth: isMobile ? 160 : 380,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+          title={productLabel}
+        >
+          {productLabel}
+        </Typography>
+      </Box>
+
+      {/* Right: Premium Navigation Bar with Box Shadow */}
+      {totalDesigns > 1 && (
+        <Box
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            bgcolor: "#FFFFFF",
+            borderRadius: "28px",
+            p: "4px 6px",
+            border: "1px solid #E8E8EC",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)",
+            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+            flexShrink: 0,
+            "&:hover": {
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.12)",
+              borderColor: "#D0D0D5",
+            },
+          }}
+        >
+          <IconButton
+            onClick={handlePrev}
+            size="small"
+            aria-label="Previous Design"
+            sx={{
+              width: 28,
+              height: 28,
+              bgcolor: "#F4F4F6",
+              color: "#222222",
+              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.06)",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            <NavigateBeforeIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+
+          <Typography
+            sx={{
+              px: 1.5,
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#222222",
+              userSelect: "none",
+              letterSpacing: "0.5px",
+              fontVariantNumeric: "tabular-nums",
+            }}
+          >
+            {String(currentIndex + 1).padStart(2, "0")} / {String(totalDesigns).padStart(2, "0")}
+          </Typography>
+
+          <IconButton
+            onClick={handleNext}
+            size="small"
+            aria-label="Next Design"
+            sx={{
+              width: 28,
+              height: 28,
+              bgcolor: "#F4F4F6",
+              color: "#222222",
+              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.06)",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "#000000",
+                color: "#FFFFFF",
+                transform: "scale(1.05)",
+              },
+            }}
+          >
+            <NavigateNextIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Box>
+      )}
     </Box>
   );
 };
 
 export default DetailBreadcrumb;
+
 
 
 

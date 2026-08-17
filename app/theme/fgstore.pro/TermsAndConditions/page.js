@@ -1,16 +1,8 @@
 import "./termsPage.scss";
-import fs from "fs";
-import path from "path";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter";
 
 const TermsAndConditions = async ({ hostname }) => {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.terms
-  );
-
-  const htmlContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = getStaticHtmlContent("terms", hostname);
 
   return (
     <div className="main_warrpper_pro">
@@ -34,3 +26,4 @@ const Banner = ({ title = "Terms and Conditions" }) => {
     </div>
   );
 };
+

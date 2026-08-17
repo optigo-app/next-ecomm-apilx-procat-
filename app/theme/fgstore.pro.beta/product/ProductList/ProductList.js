@@ -4279,8 +4279,9 @@ const Product_Card = ({
             margin: "0px",
           }}
         >
-          {productData?.Gwt &&
-            `GWT - ${productData?.Gwt} / `}
+          {Number(productData?.Gwt) > 0 ? (
+            <span>{`GWT - ${productData?.Gwt} / `}</span>
+          ) : null}
           {storeInit?.IsPriceShow == 1 && (
             <span className="proCat_price">
               <span className="smr_currencyFont">

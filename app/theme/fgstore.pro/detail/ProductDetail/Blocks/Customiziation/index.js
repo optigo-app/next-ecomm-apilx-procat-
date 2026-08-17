@@ -8,6 +8,7 @@ import {
   Button,
   Divider,
   Chip,
+  Skeleton
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -71,7 +72,7 @@ const MetalCard = ({ combo, isSelected, onClick }) => {
         backgroundColor: isSelected ? colors.accentLight : "#fff",
         borderRadius: "14px",
         px: 2,
-        py: 1.5,
+        py: 0.7,
         display: "flex",
         alignItems: "center",
         gap: 1.2,
@@ -160,7 +161,7 @@ const SizePill = ({ sizeObj, isSelected, onClick }) => (
       cursor: "pointer",
       minWidth: 60,
       px: 2,
-      py: 1,
+     py: 0.7,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -212,7 +213,7 @@ const QualityCard = ({ combo, isSelected, onClick }) => {
         backgroundColor: isSelected ? colors.accentLight : "#fff",
         borderRadius: "14px",
         px: 2.5,
-        py: 1.5,
+        py: 0.7,
         position: "relative",
         transition: "all 0.22s cubic-bezier(0.4, 0, 0.2, 1)",
         boxShadow: isSelected
@@ -310,6 +311,9 @@ export default function CustomizerDrawer({
   handleCustomChange,
   handleMetalWiseColorImg,
   singleProd,
+  singleProd1,
+  currentPrice,
+  isPriceloading,
 }) {
   const [selectedMetal, setSelectedMetal] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -569,9 +573,17 @@ export default function CustomizerDrawer({
   };
 
   // ── Derived display ───────────────────────────────────────────────────────
-  const price =
-    activeArticle?.UnitCostWithmarkup ?? activeArticle?.TotalUnitCost ?? 0;
-  const CurrencyCode = loginData?.CurrencyCode ?? storeInit?.CurrencyCode ?? "";
+  const displayPrice =
+    currentPrice ??
+    activeArticle?.UnitCostWithmarkup ??
+    activeArticle?.TotalUnitCost ??
+    singleProd1?.UnitCostWithMarkUp ??
+    singleProd?.UnitCostWithmarkup ??
+    singleProd?.UnitCostWithMarkUp ??
+    singleProd?.Amount ??
+    0;
+
+  const CurrencyCode = loginData?.CurrencyCode ?? storeInit?.CurrencyCode ?? "INR";
   const hasData = metalCombos.length > 0;
 
   const isComboBased =
@@ -589,57 +601,96 @@ export default function CustomizerDrawer({
         sx={{
           zIndex: 99999,
           "& .MuiDrawer-paper": {
-            width: { xs: "100%", sm: "500px" },
+            width: { xs: "100%", sm: "520px" },
             height: "100%",
             display: "flex",
             flexDirection: "column",
-            bgcolor: "#F8F7F4",
+            bgcolor: "#FFFFFF",
             boxShadow: "-12px 0 48px rgba(0,0,0,0.12)",
           },
         }}
       >
-        {/* Header */}
+        {/* Header - CaratLane style */}
         <Box
           sx={{
-            p: 3,
-            borderBottom: `1px solid ${colors.borderLight}`,
-            bgcolor: "#fff",
+            p: 2.5,
+            px: 3,
+            borderBottom: "1px solid #E5E7EB",
+            bgcolor: "#FFFFFF",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexShrink: 0,
           }}
         >
-          <Typography
-            sx={{
-              fontWeight: 800,
-              fontSize: "16px",
-              color: colors.textDark,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Customize Design
-          </Typography>
+          {/* Estimated Price */}
+          {storeInit?.IsPriceShow == 1 && (
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  color: "#6B7280",
+                  fontWeight: 500,
+                  lineHeight: 1.2,
+                }}
+              >
+                Estimated price
+              </Typography>
+              {isPriceloading ? (
+                <Skeleton variant="text" width={110} height={28} />
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: "20px",
+                    fontWeight: 800,
+                    color: "#111827",
+                    lineHeight: 1.3,
+                    mt: 0.2,
+                    letterSpacing: "-0.3px",
+                  }}
+                >
+                  {CurrencyCode}{" "}
+                  {typeof formatter === "function"
+                    ? formatter(displayPrice)
+                    : Number(displayPrice).toLocaleString()}
+                </Typography>
+              )}
+            </Box>
+          )}
+
           <IconButton
             onClick={onClose}
-            sx={{ color: colors.textDark, bgcolor: "#f5f5f5", "&:hover": { bgcolor: "#ececec" } }}
+            aria-label="Close"
+            sx={{
+              color: "#111827",
+              bgcolor: "#F3F4F6",
+              "&:hover": { bgcolor: "#E5E7EB" },
+              width: 34,
+              height: 34,
+            }}
           >
             <CloseIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
 
         {/* Content */}
-        <Box sx={{ flex: 1, overflowY: "auto", p: 3, display: "flex", flexDirection: "column", gap: 3 }}>
-          {/* Metal Type */}
+        <Box sx={{ flex: 1, overflowY: "auto", p: 3, display: "flex", flexDirection: "column", gap: 3.5 }}>
+          {/* Metal Type / Choice of Metal */}
           {metalTypeCombo?.length > 0 && Number(storeInit?.IsMetalCustomization) === 1 && (
             <Box>
-              <SectionLabel>Metal Type</SectionLabel>
+              <SectionLabel>Choice of Metal</SectionLabel>
               {singleProd?.IsMrpBase === 1 ? (
                 <Typography sx={{ fontWeight: 700, fontSize: "14px", color: colors.textDark }}>
                   {metalTypeCombo?.find((e) => e?.Metalid === singleProd?.MetalPurityid)?.metaltype || "-"}
                 </Typography>
               ) : (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                    gap: 1.5,
+                  }}
+                >
                   {metalTypeCombo.map((ele) => {
                     const isSelected = metalType === ele?.metaltype;
                     return (
@@ -648,19 +699,45 @@ export default function CustomizerDrawer({
                         onClick={() => handleCustomChange?.({ target: { value: ele?.metaltype } }, "mt")}
                         sx={{
                           cursor: "pointer",
-                          px: 2.2,
-                          py: 1,
-                          borderRadius: "10px",
-                          border: `2px solid ${isSelected ? colors.primary : colors.borderLight}`,
-                          bgcolor: isSelected ? colors.accentLight : "#fff",
-                          color: isSelected ? colors.primary : colors.textDark,
-                          fontWeight: 700,
-                          fontSize: "13px",
+                          p: 1.5,
+                          borderRadius: "12px",
+                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          minHeight: "68px",
                           transition: "all 0.18s ease",
-                          "&:hover": { borderColor: colors.primary, transform: "translateY(-1px)" },
+                          boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
+                          "&:hover": {
+                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            transform: "translateY(-1px)",
+                          },
                         }}
                       >
-                        {ele?.metaltype}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "13px",
+                            color: isSelected ? "#5A2A82" : "#111827",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {ele?.metaltype}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10.5px",
+                            fontWeight: 600,
+                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            mt: 0.6,
+                            letterSpacing: "0.2px",
+                          }}
+                        >
+                          Purity
+                        </Typography>
                       </Box>
                     );
                   })}
@@ -678,7 +755,13 @@ export default function CustomizerDrawer({
                   {metalColorCombo?.find((e) => e?.id === singleProd?.MetalColorid)?.metalcolorname || "-"}
                 </Typography>
               ) : (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                    gap: 1.5,
+                  }}
+                >
                   {metalColorCombo.map((ele) => {
                     const isSelected = metalColor === ele?.colorcode;
                     return (
@@ -690,19 +773,45 @@ export default function CustomizerDrawer({
                         }}
                         sx={{
                           cursor: "pointer",
-                          px: 2.2,
-                          py: 1,
-                          borderRadius: "10px",
-                          border: `2px solid ${isSelected ? colors.primary : colors.borderLight}`,
-                          bgcolor: isSelected ? colors.accentLight : "#fff",
-                          color: isSelected ? colors.primary : colors.textDark,
-                          fontWeight: 700,
-                          fontSize: "13px",
+                          p: 1.5,
+                          borderRadius: "12px",
+                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          minHeight: "68px",
                           transition: "all 0.18s ease",
-                          "&:hover": { borderColor: colors.primary, transform: "translateY(-1px)" },
+                          boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
+                          "&:hover": {
+                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            transform: "translateY(-1px)",
+                          },
                         }}
                       >
-                        {ele?.metalcolorname}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "13px",
+                            color: isSelected ? "#5A2A82" : "#111827",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {ele?.metalcolorname}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10.5px",
+                            fontWeight: 600,
+                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            mt: 0.6,
+                            letterSpacing: "0.2px",
+                          }}
+                        >
+                          Finish
+                        </Typography>
                       </Box>
                     );
                   })}
@@ -711,16 +820,22 @@ export default function CustomizerDrawer({
             </Box>
           )}
 
-          {/* Diamond */}
+          {/* Diamond Quality */}
           {storeInit?.IsDiamondCustomization === 1 && diaQcCombo?.length > 0 && diaList?.length > 0 && (
             <Box>
-              <SectionLabel>Diamond</SectionLabel>
+              <SectionLabel>Diamond Quality</SectionLabel>
               {singleProd?.IsMrpBase === 1 ? (
                 <Typography sx={{ fontWeight: 700, fontSize: "14px", color: colors.textDark }}>
                   {singleProd?.DiaQuaCol || "-"}
                 </Typography>
               ) : (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                    gap: 1.5,
+                  }}
+                >
                   {diaQcCombo.map((ele) => {
                     const val = `${ele?.Quality},${ele?.color}`;
                     const isSelected = selectDiaQc === val;
@@ -730,19 +845,45 @@ export default function CustomizerDrawer({
                         onClick={() => handleCustomChange?.({ target: { value: val } }, "dia")}
                         sx={{
                           cursor: "pointer",
-                          px: 2.2,
-                          py: 1,
-                          borderRadius: "10px",
-                          border: `2px solid ${isSelected ? colors.primary : colors.borderLight}`,
-                          bgcolor: isSelected ? colors.accentLight : "#fff",
-                          color: isSelected ? colors.primary : colors.textDark,
-                          fontWeight: 700,
-                          fontSize: "13px",
+                          p: 1.5,
+                          borderRadius: "12px",
+                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          minHeight: "68px",
                           transition: "all 0.18s ease",
-                          "&:hover": { borderColor: colors.primary, transform: "translateY(-1px)" },
+                          boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
+                          "&:hover": {
+                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            transform: "translateY(-1px)",
+                          },
                         }}
                       >
-                        {val}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "13px",
+                            color: isSelected ? "#5A2A82" : "#111827",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {val}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10.5px",
+                            fontWeight: 600,
+                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            mt: 0.6,
+                            letterSpacing: "0.2px",
+                          }}
+                        >
+                          Certified
+                        </Typography>
                       </Box>
                     );
                   })}
@@ -760,7 +901,13 @@ export default function CustomizerDrawer({
                   {singleProd?.CsQuaCol || "-"}
                 </Typography>
               ) : (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                    gap: 1.5,
+                  }}
+                >
                   {csQcCombo.map((ele) => {
                     const val = `${ele?.Quality},${ele?.color}`;
                     const isSelected = currentCsQc === val;
@@ -770,19 +917,45 @@ export default function CustomizerDrawer({
                         onClick={() => handleCustomChange?.({ target: { value: val } }, "cs")}
                         sx={{
                           cursor: "pointer",
-                          px: 2.2,
-                          py: 1,
-                          borderRadius: "10px",
-                          border: `2px solid ${isSelected ? colors.primary : colors.borderLight}`,
-                          bgcolor: isSelected ? colors.accentLight : "#fff",
-                          color: isSelected ? colors.primary : colors.textDark,
-                          fontWeight: 700,
-                          fontSize: "13px",
+                          p: 1.5,
+                          borderRadius: "12px",
+                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          minHeight: "68px",
                           transition: "all 0.18s ease",
-                          "&:hover": { borderColor: colors.primary, transform: "translateY(-1px)" },
+                          boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
+                          "&:hover": {
+                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            transform: "translateY(-1px)",
+                          },
                         }}
                       >
-                        {val}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "13px",
+                            color: isSelected ? "#5A2A82" : "#111827",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {val}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10.5px",
+                            fontWeight: 600,
+                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            mt: 0.6,
+                            letterSpacing: "0.2px",
+                          }}
+                        >
+                          Gemstone
+                        </Typography>
                       </Box>
                     );
                   })}
@@ -800,7 +973,13 @@ export default function CustomizerDrawer({
                   {singleProd?.DefaultSize || "-"}
                 </Typography>
               ) : (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1.2 }}>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+                    gap: 1.5,
+                  }}
+                >
                   {SizeSorting(SizeCombo?.rd)?.map((ele) => {
                     const isSelected = sizeData === ele?.sizename;
                     return (
@@ -809,19 +988,45 @@ export default function CustomizerDrawer({
                         onClick={() => handleCustomChange?.({ target: { value: ele?.sizename } }, "sz")}
                         sx={{
                           cursor: "pointer",
-                          px: 2.2,
-                          py: 1,
-                          borderRadius: "10px",
-                          border: `2px solid ${isSelected ? colors.primary : colors.borderLight}`,
-                          bgcolor: isSelected ? colors.accentLight : "#fff",
-                          color: isSelected ? colors.primary : colors.textDark,
-                          fontWeight: 700,
-                          fontSize: "13px",
+                          p: 1.5,
+                          borderRadius: "12px",
+                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          minHeight: "68px",
                           transition: "all 0.18s ease",
-                          "&:hover": { borderColor: colors.primary, transform: "translateY(-1px)" },
+                          boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
+                          "&:hover": {
+                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            transform: "translateY(-1px)",
+                          },
                         }}
                       >
-                        {ele?.sizename}
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "13px",
+                            color: isSelected ? "#5A2A82" : "#111827",
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {ele?.sizename}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "10px",
+                            fontWeight: 600,
+                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            mt: 0.4,
+                            letterSpacing: "0.2px",
+                          }}
+                        >
+                          Size
+                        </Typography>
                       </Box>
                     );
                   })}
@@ -831,23 +1036,28 @@ export default function CustomizerDrawer({
           )}
         </Box>
 
-        {/* Bottom Done Button */}
-        <Box sx={{ p: 3, borderTop: `1px solid ${colors.borderLight}`, bgcolor: "#fff" }}>
+        {/* Bottom Confirm Button */}
+        <Box sx={{ p: 2.5, px: 3, borderTop: "1px solid #E5E7EB", bgcolor: "#FFFFFF", flexShrink: 0 }}>
           <Button
             fullWidth
             variant="contained"
             onClick={onClose}
             sx={{
-              py: 1.5,
-              borderRadius: "10px",
-              fontSize: "14px",
+              py: 1.6,
+              borderRadius: "12px",
+              fontSize: "13.5px",
               fontWeight: 700,
-              textTransform: "none",
-              backgroundColor: colors.primary,
-              "&:hover": { backgroundColor: colors.btnHover },
+              letterSpacing: "0.6px",
+              textTransform: "uppercase",
+              backgroundColor: "#4C2068",
+              boxShadow: "0 4px 14px rgba(76, 32, 104, 0.25)",
+              "&:hover": {
+                backgroundColor: "#3B1553",
+                boxShadow: "0 6px 18px rgba(76, 32, 104, 0.35)",
+              },
             }}
           >
-            Done
+            CONFIRM CUSTOMISATION
           </Button>
         </Box>
       </Drawer>
@@ -875,64 +1085,67 @@ export default function CustomizerDrawer({
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <Box
         sx={{
-          p: 3,
-          borderBottom: `1px solid ${colors.borderLight}`,
-          bgcolor: "#fff",
-          flexShrink: 0,
+          p: 2.5,
+          px: 3,
+          borderBottom: "1px solid #E5E7EB",
+          bgcolor: "#FFFFFF",
           display: "flex",
           flexDirection: "column",
           gap: 2,
+          flexShrink: 0,
         }}
       >
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "flex-start",
+            alignItems: "center",
           }}
         >
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "10px",
-                color: colors.textMuted,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              Customize Your Piece
-            </Typography>
-            {price > 0 && storeInit?.IsPriceShow == 1 && (
-              <Box
+          {/* Estimated Price */}
+          {storeInit?.IsPriceShow == 1 && (
+            <Box>
+              <Typography
                 sx={{
-                  display: "flex",
-                  alignItems: "baseline",
-                  gap: 1,
-                  mt: 0.5,
+                  fontSize: "11px",
+                  color: "#6B7280",
+                  fontWeight: 500,
+                  lineHeight: 1.2,
                 }}
               >
+                Estimated price
+              </Typography>
+              {isPriceloading ? (
+                <Skeleton variant="text" width={110} height={28} />
+              ) : (
                 <Typography
                   sx={{
-                    fontSize: "22px",
+                    fontSize: "20px",
                     fontWeight: 800,
-                    color: colors.textDark,
+                    color: "#111827",
+                    lineHeight: 1.3,
+                    mt: 0.2,
                     letterSpacing: "-0.3px",
                   }}
                 >
-                  {CurrencyCode} {formatter(price)}
+                  {CurrencyCode}{" "}
+                  {typeof formatter === "function"
+                    ? formatter(displayPrice)
+                    : Number(displayPrice).toLocaleString()}
                 </Typography>
-              </Box>
-            )}
-          </Box>
+              )}
+            </Box>
+          )}
+
           <IconButton
             onClick={onClose}
+            aria-label="Close"
             sx={{
-              color: colors.textDark,
-              bgcolor: "#f5f5f5",
-              "&:hover": { bgcolor: "#ececec" },
-              width: 36,
-              height: 36,
+              color: "#111827",
+              bgcolor: "#F3F4F6",
+              "&:hover": { bgcolor: "#E5E7EB" },
+              width: 34,
+              height: 34,
             }}
           >
             <CloseIcon sx={{ fontSize: 18 }} />

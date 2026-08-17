@@ -90,7 +90,7 @@ const Footer = ({ list, fromPage, companyInfoData, socialMediaData }) => {
           <h4 className="footerTitle color_jeweliita">Quick Links</h4>
           <div className="footerLinks">
             {list && list?.length > 0 && list?.map((item, i) => (
-              <Link key={i} href={item?.href}>
+              <Link key={i} href={item?.href} prefetch={true}>
                 {item?.label}
               </Link>
             ))}
