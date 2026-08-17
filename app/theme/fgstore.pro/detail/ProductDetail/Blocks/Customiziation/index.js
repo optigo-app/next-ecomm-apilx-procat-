@@ -573,23 +573,29 @@ export default function CustomizerDrawer({
   };
 
   // ── Derived display ───────────────────────────────────────────────────────
-  const displayPrice =
-    currentPrice ??
-    activeArticle?.UnitCostWithmarkup ??
-    activeArticle?.TotalUnitCost ??
-    singleProd1?.UnitCostWithMarkUp ??
-    singleProd?.UnitCostWithmarkup ??
-    singleProd?.UnitCostWithMarkUp ??
-    singleProd?.Amount ??
-    0;
-
-  const CurrencyCode = loginData?.CurrencyCode ?? storeInit?.CurrencyCode ?? "INR";
-  const hasData = metalCombos.length > 0;
-
   const isComboBased =
     metalTypeCombo?.length > 0 ||
     diaQcCombo?.length > 0 ||
     (SizeCombo?.rd && SizeCombo?.rd?.length > 0);
+
+  const displayPrice = isComboBased
+    ? (singleProd1?.UnitCostWithMarkUp ??
+       singleProd?.UnitCostWithmarkup ??
+       singleProd?.UnitCostWithMarkUp ??
+       currentPrice ??
+       singleProd?.Amount ??
+       0)
+    : (currentPrice ??
+       activeArticle?.UnitCostWithmarkup ??
+       activeArticle?.TotalUnitCost ??
+       singleProd1?.UnitCostWithMarkUp ??
+       singleProd?.UnitCostWithmarkup ??
+       singleProd?.UnitCostWithMarkUp ??
+       singleProd?.Amount ??
+       0);
+
+  const CurrencyCode = loginData?.CurrencyCode ?? storeInit?.CurrencyCode ?? "INR";
+  const hasData = metalCombos.length > 0;
 
   if (isComboBased) {
     const currentCsQc = selectCsQc || selectCsQC;
