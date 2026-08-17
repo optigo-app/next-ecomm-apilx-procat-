@@ -562,6 +562,9 @@ const RightSide = ({
             handleCustomChange={handleCustomChange}
             handleMetalWiseColorImg={handleMetalWiseColorImg}
             singleProd={singleProd}
+            singleProd1={singleProd1}
+            currentPrice={currentPrice}
+            isPriceloading={isPriceloading}
           />
 
           {/* Action Buttons & Product Info Section */}
