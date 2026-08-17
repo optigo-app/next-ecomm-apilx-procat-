@@ -14,6 +14,10 @@ import {
   Skeleton,
   CircularProgress,
   Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  OutlinedInput,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRouter } from "next/navigation";
@@ -247,7 +251,7 @@ export default function CheckoutPanel({
         )}
       </Paper>
 
-      {/* 3. Payment Method Card - Clean 2-Column Grid */}
+      {/* 3. Payment Method Card - Single List Layout */}
       <Paper
         elevation={0}
         sx={{
@@ -270,106 +274,160 @@ export default function CheckoutPanel({
         </Typography>
 
         {isPayLoading ? (
-          <Grid container spacing={1.5}>
-            {[1, 2, 3, 4].map((i) => (
-              <Grid key={i} size={{ xs: 12, sm: 6 }}>
-                <Skeleton variant="rounded" height={56} sx={{ borderRadius: "6px" }} />
-              </Grid>
-            ))}
-          </Grid>
+          <Skeleton variant="rounded" height={60} sx={{ borderRadius: "8px" }} />
         ) : (
-          <Grid container spacing={1.5}>
-            {paymentMethods?.map((method) => {
-              const isChecked = String(selectedPaymentMethod) === String(method.id);
-              return (
-                <Grid key={method.id} size={{ xs: 12, sm: 6 }}>
-                  <Paper
-                    elevation={0}
-                    onClick={() => onSelectPaymentMethod(String(method.id))}
-                    sx={{
-                      p: 1.5,
-                      borderRadius: "6px",
-                      border: isChecked ? "1.5px solid #004d40" : "1px solid #e8e8e8",
-                      bgcolor: isChecked ? "#f4f9f7" : "#fff",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 1.2,
-                      minHeight: 56,
-                      position: "relative",
-                      transition: "all 0.18s ease",
-                      boxShadow: isChecked ? "0 2px 8px rgba(0, 77, 64, 0.08)" : "none",
-                      "&:hover": {
-                        borderColor: isChecked ? "#004d40" : "#bbb",
-                        bgcolor: isChecked ? "#f4f9f7" : "#fafafa",
-                        transform: "translateY(-1px)",
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, minWidth: 0 }}>
-                      <Box
+          <FormControl fullWidth size="medium">
+            <Select
+              value={String(selectedPaymentMethod || "")}
+              onChange={(e) => onSelectPaymentMethod(String(e.target.value))}
+              displayEmpty
+              input={
+                <OutlinedInput
+                  sx={{
+                    borderRadius: "8px",
+                    bgcolor: "#fff",
+                    minHeight: "56px",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#e0e0e0",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#bbb",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#004d40",
+                      borderWidth: "1.5px",
+                    },
+                  }}
+                />
+              }
+              renderValue={(selectedId) => {
+                const method = paymentMethods?.find(
+                  (m) => String(m.id) === String(selectedId)
+                );
+                if (!method) {
+                  return (
+                    <Typography variant="body2" sx={{ color: "#999" }}>
+                      Select Payment Gateway
+                    </Typography>
+                  );
+                }
+                return (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: "6px",
+                        bgcolor: "#f4f9f7",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#004d40",
+                        fontSize: "1.15rem",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {method.icon}
+                    </Box>
+                    <Box sx={{ minWidth: 0, textAlign: "left" }}>
+                      <Typography
+                        variant="body2"
                         sx={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: "6px",
-                          bgcolor: isChecked ? "#e0f2f1" : "#f5f5f5",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: isChecked ? "#004d40" : "#555",
-                          fontSize: "1.15rem",
-                          flexShrink: 0,
-                          transition: "all 0.18s ease",
+                          fontWeight: 600,
+                          color: "#222",
+                          fontSize: "0.88rem",
+                          lineHeight: 1.2,
                         }}
                       >
-                        {method.icon}
-                      </Box>
-                      <Box sx={{ minWidth: 0 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: isChecked ? 600 : 500,
-                            color: isChecked ? "#004d40" : "#222",
-                            fontSize: "0.85rem",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {method.GatewayName}
-                        </Typography>
-                        {method.id === 3 ? (
-                          <Typography variant="caption" sx={{ color: "#777", fontSize: "0.72rem", display: "block", lineHeight: 1.2 }}>
-                            Pay on delivery
-                          </Typography>
-                        ) : (
-                          <Typography variant="caption" sx={{ color: "#888", fontSize: "0.72rem", display: "block", lineHeight: 1.2 }}>
-                            Online Payment
-                          </Typography>
-                        )}
-                      </Box>
+                        {method.GatewayName}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "#777", fontSize: "0.72rem", display: "block" }}
+                      >
+                        {method.id === 3 ? "Pay on delivery" : "Online Payment"}
+                      </Typography>
                     </Box>
-
-                    <Box sx={{ flexShrink: 0 }}>
-                      {isChecked ? (
-                        <CheckCircleIcon sx={{ color: "#004d40", fontSize: 18 }} />
-                      ) : (
-                        <Box
-                          sx={{
-                            width: 16,
-                            height: 16,
-                            borderRadius: "50%",
-                            border: "1.5px solid #ccc",
-                          }}
-                        />
-                      )}
+                  </Box>
+                );
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    maxHeight: 280,
+                    borderRadius: "8px",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                    mt: 1,
+                    "& .MuiMenuItem-root": {
+                      py: 1.2,
+                      px: 2,
+                      gap: 1.5,
+                      transition: "all 0.15s ease",
+                      "&.Mui-selected": {
+                        bgcolor: "#f4f9f7 !important",
+                      },
+                      "&:hover": {
+                        bgcolor: "#f9f9f9",
+                      },
+                    },
+                  },
+                },
+              }}
+              sx={{
+                "& .MuiSelect-select": {
+                  display: "flex",
+                  alignItems: "center",
+                  py: 1,
+                  px: 1.5,
+                },
+              }}
+            >
+              {paymentMethods?.map((method) => {
+                const isSelected = String(selectedPaymentMethod) === String(method.id);
+                return (
+                  <MenuItem key={method.id} value={String(method.id)}>
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: "6px",
+                        bgcolor: isSelected ? "#e0f2f1" : "#f5f5f5",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: isSelected ? "#004d40" : "#555",
+                        fontSize: "1.15rem",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {method.icon}
                     </Box>
-                  </Paper>
-                </Grid>
-              );
-            })}
-          </Grid>
+                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: isSelected ? 600 : 500,
+                          color: isSelected ? "#004d40" : "#222",
+                          fontSize: "0.88rem",
+                        }}
+                      >
+                        {method.GatewayName}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "#888", fontSize: "0.72rem", display: "block" }}
+                      >
+                        {method.id === 3 ? "Pay on delivery" : "Online Payment"}
+                      </Typography>
+                    </Box>
+                    {isSelected && (
+                      <CheckCircleIcon sx={{ color: "#004d40", fontSize: 18, ml: 1 }} />
+                    )}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
         )}
       </Paper>
 

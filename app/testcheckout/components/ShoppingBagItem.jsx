@@ -29,8 +29,18 @@ export default function ShoppingBagItem({
   const fullImagePath = `${CDNDesignImageFolThumb}${item?.designno}~1.jpg`;
   const fullImagePathHd = `${CDNDesignImageFol}${item?.designno}~1.${item?.ImageExtension || "jpg"}`;
 
-  // Check if MRP-based product
-  const isMrpProduct = item?.IsMrpBase === 1 || item?.isMrpBase === 1 || item?.StockId !== 0;
+  // Check if In Stock or MRP-based product
+  const isInStock =
+    (item?.StockId !== 0 && item?.StockId !== undefined && item?.StockId !== null) ||
+    item?.IsInReadyStock === 1 ||
+    item?.IsInReadyStock === "1" ||
+    item?.IsInStock === 1 ||
+    item?.IsInStock === "1" ||
+    item?.IsMrpBase === 1 ||
+    item?.isMrpBase === 1;
+
+  const isMrpProduct =
+    item?.IsMrpBase === 1 || item?.isMrpBase === 1 || (item?.StockId !== 0 && item?.StockId !== undefined && item?.StockId !== null);
 
   const itemPrice = item?.FinalCost || item?.UnitCostWithMarkUp || 0;
 
@@ -54,9 +64,10 @@ export default function ShoppingBagItem({
         className="testCheckout_itemImageWrapper"
         onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
         sx={{
-          width: 180,
+          width: 230,
           height: "100%",
           flexShrink: 0,
+          position: "relative",
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
@@ -64,6 +75,30 @@ export default function ShoppingBagItem({
           cursor: "pointer",
         }}
       >
+        {/* In Stock Badge */}
+        {isInStock && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 8,
+              left: 8,
+              bgcolor: "#2e7d32",
+              color: "#fff",
+              fontSize: "0.68rem",
+              fontWeight: 600,
+              letterSpacing: "0.5px",
+              textTransform: "uppercase",
+              px: 1,
+              py: 0.25,
+              borderRadius: "3px",
+              zIndex: 2,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
+            }}
+          >
+            In Stock
+          </Box>
+        )}
+
         <img
           src={item?.images || fullImagePath}
           alt={item?.TitleLine || item?.designno}
@@ -86,23 +121,43 @@ export default function ShoppingBagItem({
       <Box sx={{ flex: 1, minWidth: 0, pr: { xs: 3, sm: 4 },
         p: { xs: 2, sm: 2.5 },
      }}>
-        <Typography
-          variant="subtitle1"
-          onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
-          sx={{
-            fontWeight: 500,
-            fontSize: { xs: "0.95rem", sm: "1.05rem" },
-            color: "#222",
-            mb: 0.5,
-            letterSpacing: "0.2px",
-            cursor: "pointer",
-            "&:hover": {
-              textDecoration: "underline",
-            },
-          }}
-        >
-          {item?.designno} {item?.StockNo ? `(${item?.StockNo})` : ""}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>
+          <Typography
+            variant="subtitle1"
+            onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
+            sx={{
+              fontWeight: 500,
+              fontSize: { xs: "0.95rem", sm: "1.05rem" },
+              color: "#222",
+              letterSpacing: "0.2px",
+              cursor: "pointer",
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            }}
+          >
+            {item?.designno} {item?.StockNo ? `(${item?.StockNo})` : ""}
+          </Typography>
+
+          {isInStock && (
+            <Box
+              component="span"
+              sx={{
+                display: { xs: "inline-block", sm: "none" },
+                bgcolor: "#e8f5e9",
+                color: "#2e7d32",
+                border: "1px solid #c8e6c9",
+                fontSize: "0.68rem",
+                fontWeight: 600,
+                px: 0.8,
+                py: 0.15,
+                borderRadius: "3px",
+              }}
+            >
+              In Stock
+            </Box>
+          )}
+        </Box>
 
         {/* Weights Specs */}
         <Box
@@ -115,22 +170,22 @@ export default function ShoppingBagItem({
             mb: 0.6,
           }}
         >
-          {storeinit?.IsGrossWeight === 1 && (
-            <span>GWT: {(item?.Gwt || 0).toFixed(3)}</span>
+          {storeinit?.IsGrossWeight == 1 && Number(item?.Gwt) > 0 && (
+            <span>GWT: {Number(item?.Gwt || 0).toFixed(3)}</span>
           )}
-          {storeinit?.IsMetalWeight === 1 && Number(item?.Nwt) !== 0 && (
-            <span>NWT: {(item?.Nwt || 0).toFixed(3)}</span>
+          {storeinit?.IsMetalWeight == 1 && Number(item?.Nwt) > 0 && (
+            <span>NWT: {Number(item?.Nwt || 0).toFixed(3)}</span>
           )}
-          {storeinit?.IsDiamondWeight === 1 &&
-            (item?.Dwt !== "0" || item?.Dpcs !== "0") && (
+          {storeinit?.IsDiamondWeight == 1 &&
+            (Number(item?.Dwt) > 0 || Number(item?.Dpcs) > 0) && (
               <span>
-                DWT: {(item?.Dwt || 0).toFixed(3)} / {item?.Dpcs || 0}
+                DWT: {Number(item?.Dwt || 0).toFixed(3)} / {item?.Dpcs || 0}
               </span>
             )}
-          {storeinit?.IsStoneWeight === 1 &&
-            (item?.CSwt !== "0" || item?.CSpcs !== "0") && (
+          {storeinit?.IsStoneWeight == 1 &&
+            (Number(item?.CSwt) > 0 || Number(item?.CSpcs) > 0) && (
               <span>
-                CWT: {(item?.CSwt || 0).toFixed(3)} / {item?.CSpcs || 0}
+                CWT: {Number(item?.CSwt || 0).toFixed(3)} / {item?.CSpcs || 0}
               </span>
             )}
         </Box>
@@ -146,23 +201,29 @@ export default function ShoppingBagItem({
             mb: 0.8,
           }}
         >
-          {item?.metaltypename && (
+          {storeinit?.IsMetalCustomization == 1 && item?.metaltypename && (
             <span>
               {item?.metaltypename} {item?.metalcolorname ? `(${item?.metalcolorname})` : ""}
             </span>
           )}
-          {item?.diamondquality && (
-            <span> | {item?.diamondquality}</span>
+          {storeinit?.IsDiamondCustomization == 1 && item?.diamondquality && (
+            <span>
+              {storeinit?.IsMetalCustomization == 1 && item?.metaltypename ? " | " : ""}
+              {item?.diamondquality}
+            </span>
           )}
-          {item?.colorstonequality && (
-            <span>, {item?.colorstonequality}</span>
+          {storeinit?.IsCsCustomization == 1 && item?.colorstonequality && (
+            <span>
+              {storeinit?.IsDiamondCustomization == 1 && item?.diamondquality ? ", " : " | "}
+              {item?.colorstonequality}
+            </span>
           )}
           {item?.Size && <span> | Size: {item?.Size}</span>}
           <span> | Qty: {item?.Quantity || 1}</span>
         </Box>
 
         {/* Price */}
-        {storeinit?.IsPriceShow === 1 && (
+        {storeinit?.IsPriceShow == 1 && (
           <Typography
             sx={{
               fontWeight: 600,

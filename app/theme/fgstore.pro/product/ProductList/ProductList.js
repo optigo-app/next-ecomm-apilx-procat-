@@ -4088,11 +4088,11 @@ const Product_Card = ({
           </Typography>
 
           {/* Gross Weight info if available */}
-          {productData?.Gwt && (
+          {Number(productData?.Gwt) > 0 ? (
             <Typography sx={{ fontSize: "11px", color: "#888888", mt: 0.2 }}>
               Gross Wt: {productData?.Gwt}g
             </Typography>
-          )}
+          ) : null}
         </Box>
 
         {/* CTA Action Button */}

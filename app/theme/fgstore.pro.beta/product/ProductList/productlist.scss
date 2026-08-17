@@ -221,33 +221,43 @@
   top: 10px;
   left: 10px;
   display: flex;
-  flex-direction: column-reverse;
-  gap: 3px;
-  font-size: 11px;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.proCat_app_instock,
+.proCat_app_MEMO,
+.proCat_app_Make_to_order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.3;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .proCat_app_instock {
   background-color: #c4efc8;
-  color: #433838;
-  text-transform: uppercase;
-  width: 70px;
-  border-radius: 6px;
+  color: #1b5e20;
 }
 
 .proCat_app_MEMO {
-  background-color: #f7c392;
-  color: black;
-  text-transform: uppercase;
-  border-radius: 6px;
-  width: 70px;
+  background-color: #fde68a;
+  color: #92400e;
 }
 
 .proCat_app_Make_to_order {
   background-color: #c1c1f5;
-  color: black;
-  text-transform: uppercase;
-  border-radius: 6px;
-  padding-inline: 5px;
+  color: #312e81;
 }
 
 .label {

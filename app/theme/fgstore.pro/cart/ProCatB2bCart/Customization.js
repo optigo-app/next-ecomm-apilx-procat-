@@ -112,7 +112,7 @@ const Customization = ({
               }
               {storeinit?.IsDiamondCustomization == 1 &&
                 <>
-                  {(selectedItem?.Dwt != "0" || selectedItem?.Dpcs != "0") &&
+                  {(Number(selectedItem?.Dwt) > 0 || Number(selectedItem?.Dpcs) > 0) &&
                     <div className="option">
                       <label htmlFor="diamond">Diamond:</label>
                       <select id="diamond" name={selectedItem?.id} value={selectedItem?.diamondquality + ',' + selectedItem?.diamondcolor} onChange={handleDiamondChange}>
@@ -132,7 +132,7 @@ const Customization = ({
               }
               {storeinit?.IsCsCustomization == 1 &&
                 <>
-                  {(selectedItem?.CSwt != "0" || selectedItem?.CSpcs != "0") &&
+                  {(Number(selectedItem?.CSwt) > 0 || Number(selectedItem?.CSpcs) > 0) &&
                     <div className="option">
                       <label htmlFor="diamond">Color Stone:</label>
                       <select id="diamond" name={selectedItem?.id} value={selectedItem?.colorstonequality + ',' + selectedItem?.colorstonecolor} onChange={handleColorStoneChange}>
@@ -223,7 +223,7 @@ const Customization = ({
                 <span>{selectedItem?.metalcolorname}</span>
               </div>
             }
-            {(selectedItem?.Dwt !== "0" || selectedItem?.Dpcs !== "0") && (
+            {(Number(selectedItem?.Dwt) > 0 || Number(selectedItem?.Dpcs) > 0) && Boolean(combineDiamondInfo(selectedItem?.diamondquality, selectedItem?.diamondcolor)) && (
               <div className="option">
                 <label htmlFor="diamond">Diamond:</label>
                 <span>
@@ -232,12 +232,12 @@ const Customization = ({
               </div>
             )}
 
-            {(selectedItem?.CSwt != "0" || selectedItem?.CSpcs != "0") &&
+            {(Number(selectedItem?.CSwt) > 0 || Number(selectedItem?.CSpcs) > 0) && Boolean(combineDiamondInfo(selectedItem?.colorstonequality, selectedItem?.colorstonecolor)) && (
               <div className="option">
-                <label htmlFor="diamond">Color Stone:</label>
+                <label htmlFor="colorstone">Color Stone:</label>
                 <span>{combineDiamondInfo(selectedItem?.colorstonequality, selectedItem?.colorstonecolor)}</span>
               </div>
-            }
+            )}
             {selectedItem?.Size != "" &&
               <div className="option">
                 <label htmlFor="size">Size:</label>

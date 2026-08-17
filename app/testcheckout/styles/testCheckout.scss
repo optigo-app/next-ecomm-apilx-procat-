@@ -48,6 +48,13 @@
     }
   }
 
+  /* Hide number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   /* Responsive Adjustments */
   @media (max-width: 900px) {
     .testCheckout_editPanel {

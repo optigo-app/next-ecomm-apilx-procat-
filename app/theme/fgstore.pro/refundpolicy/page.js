@@ -1,16 +1,8 @@
-import fs from "fs";
-import path from "path";
 import "./refundPolicy.scss";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter";
 
 const RefundPolicy = async ({ hostname }) => {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.refund
-  );
-
-  const htmlContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = getStaticHtmlContent("refund", hostname);
   return (
     <div className="main_warrpper_pro">
       <div className="procatalog-terms">
@@ -33,3 +25,4 @@ const Banner = ({ title = "Refund Policy" }) => {
     </div>
   );
 };
+

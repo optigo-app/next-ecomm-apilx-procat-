@@ -18,16 +18,16 @@ const FooterNew = ({ companyInfoData, storeData,  logos }) => {
 
         {/* Center: Navigation */}
         <nav className="fg-footer__nav">
-          <Link href="/terms-and-conditions" className="fg-footer__nav-link">
+          <Link href="/terms-and-conditions" prefetch={true} className="fg-footer__nav-link">
             Terms & Conditions
           </Link>
-          <Link href="/privacyPolicy" className="fg-footer__nav-link">
+          <Link href="/privacyPolicy" prefetch={true} className="fg-footer__nav-link">
             Privacy Policy
           </Link>
-          <Link href="/aboutUs" className="fg-footer__nav-link">
+          <Link href="/aboutUs" prefetch={true} className="fg-footer__nav-link">
             About Us
           </Link>
-          <Link href="/contactUs" className="fg-footer__nav-link">
+          <Link href="/contactUs" prefetch={true} className="fg-footer__nav-link">
             Contact Us
           </Link>
         </nav>

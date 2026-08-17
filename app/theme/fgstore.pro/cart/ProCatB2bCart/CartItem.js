@@ -163,6 +163,8 @@ const CartItem = ({
       <Card className={itemLength <= 3 ? 'proCat_cartListCard' : 'proCat_cartListCard'}
         key={item?.id}
         sx={{
+          position: 'relative',
+          overflow: 'hidden',
           boxShadow: !multiSelect && !isMobileScreen && selectedItem?.id == item?.id && 'rgb(175 130 56 / 68%) 1px 1px 1px 0px, rgb(175 130 56 / 68%) 0px 0px 0px 1px !important',
         }}
 

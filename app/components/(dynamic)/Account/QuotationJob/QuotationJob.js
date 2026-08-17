@@ -839,6 +839,7 @@ const QuotationJob = () => {
                   labelId="demo-multiple-checkbox-label"
                   id="demo-multiple-checkbox"
                   multiple
+                  displayEmpty 
                   value={selectedStatus} // Assuming selectedStatus is an array of selected values
                   onChange={handleStatus} // Assuming handleStatus function receives selected values
                   MenuProps={MenuProps}
@@ -848,11 +849,10 @@ const QuotationJob = () => {
                   size='small'
                   label='ALL'
                   renderValue={(selected) => {
-                    if (selected.length === 0) {
-                      return <em style={{ color: 'black' }}>Placeholder</em>;
+                    if (!selected || selected.length === 0) {
+                      return "ALL";
                     }
-
-                    return '';
+                    return selected.join(", ");
                   }}
                   inputProps={{
                     placeholder: 'Placeholder', // Set placeholder directly on the inputProps
@@ -1180,6 +1180,7 @@ const QuotationJob = () => {
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
                     multiple
+                    displayEmpty 
                     value={selectedStatus} // Assuming selectedStatus is an array of selected values
                     onChange={handleStatus} // Assuming handleStatus function receives selected values
                     MenuProps={MenuProps}
@@ -1188,12 +1189,18 @@ const QuotationJob = () => {
                     className='statusSelect'
                     size='small'
                     label='ALL'
-                    renderValue={(selected) => {
-                      if (selected.length === 0) {
-                        return <em style={{ color: 'black' }}>Placeholder</em>;
-                      }
+                    // renderValue={(selected) => {
+                    //   if (selected.length === 0) {
+                    //     return <em style={{ color: 'black' }}>Placeholder</em>;
+                    //   }
 
-                      return '';
+                    //   return '';
+                    // }}
+                    renderValue={(selected) => {
+                      if (!selected || selected.length === 0) {
+                        return "ALL";
+                      }
+                      return selected.join(", ");
                     }}
                     inputProps={{
                       placeholder: 'Placeholder', // Set placeholder directly on the inputProps

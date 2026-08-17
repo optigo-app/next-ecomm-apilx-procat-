@@ -1,16 +1,8 @@
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter";
 import "./index.scss";
-import fs from "fs";
-import path from "path";
 
 export default async function AboutUs({ hostname }) {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.aboutUs
-  );
-
-  const htmlContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = getStaticHtmlContent("aboutUs", hostname);
 
   return (
     <div className="main_warrpper_pro">
@@ -25,7 +17,6 @@ export default async function AboutUs({ hostname }) {
   );
 }
 
-
 const Banner = ({ title = "About Us" }) => {
   return (
     <div className="procatalog-banner">
@@ -33,3 +24,4 @@ const Banner = ({ title = "About Us" }) => {
     </div>
   );
 };
+

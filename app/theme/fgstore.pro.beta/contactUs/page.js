@@ -1,26 +1,10 @@
 import ContactForm from "./ContactForm.jsx";
 import "./ContactUs.modul.scss";
-import fs from "fs";
-import path from "path";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter.js";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter.js";
 
 export default async function ContactUsPage({ hostname }) {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.contact || ""
-  );
-  console.log(filePath, "filePath")
-  let htmlContent = "";
-  try {
-    if (fs.existsSync(filePath)) {
-      htmlContent = fs.readFileSync(filePath, "utf8");
-    } else {
-      console.error("File not found:", filePath);
-    }
-  } catch (error) {
-    console.error("Error reading Contact Us HTML:", error);
-  }
+  const htmlContent = getStaticHtmlContent("contact", hostname);
+
 
   return (
     <div className="smr_contactMain_div">

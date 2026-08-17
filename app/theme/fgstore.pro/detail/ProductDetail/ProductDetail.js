@@ -2005,6 +2005,14 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                       singleProd={singleProd}
                       singleProd1={singleProd1}
                       loadingdata={false}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      currentIndex={
+                        imageData?.findIndex((item) => item?.designno === singleProd?.designno) !== -1
+                          ? imageData?.findIndex((item) => item?.designno === singleProd?.designno)
+                          : nextindex
+                      }
+                      totalDesigns={imageData?.length || allListDataSlide?.length || 0}
                     />
 
                     <Grid container spacing={{ xs: 1, md: 1 }}>

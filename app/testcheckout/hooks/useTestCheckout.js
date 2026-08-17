@@ -263,14 +263,69 @@ export function useTestCheckout(initialStoreInit) {
     if (item?.IsMrpBase === 1) {
       return; // MRP products are not editable
     }
+
+    // Resolve matching metal
+    const foundMetal = metalTypeCombo.find(
+      (m) =>
+        (item?.metaltypeid && m.Metalid === item.metaltypeid) ||
+        m.metaltypename?.trim().toLowerCase() === item?.metaltypename?.trim().toLowerCase() ||
+        m.metaltype?.trim().toLowerCase() === item?.metaltypename?.trim().toLowerCase()
+    );
+    const mId = foundMetal ? foundMetal.Metalid : item?.metaltypeid;
+
+    // Resolve matching color
+    const foundColor = metalColorCombo.find(
+      (c) =>
+        (item?.metalcolorid && c.id === item.metalcolorid) ||
+        c.colorname?.trim().toLowerCase() === item?.metalcolorname?.trim().toLowerCase() ||
+        c.metalcolorname?.trim().toLowerCase() === item?.metalcolorname?.trim().toLowerCase()
+    );
+    const mcId = foundColor ? foundColor.id : item?.metalcolorid;
+
+    // Resolve matching diamond
+    const foundDia = diamondQualityColorCombo.find(
+      (d) =>
+        (item?.diamondqualityid && d.QualityId === item.diamondqualityid && item?.diamondcolorid && d.ColorId === item.diamondcolorid) ||
+        (d.Quality?.trim().toLowerCase() === item?.diamondquality?.trim().toLowerCase() &&
+         d.color?.trim().toLowerCase() === item?.diamondcolor?.trim().toLowerCase())
+    );
+    const diaQcId = foundDia
+      ? `${foundDia.QualityId},${foundDia.ColorId}`
+      : `${item?.diamondqualityid || 0},${item?.diamondcolorid || 0}`;
+
+    // Resolve matching color stone
+    const foundCs = colorStoneCombo.find(
+      (c) =>
+        (item?.colorstonequalityid && c.QualityId === item.colorstonequalityid && item?.colorstonecolorid && c.ColorId === item.colorstonecolorid) ||
+        (c.Quality?.trim().toLowerCase() === item?.colorstonequality?.trim().toLowerCase() &&
+         c.color?.trim().toLowerCase() === item?.colorstonecolor?.trim().toLowerCase())
+    );
+    const csQcId = foundCs
+      ? `${foundCs.QualityId},${foundCs.ColorId}`
+      : `${item?.colorstonequalityid || 0},${item?.colorstonecolorid || 0}`;
+
+    const workingItem = {
+      ...item,
+      metaltypename: foundMetal ? foundMetal.metaltypename : item?.metaltypename,
+      metalcolorname: foundColor ? (foundColor.colorname || foundColor.metalcolorname) : item?.metalcolorname,
+      diamondquality: foundDia ? foundDia.Quality : item?.diamondquality,
+      diamondcolor: foundDia ? foundDia.color : item?.diamondcolor,
+      diamondqualityid: foundDia ? foundDia.QualityId : item?.diamondqualityid,
+      diamondcolorid: foundDia ? foundDia.ColorId : item?.diamondcolorid,
+      colorstonequality: foundCs ? foundCs.Quality : item?.colorstonequality,
+      colorstonecolor: foundCs ? foundCs.color : item?.colorstonecolor,
+      colorstonequalityid: foundCs ? foundCs.QualityId : item?.colorstonequalityid,
+      colorstonecolorid: foundCs ? foundCs.ColorId : item?.colorstonecolorid,
+    };
+
     setEditingItem(item);
-    setCustomizingItem({ ...item });
+    setCustomizingItem(workingItem);
     setEditQty(item?.Quantity || 1);
 
-    setActiveMetalId(item?.metaltypeid);
-    setActiveMetalColorId(item?.metalcolorid);
-    setActiveDiaQcId(`${item?.diamondqualityid || 0},${item?.diamondcolorid || 0}`);
-    setActiveCsQcId(`${item?.colorstonequalityid || 0},${item?.colorstonecolorid || 0}`);
+    setActiveMetalId(mId);
+    setActiveMetalColorId(mcId);
+    setActiveDiaQcId(diaQcId);
+    setActiveCsQcId(csQcId);
     setActiveSize(item?.Size || "");
 
     // Fetch size combo if category exists
@@ -304,7 +359,11 @@ export function useTestCheckout(initialStoreInit) {
     const updated = { ...customizingItem };
 
     if (type === "metalType") {
-      const found = metalTypeCombo.find((m) => m.metaltypename === val || m.metaltype === val);
+      const found = metalTypeCombo.find(
+        (m) =>
+          m.metaltypename?.trim().toLowerCase() === val?.trim().toLowerCase() ||
+          m.metaltype?.trim().toLowerCase() === val?.trim().toLowerCase()
+      );
       if (found) {
         newMetalId = found.Metalid;
         updated.metaltypeid = found.Metalid;
@@ -313,7 +372,9 @@ export function useTestCheckout(initialStoreInit) {
       }
     } else if (type === "metalColor") {
       const found = metalColorCombo.find(
-        (c) => c.colorname === val || c.metalcolorname === val,
+        (c) =>
+          c.colorname?.trim().toLowerCase() === val?.trim().toLowerCase() ||
+          c.metalcolorname?.trim().toLowerCase() === val?.trim().toLowerCase()
       );
       if (found) {
         newMetalColorId = found.id;
@@ -326,12 +387,14 @@ export function useTestCheckout(initialStoreInit) {
     } else if (type === "diamond") {
       const [quality, color] = val.split(",");
       const found = diamondQualityColorCombo.find(
-        (d) => d.Quality === quality && d.color === color
+        (d) =>
+          d.Quality?.trim().toLowerCase() === quality?.trim().toLowerCase() &&
+          d.color?.trim().toLowerCase() === color?.trim().toLowerCase()
       );
       if (found) {
         newDiaQc = `${found.QualityId},${found.ColorId}`;
-        updated.diamondquality = quality;
-        updated.diamondcolor = color;
+        updated.diamondquality = found.Quality;
+        updated.diamondcolor = found.color;
         updated.diamondqualityid = found.QualityId;
         updated.diamondcolorid = found.ColorId;
         setActiveDiaQcId(newDiaQc);
@@ -339,12 +402,14 @@ export function useTestCheckout(initialStoreInit) {
     } else if (type === "colorstone") {
       const [quality, color] = val.split(",");
       const found = colorStoneCombo.find(
-        (c) => c.Quality === quality && c.color === color
+        (c) =>
+          c.Quality?.trim().toLowerCase() === quality?.trim().toLowerCase() &&
+          c.color?.trim().toLowerCase() === color?.trim().toLowerCase()
       );
       if (found) {
         newCsQc = `${found.QualityId},${found.ColorId}`;
-        updated.colorstonequality = quality;
-        updated.colorstonecolor = color;
+        updated.colorstonequality = found.Quality;
+        updated.colorstonecolor = found.color;
         updated.colorstonequalityid = found.QualityId;
         updated.colorstonecolorid = found.ColorId;
         setActiveCsQcId(newCsQc);
@@ -384,15 +449,33 @@ export function useTestCheckout(initialStoreInit) {
     }
   };
 
-  const handleEditQtyChange = (delta) => {
-    const newQty = Math.max(1, editQty + delta);
-    setEditQty(newQty);
-    if (customizingItem) {
-      setCustomizingItem((prev) => ({
-        ...prev,
-        Quantity: newQty,
-        FinalCost: (prev?.UnitCostWithMarkUp || 0) * newQty,
-      }));
+  const handleEditQtyChange = (valOrDelta, isDirect = false) => {
+    if (isDirect) {
+      if (valOrDelta === "") {
+        setEditQty("");
+        return;
+      }
+      const parsed = parseInt(valOrDelta, 10);
+      const newQty = isNaN(parsed) || parsed < 1 ? 1 : parsed;
+      setEditQty(newQty);
+      if (customizingItem) {
+        setCustomizingItem((prev) => ({
+          ...prev,
+          Quantity: newQty,
+          FinalCost: (prev?.UnitCostWithMarkUp || 0) * newQty,
+        }));
+      }
+    } else {
+      const current = typeof editQty === "number" ? editQty : parseInt(editQty, 10) || 1;
+      const newQty = Math.max(1, current + valOrDelta);
+      setEditQty(newQty);
+      if (customizingItem) {
+        setCustomizingItem((prev) => ({
+          ...prev,
+          Quantity: newQty,
+          FinalCost: (prev?.UnitCostWithMarkUp || 0) * newQty,
+        }));
+      }
     }
   };
 

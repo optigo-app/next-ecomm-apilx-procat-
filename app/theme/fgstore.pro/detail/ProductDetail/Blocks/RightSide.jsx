@@ -112,19 +112,40 @@ const RightSide = ({
   // Prioritize active combination details from customizationDetail state
   const activeArticle = customizationDetail || defaultArticle;
 
+  const currentPrice = getCost(
+    activeArticle?.UnitCostWithmarkup ||
+      activeArticle?.TotalUnitCost ||
+      singleProd1?.UnitCostWithMarkUp ||
+      singleProd?.UnitCostWithmarkup ||
+      singleProd?.UnitCostWithMarkUp,
+  );
+
+  const rawNetWeight =
+    activeArticle?.NetWeight ??
+    activeArticle?.Nwt ??
+    singleProd1?.NetWeight ??
+    singleProd1?.Nwt ??
+    singleProd?.NetWeight ??
+    singleProd?.Nwt;
+
+  const parsedNetWeight =
+    rawNetWeight != null && rawNetWeight !== "" && !isNaN(Number(rawNetWeight))
+      ? Number(rawNetWeight)
+      : null;
+
+  const netWeightDisplay =
+    parsedNetWeight != null && parsedNetWeight > 0
+      ? parsedNetWeight.toFixed(3)
+      : "-";
+
   const isLoading = isPriceloading || pdLoadImage || loadingdata || !singleProd;
   const isPriceLoadingState =
-    (isPriceloading || pdLoadImage || loadingdata || !singleProd) &&
-    !activeArticle &&
-    singleProd?.UnitCostWithmarkup === undefined &&
-    singleProd?.UnitCostWithMarkUp === undefined &&
-    singleProd1?.UnitCostWithMarkUp === undefined;
+    isLoading ||
+    currentPrice <= 0;
   const isNetWeightLoadingState =
-    isLoading &&
-    !activeArticle?.NetWeight &&
-    singleProd?.NetWeight === undefined &&
-    singleProd?.Nwt === undefined &&
-    singleProd1?.NetWeight === undefined;
+    isLoading ||
+    parsedNetWeight == null ||
+    parsedNetWeight <= 0;
 
   // Derive default diamond quality from rd2 for the activeArticle ArticleId
   const defaultDiaStone =
@@ -138,6 +159,7 @@ const RightSide = ({
       : null);
 
   const decodeEntities = (html) => {
+    if (typeof document === "undefined") return html || "";
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
     return txt.value;
@@ -165,73 +187,77 @@ const RightSide = ({
 
   const CurrencyCode = loginData?.loginData ?? storeInit?.CurrencyCode;
 
+  const otherCostCalculated =
+    getCost(activeArticle?.TotalOtherCost) +
+    getCost(activeArticle?.TotalSettingCost) +
+    getCost(activeArticle?.TotalDiamondhandlingCost) +
+    getCost(activeArticle?.TotalCSSettingCost) +
+    getCost(activeArticle?.TotalDiaSettingCost);
+
+  const singleProdOtherCost =
+    getCost(singleProd1?.Other_Cost ?? singleProd?.Other_Cost) +
+    getCost(singleProd1?.Size_MarkUp ?? singleProd?.Size_MarkUp) +
+    getCost(
+      singleProd1?.DesignMarkUpAmount ?? singleProd?.DesignMarkUpAmount,
+    ) +
+    getCost(
+      singleProd1?.ColorStone_SettingCost ??
+        singleProd?.ColorStone_SettingCost,
+    ) +
+    getCost(
+      singleProd1?.Diamond_SettingCost ??
+        singleProd?.Diamond_SettingCost,
+    ) +
+    getCost(
+      singleProd1?.Misc_SettingCost ?? singleProd?.Misc_SettingCost,
+    );
+
   const priceBreakupItems = [
     {
       label: "Metal",
       cost: getCost(
-        activeArticle
-          ? activeArticle?.TotalMetalCost
-          : singleProd1?.Metal_Cost ?? singleProd?.Metal_Cost,
+        activeArticle?.TotalMetalCost ||
+          singleProd1?.Metal_Cost ||
+          singleProd?.Metal_Cost,
       ),
     },
     {
       label: "Diamond",
       cost: getCost(
-        activeArticle
-          ? activeArticle?.TotalDiamondCost
-          : singleProd1?.Diamond_Cost ?? singleProd?.Diamond_Cost,
+        activeArticle?.TotalDiamondCost ||
+          singleProd1?.Diamond_Cost ||
+          singleProd?.Diamond_Cost,
       ),
     },
     {
       label: "Stone",
       cost: getCost(
-        activeArticle
-          ? activeArticle?.TotalColorStoneCost
-          : singleProd1?.ColorStone_Cost ?? singleProd?.ColorStone_Cost,
+        activeArticle?.TotalColorStoneCost ||
+          singleProd1?.ColorStone_Cost ||
+          singleProd?.ColorStone_Cost,
       ),
     },
     {
       label: "MISC",
       cost: getCost(
-        activeArticle
-          ? activeArticle?.TotalMiscCost
-          : singleProd1?.Misc_Cost ?? singleProd?.Misc_Cost,
+        activeArticle?.TotalMiscCost ||
+          singleProd1?.Misc_Cost ||
+          singleProd?.Misc_Cost,
       ),
     },
     {
       label: "Labour",
       cost: getCost(
-        activeArticle
-          ? activeArticle?.TotalMakingCost
-          : singleProd1?.Labour_Cost ?? singleProd?.Labour_Cost,
+        activeArticle?.TotalMakingCost ||
+          singleProd1?.Labour_Cost ||
+          singleProd?.Labour_Cost,
       ),
     },
     {
       label: "Other",
-      cost: activeArticle
-        ? getCost(activeArticle?.TotalOtherCost) +
-          getCost(activeArticle?.TotalSettingCost) +
-          getCost(activeArticle?.TotalDiamondhandlingCost) +
-          getCost(activeArticle?.TotalCSSettingCost) +
-          getCost(activeArticle?.TotalDiaSettingCost)
-        : getCost(singleProd1?.Other_Cost ?? singleProd?.Other_Cost) +
-          getCost(singleProd1?.Size_MarkUp ?? singleProd?.Size_MarkUp) +
-          getCost(
-            singleProd1?.DesignMarkUpAmount ?? singleProd?.DesignMarkUpAmount,
-          ) +
-          getCost(
-            singleProd1?.ColorStone_SettingCost ??
-              singleProd?.ColorStone_SettingCost,
-          ) +
-          getCost(
-            singleProd1?.Diamond_SettingCost ??
-              singleProd?.Diamond_SettingCost,
-          ) +
-          getCost(
-            singleProd1?.Misc_SettingCost ?? singleProd?.Misc_SettingCost,
-          ),
+      cost: otherCostCalculated > 0 ? otherCostCalculated : singleProdOtherCost,
     },
-  ].filter((item) => isLoading || item.cost !== 0);
+  ].filter((item) => isLoading || item.cost > 0);
 
   return (
     <>
@@ -261,13 +287,12 @@ const RightSide = ({
             boxSizing: 'border-box'
           }}
         >
-          {totalDesigns > 1 && (
+          {(singleProd?.CategoryName || singleProd?.collection) && (
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
-                mb: 1.5,
+                mb: 1,
                 width: "100%",
               }}
             >
@@ -280,72 +305,8 @@ const RightSide = ({
                   textTransform: "uppercase",
                 }}
               >
-                {singleProd?.CategoryName || singleProd?.collection || "Design Catalog"}
+                {singleProd?.CategoryName || singleProd?.collection}
               </Typography>
-
-              {/* Creative Split Pill Navigation Widget */}
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  bgcolor: "#F7F7F8",
-                  borderRadius: "24px",
-                  p: "3px 4px",
-                  border: "1px solid #E5E5E8",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                }}
-              >
-                  <IconButton
-                    onClick={handlePrev}
-                    size="small"
-                    sx={{
-                      width: 26,
-                      height: 26,
-                      bgcolor: "#FFFFFF",
-                      color: "#111111",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        bgcolor: "#000000",
-                        color: "#FFFFFF",
-                      },
-                    }}
-                  >
-                    <NavigateBeforeIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-
-                <Typography
-                  sx={{
-                    px: 1.2,
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "#333333",
-                    userSelect: "none",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  {String(currentIndex + 1).padStart(2, "0")} / {String(totalDesigns).padStart(2, "0")}
-                </Typography>
-
-                  <IconButton
-                    onClick={handleNext}
-                    size="small"
-                    sx={{
-                      width: 26,
-                      height: 26,
-                      bgcolor: "#FFFFFF",
-                      color: "#111111",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        bgcolor: "#000000",
-                        color: "#FFFFFF",
-                      },
-                    }}
-                  >
-                    <NavigateNextIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-              </Box>
             </Box>
           )}
 
@@ -435,7 +396,8 @@ const RightSide = ({
             >
               {isPriceloading ||
               isPriceLoadingState ||
-              isLoading ? (
+              isLoading ||
+              currentPrice <= 0 ? (
                 <Skeleton
                   variant="rounded"
                   width={160}
@@ -450,15 +412,7 @@ const RightSide = ({
                     }}
                   />
                   <span>
-                    {formatter(
-                      getCost(
-                        activeArticle?.UnitCostWithmarkup ??
-                          activeArticle?.TotalUnitCost ??
-                          singleProd1?.UnitCostWithMarkUp ??
-                          singleProd?.UnitCostWithmarkup ??
-                          singleProd?.UnitCostWithMarkUp,
-                      ),
-                    )}
+                    {formatter(currentPrice)}
                   </span>
                 </>
               )}
@@ -480,7 +434,7 @@ const RightSide = ({
                   ) : singleProd?.IsMrpBase === 1 ? (
                     singleProd?.MetalTypePurity || "-"
                   ) : (
-                    metalType ||
+                    (metalType && metalType !== "0" && metalType !== 0 ? metalType : null) ||
                     activeArticle?.MetalType ||
                     singleProd1?.MetalTypePurity ||
                     singleProd?.MetalTypePurity ||
@@ -540,20 +494,10 @@ const RightSide = ({
                 <Typography sx={{ fontSize: "15px", fontWeight: 600 }}>
                   {isPriceloading ||
                   isLoading ||
-                  (
-                    singleProd1?.NetWeight ??
-                    singleProd1?.Nwt ??
-                    singleProd?.NetWeight ??
-                    singleProd?.Nwt
-                  ) === undefined ? (
+                  (isNetWeightLoadingState && parsedNetWeight == null) ? (
                     <Skeleton variant="text" width={50} />
                   ) : (
-                    (
-                      singleProd1?.NetWeight ??
-                      singleProd1?.Nwt ??
-                      singleProd?.NetWeight ??
-                      singleProd?.Nwt
-                    )?.toFixed(3) || "-"
+                    netWeightDisplay
                   )}
                 </Typography>
               </Grid>
@@ -1020,12 +964,12 @@ const RightSide = ({
                             </Typography>
                             <Box sx={{ display: "flex", gap: 1 }}>
                               <Chip
-                                label={`${diaList.reduce((acc, item) => acc + (item?.M || 0), 0)} Pcs`}
+                                label={`${diaList.reduce((acc, item) => acc + (parseFloat(item?.M) || 0), 0)} Pcs`}
                                 size="small"
                                 sx={{ height: 22, fontSize: "11px", bgcolor: "#f0f0f0", fontWeight: 600 }}
                               />
                               <Chip
-                                label={`${diaList.reduce((acc, item) => acc + (item?.N || 0), 0).toFixed(3)} ct`}
+                                label={`${diaList.reduce((acc, item) => acc + (parseFloat(item?.N) || 0), 0).toFixed(3)} ct`}
                                 size="small"
                                 sx={{ height: 22, fontSize: "11px", bgcolor: "#f0f0f0", fontWeight: 600 }}
                               />
@@ -1049,7 +993,7 @@ const RightSide = ({
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.B || "-"}</TableCell>
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.C || "-"}</TableCell>
                                     <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.M ?? "-"}</TableCell>
-                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null ? Number(item.N).toFixed(3) : "-"}</TableCell>
+                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null && item?.N !== "" && !isNaN(Number(item.N)) && Number(item.N) > 0 ? Number(item.N).toFixed(3) : "-"}</TableCell>
                                   </TableRow> 
                                 ))}
                               </TableBody>
@@ -1067,12 +1011,12 @@ const RightSide = ({
                             </Typography>
                             <Box sx={{ display: "flex", gap: 1 }}>
                               <Chip
-                                label={`${csList.filter((e) => e?.D !== "MISC").reduce((acc, item) => acc + (item?.M || 0), 0)} Pcs`}
+                                label={`${csList.filter((e) => e?.D !== "MISC").reduce((acc, item) => acc + (parseFloat(item?.M) || 0), 0)} Pcs`}
                                 size="small"
                                 sx={{ height: 22, fontSize: "11px", bgcolor: "#f0f0f0", fontWeight: 600 }}
                               />
                               <Chip
-                                label={`${csList.filter((e) => e?.D !== "MISC").reduce((acc, item) => acc + (item?.N || 0), 0).toFixed(3)} ct`}
+                                label={`${csList.filter((e) => e?.D !== "MISC").reduce((acc, item) => acc + (parseFloat(item?.N) || 0), 0).toFixed(3)} ct`}
                                 size="small"
                                 sx={{ height: 22, fontSize: "11px", bgcolor: "#f0f0f0", fontWeight: 600 }}
                               />
@@ -1096,7 +1040,7 @@ const RightSide = ({
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.B || "-"}</TableCell>
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.C || "-"}</TableCell>
                                     <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.M ?? "-"}</TableCell>
-                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null ? Number(item.N).toFixed(3) : "-"}</TableCell>
+                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null && item?.N !== "" && !isNaN(Number(item.N)) && Number(item.N) > 0 ? Number(item.N).toFixed(3) : "-"}</TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
@@ -1131,7 +1075,7 @@ const RightSide = ({
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.B || "-"}</TableCell>
                                     <TableCell sx={{ color: "#333", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.C || "-"}</TableCell>
                                     <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.M ?? "-"}</TableCell>
-                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null ? Number(item.N).toFixed(3) : "-"}</TableCell>
+                                    <TableCell align="right" sx={{ color: "#111", fontSize: "12px", fontWeight: 600, py: 1, px: 1.5 }}>{item?.N != null && item?.N !== "" && !isNaN(Number(item.N)) && Number(item.N) > 0 ? Number(item.N).toFixed(3) : "-"}</TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>

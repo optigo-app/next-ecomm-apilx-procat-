@@ -8,5 +8,6 @@ export default async function Page() {
   const { hostname } = await getDomainInfo();
   const ACTIVE_THEME = getThemeByDomain(hostname);
   const ShippingPolicyComponent = await resolveShippingPolicy(ACTIVE_THEME);
-  return <ShippingPolicyComponent />;
+  return <ShippingPolicyComponent hostname={hostname} />;
 }
+

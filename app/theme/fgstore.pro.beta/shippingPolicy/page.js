@@ -1,16 +1,8 @@
-import fs from "fs";
-import path from "path";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter";
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter";
 import "./ShippingPolicy.scss";
 
 const ShippingPolicy = async ({ hostname }) => {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.shipping
-  );
-
-  const htmlContent = fs.readFileSync(filePath, "utf8");
+  const htmlContent = getStaticHtmlContent("shipping", hostname);
 
   return (
     <div className="main_warrpper_pro">
@@ -34,3 +26,4 @@ const Banner = ({ title = "Shipping Policy" }) => {
     </div>
   );
 };
+

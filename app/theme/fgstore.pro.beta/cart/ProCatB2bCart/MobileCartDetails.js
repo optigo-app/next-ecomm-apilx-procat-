@@ -152,13 +152,13 @@ const MobileCartDetails = ({
                       <select id="metal-type" name={selectedItem?.id} value={selectedItem?.metaltypename} onChange={handleMetalTypeChange}>
                         {mrpbasedPriceFlag == 1 ? (
                           <option value={selectedItem?.metaltypename}>{selectedItem?.metaltypename}</option>
-                        ) :
+                        ) : (
                           <>
                             {metalTypeCombo.map(option => (
                               <option key={option.Metalid} value={option.metaltypename}>{option.metaltype}</option>
                             ))}
                           </>
-                        }
+                        )}
                       </select>
                     </div>
                   }
@@ -168,7 +168,7 @@ const MobileCartDetails = ({
                       <select id="metal-color" name={selectedItem?.id} value={selectedItem?.metalcolorname} onChange={handleMetalColorChange}>
                         {mrpbasedPriceFlag == 1 ? (
                           <option value={selectedItem?.metalcolorname}>{selectedItem?.metalcolorname}</option>
-                        ) :
+                        ) : (
                           <>
                             {
                               metalColorCombo?.map(option => (
@@ -176,13 +176,13 @@ const MobileCartDetails = ({
                               ))
                             }
                           </>
-                        }
+                        )}
                       </select>
                     </div>
                   }
                   {storeinit?.IsDiamondCustomization == 1 &&
                     <>
-                      {(selectedItem?.Dwt != "0" || selectedItem?.Dpcs != "0") &&
+                      {(Number(selectedItem?.Dwt) > 0 || Number(selectedItem?.Dpcs) > 0) &&
                         <div className="option">
                           <label htmlFor="diamond">Diamond:</label>
                           <select id="diamond" name={selectedItem?.id} value={selectedItem?.diamondquality + ',' + selectedItem?.diamondcolor} onChange={handleDiamondChange}>
@@ -202,19 +202,19 @@ const MobileCartDetails = ({
                   }
                   {storeinit?.IsCsCustomization == 1 &&
                     <>
-                      {(selectedItem?.CSwt != "0" || selectedItem?.CSpcs != "0") &&
+                      {(Number(selectedItem?.CSwt) > 0 || Number(selectedItem?.CSpcs) > 0) &&
                         <div className="option">
                           <label htmlFor="diamond">Color Stone:</label>
                           <select id="diamond" name={selectedItem?.id} value={selectedItem?.colorstonequality + ',' + selectedItem?.colorstonecolor} onChange={handleColorStoneChange}>
                             {mrpbasedPriceFlag == 1 ? (
                               <option value={selectedItem?.colorstonequality + ',' + selectedItem?.colorstonecolor}>{selectedItem?.colorstonequality + ',' + selectedItem?.colorstonecolor}</option>
-                            ) :
+                            ) : (
                               <>
                                 {ColorStoneCombo?.map(option => (
                                   <option key={option?.ColorId + ',' + option?.QualityId} value={option?.Quality + ',' + option?.color}>{option?.Quality + ',' + option?.color}</option>
                                 ))}
                               </>
-                            }
+                            )}
                           </select>
                         </div>
                       }
@@ -225,14 +225,14 @@ const MobileCartDetails = ({
                       <label htmlFor="size">Size:</label>
                       <select id="size" name={selectedItem?.id} value={selectedItem?.Size} onChange={handleSizeChange}>
                         {mrpbasedPriceFlag == 1 ? (
-                          <option value={selectedItem?.Size}>{selectedItem?.Size}</option>
-                        ) :
+                          <option value={selectedItem?.size}>{selectedItem?.size}</option>
+                        ) : (
                           <>
                             {sizeCombo?.rd?.map(option => (
                               <option key={option?.id} value={option?.sizename}>{option?.sizename}</option>
                             ))}
                           </>
-                        }
+                        )}
                       </select>
                     </div>
                   }
@@ -240,31 +240,16 @@ const MobileCartDetails = ({
               }
               <div className='proCatMo_cartQtyPricemainDev'>
                 <QuantitySelector selectedItem={selectedItem} handleIncrement={handleIncrement} handleDecrement={handleDecrement} qtyCount={qtyCount} />
-                {storeinit?.IsPriceShow == 1 &&
-                  <div className="product-price">
-                    {!ispriceloding ? (
-                      <span>
-                        {loginInfo?.CurrencyCode ??
-                          storeinit?.CurrencyCode}{" "}
-                        &nbsp; {formatter(selectedItem?.FinalCost)}
-                      </span>
-                    ) : (
-                      <Skeleton className='proCatMo_CartSkelton' variant="text" width="80%" animation="wave" />
-                    )}
-                  </div>
-                }
+                <div className='proCatMo_UpdateCartBtn'>
+                  <button className="proCatMo_cartUpdate-button btnColorProCatProduct" onClick={() => handleUpdateCart(selectedItem)}>Save</button>
+                </div>
               </div>
-              <div className='proCatMo_UpdateCartBtn'>
-                <Button className="proCatMo_cartUpdate-button" onClick={() => handleUpdateCart(selectedItem)}>Save</Button>
-              </div>
-              <div className='proCatMo_CloseIcon' onClick={handleClose}>
+              <Box className="proCatMo_CloseIconCart_R_custom" onClick={handlecloseMobileModal}>
                 <CloseIcon />
-              </div>
+              </Box>
             </div>
           ) :
             <div className="proCatMo_CartCusto_R-details">
-              <Divider />
-              <p className='proCatMo_cart-Titleline'>{selectedItem?.TitleLine}</p>
               <div className="proCatMo_StockCart-options">
                 {selectedItem?.metaltypename != "" &&
                   <div className="option">
@@ -278,18 +263,18 @@ const MobileCartDetails = ({
                     <span>{selectedItem?.metalcolorname}</span>
                   </div>
                 }
-                {selectedItem?.diamondquality != "" && selectedItem?.diamondcolor != "" &&
+                {(Number(selectedItem?.Dwt) > 0 || Number(selectedItem?.Dpcs) > 0) && selectedItem?.diamondquality && selectedItem?.diamondcolor && (
                   <div className="option">
                     <label htmlFor="diamond">Diamond:</label>
                     <span>{(selectedItem?.diamondquality)?.replace(/,/g, ' - ') + ',' + selectedItem?.diamondcolor}</span>
                   </div>
-                }
-                {selectedItem?.colorstonequality != "" && selectedItem?.colorstonecolor != "" &&
+                )}
+                {(Number(selectedItem?.CSwt) > 0 || Number(selectedItem?.CSpcs) > 0) && selectedItem?.colorstonequality && selectedItem?.colorstonecolor && (
                   <div className="option">
-                    <label htmlFor="diamond">Color Stone:</label>
+                    <label htmlFor="colorstone">Color Stone:</label>
                     <span>{selectedItem?.colorstonequality + ',' + selectedItem?.colorstonecolor}</span>
                   </div>
-                }
+                )}
                 {selectedItem?.Size != "" &&
                   <div className="option">
                     <label htmlFor="size">Size:</label>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import CryptoJS from 'crypto-js';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, CircularProgress, IconButton, InputAdornment, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { Backdrop, Box, CircularProgress, IconButton, InputAdornment, Tab, Tabs, TextField, Typography } from '@mui/material'
 import './changepassword.scss'
 import { handleChangePassword } from '@/app/(core)/utils/API/AccountTabs/changePassword';
 import { toast } from 'react-toastify';
@@ -9,6 +9,7 @@ import { handlePasswordChangeAcc, handlePasswordInputChangeAcc, validateChangePa
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
 import Cookies from 'js-cookie';
 import { useStore } from '@/app/(core)/contexts/StoreProvider';
+import { getSession } from '@/app/(core)/utils/FetchSessionData';
 
 export default function ChangePassword() {
     const { push } = useNextRouterLikeRR()
@@ -31,7 +32,6 @@ export default function ChangePassword() {
         setislogin(false);
         Cookies.remove("userLoginCookie");
         sessionStorage.setItem("LoginUser", false);
-        sessionStorage.removeItem("storeInit");
         sessionStorage.removeItem("loginUserDetail");
         sessionStorage.removeItem("remarks");
         sessionStorage.removeItem("selectedAddressId");
@@ -43,21 +43,22 @@ export default function ChangePassword() {
         sessionStorage.removeItem("allproductlist");
         sessionStorage.clear();
         Cookies.remove("userLoginCookie");
-        Cookies.remove("userLoginCookie");
         Cookies.remove("LoginUser");
-        window.location.href = "/"
+        naviagation("/")
     };
 
-    useEffect(() => {
-        const storedEmail = sessionStorage.getItem('registerEmail');
-        if (storedEmail) setEmail(storedEmail);
+  useEffect(() => {
+    const storedEmail = getSession('registerEmail');
+    const storedData = getSession('loginUserDetail');
+    if (storedEmail) {
+      setEmail(storedEmail);
+    } else {
+      setEmail(storedData?.userid || storedData?.email1 || storedData?.email || '')
+    }
 
-        const storedData = sessionStorage.getItem('loginUserDetail');
-        const data = JSON.parse(storedData);
-        setCustomerID(data?.id);
+    setCustomerID(storedData?.id || '');
 
-    }, []); // 
-
+  }, []);
 
     const validatePassword = (value) => {
         const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
@@ -104,17 +105,13 @@ export default function ChangePassword() {
         const { errors, isValid } = validateChangePassword({ oldPassword, password, confirmPassword });
 
         if (isValid) {
-
             const hashedOldPassword = hashPasswordSHA1(oldPassword);
             const hashedPassword = hashPasswordSHA1(password);
             const hashedConfirmPassword = hashPasswordSHA1(confirmPassword);
-
             setIsLoading(true);
             try {
-
-                const storeInit = JSON.parse(sessionStorage.getItem('storeInit'));
-
-                const { FrontEnd_RegNo } = storeInit;
+              const storeInit = getSession('storeInit');
+              const { FrontEnd_RegNo } = storeInit;
 
                 // const combinedValue = JSON.stringify({
                 //     oldpassword: `${hashedOldPassword}`, newpassword: `${hashedPassword}`, confirmpassword: `${hashedConfirmPassword}`, FrontEnd_RegNo: `${FrontEnd_RegNo}`, Customerid: `${customerID}`
@@ -133,13 +130,15 @@ export default function ChangePassword() {
 
                 if (passwordError === '') {
                     const response = await handleChangePassword(hashedOldPassword, hashedPassword, hashedConfirmPassword, FrontEnd_RegNo, customerID, email);
-                    localStorage.setItem('log', JSON.stringify(response))
+                    localStorage.setItem('log', JSON.stringify(response));
                     if (response?.Data?.rd[0]?.stat === 1) {
+                        toast.success('Password updated successfully');
                         handleLogout();
                     } else {
-                        setErrors(prevErrors => ({ ...prevErrors, oldPassword: 'Enter Valid Old Password' }));
+                        const errorMsg = response?.Data?.rd[0]?.stat_msg || response?.Data?.rd[0]?.msg || 'Enter Valid Old Password';
+                        setErrors(prevErrors => ({ ...prevErrors, oldPassword: errorMsg }));
+                        toast.error(errorMsg);
                     }
-
                 } else {
                     toast.error('Password Not Updated');
                 }

@@ -1,31 +1,9 @@
 import ContactForm from "./ContactForm.jsx";
 import "./ContactUs.modul.scss";
-import fs from "fs";
-import path from "path";
-import { getStaticHtmlPages } from "@/app/(core)/utils/StaticFileGetter.js";
-
-// export const metadata = {
-//   title: 'Francis Diamonds | Diamond Jewellery Manufacturer & Wholesale Jewellery Catalogue',
-//   description: 'Explore premium diamond jewellery collections from Francis Diamonds, a trusted manufacturer of elegant and modern diamond jewellery designs.',
-// };
+import { getStaticHtmlContent } from "@/app/(core)/utils/StaticFileGetter.js";
 
 export default async function ContactUsPage({ hostname }) {
-  const ht = await getStaticHtmlPages(hostname);
-  const filePath = path.join(
-    process.cwd(),
-    ht?.pages?.contact || ""
-  );
-  console.log(filePath, "filePath")
-  let htmlContent = "";
-  try {
-    if (fs.existsSync(filePath)) {
-      htmlContent = fs.readFileSync(filePath, "utf8");
-    } else {
-      console.error("File not found:", filePath);
-    }
-  } catch (error) {
-    console.error("Error reading Contact Us HTML:", error);
-  }
+  const htmlContent = getStaticHtmlContent("contact", hostname);
 
   return (
     <div className="main_warrpper_pro">
@@ -40,8 +18,6 @@ export default async function ContactUsPage({ hostname }) {
   );
 }
 
-
-
 const Banner = ({ title = "Contact Us" }) => {
   return (
     <div className="procatalog-banner">
@@ -49,3 +25,4 @@ const Banner = ({ title = "Contact Us" }) => {
     </div>
   );
 };
+
