@@ -1020,10 +1020,14 @@ const QuotationJob = () => {
             <Box sx={{ width: "135px", height: "135px", paddingBottom: "20px", overflow: "hidden" }} >
               <Box sx={{ border: view === 'list' && "1px solid #d6d6d6", height: "117px" }} >
                 {(hoverImg !== "") && (
-                  <img src={hoverImg}
+                  <img
+                    src={hoverImg}
                     draggable={true}
+                    onError={(e) => { e.target.src = "/image-not-found.jpg"; }}
                     onContextMenu={(e) => e.preventDefault()}
-                    alt="quotationJob" style={{ width: "100%", objectFit: "contain", minHeight: "114px", maxHeight: "114px", }} />
+                    alt="quotationJob"
+                    style={{ width: "100%", objectFit: "contain", minHeight: "114px", maxHeight: "114px", }}
+                  />
                 )}
               </Box>
             </Box>
@@ -1037,7 +1041,12 @@ const QuotationJob = () => {
                 <Box sx={{ width: "135px", height: "135px", paddingBottom: "20px", overflow: "hidden", marginBlock: '20px' }} >
                   <Box sx={{ border: view === 'list' && "1px solid #d6d6d6", height: "117px" }} >
                     {(view === 'list' && hoverImg !== "") && (
-                      <img src={hoverImg} alt="quotationJob" style={{ width: "100%", objectFit: "cover", minHeight: "114px", maxHeight: "114px", }} />
+                      <img
+                        src={hoverImg}
+                        alt="quotationJob"
+                        onError={(e) => { e.target.src = "/image-not-found.jpg"; }}
+                        style={{ width: "100%", objectFit: "cover", minHeight: "114px", maxHeight: "114px", }}
+                      />
                     )}
                   </Box>
                 </Box>

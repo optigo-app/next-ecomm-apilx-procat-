@@ -1,4 +1,5 @@
 'use client';
+import React from "react";
 import "./LoginOption.modul.scss";
 import Link from "next/link";
 import {
@@ -9,192 +10,346 @@ import {
   Paper,
   Stack,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Divider,
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import SmartphoneOutlinedIcon from "@mui/icons-material/SmartphoneOutlined";
-
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const LoginOption = ({ searchParams }) => {
-  const { LoginRedirect = "", loginRedirect: loginRedirLow = "", search = "" } = searchParams || {};
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const {
+    LoginRedirect = "",
+    loginRedirect: loginRedirLow = "",
+    search = "",
+  } = searchParams || {};
   const loginRedirect = LoginRedirect || loginRedirLow || search || "";
+
   const getSecurityKeyFromUrl = () => {
-    // 1. Check direct query param SK or SecurityKey
     if (searchParams?.SK) return searchParams.SK;
     if (searchParams?.SecurityKey) return searchParams.SecurityKey;
 
-    // 2. Extract from LoginRedirect if present
     if (loginRedirect) {
       const urlText = decodeURIComponent(loginRedirect);
-
-      // Try path segment K=
       const kMatch = urlText.match(/\/K=([^/?&#]+)/);
       if (kMatch) {
-        try { return atob(kMatch[1]); } catch (e) { }
+        try {
+          return atob(kMatch[1]);
+        } catch (e) {}
       }
 
-      // Try query param SK= or SecurityKey= inside the redirect URL
       const skMatch = urlText.match(/[?&](SK|SecurityKey)=([^&]+)/);
       if (skMatch) return skMatch[2];
     }
-
     return "";
   };
 
   const securityKey = getSecurityKeyFromUrl();
-  const redirectEmailUrl = `/ContinueWithEmail${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}` : (securityKey ? `?SK=${encodeURIComponent(securityKey)}` : "")}`;
-  const redirectMobileUrl = `/ContinueWithMobile${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}` : (securityKey ? `?SK=${encodeURIComponent(securityKey)}` : "")}`;
+  const queryParamStr = `${loginRedirect ? `?LoginRedirect=${encodeURIComponent(loginRedirect)}${securityKey ? `&SK=${encodeURIComponent(securityKey)}` : ""}` : securityKey ? `?SK=${encodeURIComponent(securityKey)}` : ""}`;
 
-  return <>
+  const redirectEmailUrl = `/ContinueWithEmail${queryParamStr}`;
+  const redirectMobileUrl = `/ContinueWithMobile${queryParamStr}`;
+  const redirectRegisterUrl = `/register${queryParamStr}`;
+
+  return (
     <Box
       sx={{
-        minHeight: '80vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'white',
-        p: { xs: 0, sm: 0 },
-
+        minHeight: "calc(100vh - 120px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "#fbfbfc",
+        py: { xs: 2, sm: 4, md: 6 },
+        px: { xs: 1.5, sm: 2, md: 3 },
       }}
     >
-      <Container maxWidth="sm">
+      <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 2, sm: 5 },
-            borderRadius: 3,
-            textAlign: 'center',
-            border: '1px solid',
-            borderColor: 'divider'
+            borderRadius: "4px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
+            bgcolor: "#ffffff",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            minHeight: { md: "520px" },
+            p: { xs: 1.5, sm: 2, md: 2.5 },
+            gap: { xs: 2.5, md: 3.5 },
           }}
         >
-          <Stack spacing={3} alignItems="center">
-            {/* Header */}
-            <Box>
-              <Typography
-                variant="h4"
-                component="h1"
-                sx={{
-                  fontWeight: 400,
-                  color: 'text.primary',
-                  mb: 1,
-                  fontSize: { xs: '1.5rem', sm: '2rem' }
-                }}
-              >
-                Log in or sign up in seconds
-              </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{ maxWidth: 400, mx: 'auto' }}
-              >
-                Use your email or mobile number to continue with the organization.
-              </Typography>
-            </Box>
-
-            {/* Login Options */}
-            <Stack spacing={2} width="100%" sx={{ mt: 2 }}>
-              <Button
-                component={Link}
-                href={redirectEmailUrl}
-                fullWidth
-                size="large"
-                startIcon={<EmailOutlinedIcon />}
-                sx={{
-                  py: 1.5,
-                  px: 3,
-                  border: '2px solid',
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                  bgcolor: 'transparent',
-                  textTransform: 'none',
-                  fontSize: {
-                    xs: '0.8rem',
-                    sm: '1rem'
-                  },
-                  fontWeight: 400,
-                  transition: 'all 0.2s ease-in-out',
-                }}
-                className="btnColorProCat"
-              >
-                Continue with email
-              </Button>
-
-              <Button
-                component={Link}
-                href={redirectMobileUrl}
-                fullWidth
-                size="large"
-                startIcon={<SmartphoneOutlinedIcon />}
-                sx={{
-                  py: 1.5,
-                  px: 3,
-                  border: '2px solid',
-                  borderColor: 'secondary.main',
-                  color: 'secondary.main',
-                  bgcolor: 'transparent',
-                  textTransform: 'none',
-                  fontSize: {
-                    xs: '0.8rem',
-                    sm: '1rem'
-                  },
-                  fontWeight: 400,
-                  transition: 'all 0.2s ease-in-out',
-                }}
-                className="btnColorProCat"
-              >
-                Log in with mobile
-              </Button>
-            </Stack>
-
-            {/* Footer */}
-            <Typography
-              variant="caption"
-              color="text.secondary"
+          {/* Left Column - Fashion Editorial Visual Showcase */}
+          <Box
+            sx={{
+              flex: { xs: "none", md: "0 0 45%" },
+              height: { xs: "160px", sm: "220px", md: "auto" },
+              minHeight: { md: "480px" },
+              borderRadius: "4px",
+              overflow: "hidden",
+              position: "relative",
+              bgcolor: "#f1ede7",
+              backgroundImage: "url('/Assets/auth_fashion_model.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: { xs: "center 20%", md: "center 15%" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
+            }}
+          >
+            {/* Ambient Gradient Overlay */}
+            <Box
               sx={{
-                mt: 3,
-                textAlign: 'center',
-                maxWidth: 350,
-                lineHeight: 1.6
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)",
+                pointerEvents: "none",
+              }}
+            />
+            <Box
+              sx={{
+                position: "relative",
+                zIndex: 2,
+                p: { xs: 1.5, sm: 2.5, md: 3 },
+                color: "#ffffff",
               }}
             >
-              By continuing, you agree to our{' '}
-              <Box
-                component={Link}
+              <Typography
+                variant="caption"
                 sx={{
-                  color: 'primary.main',
-                  textDecoration: 'none',
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
                   fontWeight: 600,
-                  cursor: 'pointer',
-                  '&:hover': { textDecoration: 'underline' }
+                  opacity: 0.9,
+                  fontSize: { xs: "10px", sm: "11px" },
+                  display: "block",
+                  mb: 0.25,
                 }}
-                href="/terms-and-conditions"
               >
-                Terms of Use
-              </Box>
-              . Read our{' '}
-              <Box
-                component={Link}
+                Exclusive Fine Jewelry
+              </Typography>
+              <Typography
+                variant="h6"
                 sx={{
-                  color: 'primary.main',
-                  textDecoration: 'none',
                   fontWeight: 600,
-                  cursor: 'pointer',
-                  '&:hover': { textDecoration: 'underline' }
+                  fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.2rem" },
+                  lineHeight: 1.25,
+                  textShadow: "0 2px 6px rgba(0,0,0,0.3)",
                 }}
-                href="/privacyPolicy"
               >
-                Privacy Policy
+                Elegance & Precision in Every Creation
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Right Column - Login Options Form Block */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              px: { xs: 1, sm: 2.5, md: 3.5 },
+              py: { xs: 1, sm: 2 },
+            }}
+          >
+            <Stack spacing={{ xs: 2.5, sm: 3 }} sx={{ maxWidth: "400px", mx: "auto", width: "100%" }}>
+              {/* Header */}
+              <Box>
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    fontWeight: 700,
+                    color: "#111827",
+                    fontSize: { xs: "1.35rem", sm: "1.65rem", md: "1.85rem" },
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.25,
+                    mb: 0.75,
+                  }}
+                >
+                  Login to your account
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#4b5563",
+                    fontSize: { xs: "0.85rem", sm: "0.92rem" },
+                    lineHeight: 1.45,
+                  }}
+                >
+                  Welcome back! Choose how you would like to sign in to your
+                  account.
+                </Typography>
               </Box>
-              .
-            </Typography>
-          </Stack>
+
+              {/* Login Method Buttons */}
+              <Stack spacing={1.5} width="100%">
+                <Button
+                  component={Link}
+                  href={redirectEmailUrl}
+                  fullWidth
+                  size="large"
+                  startIcon={<EmailOutlinedIcon sx={{ fontSize: { xs: "18px", sm: "20px" } }} />}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.6 }} />}
+                  sx={{
+                    py: { xs: 1.25, sm: 1.5 },
+                    px: { xs: 2, sm: 2.5 },
+                    bgcolor: "#111827",
+                    color: "#ffffff",
+                    borderRadius: "4px",
+                    textTransform: "none",
+                    fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                    fontWeight: 600,
+                    boxShadow: "none",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    transition: "all 0.15s ease-in-out",
+                    "&:hover": {
+                      bgcolor: "#1f2937",
+                      boxShadow: "none",
+                    },
+                    "& .MuiButton-startIcon": {
+                      marginRight: "8px",
+                    },
+                  }}
+                >
+                  <span style={{ flex: 1, textAlign: "left" }}>
+                    Continue with Email
+                  </span>
+                </Button>
+
+                <Button
+                  component={Link}
+                  href={redirectMobileUrl}
+                  fullWidth
+                  size="large"
+                  startIcon={<SmartphoneOutlinedIcon sx={{ fontSize: { xs: "18px", sm: "20px" } }} />}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.6 }} />}
+                  sx={{
+                    py: { xs: 1.25, sm: 1.5 },
+                    px: { xs: 2, sm: 2.5 },
+                    bgcolor: "#ffffff",
+                    color: "#111827",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "4px",
+                    textTransform: "none",
+                    fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                    fontWeight: 600,
+                    boxShadow: "none",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    transition: "all 0.15s ease-in-out",
+                    "&:hover": {
+                      bgcolor: "#f9fafb",
+                      borderColor: "#9ca3af",
+                    },
+                    "& .MuiButton-startIcon": {
+                      marginRight: "8px",
+                    },
+                  }}
+                >
+                  <span style={{ flex: 1, textAlign: "left" }}>
+                    Log in with Mobile Number
+                  </span>
+                </Button>
+              </Stack>
+
+              {/* Divider */}
+              <Box sx={{ display: "flex", alignItems: "center", my: 0.5 }}>
+                <Divider sx={{ flex: 1, borderColor: "#e5e7eb" }} />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    px: 1.5,
+                    color: "#9ca3af",
+                    fontWeight: 500,
+                    textTransform: "uppercase",
+                    fontSize: "10px",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  or
+                </Typography>
+                <Divider sx={{ flex: 1, borderColor: "#e5e7eb" }} />
+              </Box>
+
+              {/* Sign up prompt */}
+              <Box textAlign="center">
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#4b5563", fontSize: { xs: "0.85rem", sm: "0.92rem" } }}
+                >
+                  Don&apos;t have an account?{" "}
+                  <Box
+                    component={Link}
+                    href={redirectRegisterUrl}
+                    sx={{
+                      color: "#111827",
+                      fontWeight: 700,
+                      textDecoration: "none",
+                      borderBottom: "1.5px solid #111827",
+                      transition: "opacity 0.2s",
+                      "&:hover": { opacity: 0.8 },
+                    }}
+                  >
+                    Sign up now
+                  </Box>
+                </Typography>
+              </Box>
+
+              {/* Legal Footer */}
+              <Typography
+                variant="caption"
+                sx={{
+                  textAlign: "center",
+                  color: "#6b7280",
+                  fontSize: { xs: "11px", sm: "11.5px" },
+                  lineHeight: 1.5,
+                  display: "block",
+                }}
+              >
+                By continuing, you agree to our{" "}
+                <Box
+                  component={Link}
+                  href="/terms-and-conditions"
+                  sx={{
+                    color: "#374151",
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    "&:hover": { color: "#111827" },
+                  }}
+                >
+                  Terms of Use
+                </Box>{" "}
+                and{" "}
+                <Box
+                  component={Link}
+                  href="/privacyPolicy"
+                  sx={{
+                    color: "#374151",
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    "&:hover": { color: "#111827" },
+                  }}
+                >
+                  Privacy Policy
+                </Box>
+                .
+              </Typography>
+            </Stack>
+          </Box>
         </Paper>
       </Container>
     </Box>
-  </>
-
+  );
 };
 
 export default LoginOption;
-

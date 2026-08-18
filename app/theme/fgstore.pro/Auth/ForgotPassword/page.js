@@ -5,6 +5,8 @@ import CryptoJS from "crypto-js";
 import { ResetPasswordAPI } from "@/app/(core)/utils/API/Auth/ResetPasswordAPI";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+
 import {
   Box,
   Container,
@@ -20,11 +22,9 @@ import {
   useTheme,
   useMediaQuery
 } from "@mui/material";
-import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-
 
 export default function ForgotPassword({ params, storeInit }) {
   const location = useNextRouterLikeRR();
@@ -41,7 +41,7 @@ export default function ForgotPassword({ params, storeInit }) {
   const searchParams = useSearchParams();
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const idFromUrl = searchParams.get("userid");
@@ -51,20 +51,14 @@ export default function ForgotPassword({ params, storeInit }) {
       return;
     }
 
-    // store in state
     setUserId(idFromUrl);
-
-    // remove userid from URL (security + clean URL)
     window.history.replaceState({}, "", window.location.pathname);
 
     const storedEmail = sessionStorage.getItem("userEmailForPdList");
     if (storedEmail) {
       setEmail(storedEmail);
     }
-
   }, []);
-
-
 
   const handleInputChange = (e, setter, fieldName) => {
     const { value } = e.target;
@@ -116,18 +110,18 @@ export default function ForgotPassword({ params, storeInit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = {};
+    const newErrors = {};
 
     if (!password.trim()) {
       setPasswordError("Password is required");
-      errors.password = "Password is required";
+      newErrors.password = "Password is required";
     }
     if (!confirmPassword.trim()) {
-      errors.confirmPassword = "Confirm Password is required";
+      newErrors.confirmPassword = "Confirm Password is required";
     } else if (confirmPassword !== password) {
-      errors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = "Passwords do not match";
     }
-    if (Object.keys(errors).length === 0) {
+    if (Object.keys(newErrors).length === 0) {
       const hashedPassword = hashPasswordSHA1(password);
       setIsLoading(true);
       ResetPasswordAPI(userId, hashedPassword)
@@ -139,22 +133,26 @@ export default function ForgotPassword({ params, storeInit }) {
             alert(response.Data.rd[0].stat_msg);
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
     } else {
-      setErrors(errors);
+      setErrors(newErrors);
     }
   };
 
-  return <>
+  return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'white',
-        p: 0,
-        position: 'relative'
+        minHeight: "calc(100vh - 120px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "#fbfbfc",
+        py: { xs: 2, sm: 4, md: 6 },
+        px: { xs: 1.5, sm: 2, md: 3 },
+        position: "relative",
       }}
     >
       {/* Loading Overlay */}
@@ -162,321 +160,383 @@ export default function ForgotPassword({ params, storeInit }) {
         open={isLoading}
         sx={{
           zIndex: theme.zIndex.modal + 1,
-          color: '#fff',
-          bgcolor: 'rgba(0,0,0,0.3)'
+          color: "#fff",
+          bgcolor: "rgba(0,0,0,0.3)",
         }}
       >
-        <CircularProgress size={50} thickness={4} color="primary" />
+        <CircularProgress size={45} thickness={4} sx={{ color: "#111827" }} />
       </Backdrop>
 
-      <Container maxWidth="sm">
+      <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
         <Paper
           elevation={0}
           sx={{
-            p: { xs: 2, sm: 5 },
-            borderRadius: 3,
-            border: '1px solid',
-            borderColor: 'divider',
-            position: 'relative',
-            overflow: 'hidden'
+            borderRadius: "4px",
+            border: "1px solid #e5e7eb",
+            boxShadow:
+              "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
+            bgcolor: "#ffffff",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            minHeight: { md: "520px" },
+            p: { xs: 1.5, sm: 2, md: 2.5 },
+            gap: { xs: 2.5, md: 3.5 },
+            position: "relative",
           }}
         >
-          {/* Back Button */}
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigation("/")}
+          {/* Left Column - Fashion Visual Showcase */}
+          <Box
             sx={{
-              position: 'absolute',
-              top: 16,
-              left: 16,
-              color: 'text.secondary',
-              textTransform: 'none',
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: 'grey.100',
-                color: 'text.primary'
-              }
+              flex: { xs: "none", md: "0 0 45%" },
+              height: { xs: "160px", sm: "220px", md: "auto" },
+              minHeight: { md: "480px" },
+              borderRadius: "4px",
+              overflow: "hidden",
+              position: "relative",
+              bgcolor: "#f1ede7",
+              backgroundImage: "url('/Assets/auth_fashion_model.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: { xs: "center 20%", md: "center 15%" },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
             }}
           >
-            Back
-          </Button>
-
-          <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
-            {/* Icon */}
             <Box
               sx={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                bgcolor: 'warning.light',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 1
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)",
+                pointerEvents: "none",
               }}
-              className="btnColorProCat"
-            >
-              <LockResetOutlinedIcon
-                sx={{
-                  fontSize: 32,
-                }}
-              />
-            </Box>
-
-            {/* Title */}
-            <Box textAlign="center">
-              <Typography
-                variant="h4"
-                component="h1"
-                sx={{
-                  fontWeight: 400,
-                  color: 'text.primary',
-                  mb: 1,
-                  fontSize: { xs: '1.75rem', sm: '2.25rem' }
-                }}
-              >
-                Forgot Your Password?
-              </Typography>
-
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{
-                  maxWidth: 400,
-                  mx: 'auto',
-                  lineHeight: 1.6,
-                  fontSize: '1rem'
-                }}
-              >
-                Enter your new password below to reset your account
-              </Typography>
-            </Box>
-
-            {/* Form */}
-            <Stack
-              spacing={2.5}
-              width="100%"
-              component="form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit(e);
+            />
+            <Box
+              sx={{
+                position: "relative",
+                zIndex: 2,
+                p: { xs: 1.5, sm: 2.5, md: 3 },
+                color: "#ffffff",
               }}
-              sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
             >
-              <TextField
-                autoFocus
-                id="password"
-                label="New Password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                fullWidth
-                value={password}
-                onChange={handlePasswordChange}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    handleSubmit(event);
-                  }
-                }}
-                error={!!passwordError}
-                helperText={passwordError}
-                disabled={isLoading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => handleTogglePasswordVisibility("password")}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-
-                }}
-              />
-
-              <TextField
-                id="confirmPassword"
-                label="Confirm New Password"
-                type={showConfirmPassword ? "text" : "password"}
-                autoComplete="new-password"
-                fullWidth
-                value={confirmPassword}
-                onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                disabled={isLoading}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => handleTogglePasswordVisibility("confirmPassword")}
-                        onMouseDown={handleMouseDownConfirmPassword}
-                        edge="end"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-
-                }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                size="large"
-                variant="contained"
-                color="warning"
-                disabled={isLoading || !password || !confirmPassword}
+              <Typography
+                variant="caption"
                 sx={{
-                  mt: 1,
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '1rem',
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
                   fontWeight: 600,
-                  boxShadow: 'none',
-                  transition: 'all 0.2s ease-in-out',
-
-                  '&:disabled': {
-                    bgcolor: 'grey.300',
-                    color: 'grey.500'
-                  }
+                  opacity: 0.9,
+                  fontSize: { xs: "10px", sm: "11px" },
+                  display: "block",
+                  mb: 0.25,
                 }}
-                className="btnColorProCat"
               >
-                {isLoading ? 'Updating...' : 'Change Password'}
-              </Button>
-
-              <Button
-                fullWidth
-                size="large"
-                variant="text"
-                onClick={() => navigation("/")}
-                disabled={isLoading}
+                Exclusive Fine Jewelry
+              </Typography>
+              <Typography
+                variant="h6"
                 sx={{
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: 'text.secondary',
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                    color: 'text.primary'
-                  }
+                  fontWeight: 600,
+                  fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.2rem" },
+                  lineHeight: 1.25,
+                  textShadow: "0 2px 6px rgba(0,0,0,0.3)",
                 }}
               >
-                Cancel
-              </Button>
+                Elegance & Precision in Every Creation
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Right Column - Reset Password Form */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              px: { xs: 1, sm: 2.5, md: 3.5 },
+              py: { xs: 1, sm: 2 },
+              position: "relative",
+            }}
+          >
+            {/* Back Button */}
+            <Button
+              startIcon={<ArrowBackIcon sx={{ fontSize: "18px" }} />}
+              onClick={() => navigation("/")}
+              sx={{
+                alignSelf: "flex-start",
+                mb: { xs: 1, sm: 1.5 },
+                color: "#6b7280",
+                textTransform: "none",
+                fontWeight: 500,
+                fontSize: "0.88rem",
+                p: 0,
+                minWidth: "auto",
+                "&:hover": {
+                  bgcolor: "transparent",
+                  color: "#111827",
+                },
+              }}
+            >
+              Back to home
+            </Button>
+
+            <Stack
+              spacing={{ xs: 2.5, sm: 3 }}
+              sx={{ maxWidth: "400px", mx: "auto", width: "100%" }}
+            >
+              {/* Title & Subtext */}
+              <Box>
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    fontWeight: 700,
+                    color: "#111827",
+                    fontSize: { xs: "1.35rem", sm: "1.65rem", md: "1.85rem" },
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.25,
+                    mb: 0.75,
+                  }}
+                >
+                  Forgot Your Password?
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "#4b5563",
+                    fontSize: { xs: "0.85rem", sm: "0.92rem" },
+                    lineHeight: 1.45,
+                  }}
+                >
+                  Enter a new password for{" "}
+                  <Box
+                    component="span"
+                    sx={{
+                      fontWeight: 600,
+                      color: "#111827",
+                    }}
+                  >
+                    {email || "your account"}
+                  </Box>
+                  .
+                </Typography>
+              </Box>
+
+              {/* Form Inputs & Submission */}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ width: "100%" }}
+              >
+                <Stack spacing={2}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    id="password"
+                    label="New Password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={handlePasswordChange}
+                    error={!!passwordError || !!errors.password}
+                    helperText={passwordError || errors.password}
+                    disabled={isLoading}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => handleTogglePasswordVisibility("password")}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                            sx={{ color: "#6b7280" }}
+                          >
+                            {showPassword ? (
+                              <VisibilityOff sx={{ fontSize: 20 }} />
+                            ) : (
+                              <Visibility sx={{ fontSize: 20 }} />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        borderRadius: "4px",
+                        bgcolor: "#ffffff",
+                        "& fieldset": {
+                          borderColor: "#d1d5db",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#9ca3af",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#111827",
+                          borderWidth: "1.5px",
+                        },
+                      },
+                    }}
+                    FormHelperTextProps={{
+                      sx: {
+                        ml: 0,
+                        fontSize: "0.8rem",
+                        fontWeight: 500,
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    id="confirmPassword"
+                    label="Confirm New Password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) =>
+                      handleInputChange(e, setConfirmPassword, "confirmPassword")
+                    }
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                    disabled={isLoading}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle confirm password visibility"
+                            onClick={() => handleTogglePasswordVisibility("confirmPassword")}
+                            onMouseDown={handleMouseDownConfirmPassword}
+                            edge="end"
+                            sx={{ color: "#6b7280" }}
+                          >
+                            {showConfirmPassword ? (
+                              <VisibilityOff sx={{ fontSize: 20 }} />
+                            ) : (
+                              <Visibility sx={{ fontSize: 20 }} />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        borderRadius: "4px",
+                        bgcolor: "#ffffff",
+                        "& fieldset": {
+                          borderColor: "#d1d5db",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#9ca3af",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#111827",
+                          borderWidth: "1.5px",
+                        },
+                      },
+                    }}
+                    FormHelperTextProps={{
+                      sx: {
+                        ml: 0,
+                        fontSize: "0.8rem",
+                        fontWeight: 500,
+                      },
+                    }}
+                  />
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    size="large"
+                    disabled={isLoading || !password.trim() || !confirmPassword.trim()}
+                    sx={{
+                      py: { xs: 1.25, sm: 1.5 },
+                      px: { xs: 2, sm: 2.5 },
+                      bgcolor: "#111827",
+                      color: "#ffffff",
+                      borderRadius: "4px",
+                      textTransform: "none",
+                      fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                      fontWeight: 600,
+                      boxShadow: "none",
+                      transition: "all 0.15s ease-in-out",
+                      mt: 1,
+                      "&:hover": {
+                        bgcolor: "#1f2937",
+                        boxShadow: "none",
+                      },
+                      "&.Mui-disabled": {
+                        bgcolor: "#e5e7eb",
+                        color: "#9ca3af",
+                      },
+                    }}
+                  >
+                    {isLoading ? "Updating..." : "Reset Password"}
+                  </Button>
+
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="text"
+                    onClick={() => navigation("/")}
+                    disabled={isLoading}
+                    sx={{
+                      py: 1,
+                      textTransform: "none",
+                      fontSize: "0.88rem",
+                      fontWeight: 500,
+                      color: "#6b7280",
+                      borderRadius: "4px",
+                      "&:hover": {
+                        bgcolor: "#f3f4f6",
+                        color: "#111827",
+                      },
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              </Box>
+
+              {/* Legal Footer */}
+              <Typography
+                variant="caption"
+                sx={{
+                  textAlign: "center",
+                  color: "#6b7280",
+                  fontSize: { xs: "11px", sm: "11.5px" },
+                  lineHeight: 1.5,
+                  display: "block",
+                  mt: 1,
+                }}
+              >
+                By continuing, you agree to our{" "}
+                <Box
+                  component={Link}
+                  href="/terms-and-conditions"
+                  sx={{
+                    color: "#374151",
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    "&:hover": { color: "#111827" },
+                  }}
+                >
+                  Terms of Use
+                </Box>{" "}
+                and{" "}
+                <Box
+                  component={Link}
+                  href="/privacyPolicy"
+                  sx={{
+                    color: "#374151",
+                    fontWeight: 600,
+                    textDecoration: "underline",
+                    "&:hover": { color: "#111827" },
+                  }}
+                >
+                  Privacy Policy
+                </Box>
+                .
+              </Typography>
             </Stack>
-          </Stack>
+          </Box>
         </Paper>
       </Container>
     </Box>
-  </>
-
-  return (
-    <div className="smr_forgotMain">
-      {isLoading && (
-        <div className="loader-overlay">
-          <CircularProgress className="loadingBarManage" />
-        </div>
-      )}
-      <div>
-        {/* style={{ backgroundColor: '#c0bbb1' }} */}
-        <div className="smr_forgotSubDiv">
-          <p
-            style={{
-              textAlign: "center",
-              padding: "60px",
-              margin: "0px",
-              fontSize: "40px",
-              color: "#7d7f85",
-              marginBottom: '15px'
-            }}
-            className="AuthScreenMainTitle"
-          >
-            Forgot Your Password
-          </p>
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "-60px",
-              fontSize: "15px",
-              color: "#7d7f85",
-            }}
-            className="AuthScreenSubTitle"
-          >
-            { }
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <TextField
-              autoFocus
-              id="outlined-password-input"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              className="smr_forgotBox"
-              style={{ margin: "15px" }}
-              value={password}
-              onChange={handlePasswordChange}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSubmit();
-                }
-              }}
-              error={!!passwordError}
-              helperText={passwordError}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("password")} onMouseDown={handleMouseDownPassword} edge="end">
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              id="outlined-confirm-password-input"
-              label="Confirm Password"
-              type={showConfirmPassword ? "text" : "password"}
-              autoComplete="current-password"
-              className="smr_forgotBox"
-              style={{ margin: "15px" }}
-              value={confirmPassword}
-              onChange={(e) => handleInputChange(e, setConfirmPassword, "confirmPassword")}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-              InputProps={{
-                // Set InputProps for icon
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label="toggle password visibility" onClick={() => handleTogglePasswordVisibility("confirmPassword")} onMouseDown={handleMouseDownConfirmPassword} edge="end">
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <button className="createBtnRegister btnColorProCat" onClick={handleSubmit}>
-              Change Password
-            </button>
-            <Button style={{ marginTop: "10px", color: "gray" }} onClick={() => navigation("/")}>
-              CANCEL
-            </Button>
-          </div>
-          {/* <Footer /> */}
-        </div>
-      </div>
-    </div>
   );
 }

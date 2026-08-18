@@ -13,7 +13,7 @@ import { GetCountAPI } from "@/app/(core)/utils/API/GetCount/GetCountAPI";
 import { generateToken } from "@/app/(core)/utils/Glob_Functions/Tokenizer";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
-import { currentActiveFlow, IS_B2C } from "../../../../(core)/constants/data";
+import Link from "next/link";
 
 import {
   Box,
@@ -33,7 +33,6 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -238,10 +237,13 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
           }));
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   };
 
-  const handleTogglePasswordVisibility = (fieldName) => {
+  const handleTogglePasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
@@ -265,7 +267,10 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
           alert("Error");
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
   };
 
   const HandleCancel = () => {
@@ -278,7 +283,6 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
 
   return (
     <>
-      {/* Admin Status Dialog */}
       <AdminStatusDialog
         open={adminStatusDialog.open}
         type={adminStatusDialog.type}
@@ -289,12 +293,13 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
       />
       <Box
         sx={{
-          minHeight: "90vh",
+          minHeight: "calc(100vh - 120px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "white",
-          p: { xs: 0, sm: 0 },
+          bgcolor: "#fbfbfc",
+          py: { xs: 2, sm: 4, md: 6 },
+          px: { xs: 1.5, sm: 2, md: 3 },
           position: "relative",
         }}
       >
@@ -307,289 +312,399 @@ export default function LoginWithEmail({ params, searchParams, storeInit }) {
             bgcolor: "rgba(0,0,0,0.3)",
           }}
         >
-          <CircularProgress size={50} thickness={4} color="primary" />
+          <CircularProgress size={45} thickness={4} sx={{ color: "#111827" }} />
         </Backdrop>
 
-        <Container maxWidth="sm">
+        <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 2, sm: 5 },
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-              position: "relative",
+              borderRadius: "4px",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
+              bgcolor: "#ffffff",
               overflow: "hidden",
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              minHeight: { md: "520px" },
+              p: { xs: 1.5, sm: 2, md: 2.5 },
+              gap: { xs: 2.5, md: 3.5 },
+              position: "relative",
             }}
           >
-            {/* Back Button */}
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={HandleCancel}
+            {/* Left Column - Fashion Visual Showcase */}
+            <Box
               sx={{
-                position: "absolute",
-                top: 16,
-                left: 16,
-                color: "text.secondary",
-                textTransform: "none",
-                fontWeight: 500,
-                "&:hover": {
-                  bgcolor: "grey.100",
-                  color: "text.primary",
-                },
+                flex: { xs: "none", md: "0 0 45%" },
+                height: { xs: "160px", sm: "220px", md: "auto" },
+                minHeight: { md: "480px" },
+                borderRadius: "4px",
+                overflow: "hidden",
+                position: "relative",
+                bgcolor: "#f1ede7",
+                backgroundImage: "url('/Assets/auth_fashion_model.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: { xs: "center 20%", md: "center 15%" },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
               }}
             >
-              Back
-            </Button>
-
-            <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
-              {/* Icon */}
               <Box
                 sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: "50%",
-                  bgcolor: "primary.light",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  mb: 1,
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)",
+                  pointerEvents: "none",
                 }}
-                className="btnColorProCat"
-              >
-                <LockOutlinedIcon
-                  sx={{
-                    fontSize: 32,
-                  }}
-                />
-              </Box>
-
-              {/* Title */}
-              <Box textAlign="center">
-                <Typography
-                  variant="h4"
-                  component="h1"
-                  sx={{
-                    fontWeight: 400,
-                    color: "text.primary",
-                    mb: 1,
-                    fontSize: { xs: "1.75rem", sm: "2.25rem" },
-                  }}
-                >
-                  Login with Password
-                </Typography>
-
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{ color: "text.secondary" }}
-                >
-                  <IconButton>
-                    <EmailOutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                  <Typography variant="body1">{email}</Typography>
-                </Stack>
-              </Box>
-
-              {/* Form */}
-              <Stack
-                spacing={2.5}
-                width="100%"
-                component="form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
+              />
+              <Box
+                sx={{
+                  position: "relative",
+                  zIndex: 2,
+                  p: { xs: 1.5, sm: 2.5, md: 3 },
+                  color: "#ffffff",
                 }}
-                sx={{ maxWidth: 400, mx: "auto", mt: 2 }}
               >
-                <TextField
-                  autoFocus
-                  fullWidth
-                  id="password"
-                  label="Password"
-                  type={showConfirmPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    handleInputChange(e, setConfirmPassword, "confirmPassword")
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSubmit();
-                  }}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword}
-                  disabled={isLoading}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={() =>
-                            handleTogglePasswordVisibility("confirmPassword")
-                          }
-                          onMouseDown={handleMouseDownConfirmPassword}
-                          edge="end"
-                          sx={{ color: "text.secondary" }}
-                        >
-                          {showConfirmPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                    sx: {
-                      bgcolor: "background.paper",
-                    },
-                  }}
-                  FormHelperTextProps={{
-                    sx: {
-                      ml: 0,
-                      fontSize: "0.875rem",
-                      fontWeight: 500,
-                    },
-                  }}
-                />
-
-                {/* Remember Me & Forgot Password Row */}
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ mt: 0.5 }}
-                >
-                  {isOtpNewUi ? (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                          color="primary"
-                          size="small"
-                        />
-                      }
-                      label={
-                        <Typography variant="body2" color="text.secondary">
-                          Remember me
-                        </Typography>
-                      }
-                      sx={{ m: 0 }}
-                    />
-                  ) : (
-                    <Box />
-                  )}
-
-                  <Button
-                    onClick={handleForgotPassword}
-                    sx={{
-                      textTransform: "none",
-                      fontWeight: 500,
-                      p: 0,
-                      minWidth: "auto",
-                      color: "primary.main",
-                      fontSize: "0.875rem",
-                      "&:hover": {
-                        bgcolor: "transparent",
-                        textDecoration: "underline",
-                      },
-                    }}
-                  >
-                    Forgot Password?
-                  </Button>
-                </Stack>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  size="large"
-                  variant="contained"
-                  className="btnColorProCat"
-                  disabled={isLoading || !confirmPassword.trim()}
-                  sx={{
-                    py: 1.5,
-                    textTransform: "none",
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    boxShadow: "none",
-                    transition: "all 0.2s ease-in-out",
-                    "&:hover": {
-                      boxShadow: 2,
-                      transform: "translateY(-1px)",
-                    },
-                    "&:disabled": {
-                      bgcolor: "grey.300",
-                      color: "grey.500",
-                    },
-                  }}
-                >
-                  {isLoading ? "Logging in..." : "Login"}
-                </Button>
-
-                {/* Divider */}
-                <Divider sx={{ my: 2 }}>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ px: 1 }}
-                  >
-                    OR
-                  </Typography>
-                </Divider>
-
-                {/* Login with Code Option */}
-                <Button
-                  fullWidth
-                  size="large"
-                  variant="outlined"
-                  onClick={handleNavigation}
-                  startIcon={<EmailOutlinedIcon />}
-                  className="btnColorProCat"
-                  sx={{
-                    py: 1.5,
-                    textTransform: "none",
-                    fontSize: "0.95rem",
-                    fontWeight: 600,
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  Login with Code Instead
-                </Button>
-
                 <Typography
                   variant="caption"
-                  color="text.secondary"
-                  textAlign="center"
-                  sx={{ display: "block", mt: 1 }}
-                >
-                  Go passwordless! We'll send you an email.
-                </Typography>
-
-                <Button
-                  fullWidth
-                  size="large"
-                  variant="text"
-                  onClick={HandleCancel}
-                  disabled={isLoading}
                   sx={{
-                    py: 1.5,
-                    textTransform: "none",
-                    fontSize: "0.95rem",
-                    fontWeight: 500,
-                    color: "text.secondary",
-                    mt: 1,
-                    "&:hover": {
-                      bgcolor: "grey.100",
-                      color: "text.primary",
-                    },
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                    opacity: 0.9,
+                    fontSize: { xs: "10px", sm: "11px" },
+                    display: "block",
+                    mb: 0.25,
                   }}
                 >
-                  Cancel
-                </Button>
+                  Exclusive Fine Jewelry
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.2rem" },
+                    lineHeight: 1.25,
+                    textShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  Elegance & Precision in Every Creation
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Right Column - Login with Password Form */}
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                px: { xs: 1, sm: 2.5, md: 3.5 },
+                py: { xs: 1, sm: 2 },
+                position: "relative",
+              }}
+            >
+              {/* Back Button */}
+              <Button
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px" }} />}
+                onClick={HandleCancel}
+                sx={{
+                  alignSelf: "flex-start",
+                  mb: { xs: 1, sm: 1.5 },
+                  color: "#6b7280",
+                  textTransform: "none",
+                  fontWeight: 500,
+                  fontSize: "0.88rem",
+                  p: 0,
+                  minWidth: "auto",
+                  "&:hover": {
+                    bgcolor: "transparent",
+                    color: "#111827",
+                  },
+                }}
+              >
+                Back
+              </Button>
+
+              <Stack
+                spacing={{ xs: 2.5, sm: 3 }}
+                sx={{ maxWidth: "400px", mx: "auto", width: "100%" }}
+              >
+                {/* Title & Email Badge */}
+                <Box>
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    sx={{
+                      fontWeight: 700,
+                      color: "#111827",
+                      fontSize: { xs: "1.35rem", sm: "1.65rem", md: "1.85rem" },
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.25,
+                      mb: 0.75,
+                    }}
+                  >
+                    Login with Password
+                  </Typography>
+
+                  <Stack
+                    direction="row"
+                    spacing={0.75}
+                    alignItems="center"
+                    sx={{
+                      bgcolor: "#f3f4f6",
+                      py: 0.5,
+                      px: 1.25,
+                      borderRadius: "4px",
+                      width: "fit-content",
+                      mt: 0.5,
+                    }}
+                  >
+                    <EmailOutlinedIcon sx={{ fontSize: 16, color: "#6b7280" }} />
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#374151", fontSize: "0.85rem", fontWeight: 500 }}
+                    >
+                      {email}
+                    </Typography>
+                  </Stack>
+                </Box>
+
+                {/* Form Input & Submission */}
+                <Box
+                  component="form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                  sx={{ width: "100%" }}
+                >
+                  <Stack spacing={2}>
+                    <TextField
+                      autoFocus
+                      fullWidth
+                      id="password"
+                      label="Password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      value={confirmPassword}
+                      onChange={(e) =>
+                        handleInputChange(e, setConfirmPassword, "confirmPassword")
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSubmit();
+                      }}
+                      error={!!errors.confirmPassword}
+                      helperText={errors.confirmPassword}
+                      disabled={isLoading}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleTogglePasswordVisibility}
+                              onMouseDown={handleMouseDownConfirmPassword}
+                              edge="end"
+                              sx={{ color: "#6b7280" }}
+                            >
+                              {showConfirmPassword ? (
+                                <VisibilityOff sx={{ fontSize: 20 }} />
+                              ) : (
+                                <Visibility sx={{ fontSize: 20 }} />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: {
+                          borderRadius: "4px",
+                          bgcolor: "#ffffff",
+                          "& fieldset": {
+                            borderColor: "#d1d5db",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "#9ca3af",
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#111827",
+                            borderWidth: "1.5px",
+                          },
+                        },
+                      }}
+                      FormHelperTextProps={{
+                        sx: {
+                          ml: 0,
+                          fontSize: "0.8rem",
+                          fontWeight: 500,
+                        },
+                      }}
+                    />
+
+                    {/* Remember Me & Forgot Password Row */}
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      sx={{ mt: 0.25 }}
+                    >
+                      {isOtpNewUi ? (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={rememberMe}
+                              onChange={(e) => setRememberMe(e.target.checked)}
+                              size="small"
+                              sx={{
+                                color: "#9ca3af",
+                                "&.Mui-checked": {
+                                  color: "#111827",
+                                },
+                              }}
+                            />
+                          }
+                          label={
+                            <Typography variant="body2" sx={{ fontSize: "0.85rem", color: "#4b5563" }}>
+                              Remember me
+                            </Typography>
+                          }
+                          sx={{ m: 0 }}
+                        />
+                      ) : (
+                        <Box />
+                      )}
+
+                      <Button
+                        onClick={handleForgotPassword}
+                        sx={{
+                          textTransform: "none",
+                          fontWeight: 600,
+                          p: 0,
+                          minWidth: "auto",
+                          color: "#111827",
+                          fontSize: "0.85rem",
+                          "&:hover": {
+                            bgcolor: "transparent",
+                            textDecoration: "underline",
+                          },
+                        }}
+                      >
+                        Forgot Password?
+                      </Button>
+                    </Stack>
+
+                    <Button
+                      type="submit"
+                      fullWidth
+                      size="large"
+                      disabled={isLoading || !confirmPassword.trim()}
+                      sx={{
+                        py: { xs: 1.25, sm: 1.5 },
+                        px: { xs: 2, sm: 2.5 },
+                        bgcolor: "#111827",
+                        color: "#ffffff",
+                        borderRadius: "4px",
+                        textTransform: "none",
+                        fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                        fontWeight: 600,
+                        boxShadow: "none",
+                        transition: "all 0.15s ease-in-out",
+                        "&:hover": {
+                          bgcolor: "#1f2937",
+                          boxShadow: "none",
+                        },
+                        "&.Mui-disabled": {
+                          bgcolor: "#e5e7eb",
+                          color: "#9ca3af",
+                        },
+                      }}
+                    >
+                      {isLoading ? "Logging in..." : "Login"}
+                    </Button>
+
+                    {/* Divider */}
+                    <Box sx={{ display: "flex", alignItems: "center", my: 0.5 }}>
+                      <Divider sx={{ flex: 1, borderColor: "#e5e7eb" }} />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          px: 1.5,
+                          color: "#9ca3af",
+                          fontWeight: 500,
+                          textTransform: "uppercase",
+                          fontSize: "10px",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        or
+                      </Typography>
+                      <Divider sx={{ flex: 1, borderColor: "#e5e7eb" }} />
+                    </Box>
+
+                    {/* Login with Code Option */}
+                    <Button
+                      fullWidth
+                      size="large"
+                      onClick={handleNavigation}
+                      startIcon={<EmailOutlinedIcon sx={{ fontSize: 18 }} />}
+                      sx={{
+                        py: { xs: 1.25, sm: 1.5 },
+                        px: { xs: 2, sm: 2.5 },
+                        bgcolor: "#ffffff",
+                        color: "#111827",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "4px",
+                        textTransform: "none",
+                        fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                        fontWeight: 600,
+                        boxShadow: "none",
+                        transition: "all 0.15s ease-in-out",
+                        "&:hover": {
+                          bgcolor: "#f9fafb",
+                          borderColor: "#9ca3af",
+                        },
+                      }}
+                    >
+                      Login with Code Instead
+                    </Button>
+
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      textAlign="center"
+                      sx={{ display: "block", fontSize: "11px", color: "#6b7280" }}
+                    >
+                      Go passwordless! We&apos;ll send you an email.
+                    </Typography>
+
+                    <Button
+                      fullWidth
+                      size="small"
+                      variant="text"
+                      onClick={HandleCancel}
+                      disabled={isLoading}
+                      sx={{
+                        py: 1,
+                        textTransform: "none",
+                        fontSize: "0.88rem",
+                        fontWeight: 500,
+                        color: "#6b7280",
+                        borderRadius: "4px",
+                        "&:hover": {
+                          bgcolor: "#f3f4f6",
+                          color: "#111827",
+                        },
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Stack>
+                </Box>
               </Stack>
-            </Stack>
+            </Box>
           </Paper>
         </Container>
       </Box>

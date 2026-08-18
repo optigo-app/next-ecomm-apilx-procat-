@@ -746,13 +746,17 @@ const PendingMemo = () => {
               {NumberWithCommas(total?.TotalAmount, 2)}
             </Typography>
           </Box> */}
-          <Box className="salesReportImgSec" sx={{ width: "135px", height: "135px", paddingBottom: "20px", overflow: "hidden", }} >
+            <Box className="salesReportImgSec" sx={{ width: "135px", height: "135px", paddingBottom: "20px", overflow: "hidden", }} >
             <Box sx={{ border: "1px solid #d6d6d6", height: "117px", marginTop: "17px", }} >
               {hoverImg !== "" && (
-                <img src={hoverImg}
+                <img
+                  src={hoverImg}
                   draggable={true}
+                  onError={(e) => { e.target.src = "/image-not-found.jpg"; }}
                   onContextMenu={(e) => e.preventDefault()}
-                  alt="pendingMemo" style={{ width: "100%", objectFit: "contain", minHeight: "114px", maxHeight: "114px", }} />
+                  alt="pendingMemo"
+                  style={{ width: "100%", objectFit: "contain", minHeight: "114px", maxHeight: "114px", }}
+                />
               )}
             </Box>
           </Box>

@@ -47,16 +47,16 @@ const AccountLedgerExcel = ({filterArray, credit_curr_diff, credit_amt_diff, cre
 
   return (
     <>
-    <ReactHTMLTableToExcel
-        id="test-table-xls-button"
-        className="download-table-xls-button btn btn-success text-black bg-success px-2 py-1 fs-5 d-none"
-        table="table-to-xls"
-        filename={`AccountLedger_${Date.now()}`}
-        sheet="tablexls"
-        buttonText="Download as XLS"
-    />
-    <div className='d-none'>
-    <table id='table-to-xls'>
+    <div style={{ display: 'none' }}>
+      <ReactHTMLTableToExcel
+          id="test-table-xls-button"
+          className="download-table-xls-button"
+          table="table-to-xls"
+          filename={`AccountLedger_${Date.now()}`}
+          sheet="tablexls"
+          buttonText="Download as XLS"
+      />
+      <table id='table-to-xls'>
     <tr></tr>
       <tr>
             

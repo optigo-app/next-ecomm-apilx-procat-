@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import './LoginWithMobileCode.modul.scss';
 import { ContimueWithMobileAPI } from '@/app/(core)/utils/API/Auth/ContimueWithMobileAPI';
@@ -7,8 +7,9 @@ import { LoginWithEmailAPI } from '@/app/(core)/utils/API/Auth/LoginWithEmailAPI
 import Cookies from 'js-cookie';
 import { useNextRouterLikeRR } from '@/app/(core)/hooks/useLocationRd';
 import OTP from './OTP';
-import { currentActiveFlow } from '../../../../(core)/constants/data';
 import AdminStatusDialog from '../Register/components/AdminStatusDialog';
+import Link from 'next/link';
+
 import {
   Box,
   Container,
@@ -24,9 +25,7 @@ import {
 } from "@mui/material";
 import SmartphoneOutlinedIcon from "@mui/icons-material/SmartphoneOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import { getEventMessage } from '@/app/(core)/constants/EventMessage';
-
 
 export default function LoginWithMobileCode({ params, searchParams }) {
   const location = useNextRouterLikeRR();
@@ -36,21 +35,19 @@ export default function LoginWithMobileCode({ params, searchParams }) {
   const [mobileNo, setMobileNo] = useState('');
   const [enterOTP, setEnterOTP] = useState('');
   const [resendTimer, setResendTimer] = useState(120);
-  const [isLoginState, setIsLoginState] = useState(false)
+  const [isLoginState, setIsLoginState] = useState(false);
   const [adminStatusDialog, setAdminStatusDialog] = useState({ open: false, type: "pending", message: "" });
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const search = searchParams?.LoginRedirect || searchParams?.loginRedirect || searchParams?.search || "";
   const updatedSearch = search?.replace('?LoginRedirect=', '');
   const redirectMobileUrl = `${decodeURIComponent(updatedSearch)}`;
   const cancelRedireactUrl = `/LoginOption?${search}`;
 
-
   useEffect(() => {
     const storedMobile = sessionStorage?.getItem('registerMobile') ?? '';
     if (storedMobile) setMobileNo(storedMobile);
   }, []);
-
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -67,18 +64,6 @@ export default function LoginWithMobileCode({ params, searchParams }) {
     }
   }, [resendTimer]);
 
-  const handleInputChange = (e, setter, fieldName) => {
-    const { value } = e.target;
-    setter(value);
-    if (fieldName === 'mobileNo') {
-      if (!value.trim()) {
-        setErrors(prevErrors => ({ ...prevErrors, otp: 'Code is required' }));
-      } else {
-        setErrors(prevErrors => ({ ...prevErrors, otp: '' }));
-      }
-    }
-  };
-
   const handleSubmit = async () => {
     const visiterId = Cookies.get('visiterId');
     if (enterOTP.length < 5) {
@@ -86,10 +71,11 @@ export default function LoginWithMobileCode({ params, searchParams }) {
       return;
     }
 
-
+    setIsLoading(true);
     LoginWithEmailAPI('', mobileNo, enterOTP, 'otp_mobile_login', '', visiterId).then((response) => {
       const result = getEventMessage(response);
       if (result?.eventName && result?.status) {
+        setIsLoading(false);
         setAdminStatusDialog({
           open: true,
           type: result?.eventName,
@@ -97,12 +83,12 @@ export default function LoginWithMobileCode({ params, searchParams }) {
         });
         return;
       }
+      setIsLoading(false);
       if (response.Data.rd[0].stat === 1) {
-        Cookies.set('LoginUser', true)
-        sessionStorage.setItem('LoginUser', true)
-        setIsLoginState(true)
+        setIsLoginState(true);
+        Cookies.set('LoginUser', true);
+        sessionStorage.setItem('LoginUser', true);
         sessionStorage.setItem('loginUserDetail', JSON.stringify(response.Data.rd[0]));
-        sessionStorage.setItem('registerMobile', mobileNo);
 
         if (redirectMobileUrl) {
           const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
@@ -116,25 +102,26 @@ export default function LoginWithMobileCode({ params, searchParams }) {
           const securityKey = searchParams?.SK || searchParams?.SecurityKey || "";
           window.location.href = securityKey ? `/?SK=${encodeURIComponent(securityKey)}` : '/';
         }
-
       } else {
-        setErrors(prevErrors => ({ ...prevErrors, otp: response?.Data?.rd[0]?.stat_msg }));
+        setErrors(prevErrors => ({ ...prevErrors, otp: response.Data.rd[0].stat_msg }));
       }
-    }).catch((err) => console.log(err))
+    }).catch((err) => {
+      setIsLoading(false);
+      console.log(err);
+      setErrors(prevErrors => ({ ...prevErrors, otp: 'An error occurred while logging in. Please try again.' }));
+    });
   };
-
 
   const handleResendCode = async () => {
     setResendTimer(120);
-    setIsLoading(true);
-    ContimueWithMobileAPI(mobileNo).then((response) => {
-      setIsLoading(false);
+    const Countrycodestate = sessionStorage.getItem('Countrycodestate');
+    ContimueWithMobileAPI(mobileNo, Countrycodestate).then((response) => {
       if (response.Data.rd[0].stat === '1') {
-        toast.success('OTP send Sucssessfully');
+        toast.success('OTP resent successfully');
       } else {
-        alert('Error..')
+        toast.error('OTP send error');
       }
-    }).catch((err) => console.log(err))
+    }).catch((err) => console.log(err));
   };
 
   const formatTime = (seconds) => {
@@ -142,7 +129,6 @@ export default function LoginWithMobileCode({ params, searchParams }) {
     const secs = (seconds % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
-
 
   return (
     <>
@@ -154,13 +140,14 @@ export default function LoginWithMobileCode({ params, searchParams }) {
       />
       <Box
         sx={{
-          minHeight: '80vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          bgcolor: 'white',
-          p: { xs: 0, sm: 0 },
-          position: 'relative'
+          minHeight: "calc(100vh - 120px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "#fbfbfc",
+          py: { xs: 2, sm: 4, md: 6 },
+          px: { xs: 1.5, sm: 2, md: 3 },
+          position: "relative",
         }}
       >
         {/* Loading Overlay */}
@@ -168,232 +155,334 @@ export default function LoginWithMobileCode({ params, searchParams }) {
           open={isLoading}
           sx={{
             zIndex: theme.zIndex.modal + 1,
-            color: '#fff',
-            bgcolor: 'rgba(0,0,0,0.3)'
+            color: "#fff",
+            bgcolor: "rgba(0,0,0,0.3)",
           }}
         >
-          <CircularProgress size={50} thickness={4} color="primary" />
+          <CircularProgress size={45} thickness={4} sx={{ color: "#111827" }} />
         </Backdrop>
 
-        <Container maxWidth="sm">
+        <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 1.5, sm: 5 },
-              borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
-              position: 'relative',
-              overflow: 'hidden'
+              borderRadius: "4px",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
+              bgcolor: "#ffffff",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              minHeight: { md: "520px" },
+              p: { xs: 1.5, sm: 2, md: 2.5 },
+              gap: { xs: 2.5, md: 3.5 },
+              position: "relative",
             }}
           >
-            {/* Back Button */}
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={() => navigation(cancelRedireactUrl)}
+            {/* Left Column - Fashion Visual Showcase */}
+            <Box
               sx={{
-                position: 'absolute',
-                top: 16,
-                left: 16,
-                color: 'text.secondary',
-                textTransform: 'none',
-                fontWeight: 500,
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                  color: 'text.primary'
-                }
+                flex: { xs: "none", md: "0 0 45%" },
+                height: { xs: "160px", sm: "220px", md: "auto" },
+                minHeight: { md: "480px" },
+                borderRadius: "4px",
+                overflow: "hidden",
+                position: "relative",
+                bgcolor: "#f1ede7",
+                backgroundImage: "url('/Assets/auth_fashion_model.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: { xs: "center 20%", md: "center 15%" },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
               }}
             >
-              Back
-            </Button>
-
-            <Stack spacing={3} alignItems="center" sx={{ pt: 4 }}>
-              {/* Icon */}
               <Box
                 sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: '50%',
-                  bgcolor: 'secondary.light',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mb: 1
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%)",
+                  pointerEvents: "none",
                 }}
-                className='btnColorProCat'
+              />
+              <Box
+                sx={{
+                  position: "relative",
+                  zIndex: 2,
+                  p: { xs: 1.5, sm: 2.5, md: 3 },
+                  color: "#ffffff",
+                }}
               >
-                <SmartphoneOutlinedIcon
-                  sx={{
-                    fontSize: 32,
-                  }}
-                />
-              </Box>
-
-              {/* Title */}
-              <Box textAlign="center">
                 <Typography
-                  variant="h4"
-                  component="h1"
+                  variant="caption"
                   sx={{
-                    fontWeight: 400,
-                    color: 'text.primary',
-                    mb: 1.5,
-                    fontSize: { xs: '1.75rem', sm: '2.25rem' }
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    fontWeight: 600,
+                    opacity: 0.9,
+                    fontSize: { xs: "10px", sm: "11px" },
+                    display: "block",
+                    mb: 0.25,
                   }}
                 >
-                  Login with Code
+                  Exclusive Fine Jewelry
                 </Typography>
-
                 <Typography
-                  variant="body1"
-                  color="text.secondary"
+                  variant="h6"
                   sx={{
-                    maxWidth: 400,
-                    mx: 'auto',
-                    lineHeight: 1.6,
-                    fontSize: '1rem'
+                    fontWeight: 600,
+                    fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.2rem" },
+                    lineHeight: 1.25,
+                    textShadow: "0 2px 6px rgba(0,0,0,0.3)",
                   }}
                 >
-                  Last step! To secure your account, enter the code we just sent to{' '}
-                  <Box
-                    component="span"
+                  Elegance & Precision in Every Creation
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Right Column - Mobile OTP Verification Form */}
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                px: { xs: 1, sm: 2.5, md: 3.5 },
+                py: { xs: 1, sm: 2 },
+                position: "relative",
+              }}
+            >
+              {/* Back Button */}
+              <Button
+                startIcon={<ArrowBackIcon sx={{ fontSize: "18px" }} />}
+                onClick={() => navigation(cancelRedireactUrl)}
+                sx={{
+                  alignSelf: "flex-start",
+                  mb: { xs: 1, sm: 1.5 },
+                  color: "#6b7280",
+                  textTransform: "none",
+                  fontWeight: 500,
+                  fontSize: "0.88rem",
+                  p: 0,
+                  minWidth: "auto",
+                  "&:hover": {
+                    bgcolor: "transparent",
+                    color: "#111827",
+                  },
+                }}
+              >
+                Back
+              </Button>
+
+              <Stack
+                spacing={{ xs: 2.5, sm: 3 }}
+                sx={{ maxWidth: "400px", mx: "auto", width: "100%" }}
+              >
+                {/* Title & Subtext */}
+                <Box>
+                  <Typography
+                    variant="h4"
+                    component="h1"
                     sx={{
-                      fontWeight: 600,
-                      color: 'text.primary',
-                      wordBreak: 'break-all'
+                      fontWeight: 700,
+                      color: "#111827",
+                      fontSize: { xs: "1.35rem", sm: "1.65rem", md: "1.85rem" },
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.25,
+                      mb: 0.75,
                     }}
                   >
-                    {mobileNo}
-                  </Box>
-                </Typography>
-              </Box>
-
-              {/* OTP Input Section */}
-              <Stack
-                spacing={3}
-                width="100%"
-                alignItems="center"
-                component="form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
-                }}
-                sx={{ maxWidth: 400, mx: 'auto', mt: 2 }}
-              >
-                {/* OTP Component */}
-                <Box sx={{ width: '100%' }}>
-                  <OTP
-                    separator={<span> </span>}
-                    value={enterOTP}
-                    onChange={setEnterOTP}
-                    length={6}
-                    onSubmit={handleSubmit}
-                  />
-
-                  {errors.otp && (
-                    <Typography
-                      variant="caption"
-                      color="error"
+                    Login with Mobile Code
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#4b5563",
+                      fontSize: { xs: "0.85rem", sm: "0.92rem" },
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    Last step! Enter the 6-digit code sent to{" "}
+                    <Box
+                      component="span"
                       sx={{
-                        display: 'block',
-                        textAlign: 'center',
-                        mt: 1,
-                        fontWeight: 500
+                        fontWeight: 600,
+                        color: "#111827",
                       }}
                     >
-                      {errors.otp}
-                    </Typography>
-                  )}
-                </Box>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  size="large"
-                  variant="contained"
-                  color="secondary"
-                  className='btnColorProCat'
-                  disabled={isLoading || enterOTP.length !== 6}
-                  sx={{
-                    py: 1.5,
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    boxShadow: 'none',
-                    transition: 'all 0.2s ease-in-out',
-                    '&:hover': {
-                      boxShadow: 2,
-                      transform: 'translateY(-1px)'
-                    },
-                    '&:disabled': {
-                      bgcolor: 'grey.300',
-                      color: 'grey.500'
-                    }
-                  }}
-                >
-                  {isLoading ? 'Verifying...' : 'Verify & Login'}
-                </Button>
-
-                {/* Resend Code Section */}
-                <Box textAlign="center" sx={{ mt: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Didn't get the code?{' '}
-                    {resendTimer === 0 ? (
-                      <MuiLink
-                        component="button"
-                        type="button"
-                        onClick={handleResendCode}
-                        sx={{
-                          fontWeight: 600,
-                          color: 'secondary.main',
-                          textDecoration: 'none',
-                          cursor: 'pointer',
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          fontSize: 'inherit',
-                          fontFamily: 'inherit',
-                          '&:hover': {
-                            textDecoration: 'underline'
-                          }
-                        }}
-                      >
-                        Resend Code
-                      </MuiLink>
-                    ) : (
-                      <Box component="span" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                        Resend in {formatTime(resendTimer)}
-                      </Box>
-                    )}
+                      {mobileNo}
+                    </Box>
                   </Typography>
                 </Box>
 
-                <Button
-                  fullWidth
-                  size="large"
-                  variant="text"
-                  onClick={() => navigation(cancelRedireactUrl)}
-                  disabled={isLoading}
+                {/* OTP Input Section */}
+                <Box
+                  component="form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                  sx={{ width: "100%" }}
+                >
+                  <Stack spacing={2.5}>
+                    <Box sx={{ width: "100%" }}>
+                      <OTP
+                        separator={<span> </span>}
+                        value={enterOTP}
+                        onChange={setEnterOTP}
+                        length={6}
+                        onSubmit={handleSubmit}
+                      />
+
+                      {errors.otp && (
+                        <Typography
+                          variant="caption"
+                          color="error"
+                          sx={{
+                            display: "block",
+                            textAlign: "center",
+                            mt: 1,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {errors.otp}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Button
+                      type="submit"
+                      fullWidth
+                      size="large"
+                      disabled={isLoading || enterOTP.length !== 6}
+                      sx={{
+                        py: { xs: 1.25, sm: 1.5 },
+                        px: { xs: 2, sm: 2.5 },
+                        bgcolor: "#111827",
+                        color: "#ffffff",
+                        borderRadius: "4px",
+                        textTransform: "none",
+                        fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                        fontWeight: 600,
+                        boxShadow: "none",
+                        transition: "all 0.15s ease-in-out",
+                        "&:hover": {
+                          bgcolor: "#1f2937",
+                          boxShadow: "none",
+                        },
+                        "&.Mui-disabled": {
+                          bgcolor: "#e5e7eb",
+                          color: "#9ca3af",
+                        },
+                      }}
+                    >
+                      {isLoading ? "Verifying..." : "Verify & Login"}
+                    </Button>
+
+                    {/* Resend Code Section */}
+                    <Box textAlign="center">
+                      <Typography variant="body2" sx={{ fontSize: "0.85rem", color: "#6b7280" }}>
+                        Didn&apos;t get the code?{" "}
+                        {resendTimer === 0 ? (
+                          <MuiLink
+                            component="button"
+                            type="button"
+                            onClick={handleResendCode}
+                            sx={{
+                              fontWeight: 600,
+                              color: "#111827",
+                              textDecoration: "underline",
+                              cursor: "pointer",
+                              background: "none",
+                              border: "none",
+                              p: 0,
+                              fontSize: "0.85rem",
+                              "&:hover": { color: "#000" },
+                            }}
+                          >
+                            Resend Code
+                          </MuiLink>
+                        ) : (
+                          <Box component="span" sx={{ color: "#111827", fontWeight: 600 }}>
+                            Resend in {formatTime(resendTimer)}
+                          </Box>
+                        )}
+                      </Typography>
+                    </Box>
+
+                    <Button
+                      fullWidth
+                      size="small"
+                      variant="text"
+                      onClick={() => navigation(cancelRedireactUrl)}
+                      disabled={isLoading}
+                      sx={{
+                        py: 1,
+                        textTransform: "none",
+                        fontSize: "0.88rem",
+                        fontWeight: 500,
+                        color: "#6b7280",
+                        borderRadius: "4px",
+                        "&:hover": {
+                          bgcolor: "#f3f4f6",
+                          color: "#111827",
+                        },
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </Stack>
+                </Box>
+
+                {/* Legal Footer */}
+                <Typography
+                  variant="caption"
                   sx={{
-                    py: 1.5,
-                    textTransform: 'none',
-                    fontSize: '0.95rem',
-                    fontWeight: 500,
-                    color: 'text.secondary',
+                    textAlign: "center",
+                    color: "#6b7280",
+                    fontSize: { xs: "11px", sm: "11.5px" },
+                    lineHeight: 1.5,
+                    display: "block",
                     mt: 1,
-                    '&:hover': {
-                      bgcolor: 'grey.100',
-                      color: 'text.primary'
-                    }
                   }}
                 >
-                  Cancel
-                </Button>
+                  By continuing, you agree to our{" "}
+                  <Box
+                    component={Link}
+                    href="/terms-and-conditions"
+                    sx={{
+                      color: "#374151",
+                      fontWeight: 600,
+                      textDecoration: "underline",
+                      "&:hover": { color: "#111827" },
+                    }}
+                  >
+                    Terms of Use
+                  </Box>{" "}
+                  and{" "}
+                  <Box
+                    component={Link}
+                    href="/privacyPolicy"
+                    sx={{
+                      color: "#374151",
+                      fontWeight: 600,
+                      textDecoration: "underline",
+                      "&:hover": { color: "#111827" },
+                    }}
+                  >
+                    Privacy Policy
+                  </Box>
+                  .
+                </Typography>
               </Stack>
-            </Stack>
+            </Box>
           </Paper>
         </Container>
       </Box>
     </>
-  )
+  );
 }

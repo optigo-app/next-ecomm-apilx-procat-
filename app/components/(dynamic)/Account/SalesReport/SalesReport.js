@@ -828,6 +828,7 @@ const SalesReport = () => {
                 <img
                   src={hoverImg}
                   alt="salesReport"
+                  onError={(e) => { e.target.src = "/image-not-found.jpg"; }}
                   style={{
                     width: "100%",
                     objectFit: "contain",
