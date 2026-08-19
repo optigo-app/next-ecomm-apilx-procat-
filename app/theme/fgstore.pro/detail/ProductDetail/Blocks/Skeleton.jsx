@@ -5,8 +5,7 @@ import {
     Skeleton,
     Grid
 } from '@mui/material';
-import './index.scss'
-
+import './index.scss';
 
 const ProductSkeleton = () => (
     <Card
@@ -67,31 +66,61 @@ const ProductSkeleton = () => (
 export default ProductSkeleton;
 
 export const DetailSkeleton = () => {
-    return <>
-        <Grid container spacing={1.7}>
-            {Array(4)
-                .fill(null)
-                .map((img, index) => (
-                    <Grid size={{
-                        xs: 6
-                    }} key={index}>
+    return (
+        <Box
+            sx={{
+                width: "100%",
+                maxWidth: { xs: "100%", sm: "520px", md: "540px" },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                mx: "auto",
+            }}
+        >
+            {/* Main Featured Image Skeleton */}
+            <Box
+                sx={{
+                    position: "relative",
+                    width: "100%",
+                    pt: "100%",
+                    mb: 1.5,
+                    borderRadius: 2,
+                    overflow: "hidden",
+                }}
+            >
+                <Skeleton
+                    variant="rectangular"
+                    animation="wave"
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 2,
+                        bgcolor: "#eeeeee80",
+                    }}
+                />
+            </Box>
+            {/* Thumbnails Row Skeleton */}
+            <Box sx={{ display: "flex", gap: 1.2, overflow: "hidden" }}>
+                {Array(4)
+                    .fill(null)
+                    .map((_, index) => (
                         <Skeleton
+                            key={index}
                             variant="rectangular"
                             animation="wave"
                             sx={{
-                                width: "100%",
-                                height: "100%",
-                                aspectRatio: {
-                                    xs: "3 / 4",
-                                    sm: "1 / 1.25",
-                                    md: "1 / 1.3",
-                                },
-                                borderRadius: 3,
+                                width: { xs: "65px", sm: "76px", md: "84px" },
+                                height: { xs: "65px", sm: "76px", md: "84px" },
+                                flexShrink: 0,
+                                borderRadius: 1.5,
                                 bgcolor: "#eeeeee80",
                             }}
                         />
-                    </Grid>
-                ))}
-        </Grid>
-    </>
-}
+                    ))}
+            </Box>
+        </Box>
+    );
+};

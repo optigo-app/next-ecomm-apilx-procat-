@@ -139,9 +139,7 @@ const RightSide = ({
       : "-";
 
   const isLoading = isPriceloading || pdLoadImage || loadingdata || !singleProd;
-  const isPriceLoadingState =
-    isLoading ||
-    currentPrice <= 0;
+  const isPriceLoadingState = isLoading;
   const isNetWeightLoadingState =
     isLoading ||
     parsedNetWeight == null ||
@@ -394,10 +392,7 @@ const RightSide = ({
                 gap: 1,
               }}
             >
-              {isPriceloading ||
-              isPriceLoadingState ||
-              isLoading ||
-              currentPrice <= 0 ? (
+              {(isPriceloading || isLoading) && !currentPrice ? (
                 <Skeleton
                   variant="rounded"
                   width={160}
@@ -412,7 +407,7 @@ const RightSide = ({
                     }}
                   />
                   <span>
-                    {formatter(currentPrice)}
+                    {formatter(currentPrice || 0)}
                   </span>
                 </>
               )}

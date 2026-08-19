@@ -242,20 +242,14 @@ export default function ItemCustomizationPanel({
           onClick={() => handleMoveToDetail && handleMoveToDetail(customizingItem)}
           sx={{
             width: "100%",
-            height: { xs: 200, sm: 230 },
-            bgcolor: "#fcfcfc",
-            borderRadius: "6px",
-            border: "1px solid #eee",
+            height: { xs: 250, sm: 290, md: 320 },
+            bgcolor: "transparent",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            mb: 2,
+            mb: 2.5,
             cursor: "pointer",
-            transition: "border-color 0.2s ease",
-            "&:hover": {
-              borderColor: "#ccc",
-            },
           }}
         >
           <img
@@ -266,7 +260,14 @@ export default function ItemCustomizationPanel({
               noImageFound
             }
             alt={customizingItem?.designno}
-            style={{ maxHeight: "90%", maxWidth: "90%", objectFit: "contain", display: "block" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              maxHeight: "100%",
+              maxWidth: "100%",
+              objectFit: "contain",
+              display: "block",
+            }}
             onError={(e) => {
               const imgEl = e.target;
               if (!imgEl.dataset.triedThumb && fullImagePath) {

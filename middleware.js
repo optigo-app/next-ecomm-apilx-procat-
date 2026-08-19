@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchStoreInitData } from "@/app/(core)/utils/fetchStoreInit";
+import { getStoreInitData } from "@/app/(core)/cache_utility/storeInitCache";
 import { NEXT_APP_WEB } from "@/app/(core)/utils/env";
 
 const domainMap = {
@@ -38,10 +38,9 @@ export default async function middleware(req) {
 
     const { cookies, nextUrl } = req;
     const host = req.headers.get("host");
-    console.log(host, "host")
     let storeData = {};
     try {
-      storeData = await fetchStoreInitData();
+      storeData = await getStoreInitData(host);
     } catch {
       storeData = { rd: [{}], rd1: [], rd2: [{}] };
     }
@@ -59,7 +58,7 @@ export default async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico).*)"],
+  matcher: ["/((?!_next|api|favicon.ico).*)"],
   runtime: "nodejs",
 };
 

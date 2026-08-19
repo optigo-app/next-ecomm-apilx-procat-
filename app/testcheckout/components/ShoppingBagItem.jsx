@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Box, Typography, IconButton, Button } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/app/(core)/contexts/StoreProvider";
 import CloseIcon from "@mui/icons-material/Close";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
@@ -21,6 +23,8 @@ export default function ShoppingBagItem({
   onSaveProductRemark,
   handleMoveToDetail,
 }) {
+  const router = useRouter();
+  const { islogin } = useStore();
   const [isRemarkOpen, setIsRemarkOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -29,7 +33,6 @@ export default function ShoppingBagItem({
   const fullImagePath = `${CDNDesignImageFolThumb}${item?.designno}~1.jpg`;
   const fullImagePathHd = `${CDNDesignImageFol}${item?.designno}~1.${item?.ImageExtension || "jpg"}`;
 
-  // Check if In Stock or MRP-based product
   const isInStock =
     (item?.StockId !== 0 && item?.StockId !== undefined && item?.StockId !== null) ||
     item?.IsInReadyStock === 1 ||
@@ -64,8 +67,9 @@ export default function ShoppingBagItem({
         className="testCheckout_itemImageWrapper"
         onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
         sx={{
-          width: 230,
-          height: "100%",
+          width: { xs: 110, sm: 150, md: 250 },
+          minHeight: { xs: 110, sm: 150, md: "100%" },
+          aspectRatio: "1 / 1",
           flexShrink: 0,
           position: "relative",
           overflow: "hidden",
@@ -80,16 +84,16 @@ export default function ShoppingBagItem({
           <Box
             sx={{
               position: "absolute",
-              top: 8,
-              left: 8,
+              top: { xs: 6, sm: 8 },
+              left: { xs: 6, sm: 8 },
               bgcolor: "#2e7d32",
               color: "#fff",
-              fontSize: "0.68rem",
-              fontWeight: 600,
-              letterSpacing: "0.5px",
+              fontSize: { xs: "0.6rem", sm: "0.68rem" },
+              fontWeight: 700,
+              letterSpacing: "0.4px",
               textTransform: "uppercase",
-              px: 1,
-              py: 0.25,
+              px: { xs: 0.7, sm: 1 },
+              py: 0.2,
               borderRadius: "3px",
               zIndex: 2,
               boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
@@ -118,16 +122,21 @@ export default function ShoppingBagItem({
       </Box>
 
       {/* Product Details - Clean Light Aesthetic */}
-      <Box sx={{ flex: 1, minWidth: 0, pr: { xs: 3, sm: 4 },
-        p: { xs: 2, sm: 2.5 },
-     }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5, flexWrap: "wrap" }}>
+      <Box
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          pr: { xs: 4, sm: 4 },
+          p: { xs: 1.2, sm: 2, md: 2.5 },
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.3, flexWrap: "wrap" }}>
           <Typography
             variant="subtitle1"
             onClick={() => handleMoveToDetail && handleMoveToDetail(item)}
             sx={{
-              fontWeight: 500,
-              fontSize: { xs: "0.95rem", sm: "1.05rem" },
+              fontWeight: 600,
+              fontSize: { xs: "0.88rem", sm: "1.05rem" },
               color: "#222",
               letterSpacing: "0.2px",
               cursor: "pointer",
@@ -158,7 +167,6 @@ export default function ShoppingBagItem({
             </Box>
           )}
         </Box>
-
         {/* Weights Specs */}
         <Box
           sx={{
@@ -167,6 +175,7 @@ export default function ShoppingBagItem({
             gap: "6px 12px",
             fontSize: "0.8rem",
             color: "#777",
+            fontWeight: 600,
             mb: 0.6,
           }}
         >
@@ -198,6 +207,7 @@ export default function ShoppingBagItem({
             gap: "6px",
             fontSize: "0.8rem",
             color: "#555",
+            fontWeight: 600,
             mb: 0.8,
           }}
         >
@@ -226,7 +236,7 @@ export default function ShoppingBagItem({
         {storeinit?.IsPriceShow == 1 && (
           <Typography
             sx={{
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: { xs: "0.95rem", sm: "1.05rem" },
               color: "#1a1a1a",
               mt: 0.3,
@@ -244,6 +254,7 @@ export default function ShoppingBagItem({
             sx={{
               fontSize: "0.8rem",
               color: "#777",
+              fontWeight: 600,
               fontStyle: "italic",
               mb: 1,
             }}
@@ -285,7 +296,13 @@ export default function ShoppingBagItem({
           <Button
             size="small"
             startIcon={<RateReviewOutlinedIcon sx={{ fontSize: "14px !important" }} />}
-            onClick={() => setIsRemarkOpen(true)}
+            onClick={() => {
+              if (!islogin) {
+                router.push(`/LoginOption?LoginRedirect=${encodeURIComponent("/cartPage")}`);
+              } else {
+                setIsRemarkOpen(true);
+              }
+            }}
             sx={{
               px: 1.4,
               py: 0.35,

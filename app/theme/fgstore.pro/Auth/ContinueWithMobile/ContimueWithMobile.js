@@ -149,7 +149,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
       </Backdrop>
 
       {/* OTP Modal Container */}
-      {((storeInit?.IsEcomOtpVerification && storeInit?.IsEcomOtpVerification === 1) && Countrycodestate == "91") && (
+      {Boolean(storeInit?.IsEcomOtpVerification === 1 && Countrycodestate == "91") && (
         <OTPContainer
           mobileNo={mobileNo.trim()}
           isOpen={isOpen}
@@ -164,31 +164,27 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
         />
       )}
 
-      <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
-        <Paper
-          elevation={0}
+      <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
+        <Box
           sx={{
-            borderRadius: "4px",
-            border: "1px solid #e5e7eb",
-            boxShadow:
-              "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
-            bgcolor: "#ffffff",
-            overflow: "hidden",
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            minHeight: { md: "520px" },
-            p: { xs: 1.5, sm: 2, md: 2.5 },
-            gap: { xs: 2.5, md: 3.5 },
-            position: "relative",
+            alignItems: { xs: "center", md: "stretch" },
+            justifyContent: "center",
+            gap: { xs: 3, md: 4, lg: 5 },
+            width: "100%",
+            maxWidth: "1040px",
+            mx: "auto",
           }}
         >
-          {/* Left Column - Visual Showcase */}
+          {/* Left Column - Visual Showcase (Large, Unrounded, Sharp) */}
           <Box
             sx={{
-              flex: { xs: "none", md: "0 0 45%" },
-              height: { xs: "160px", sm: "220px", md: "auto" },
-              minHeight: { md: "480px" },
-              borderRadius: "4px",
+              flex: { xs: "none", md: "0 0 460px", lg: "0 0 490px" },
+              width: { xs: "100%", sm: "400px", md: "460px", lg: "490px" },
+              height: { xs: "260px", sm: "360px", md: "auto" },
+              minHeight: { md: "580px", lg: "620px" },
+              borderRadius: "0px",
               overflow: "hidden",
               position: "relative",
               bgcolor: "#f1ede7",
@@ -198,7 +194,6 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-end",
-              boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
             }}
           >
             <Box
@@ -214,7 +209,7 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
               sx={{
                 position: "relative",
                 zIndex: 2,
-                p: { xs: 1.5, sm: 2.5, md: 3 },
+                p: { xs: 2, sm: 2.5, md: 3 },
                 color: "#ffffff",
               }}
             >
@@ -246,15 +241,25 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
             </Box>
           </Box>
 
-          {/* Right Column - Continue with Mobile Form */}
-          <Box
+          {/* Right Column - Continue with Mobile Form Card */}
+          <Paper
+            elevation={0}
             sx={{
               flex: 1,
+              maxWidth: { xs: "100%", sm: "440px", md: "460px" },
+              width: "100%",
+              height: "auto",
+              minHeight: { md: "580px", lg: "620px" },
+              bgcolor: "#ffffff",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
-              px: { xs: 1, sm: 2.5, md: 3.5 },
-              py: { xs: 1, sm: 2 },
+              justifyContent: "space-between",
+              p: { xs: 2.5, sm: 3.5, md: 4 },
+              boxSizing: "border-box",
               position: "relative",
             }}
           >
@@ -427,8 +432,8 @@ export default function ContimueWithMobile({ params, searchParams, storeInit }) 
                 .
               </Typography>
             </Stack>
-          </Box>
-        </Paper>
+          </Paper>
+        </Box>
       </Container>
     </Box>
   );

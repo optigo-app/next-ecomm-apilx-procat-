@@ -512,7 +512,7 @@ const DetailBlock = ({
                                         ) : (
                                             <>
                                                 <span className="db-price-currency">{loginInfo?.CurrencyCode ?? storeInit?.CurrencyCode}</span>
-                                                <span className="db-price-amount">{formatter.format(singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp)}</span>
+                                                <span className="db-price-amount">{formatter.format(Number(singleProd1?.UnitCostWithMarkUp ?? singleProd?.UnitCostWithMarkUp) || 0)}</span>
                                             </>
                                         )}
                                     </div>

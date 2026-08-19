@@ -370,58 +370,26 @@ export default function B2CRegister({ searchParams }) {
           <CircularProgress size={45} thickness={4} sx={{ color: "#111827" }} />
         </Backdrop>
 
-        <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
-          {/* Top Bar Navigation */}
+        <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              mb: 2,
-              px: { xs: 0.5, sm: 0 },
-            }}
-          >
-            <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.9rem" }}>
-              Already have an account?{" "}
-              <Box
-                component={Link}
-                href={cancelRedireactUrl}
-                sx={{
-                  color: "#111827",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  "&:hover": { textDecoration: "underline" },
-                }}
-              >
-                Sign In
-              </Box>
-            </Typography>
-          </Box>
-
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: "4px",
-              border: "1px solid #e5e7eb",
-              boxShadow:
-                "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
-              bgcolor: "#ffffff",
-              overflow: "hidden",
-              display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              minHeight: { md: "640px" },
-              p: { xs: 2, sm: 3, md: 4 },
-              gap: { xs: 3, md: 5 },
-              position: "relative",
+              alignItems: { xs: "center", md: "stretch" },
+              justifyContent: "center",
+              gap: { xs: 3, md: 4, lg: 5 },
+              width: "100%",
+              maxWidth: "1040px",
+              mx: "auto",
             }}
           >
-            {/* Left Column - Fashion Visual Showcase */}
+            {/* Left Column - Fashion Visual Showcase (Large, Unrounded, Sharp) */}
             <Box
               sx={{
-                flex: { xs: "none", md: "0 0 42%" },
-                height: { xs: "180px", sm: "260px", md: "auto" },
-                minHeight: { md: "580px" },
-                borderRadius: "4px",
+                flex: { xs: "none", md: "0 0 460px", lg: "0 0 490px" },
+                width: { xs: "100%", sm: "400px", md: "460px", lg: "490px" },
+                height: { xs: "280px", sm: "380px", md: "640px", lg: "680px" },
+                borderRadius: "0px",
                 overflow: "hidden",
                 position: "relative",
                 bgcolor: "#f1ede7",
@@ -431,7 +399,6 @@ export default function B2CRegister({ searchParams }) {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-end",
-                boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
               }}
             >
               <Box
@@ -479,24 +446,63 @@ export default function B2CRegister({ searchParams }) {
               </Box>
             </Box>
 
-            {/* Right Column - Registration Form Block */}
-            <Box
+            {/* Right Column - Registration Form Card */}
+            <Paper
+              elevation={0}
               sx={{
                 flex: 1,
+                maxWidth: { xs: "100%", sm: "460px", md: "500px" },
+                width: "100%",
+                height: { md: "640px", lg: "680px" },
+                minHeight: { md: "640px", lg: "680px" },
+                bgcolor: "#ffffff",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+                boxShadow:
+                  "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                px: { xs: 0.5, sm: 2, md: 3 },
-                py: { xs: 1.5, sm: 2.5 },
+                p: { xs: 3, sm: 4, md: 4.5 },
+                boxSizing: "border-box",
                 position: "relative",
               }}
             >
+              {/* Top Right "Already have an account? Sign In" */}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  mb: { xs: 1, sm: 1.5 },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#6b7280", fontSize: "0.85rem" }}
+                >
+                  Already have an account?{" "}
+                  <Box
+                    component={Link}
+                    href={cancelRedireactUrl}
+                    sx={{
+                      color: "#111827",
+                      fontWeight: 700,
+                      textDecoration: "none",
+                      "&:hover": { textDecoration: "underline" },
+                    }}
+                  >
+                    Sign In
+                  </Box>
+                </Typography>
+              </Box>
+
               <Stack
                 spacing={{ xs: 2.5, sm: 3 }}
                 sx={{ maxWidth: "460px", mx: "auto", width: "100%" }}
               >
                 {/* Header Section */}
-                <Box textAlign="center" sx={{ mb: { xs: 3, sm: 3 } }}>
+                <Box textAlign="center" sx={{ mb: { xs: 2, sm: 2.5 } }}>
                   <Typography
                     variant="h4"
                     component="h1"
@@ -874,8 +880,8 @@ export default function B2CRegister({ searchParams }) {
                   </Stack>
                 </Box>
               </Stack>
-            </Box>
-          </Paper>
+            </Paper>
+          </Box>
         </Container>
       </Box>
     </>

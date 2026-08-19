@@ -12,80 +12,39 @@ let SV_Token = null;
 let SV_version = null;
 let storeInitCache = null;
 let initPromise = null;
-let memoryCachedIp = null;
-let pendingIpPromise = null;
 
-const fetchWithTimeout = async (url, options = {}, timeoutMs = 2500) => {
-  let timeoutId = null;
-
-  const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => {
-      reject(new Error(`Request timed out after ${timeoutMs}ms`));
-    }, timeoutMs);
-  });
-
-  try {
-    const res = await Promise.race([
-      fetch(url, options),
-      timeoutPromise,
-    ]);
-    if (timeoutId) clearTimeout(timeoutId);
-    return res;
-  } catch (err) {
-    if (timeoutId) clearTimeout(timeoutId);
-    throw err;
-  }
+const applyStoreInitData = (data) => {
+  storeInitCache = data;
+  APIURL = data?.ApiUrl || {};
+  SV_DY = data?.sv;
+  SV_YearCode = data?.YearCode;
+  SV_Token = data?.token;
+  SV_version = data?.version;
 };
 
-export const getClientIpAddress = async (timeoutMs = 2500) => {
+export const getClientIpAddress = async () => {
   try {
-    if (memoryCachedIp) return memoryCachedIp;
-
     if (typeof window !== "undefined") {
       const cachedIp = sessionStorage.getItem("clientIpAddress");
-      if (cachedIp) {
-        memoryCachedIp = cachedIp;
-        return cachedIp;
-      }
+      if (cachedIp) return cachedIp;
     }
 
-    if (pendingIpPromise) return await pendingIpPromise;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
 
-    pendingIpPromise = (async () => {
-      let ip = "";
-      try {
-        // 1. Primary: Internal Next.js API route
-        const res = await fetchWithTimeout("/api/get-client-ip", {}, timeoutMs);
-        if (res && res.ok) {
-          const data = await res.json();
-          ip = data?.ip || "";
-        }
-      } catch (error) {
-        // 2. Secondary fallback: Try local ipconfig.json
-        try {
-          const fallbackRes = await fetchWithTimeout("/ipconfig.json", {}, 1000);
-          if (fallbackRes && fallbackRes.ok) {
-            const fallbackData = await fallbackRes.json();
-            ip = fallbackData?.ip || "";
-          }
-        } catch (e) {
-          // Ignore secondary fallback error
-        }
-      }
+    const res = await fetch("https://api.ipify.org?format=json", {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+    const ip = data?.ip || "";
 
-      if (typeof window !== "undefined" && ip) {
-        sessionStorage.setItem("clientIpAddress", ip);
-      }
-      if (ip) memoryCachedIp = ip;
-      return ip;
-    })();
-
-    const result = await pendingIpPromise;
-    pendingIpPromise = null;
-    return result;
+    if (typeof window !== "undefined" && ip) {
+      sessionStorage.setItem("clientIpAddress", ip);
+    }
+    return ip;
   } catch (error) {
-    console.error("Error fetching IP address:", error);
-    return memoryCachedIp || "";
+    return "";
   }
 };
 
@@ -94,6 +53,11 @@ const setApiUrl = async () => {
 
   apiUrlPromise = (async () => {
     try {
+      const existingStoreInit = getStoreInitData();
+      if (existingStoreInit && Object.keys(existingStoreInit).length > 0) {
+        applyStoreInitData(existingStoreInit);
+        return APIURL;
+      }
 
       let fetchUrl = `/api/store-init`;
       if (typeof window === "undefined") {
@@ -102,20 +66,15 @@ const setApiUrl = async () => {
         fetchUrl = `${protocol}//${hostname}/api/store-init`;
       }
 
-      const datas = await fetch(fetchUrl, { method: 'GET' });
+      const datas = await fetch(fetchUrl, { method: "GET" });
       const parseddata = await datas.json();
       const domainInfo = await getDomainInfo();
       const hostname = domainInfo?.hostname || "";
       const cleanHost = hostname.split(":")[0];
 
-
       if (parseddata) {
-        APIURL = parseddata?.ApiUrl || {};
-        SV_DY = parseddata?.sv
-        SV_YearCode = parseddata?.YearCode
-        SV_Token = parseddata?.token
-        SV_version = parseddata?.version;
-        return
+        applyStoreInitData(parseddata);
+        return;
       }
 
       if (isLocalHost(cleanHost)) {
@@ -137,16 +96,12 @@ const setApiUrl = async () => {
   return apiUrlPromise;
 };
 
-// Initial call
-setApiUrl();
-
 export const getStoreInitData = () => {
   if (typeof window !== "undefined") {
     return window.__STORE_INIT__ || getSession("storeInit");
   }
   return null;
 };
-
 
 const initStore = async () => {
   if (storeInitCache) return storeInitCache;
@@ -156,8 +111,9 @@ const initStore = async () => {
       try {
         let data;
         if (typeof window === "undefined") {
-          // Server-side: bypass internal API call and fetch directly
-          const storeInitRes = await fetchStoreInitData();
+          // Server-side: Use disk/memory SWR cached storeInit (0ms latency)
+          const { getStoreInitData } = await import("@/app/(core)/cache_utility/storeInitCache");
+          const storeInitRes = await getStoreInitData();
           data = storeInitRes?.rd?.[0] || storeInitRes;
         } else {
           // Client-side: use the API route
@@ -210,17 +166,17 @@ export const CommonAPI = async (body) => {
     }
 
     let storeInit = getStoreInitData();
-    storeInit = await initStore() || storeInitCache;
+    storeInit = (await initStore()) || storeInitCache;
     //         SV_DY
     // SV_YearCode
     // SV_Token
 
-    if (!storeInit && typeof window !== 'undefined') {
-      storeInit = window.__STORE_INIT__ || await waitForStoreInit();
+    if (!storeInit && typeof window !== "undefined") {
+      storeInit = window.__STORE_INIT__ || (await waitForStoreInit());
     }
 
     const ipAddress = await getClientIpAddress();
-    if (typeof FormData !== 'undefined' && body instanceof FormData) {
+    if (typeof FormData !== "undefined" && body instanceof FormData) {
       if (body.has("con")) {
         try {
           let conObj = JSON.parse(body.get("con"));
@@ -231,12 +187,18 @@ export const CommonAPI = async (body) => {
         }
       }
       if (body.has("IPAddress")) body.delete("IPAddress");
-    } else if (typeof body === 'object' && body !== null && !Array.isArray(body)) {
+    } else if (
+      typeof body === "object" &&
+      body !== null &&
+      !Array.isArray(body)
+    ) {
       if (body.con) {
         try {
-          let conObj = typeof body.con === 'string' ? JSON.parse(body.con) : body.con;
+          let conObj =
+            typeof body.con === "string" ? JSON.parse(body.con) : body.con;
           conObj.IPAddress = ipAddress;
-          body.con = typeof body.con === 'string' ? JSON.stringify(conObj) : conObj;
+          body.con =
+            typeof body.con === "string" ? JSON.stringify(conObj) : conObj;
         } catch (e) {
           console.error("Error parsing body.con:", e);
         }
@@ -244,7 +206,10 @@ export const CommonAPI = async (body) => {
       if ("ipaddress" in body) delete body.ipaddress;
     }
 
-    const YearCode = SV_YearCode || storeInit?.YearCode || "e3tsaXZlLm9wdGlnb2FwcHMuY29tfX17ezIxfX17e3NvbmFzb25zfX17e3NvbmFzb25zfX0=";
+    const YearCode =
+      SV_YearCode ||
+      storeInit?.YearCode ||
+      "e3tsaXZlLm9wdGlnb2FwcHMuY29tfX17ezIxfX17e3NvbmFzb25zfX17e3NvbmFzb25zfX0=";
     const Version = SV_version || "NXT" || (storeInit?.version ?? "");
     const token = SV_Token || (storeInit?.token ?? "");
     const sp = "54";
@@ -258,22 +223,42 @@ export const CommonAPI = async (body) => {
       sv: sv,
     };
 
-    const endpoint = APIURL.endsWith('/api/report')
+    const endpoint = APIURL.endsWith("/api/report")
       ? APIURL
-      : APIURL.replace(/\/$/, '') + '/api/report';
+      : APIURL.replace(/\/$/, "") + "/api/report";
 
-    const response = await axios.post(endpoint, body, {
-      headers: header,
-      timeout: 30000
-    });
+    let responseData = null;
+    try {
+      const response = await axios.post(endpoint, body, {
+        headers: header,
+        timeout: 30000,
+      });
+      responseData = response?.data;
+    } catch (axiosError) {
+      console.warn("Axios failed in CommonAPI, attempting native fetch fallback:", axiosError?.message);
+      try {
+        const fetchRes = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...header,
+          },
+          body: typeof body === "string" ? body : JSON.stringify(body),
+        });
+        responseData = await fetchRes.json();
+      } catch (fetchError) {
+        console.error("CommonAPI Fetch Fallback Error:", fetchError);
+        throw fetchError;
+      }
+    }
 
-    return response?.data || { Data: { rd: [] } };
+    return responseData || { Data: { rd: [] } };
   } catch (error) {
     console.error("CommonAPI Error:", error);
     return {
       Data: {
-        rd: [{ stat: 0, stat_msg: "Network error or API failure" }]
-      }
+        rd: [{ stat: 0, stat_msg: error?.message || "Network error or API failure" }],
+      },
     };
   }
 };

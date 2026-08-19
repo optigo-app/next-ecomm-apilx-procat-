@@ -66,29 +66,27 @@ const LoginOption = ({ searchParams }) => {
         px: { xs: 1.5, sm: 2, md: 3 },
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
-        <Paper
-          elevation={0}
+      <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2 } }}>
+        <Box
           sx={{
-            borderRadius: "4px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
-            bgcolor: "#ffffff",
-            overflow: "hidden",
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            minHeight: { md: "520px" },
-            p: { xs: 1.5, sm: 2, md: 2.5 },
-            gap: { xs: 2.5, md: 3.5 },
+            alignItems: { xs: "center", md: "stretch" },
+            justifyContent: "center",
+            gap: { xs: 3, md: 4, lg: 5 },
+            width: "100%",
+            maxWidth: "1040px",
+            mx: "auto",
           }}
         >
-          {/* Left Column - Fashion Editorial Visual Showcase */}
+          {/* Left Column - Fashion Editorial Visual Showcase (Large, Unrounded, Sharp) */}
           <Box
             sx={{
-              flex: { xs: "none", md: "0 0 45%" },
-              height: { xs: "160px", sm: "220px", md: "auto" },
-              minHeight: { md: "480px" },
-              borderRadius: "4px",
+              flex: { xs: "none", md: "0 0 460px", lg: "0 0 490px" },
+              width: { xs: "100%", sm: "400px", md: "460px", lg: "490px" },
+              height: { xs: "260px", sm: "360px", md: "auto" },
+              minHeight: { md: "540px", lg: "580px" },
+              borderRadius: "0px",
               overflow: "hidden",
               position: "relative",
               bgcolor: "#f1ede7",
@@ -98,7 +96,6 @@ const LoginOption = ({ searchParams }) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "flex-end",
-              boxShadow: "inset 0 0 0 1px rgba(0, 0, 0, 0.05)",
             }}
           >
             {/* Ambient Gradient Overlay */}
@@ -115,7 +112,7 @@ const LoginOption = ({ searchParams }) => {
               sx={{
                 position: "relative",
                 zIndex: 2,
-                p: { xs: 1.5, sm: 2.5, md: 3 },
+                p: { xs: 2, sm: 2.5, md: 3 },
                 color: "#ffffff",
               }}
             >
@@ -147,18 +144,40 @@ const LoginOption = ({ searchParams }) => {
             </Box>
           </Box>
 
-          {/* Right Column - Login Options Form Block */}
-          <Box
+          {/* Right Column - Login Options Form Card (Full Height & Balanced UI/UX) */}
+          <Paper
+            elevation={0}
             sx={{
               flex: 1,
+              maxWidth: { xs: "100%", sm: "440px", md: "460px" },
+              width: "100%",
+              height: "auto",
+              minHeight: { md: "540px", lg: "580px" },
+              bgcolor: "#ffffff",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
-              px: { xs: 1, sm: 2.5, md: 3.5 },
-              py: { xs: 1, sm: 2 },
+              justifyContent: "space-between",
+              p: { xs: 3, sm: 4, md: 5 },
+              boxSizing: "border-box",
             }}
           >
-            <Stack spacing={{ xs: 2.5, sm: 3 }} sx={{ maxWidth: "400px", mx: "auto", width: "100%" }}>
+            {/* Main Interactive Form Block */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                flex: 1,
+                gap: { xs: 2.5, sm: 3 },
+                maxWidth: "400px",
+                mx: "auto",
+                width: "100%",
+              }}
+            >
               {/* Header */}
               <Box>
                 <Typography
@@ -167,8 +186,8 @@ const LoginOption = ({ searchParams }) => {
                   sx={{
                     fontWeight: 700,
                     color: "#111827",
-                    fontSize: { xs: "1.35rem", sm: "1.65rem", md: "1.85rem" },
-                    letterSpacing: "-0.01em",
+                    fontSize: { xs: "1.4rem", sm: "1.7rem", md: "1.9rem" },
+                    letterSpacing: "-0.02em",
                     lineHeight: 1.25,
                     mb: 0.75,
                   }}
@@ -178,9 +197,9 @@ const LoginOption = ({ searchParams }) => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "#4b5563",
+                    color: "#6b7280",
                     fontSize: { xs: "0.85rem", sm: "0.92rem" },
-                    lineHeight: 1.45,
+                    lineHeight: 1.5,
                   }}
                 >
                   Welcome back! Choose how you would like to sign in to your
@@ -189,34 +208,34 @@ const LoginOption = ({ searchParams }) => {
               </Box>
 
               {/* Login Method Buttons */}
-              <Stack spacing={1.5} width="100%">
+              <Stack spacing={1.75} width="100%">
                 <Button
                   component={Link}
                   href={redirectEmailUrl}
                   fullWidth
                   size="large"
-                  startIcon={<EmailOutlinedIcon sx={{ fontSize: { xs: "18px", sm: "20px" } }} />}
-                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.6 }} />}
+                  startIcon={<EmailOutlinedIcon sx={{ fontSize: { xs: "19px", sm: "21px" } }} />}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.7 }} />}
                   sx={{
-                    py: { xs: 1.25, sm: 1.5 },
+                    py: { xs: 1.35, sm: 1.55 },
                     px: { xs: 2, sm: 2.5 },
                     bgcolor: "#111827",
                     color: "#ffffff",
-                    borderRadius: "4px",
+                    borderRadius: "6px",
                     textTransform: "none",
-                    fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                    fontSize: { xs: "0.9rem", sm: "0.95rem" },
                     fontWeight: 600,
-                    boxShadow: "none",
+                    boxShadow: "0 2px 6px rgba(17, 24, 39, 0.12)",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    transition: "all 0.15s ease-in-out",
+                    transition: "all 0.18s ease-in-out",
                     "&:hover": {
                       bgcolor: "#1f2937",
-                      boxShadow: "none",
+                      boxShadow: "0 4px 12px rgba(17, 24, 39, 0.2)",
                     },
                     "& .MuiButton-startIcon": {
-                      marginRight: "8px",
+                      marginRight: "10px",
                     },
                   }}
                 >
@@ -230,29 +249,30 @@ const LoginOption = ({ searchParams }) => {
                   href={redirectMobileUrl}
                   fullWidth
                   size="large"
-                  startIcon={<SmartphoneOutlinedIcon sx={{ fontSize: { xs: "18px", sm: "20px" } }} />}
-                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.6 }} />}
+                  startIcon={<SmartphoneOutlinedIcon sx={{ fontSize: { xs: "19px", sm: "21px" } }} />}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: "16px", sm: "18px" }, opacity: 0.7 }} />}
                   sx={{
-                    py: { xs: 1.25, sm: 1.5 },
+                    py: { xs: 1.35, sm: 1.55 },
                     px: { xs: 2, sm: 2.5 },
                     bgcolor: "#ffffff",
                     color: "#111827",
                     border: "1px solid #d1d5db",
-                    borderRadius: "4px",
+                    borderRadius: "6px",
                     textTransform: "none",
-                    fontSize: { xs: "0.88rem", sm: "0.95rem" },
+                    fontSize: { xs: "0.9rem", sm: "0.95rem" },
                     fontWeight: 600,
-                    boxShadow: "none",
+                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    transition: "all 0.15s ease-in-out",
+                    transition: "all 0.18s ease-in-out",
                     "&:hover": {
                       bgcolor: "#f9fafb",
                       borderColor: "#9ca3af",
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
                     },
                     "& .MuiButton-startIcon": {
-                      marginRight: "8px",
+                      marginRight: "10px",
                     },
                   }}
                 >
@@ -270,10 +290,10 @@ const LoginOption = ({ searchParams }) => {
                   sx={{
                     px: 1.5,
                     color: "#9ca3af",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     textTransform: "uppercase",
-                    fontSize: "10px",
-                    letterSpacing: "0.05em",
+                    fontSize: "11px",
+                    letterSpacing: "0.08em",
                   }}
                 >
                   or
@@ -285,7 +305,7 @@ const LoginOption = ({ searchParams }) => {
               <Box textAlign="center">
                 <Typography
                   variant="body2"
-                  sx={{ color: "#4b5563", fontSize: { xs: "0.85rem", sm: "0.92rem" } }}
+                  sx={{ color: "#4b5563", fontSize: { xs: "0.88rem", sm: "0.92rem" } }}
                 >
                   Don&apos;t have an account?{" "}
                   <Box
@@ -296,16 +316,23 @@ const LoginOption = ({ searchParams }) => {
                       fontWeight: 700,
                       textDecoration: "none",
                       borderBottom: "1.5px solid #111827",
-                      transition: "opacity 0.2s",
-                      "&:hover": { opacity: 0.8 },
+                      pb: "1px",
+                      transition: "all 0.15s ease",
+                      "&:hover": {
+                        color: "#000",
+                        borderColor: "#000",
+                        opacity: 0.8,
+                      },
                     }}
                   >
                     Sign up now
                   </Box>
                 </Typography>
               </Box>
+            </Box>
 
-              {/* Legal Footer */}
+            {/* Legal Footer Anchored at Bottom */}
+            <Box sx={{ pt: 2.5, mt: "auto", borderTop: "1px solid #f3f4f6", maxWidth: "400px", mx: "auto", width: "100%" }}>
               <Typography
                 variant="caption"
                 sx={{
@@ -344,9 +371,9 @@ const LoginOption = ({ searchParams }) => {
                 </Box>
                 .
               </Typography>
-            </Stack>
-          </Box>
-        </Paper>
+            </Box>
+          </Paper>
+        </Box>
       </Container>
     </Box>
   );

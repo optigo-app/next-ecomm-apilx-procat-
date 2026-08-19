@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Grid,
@@ -17,6 +17,7 @@ import { handelOpenMenu } from "@/app/(core)/utils/Glob_Functions/Cart_Wishlist/
 
 import { useTestCheckout } from "../hooks/useTestCheckout";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import ConfirmationDialog from "@/app/(core)/utils/Glob_Functions/ConfirmationDialog/ConfirmationDialog";
 import ShoppingBagList from "./ShoppingBagList";
 import CheckoutPanel from "./CheckoutPanel";
 import ItemCustomizationPanel from "./ItemCustomizationPanel";
@@ -26,6 +27,7 @@ import "../styles/testCheckout.scss";
 export default function TestCheckoutMain({ storeinit }) {
   const router = useRouter();
   const checkout = useTestCheckout(storeinit);
+  const [isClearAllDialogOpen, setIsClearAllDialogOpen] = useState(false);
 
   const {
     cartItems,
@@ -56,6 +58,7 @@ export default function TestCheckoutMain({ storeinit }) {
 
     // Cart Actions
     handleRemoveItem,
+    handleRemoveAll,
     handleSaveProductRemark,
     handleMoveToDetail,
 
@@ -106,11 +109,18 @@ export default function TestCheckoutMain({ storeinit }) {
 
   return (
     <div className="testCheckout_wrapper">
-      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          px: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 8, sm: 10, md: 14 },
+        }}
+      >
         {/* Header Navigation */}
         <Box
           sx={{
-            py: { xs: 2.5, md: 3.5 },
+            py: { xs: 2, md: 3 },
+            px: { xs: "48px", sm: "60px", md: 0 },
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -130,8 +140,8 @@ export default function TestCheckoutMain({ storeinit }) {
               color: "#333",
               border: "1px solid #eee",
               borderRadius: "50%",
-              width: 38,
-              height: 38,
+              width: { xs: 34, sm: 38 },
+              height: { xs: 34, sm: 38 },
               "&:hover": {
                 bgcolor: "#f5f5f5",
                 borderColor: "#ccc",
@@ -146,11 +156,12 @@ export default function TestCheckoutMain({ storeinit }) {
             variant="h4"
             sx={{
               fontWeight: 400,
-              fontSize: { xs: "1.4rem", sm: "1.75rem", md: "2rem" },
-              letterSpacing: { xs: "1px", sm: "1.5px" },
+              fontSize: { xs: "1.15rem", sm: "1.6rem", md: "1.9rem" },
+              letterSpacing: { xs: "0.5px", sm: "1.2px" },
               color: "#111",
               fontFamily: "inherit",
               textAlign: "center",
+              lineHeight: 1.2,
             }}
           >
             My Shopping Bag
@@ -159,14 +170,42 @@ export default function TestCheckoutMain({ storeinit }) {
             variant="body2"
             sx={{
               color: "#777",
-              mt: 0.5,
-              fontSize: { xs: "0.8rem", sm: "0.88rem" },
-              fontWeight: 300,
-              letterSpacing: "0.5px",
+              mt: 0.3,
+              fontSize: { xs: "0.75rem", sm: "0.85rem" },
+              fontWeight: 600,
+              letterSpacing: "0.3px",
             }}
           >
             {cartItems?.length || 0} items in your bag
           </Typography>
+
+          {/* Clear All Button on Right */}
+          {!isEmptyCart && (
+            <Button
+              size="small"
+              onClick={() => setIsClearAllDialogOpen(true)}
+              sx={{
+                position: "absolute",
+                right: 0,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "#777",
+                fontSize: { xs: "0.72rem", sm: "0.84rem" },
+                fontWeight: 600,
+                textTransform: "none",
+                textDecoration: "underline",
+                letterSpacing: "0.3px",
+                p: { xs: 0.5, sm: 1 },
+                "&:hover": {
+                  color: "#d32f2f",
+                  bgcolor: "transparent",
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              Clear All
+            </Button>
+          )}
         </Box>
 
         {/* When Bag is Empty: Full-width Clean Centered Empty State (Hides checkout panel) */}
@@ -377,6 +416,18 @@ export default function TestCheckoutMain({ storeinit }) {
           open={isPlacingOrder || isOrderSuccess}
           isSuccess={isOrderSuccess}
           orderNumber={orderNumber}
+        />
+
+        {/* Confirmation Dialog for Clear All */}
+        <ConfirmationDialog
+          open={isClearAllDialogOpen}
+          onClose={() => setIsClearAllDialogOpen(false)}
+          onConfirm={async () => {
+            setIsClearAllDialogOpen(false);
+            await handleRemoveAll();
+          }}
+          title="Clear Shopping Bag"
+          content="Are you sure you want to remove all items from your shopping bag?"
         />
       </Container>
     </div>

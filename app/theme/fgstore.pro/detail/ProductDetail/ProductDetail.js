@@ -1024,121 +1024,69 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       };
 
       setProdLoading(true);
-
       setisPriceLoading(true);
       setQuantity(1);
 
-      await SingleProdListAPI(
-        decodeobj,
-        decodeobj?.s ?? sizeData,
-        obj,
-        cookie,
-        alName,
-      )
-        .then(async (res) => {
-          if (res) {
-            setSingleProd(res?.pdList[0]);
+      try {
+        const res = await SingleProdListAPI(
+          decodeobj,
+          decodeobj?.s ?? sizeData,
+          obj,
+          cookie,
+          alName,
+        );
 
-            if (res?.pdList?.length > 0) {
-              setisPriceLoading(false);
-              const qty = res?.pdList[0]?.CartQuantity;
-              setQuantity(qty && qty > 0 ? qty : 1);
-              setRemarks(res?.pdList[0]?.Remarks ?? "");
-              // setIsImageLoad(false)
-              // setSelectedThumbImg({
-              //   link: "",
-              //   type: "img",
-              // });
-              setProdLoading(false);
-            }
+        if (res && res.pdList && res.pdList[0]) {
+          const prod = res.pdList[0];
+          setSingleProd(prod);
+          setDiaList(res?.pdResp?.rd3 || []);
+          setCsList(res?.pdResp?.rd4 || []);
 
-            if (!res?.pdList[0]) {
-              setisPriceLoading(false);
-              setProdLoading(false);
-              setIsDataFound(true);
-            } else {
-              setIsDataFound(false);
-            }
+          const qty = prod?.CartQuantity;
+          setQuantity(qty && qty > 0 ? qty : 1);
+          setRemarks(prod?.Remarks ?? "");
+          setIsDataFound(false);
 
-            setDiaList(res?.pdResp?.rd3);
-            setCsList(res?.pdResp?.rd4);
+          let initialsize =
+            prod && prod.DefaultSize !== ""
+              ? prod?.DefaultSize
+              : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)?.sizename ??
+                SizeCombo?.rd?.[0]?.sizename;
+          setSizeData(initialsize);
 
-            let prod = res?.pdList[0];
-
-            let initialsize =
-              prod && prod.DefaultSize !== ""
-                ? prod?.DefaultSize
-                : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)
-                      ?.sizename === undefined
-                  ? SizeCombo?.rd[0]?.sizename
-                  : SizeCombo?.rd?.find((size) => size.IsDefaultSize === 1)
-                      ?.sizename;
-            setSizeData(initialsize);
-
-            // await SingleFullProdPriceAPI(decodeobj).then((res) => {
-            //   setSingleProdPrice(res);
-            //   console.log("singlePrice", res);
-            // });
-          }
-          return res;
-        })
-        .then(async (resp) => {
-          if (resp) {
-            await getSizeData(resp?.pdList[0], cookie)
-              .then((res) => {
-                // console.log("Sizeres",res)
-                console.log(res?.Data, "res?.Data");
-                setSizeCombo(res?.Data);
-              })
-              .catch((err) => console.log("SizeErr", err));
-
-            if (storeinitInside?.IsStockWebsite === 1) {
-              await StockItemApi(resp?.pdList[0]?.autocode, "stockitem", cookie)
-                .then((res) => {
-                  setStockItemArr(res?.Data?.rd);
-                })
-                .catch((err) => console.log("stockItemErr", err));
-            }
-
-            if (storeinitInside?.IsProductDetailSimilarDesign === 1) {
-              await StockItemApi(
-                resp?.pdList[0]?.autocode,
-                "similarbrand",
-                obj,
-                cookie,
-              )
-                .then((res) => {
-                  setSimilarBrandArr(res?.Data?.rd);
-                })
-                .catch((err) => console.log("similarbrandErr", err));
-            }
-
-            // if (storeinitInside?.IsProductDetailDesignSet === 1) {
-            //   await DesignSetListAPI(obj1, resp?.pdList[0]?.designno, cookie)
-            //     .then((res) => {
-            //       // console.log("designsetList",res?.Data?.rd[0])
-            //       setDesignSetList(res?.Data?.rd);
-            //     })
-            //     .catch((err) => console.log("designsetErr", err));
-            // }
-
-            await SaveLastViewDesign(
-              cookie,
-              resp?.pdList[0]?.autocode,
-              resp?.pdList[0]?.designno,
-            )
-              .then((res) => {
-                setSaveLastView(res?.Data?.rd);
-              })
-              .catch((err) => console.log("saveLastView", err));
-          }
-        })
-        .catch((err) => console.log("err", err))
-        .finally(() => {
-          // setIsImageLoad(false);
-          setProdLoading(false);
+          // Release price and product loading immediately!
           setisPriceLoading(false);
-        });
+          setProdLoading(false);
+
+          // Fetch secondary data concurrently in background without blocking price/UI
+          Promise.allSettled([
+            getSizeData(prod, cookie).then((sRes) => {
+              if (sRes?.Data) setSizeCombo(sRes.Data);
+            }),
+            storeinitInside?.IsStockWebsite === 1
+              ? StockItemApi(prod.autocode, "stockitem", cookie).then((stRes) => {
+                  if (stRes?.Data?.rd) setStockItemArr(stRes.Data.rd);
+                })
+              : Promise.resolve(),
+            storeinitInside?.IsProductDetailSimilarDesign === 1
+              ? StockItemApi(prod.autocode, "similarbrand", obj, cookie).then((smRes) => {
+                  if (smRes?.Data?.rd) setSimilarBrandArr(smRes.Data.rd);
+                })
+              : Promise.resolve(),
+            SaveLastViewDesign(cookie, prod.autocode, prod.designno).then((lvRes) => {
+              if (lvRes?.Data?.rd) setSaveLastView(lvRes.Data.rd);
+            }),
+          ]).catch((err) => console.error("Secondary detail APIs error:", err));
+        } else {
+          setIsDataFound(true);
+          setisPriceLoading(false);
+          setProdLoading(false);
+        }
+      } catch (err) {
+        console.error("FetchProductData error:", err);
+        setisPriceLoading(false);
+        setProdLoading(false);
+      }
     };
 
     FetchProductData();
@@ -1147,7 +1095,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
       top: 0,
       behavior: "smooth",
     });
-  }, [params, comboReady, storeInit]);
+  }, [params, comboReady, storeInit?.FrontEnd_RegNo]);
 
   function checkImageAvailability(imageUrl) {
     return new Promise((resolve, reject) => {
@@ -2015,7 +1963,11 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                       totalDesigns={imageData?.length || allListDataSlide?.length || 0}
                     />
 
-                    <Grid container spacing={{ xs: 1, md: 1 }}>
+                    <Grid container spacing={{ xs: 1, md: 1 }}
+                    sx={{
+                      marginBottom:'8rem'
+                    }}
+                    >
                       <LeftSide
                         loading={!isImageload || !imagePromise}
                         media={(
