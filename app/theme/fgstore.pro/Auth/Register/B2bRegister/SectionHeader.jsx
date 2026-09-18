@@ -1,77 +1,59 @@
-import { Box,  Typography, Chip } from "@mui/material";
-import { CheckCircle as CheckIcon } from "@mui/icons-material";
-import { Business as BusinessIcon, Person as PersonIcon, Description as DocumentIcon, VerifiedUser as VerifiedIcon } from "@mui/icons-material";
+import React from "react";
+import { Box, Typography } from "@mui/material";
 
-const STEPS = [
-  { label: "Business Information", icon: BusinessIcon },
-  { label: "Authorized Representative", icon: PersonIcon },
-  { label: "Business Documents", icon: DocumentIcon },
-  { label: "Declarations & Consent", icon: VerifiedIcon },
-];
-
-  const SectionHeader = ({ title, icon: Icon, stepIndex, isStepComplete, sectionRefs }) => (
-    <Box
-      ref={(el) => (sectionRefs.current[stepIndex] = el)}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        mb: 2,
-        pb: 2,
-        borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-      }}
-    >
+const SectionHeader = ({ title, subtitle, icon: Icon }) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1.75,
+      mb: 2.5,
+      mt: 1,
+    }}
+  >
+    {Icon && (
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 48,
-          height: 48,
-          borderRadius: "12px",
-          bgcolor: isStepComplete(stepIndex) ? "rgba(16, 185, 129, 0.15)" : "rgba(139, 92, 246, 0.15)",
-          border: "1px solid",
-          borderColor: isStepComplete(stepIndex) ? "rgba(16, 185, 129, 0.3)" : "rgba(139, 92, 246, 0.3)",
+          width: 42,
+          height: 42,
+          borderRadius: "50%",
+          bgcolor: "#e8f5e9",
+          color: "#0b291d",
+          flexShrink: 0,
         }}
       >
-        {isStepComplete(stepIndex) ? <CheckIcon sx={{ fontSize: 24, color: "#10b981" }} /> : <Icon sx={{ fontSize: 24, color: "#8b5cf6" }} />}
+        <Icon sx={{ fontSize: 22, color: "#0b291d" }} />
       </Box>
-      <Box sx={{ flex: 1 }}>
+    )}
+    <Box>
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 700,
+          fontSize: "1.05rem",
+          color: "#111827",
+          lineHeight: 1.25,
+        }}
+      >
+        {title}
+      </Typography>
+      {subtitle && (
         <Typography
-          variant="h6"
+          variant="body2"
           sx={{
-            fontWeight: 600,
-            fontSize: "1.25rem",
-            letterSpacing: "-0.02em",
+            color: "#6b7280",
+            fontSize: "0.85rem",
+            mt: 0.25,
           }}
         >
-          {title}
+          {subtitle}
         </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            color: "#9ca3af",
-            fontSize: "0.813rem",
-          }}
-        >
-          Step {stepIndex + 1} of {STEPS.length}
-        </Typography>
-      </Box>
-      {isStepComplete(stepIndex) && (
-        <Chip
-          label="Completed"
-          size="small"
-          sx={{
-            bgcolor: "rgba(16, 185, 129, 0.15)",
-            color: "#10b981",
-            fontWeight: 600,
-            fontSize: "0.75rem",
-            border: "1px solid rgba(16, 185, 129, 0.3)",
-          }}
-        />
       )}
     </Box>
-  );
+  </Box>
+);
 
-
-  export default SectionHeader;
+export default SectionHeader;

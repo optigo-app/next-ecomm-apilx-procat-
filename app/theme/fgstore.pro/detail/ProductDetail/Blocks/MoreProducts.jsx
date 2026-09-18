@@ -9,6 +9,15 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import "swiper/css";
 import "swiper/css/navigation";
 
+const SWIPER_BREAKPOINTS = {
+  0: { slidesPerView: 1.8, spaceBetween: 12 },
+  480: { slidesPerView: 2.2, spaceBetween: 14 },
+  768: { slidesPerView: 3, spaceBetween: 16 },
+  1024: { slidesPerView: 4, spaceBetween: 18 },
+  1280: { slidesPerView: 4.2, spaceBetween: 20 },
+  1536: { slidesPerView: 4.5, spaceBetween: 20 },
+};
+
 const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, imageNotFound }, ref) => {
   const filteredImageData = (imageData || []).filter(
     (ele) => ele?.designno !== singleProd?.designno
@@ -24,89 +33,124 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
   }));
 
   // 1. Condition to check if we should show the left/right arrows
-  const showArrows = filteredImageData.length > 5;
+  const showArrows = filteredImageData.length > 4;
 
   return (
     <>
-      <Box sx={{ px: { xs: 2, sm: 4 }, py: 6 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            mb: 4,
-            textAlign: "center",
-            color: "#111111",
-            fontSize: "24px",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-          }}
-        >
-          More Products
-        </Typography>
-        <Box position="relative">
-          
-          {/* 2. Conditionally render Left Chevron */}
-          {showArrows && (
-            <IconButton
-              onClick={() => swiperRef.current?.slidePrev()}
-              aria-label="Previous Products"
+      <Box sx={{ maxWidth: "1600px", mx: "auto", px: { xs: 2, sm: 3, md: 4 }, py: 3, width: "100%", boxSizing: "border-box" }}>
+        {/* Section Header with Title on Left and Pill Navigation on Right */}
+        <Box sx={{ mb: 2.5, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#111111",
+              fontSize: { xs: "18px", md: "22px" },
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            More Products
+          </Typography>
+
+          {/* Pill Navigation on Right */}
+          {filteredImageData?.length > 1 && (
+            <Box
               sx={{
-                position: "absolute",
-                left: { xs: -8, sm: -14, md: -22 },
-                top: "50%",
-                transform: "translateY(-50%)",
-                zIndex: 10,
-                width: 40,
-                height: 40,
+                display: "inline-flex",
+                alignItems: "center",
                 bgcolor: "#FFFFFF",
-                color: "#111111",
+                borderRadius: "28px",
+                p: "3px 6px",
                 border: "1px solid #E8E8EC",
-                boxShadow: "0 4px 14px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06)",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  bgcolor: "#000000",
-                  color: "#FFFFFF",
-                  boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
-                  transform: "translateY(-50%) scale(1.06)",
-                },
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+                transition: "all 0.2s ease",
+                flexShrink: 0,
               }}
             >
-              <ChevronLeftIcon />
-            </IconButton>
+              <IconButton
+                onClick={() => swiperRef.current?.slidePrev()}
+                size="small"
+                aria-label="Previous Products"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  bgcolor: "#F4F4F6",
+                  color: "#222222",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#000000",
+                    color: "#FFFFFF",
+                  },
+                }}
+              >
+                <ChevronLeftIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+
+              <Typography
+                sx={{
+                  px: 1.5,
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "#222222",
+                  userSelect: "none",
+                  letterSpacing: "0.5px",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {String(activeIndex + 1).padStart(2, "0")} / {String(filteredImageData.length).padStart(2, "0")}
+              </Typography>
+
+              <IconButton
+                onClick={() => swiperRef.current?.slideNext()}
+                size="small"
+                aria-label="Next Products"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  bgcolor: "#F4F4F6",
+                  color: "#222222",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    bgcolor: "#000000",
+                    color: "#FFFFFF",
+                  },
+                }}
+              >
+                <ChevronRightIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Box>
           )}
-          
+        </Box>
+        <Box position="relative">
           <Swiper
             onSwiper={(swiper) => (swiperRef.current = swiper)}
             onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-            spaceBetween={20}
-            centerInsufficientSlides={true} 
-            breakpoints={{
-              0: { slidesPerView: 1 },
-              480: { slidesPerView: 2 },
-              600: { slidesPerView: 2 },
-              900: { slidesPerView: 3 },
-              1200: { slidesPerView: 4 },
-              1536: { slidesPerView: 5 },
-            }}
-            style={{ paddingBottom: "20px" }}
+            slidesPerView={5}
+            spaceBetween={16}
+            breakpoints={SWIPER_BREAKPOINTS}
+            style={{ paddingBottom: "10px" }}
           >
             {filteredImageData.map((ele, index) => (
-              <SwiperSlide key={ele?.autocode || index}>
-                <Box sx={{ py: 1, px: 0.5 }}>
+              <SwiperSlide key={ele?.autocode || index} style={{ height: "auto" }}>
+                <Box sx={{ py: 0.5, px: 0.2, height: "100%" }}>
                   <Card
                     elevation={0}
                     sx={{
-                      borderRadius: "16px",
-                      border: singleProd?.designno === ele?.designno ? "2px solid #000000" : "1.5px solid #E5E5E5",
+                      borderRadius: "10px",
+                      border: singleProd?.designno === ele?.designno ? "2px solid #000000" : "1px solid #EBEBEB",
                       bgcolor: "#FFFFFF",
                       overflow: "hidden",
-                      transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                      transition: "all 0.2s ease",
                       "&:hover": {
-                        border: "1.5px solid #000000",
-                        boxShadow: "0 0 0 1px #000000, 0 8px 24px rgba(0, 0, 0, 0.08)",
-                        transform: "translateY(-4px)",
+                        borderColor: "#000000",
+                        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)",
+                        transform: "translateY(-2px)",
                         "& .more-product-img": {
-                          transform: "scale(1.05)",
+                          transform: "scale(1.04)",
                         },
                       },
                     }}
@@ -116,13 +160,20 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
                         const originalIndex = imageData.findIndex((item) => item.designno === ele.designno);
                         handleMoveToDetail(ele, originalIndex !== -1 ? originalIndex : index);
                       }}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        alignItems: "stretch",
+                        justifyContent: "flex-start",
+                      }}
                     >
                       <Box
                         sx={{
                           position: "relative",
                           width: "100%",
                           pt: "100%",
-                          bgcolor: "#FAFAFA",
+                          bgcolor: "#F9F9F9",
                           overflow: "hidden",
                         }}
                       >
@@ -141,21 +192,38 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
                             left: 0,
                             width: "100%",
                             height: "100%",
-                            objectFit: "cover",
-                            transition: "transform 0.3s ease",
+                            objectFit: "contain",
+                            p: 1.2,
+                            mixBlendMode: "multiply",
+                            transition: "transform 0.25s ease",
                           }}
                         />
                       </Box>
 
-                      <CardContent sx={{ textAlign: "center", py: 2, px: 1.5, bgcolor: "#FFFFFF" }}>
+                      <CardContent
+                        sx={{
+                          height: "48px",
+                          minHeight: "48px",
+                          maxHeight: "48px",
+                          p: 1,
+                          "&:last-child": { pb: 1 },
+                          bgcolor: "#FFFFFF",
+                          boxSizing: "border-box",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
                         <Typography
                           variant="body2"
                           sx={{
                             fontWeight: 700,
-                            fontSize: "14px",
+                            fontSize: "12px",
                             color: "#111111",
                             letterSpacing: "0.3px",
                             textTransform: "uppercase",
+                            lineHeight: 1.2,
                           }}
                         >
                           {ele?.designno}
@@ -165,13 +233,15 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
                             variant="caption"
                             sx={{
                               display: "block",
-                              color: "#777777",
-                              fontSize: "12px",
+                              color: "#888888",
+                              fontSize: "10px",
                               fontWeight: 500,
-                              mt: 0.3,
+                              mt: 0.2,
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
+                              maxWidth: "100%",
+                              textAlign: "center",
                             }}
                           >
                             {ele?.TitleLine}
@@ -184,37 +254,6 @@ const MoreProducts = forwardRef(({ imageData, handleMoveToDetail, singleProd, im
               </SwiperSlide>
             ))}
           </Swiper>
-
-          {/* 4. Conditionally render Right Chevron */}
-          {showArrows && (
-            <IconButton
-              onClick={() => swiperRef.current?.slideNext()}
-              aria-label="Next Products"
-              sx={{
-                position: "absolute",
-                right: { xs: -8, sm: -14, md: -22 },
-                top: "50%",
-                transform: "translateY(-50%)",
-                zIndex: 10,
-                width: 40,
-                height: 40,
-                bgcolor: "#FFFFFF",
-                color: "#111111",
-                border: "1px solid #E8E8EC",
-                boxShadow: "0 4px 14px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06)",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  bgcolor: "#000000",
-                  color: "#FFFFFF",
-                  boxShadow: "0 6px 20px rgba(0, 0, 0, 0.2)",
-                  transform: "translateY(-50%) scale(1.06)",
-                },
-              }}
-            >
-              <ChevronRightIcon />
-            </IconButton>
-          )}
-
         </Box>
       </Box>
     </>

@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
 import { getAccountLedgerData } from '@/app/(core)/utils/API/AccountTabs/accountLedger';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, useMediaQuery } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Typography  ,Box, Button, CircularProgress, useMediaQuery } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccountLedgerExcel from './AccountLedgerExcel';
 import { downloadExcelLedgerData } from '@/app/(core)/utils/Glob_Functions/GlobalFunction';
@@ -695,7 +695,7 @@ const AccountLedger = () => {
                         <div className='mx_1_acc ms_4_acc mb_2_acc'>
                         </div>
                         <div style={{paddingBottom:'35px'}}>{ filterArray?.length > 0 && <img
-                        src={excelExport} onClick={() => downloadExcelLedgerData()} style={{height:'40px', width:'40px', objectFit:'contain', cursor:'pointer'}} alt='excelExport' title='Download Excel' />}</div>
+                        src={excelExport?.src || excelExport} onClick={() => downloadExcelLedgerData()} style={{height:'36px', width:'36px', objectFit:'contain', cursor:'pointer'}} alt='excelExport' title='Download Excel' />}</div>
 
                         </div>}
                         
@@ -785,7 +785,7 @@ const AccountLedger = () => {
                                             <SearchIcon sx={{ color: "#fff !important", cursor:'pointer' }} />
                                         </Button>
                                     </Box>
-                            <div style={{ display:'flex', justifyContent:'center', alignItems:'center'}}>{ filterArray?.length > 0 && <img src={excelExport} onClick={() => downloadExcelLedgerData()} style={{height:'40px', cursor:'pointer', width:'40px', objectFit:'contain', cursor:'pointer'}} alt='#excelExport' />}</div>
+                            <div style={{ display:'flex', justifyContent:'center', alignItems:'center'}}>{ filterArray?.length > 0 && <img src={excelExport?.src || excelExport} onClick={() => downloadExcelLedgerData()} style={{height:'36px', cursor:'pointer', width:'36px', objectFit:'contain'}} alt='Download Excel' title='Download Excel' />}</div>
 
                                 </div>
                                 <Box  className=" center_acc w_all_acc">
@@ -814,71 +814,70 @@ const AccountLedger = () => {
                     </>
                 }
                 
-                <div className='text_secondary_acc fs_al d_flex_Acc justify_content_between align_items_start p_2_acc my_3_acc mt_0_acc balance_none'>
-                    <div className='custom_flex_class'>
-                        <div className='custom_px_4 px_2_al d_flex_Acc align_items_center mb_2_acc ps-0 w_all_acc'>
-                            <span className='w_40_acc '>Balance Gold :&nbsp;</span> 
-                            <span className='bal_Amt_ac  w_60_acc end_acc'>
-                                {   ((((resultTotal?.debit_metalgold  + Math.abs(debit_mg_diff) ) - 
-                                    ( resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3)) === 'NaN' ? '0.00' :  
-                                    (((resultTotal?.debit_metalgold  + Math.abs(debit_mg_diff) ) - ( resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3)))
-                                }
-                                { ((resultTotal?.debit_metalgold + Math.abs(debit_mg_diff)) - (resultTotal?.credit_metalgold + Math.abs(credit_mg_diff))) > 0 ? 'Dr' : ' Cr' }
-                            </span>
-                            </div>
-                        <div className='custom_px_4 px_2_al d_flex_Acc align_items_center mb_2_acc w_all_acc'>
-                            <span className='w_40_acc'>Balance Diam. :&nbsp;</span> 
-                                <span className='bal_Amt_ac w_60_acc end_acc'>
-                                    { ((((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3)) === 'NaN' ? '0.00'
-                                     : (((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3))) }
-                                    { ((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt)) > 0 ? 'Dr' : ' Cr' }
-                                </span>
-                        </div>
-                        <div className='custom_px_4 px_2_al d_flex_Acc align_items_center mb_2_acc w_all_acc'>
-                            <span className='w_40_acc'>Balance Amount :&nbsp;</span> 
-                            <span className='bal_Amt_ac w_60_acc end_acc'>
-                            <span dangerouslySetInnerHTML={{__html:currencySymbol}}></span>&nbsp;
-                            { ((formatAmount(
-                                (Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))
-                              ) === 'NaN' ? '0.00' : (formatAmount(
-                                (Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))
-                              ))
-                            }&nbsp;
+                        {/* Balance Cards Summary */}
+                        <Box
+                            sx={{
+                                display: "grid",
+                                gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+                                gap: 2,
+                                my: 2.5,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    bgcolor: "#f9fafb",
+                                    borderRadius: "6px",
+                                    border: "1px solid #e5e7eb",
+                                    textAlign: "center",
+                                }}
+                            >
+                                <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", fontWeight: 600, mb: 0.5 }}>
+                                    Balance Gold
+                                </Typography>
+                                <Typography sx={{ fontSize: "1.05rem", fontWeight: 700, color: "#111827" }}>
+                                    {((((resultTotal?.debit_metalgold + Math.abs(debit_mg_diff)) - (resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3)) === 'NaN' ? '0.00' : (((resultTotal?.debit_metalgold + Math.abs(debit_mg_diff)) - (resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3)))}
+                                    {((resultTotal?.debit_metalgold + Math.abs(debit_mg_diff)) - (resultTotal?.credit_metalgold + Math.abs(credit_mg_diff))) > 0 ? ' Dr' : ' Cr'}
+                                </Typography>
+                            </Box>
 
-                            {(((Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency)) ? 'Dr' : ' Cr' ) }</span>
-                        </div>
-                    </div>
-                </div>
-                <div className='text_secondary_acc fs_al d_flex_Acc justify_content_between align_items_start p_2_acc my_3_acc mt_0_acc balance_not_none'>
-                    <div className='custom_flex_class'>
-                        <div className='custom_px_4 px_2_al d_flex_Acc flex_column align_items_center mb_2_acc  w_100_acc'>
-                            <div className='w_100_acc elvee_Acc_led_fs_label'>Balance Gold :&nbsp;</div> <div className='bal_Amt_ac  w_100_acc end_acc elvee_Acc_Led_inp'>
-                            { ((((resultTotal?.debit_metalgold  + Math.abs(debit_mg_diff) ) - ( resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3)) === 'NaN' ? '0.00' :  (((resultTotal?.debit_metalgold  + Math.abs(debit_mg_diff) ) - ( resultTotal?.credit_metalgold + Math.abs(credit_mg_diff)))?.toFixed(3))) }
-                            { ((resultTotal?.debit_metalgold + Math.abs(debit_mg_diff)) - (resultTotal?.credit_metalgold + Math.abs(credit_mg_diff))) > 0 ? 'Dr' : ' Cr' }</div>
-                        </div>
-                        <div className='custom_px_4 px_2_al d_flex_Acc flex_column align_items_center mb_2_acc w_100_acc'>
-                            <div className='w_100_acc elvee_Acc_led_fs_label'>Balance Diam. :&nbsp;</div> 
-                            <div className='bal_Amt_ac w_100_acc end_acc elvee_Acc_Led_inp'>
-                            { ((((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3)) === 'NaN' ? '0.00' : (((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3))) }
-                            { ((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt)) > 0 ? 'Dr' : ' Cr' }
-                            </div>
-                        </div>
-                        <div className='custom_px_4 px_2_al d_flex_Acc flex_column align_items_center mb_2_acc w_100_acc'>
-                            <div className='w_100_acc elvee_Acc_led_fs_label'>Balance Amount :&nbsp;</div> 
-                            <div className='bal_Amt_ac w_100_acc end_acc elvee_Acc_Led_inp'>
-                            <span dangerouslySetInnerHTML={{__html:currencySymbol}}></span>&nbsp;
-                            { ((formatAmount(
-                                (Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))
-                              ) === 'NaN' ? '0.00' : (formatAmount(
-                                (Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))
-                              ))
-                            }&nbsp;
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    bgcolor: "#f9fafb",
+                                    borderRadius: "6px",
+                                    border: "1px solid #e5e7eb",
+                                    textAlign: "center",
+                                }}
+                            >
+                                <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", fontWeight: 600, mb: 0.5 }}>
+                                    Balance Diamond
+                                </Typography>
+                                <Typography sx={{ fontSize: "1.05rem", fontWeight: 700, color: "#111827" }}>
+                                    {((((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3)) === 'NaN' ? '0.00' : (((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt))?.toFixed(3)))}
+                                    {((Math.abs(debit_dia_diff) + resultTotal?.debit_diamondwt) - (Math.abs(credit_dia_diff) + resultTotal?.credit_diamondwt)) > 0 ? ' Dr' : ' Cr'}
+                                </Typography>
+                            </Box>
 
-                            {(((Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency)) ? 'Dr' : ' Cr' ) }
-                        </div>
-                        </div>
-                    </div>
-                </div>
+                            <Box
+                                sx={{
+                                    p: 2,
+                                    bgcolor: "#f9fafb",
+                                    borderRadius: "6px",
+                                    border: "1px solid #e5e7eb",
+                                    textAlign: "center",
+                                }}
+                            >
+                                <Typography sx={{ fontSize: "0.8rem", color: "#6b7280", fontWeight: 600, mb: 0.5 }}>
+                                    Balance Amount
+                                </Typography>
+                                <Typography sx={{ fontSize: "1.05rem", fontWeight: 700, color: "#0b291d" }}>
+                                    <span dangerouslySetInnerHTML={{ __html: currencySymbol }}></span>&nbsp;
+                                    {((formatAmount((Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))) === 'NaN' ? '0.00' : (formatAmount((Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency))))}&nbsp;
+                                    {(((Math.abs(debit_curr_diff) + resultTotal?.debit_totalcurrency) - (Math.abs(credit_curr_diff) + resultTotal?.credit_totalcurrency)) ? 'Dr' : ' Cr')}
+                                </Typography>
+                            </Box>
+                        </Box>
                 {
                     loaderAC ? <Box sx={{ display: "flex", justifyContent: "center", paddingTop: "10px", paddingBottom: "30px" }}>
                         <CircularProgress className='loadingBarManage' /></Box> : 

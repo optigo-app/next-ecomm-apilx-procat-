@@ -11,7 +11,6 @@ import { Get_Procatalog } from "@/app/(core)/utils/API/Home/Get_Procatalog/Get_P
 import Cookies from "js-cookie";
 import {
   Box,
-  CardMedia,
   Modal,
   Skeleton,
   Grid,
@@ -23,7 +22,6 @@ import AlbumSkeleton from "./AlbumSkeleton/AlbumSkeleton";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { useStore } from "@/app/(core)/contexts/StoreProvider";
-import { useMaster } from "@/app/(core)/contexts/MasterProvider";
 import { useSearchParams } from "next/navigation";
 import {
   normalizeALC,
@@ -36,7 +34,6 @@ import { readCache, writeCache } from "@/app/(core)/cache_utility/cacheActions";
 
 const Album = () => {
   const { islogin, loginUserDetail, storeinit } = useStore();
-  const { comboReady } = useMaster();
   const [albumData, setAlbumData] = useState([]);
   const [fallbackImages, setFallbackImages] = useState({});
   const [designSubData, setDesignSubData] = useState([]);
@@ -95,8 +92,6 @@ const Album = () => {
       console.log(
         "██████ ALBUM FETCH START ██████ ALC:",
         JSON.stringify(apiALC),
-        "finalID:",
-        finalID,
       );
 
       const { key, meta } = buildAlbumCacheKey(
@@ -108,17 +103,6 @@ const Album = () => {
       );
       const effectiveKey = precomputedKey || key;
       const eventName = "procatalog_album";
-      // console.log("██████ ALBUM CACHE KEY ██████", effectiveKey);
-      // console.log(
-      //   "██████ ALBUM PRICING ██████ PackageId:",
-      //   pricingContext?.PackageId,
-      //   "Laboursetid:",
-      //   pricingContext?.Laboursetid,
-      //   "diamond:",
-      //   pricingContext?.diamondpricelistname,
-      //   "colorstone:",
-      //   pricingContext?.colorstonepricelistname,
-      // );
 
       isFetchingRef.current = true;
       setIsFetching(true);
@@ -132,7 +116,6 @@ const Album = () => {
             localCacheRes.data.length,
             "albums from cache",
           );
-          console.log('localCacheRes.data', localCacheRes.data)
           setAlbumData(localCacheRes.data);
           setFallbackImages(
             processAlbumImages(localCacheRes.data, storeinit),
@@ -297,7 +280,7 @@ const Album = () => {
   );
 
   useEffect(() => {
-    if (!pricingContext || !storeinit || !comboReady) {
+    if (!pricingContext || !storeinit) {
       return;
     }
 
@@ -334,7 +317,6 @@ const Album = () => {
     islogin,
     pricingContext,
     storeinit,
-    comboReady,
     ALCVAL,
     fetchAndSetAlbumData,
     loginUserDetail?.id,

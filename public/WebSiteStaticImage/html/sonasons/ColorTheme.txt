@@ -1,57 +1,44 @@
-/* FileCreateDate: 2026-08-17T10:52:25.84 */
+
 .setFullThemeBack{
-background-color: #98b8d9 !important;
+background-color: #97b8da!important;
 }
 
 .setFullThemeBack_Bg{
-background-color: #98b8d9 !important;
+background-color: #ffffff!important;
 }
 
 .btnColorProCat{
-	background-color: #7800a8 !important;
-	color: #ffffff !important;
-	border: 1px solid #98b8d9 !important;
-}
-
-.badgeColor .MuiBadge-badge, .badgeColorFix .MuiBadge-badge {
-	background-color: #7800a8 !important;
-	color: #ffffff !important;
+	background-color: #97b8da!important;
+	color : #323030 !important;
+	border: 1px solid #97b8da;
 }
 
 .btnColorProCatProduct{
-	background-color: #a29bfe !important;
-	color: #fff !important;
-	border: 1px solid #98b8d9 !important;
-	border-radius: 5px !important;
+	background-color: #97b8da!important;
+	color : #fff !important;
+	border: 1px solid #97b8da!important;
 }
 
 .btnColorProCatProductRemoveCart {
-	background-color: #fff !important;
-	color: #474747D1 !important;
-	border: 1px solid #CBE5FF !important;
-	border-radius: 5px !important;
+	background-color:  #fff!important;
+	color: black !important;
+	border: 1px solid  #97b8da;
 }
 
 .btnColorSvg{
-	color: #ffffff !important;
-	fill: #ffffff !important;
+	color : #fff !important;
+	fill : #fff !important;
 }
 
 .btnColorRemoveSvg{
-	color: #000000 !important;
-	fill: #000000 !important;
+	color : black !important;
+	fill : black !important;
 }
-
-
-.tab_color : {
-	background-color: #7800a8 !important;
-  background : #7800a8 !important;
-}
-
 
 .sticky_part_header_pk{
-	background-color:  #98b8d9!important;
+	background-color:  #fff!important;
 }
+
 
 {
 "rd":[

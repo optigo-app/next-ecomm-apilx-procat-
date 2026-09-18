@@ -2,8 +2,10 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import Cookies from "js-cookie";
 import { GetCountAPI } from "../utils/API/GetCount/GetCountAPI";
-import { ToastContainer, Zoom } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../styles/customToast.css";
+import { enhanceGlobalToast } from "../utils/toastNotification";
 import Snackbar from "@mui/material/Snackbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -12,17 +14,70 @@ import IconButton from "@mui/material/IconButton";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 
+// Initialize global toast enhancement for rich notification UI
+if (typeof window !== "undefined") {
+  enhanceGlobalToast();
+}
+
 const StoreContext = createContext(null);
 
-const toastStyle = {
-  borderRadius: "6px",
-  boxShadow: `  rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px`,
-  minWidth: "0px",
-  width: "fit-content !important",
-  padding: "12px 6px !important",
-  borderLeft: `8px solid teal`,
-  fontSize: "18px",
+const CustomToastIcon = ({ type }) => {
+  if (type === "success") {
+    return (
+      <div className="custom-toast-icon-badge success">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+    );
+  }
+  if (type === "info") {
+    return (
+      <div className="custom-toast-icon-badge info">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" strokeWidth="3.5" />
+        </svg>
+      </div>
+    );
+  }
+  if (type === "error") {
+    return (
+      <div className="custom-toast-icon-badge error">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </div>
+    );
+  }
+  if (type === "warning") {
+    return (
+      <div className="custom-toast-icon-badge warning">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="8" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="3.5" />
+        </svg>
+      </div>
+    );
+  }
+  return null;
 };
+
+const CustomCloseButton = ({ closeToast }) => (
+  <button
+    type="button"
+    className="custom-toast-close-btn"
+    onClick={closeToast}
+    aria-label="close"
+  >
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  </button>
+);
+
 export function StoreProvider({ children, storeinit }) {
   if (typeof window !== "undefined") {
     window.__STORE_INIT__ = storeinit;
@@ -37,6 +92,7 @@ export function StoreProvider({ children, storeinit }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    enhanceGlobalToast();
     const storedDetail = sessionStorage.getItem("loginUserDetail");
     if (storedDetail) {
       const parsed = JSON.parse(storedDetail);
@@ -84,7 +140,20 @@ export function StoreProvider({ children, storeinit }) {
 
   return (
     <StoreContext.Provider value={value}>
-      <ToastContainer position="bottom-right" toastStyle={toastStyle} stacked={true} hideProgressBar={true} autoClose={1400} transition={Zoom} style={{ zIndex: "9999999999999999", fontFamily: "inherit" }} />
+      <ToastContainer
+        position="bottom-right"
+        stacked={false}
+        limit={4}
+        hideProgressBar={true}
+        autoClose={3500}
+        transition={Slide}
+        icon={CustomToastIcon}
+        closeButton={CustomCloseButton}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+        theme="light"
+      />
       {children}
       <ExpirySnackbar loginUserDetail={loginUserDetail} />
     </StoreContext.Provider>

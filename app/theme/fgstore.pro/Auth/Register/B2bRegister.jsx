@@ -7,8 +7,6 @@ import {
   Container,
   FormControl,
   FormControlLabel,
-  FormHelperText,
-  Grid,
   InputLabel,
   MenuItem,
   Paper,
@@ -33,14 +31,18 @@ import {
   CheckCircle as CheckIcon,
   ArrowBack as ArrowBackIcon,
   ArrowForward as ArrowForwardIcon,
+  Security as SecurityIcon,
+  LocationOn as LocationOnIcon,
+  BookmarkBorder as BookmarkIcon,
+  LockOutlined as LockIcon,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
 import FileUploadField from "./B2bRegister/FileUpload";
 import SectionHeader from "./B2bRegister/SectionHeader";
 import HeaderStepper from "./B2bRegister/HeaderStepper";
-import SidebarStepper from "./B2bRegister/SidebarStepper";
 import getMasterOptions from "./B2bRegister/MasterParser";
 import CryptoJS from "crypto-js";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { WEBSignUpWithCompanyInfoAPI } from "@/app/(core)/utils/API/Auth/WEBSignUpWithCompanyInfoAPI";
 import { LoginWithEmailAPI } from "@/app/(core)/utils/API/Auth/LoginWithEmailAPI";
 import Cookies from "js-cookie";
@@ -49,78 +51,7 @@ import RegistrationSuccess from "./B2bRegister/SuccessCard";
 import CountryDropDown from "@/app/(core)/utils/Glob_Functions/CountryDropDown/CountryDropDown";
 import { useNextRouterLikeRR } from "@/app/(core)/hooks/useLocationRd";
 import { getSession } from "@/app/(core)/utils/FetchSessionData";
-
-const DOCUMENT_RULES = {
-  "aadhar card": {
-    regex: /^\d{12}$/,
-    message: "Invalid Aadhaar format (must be 12 digits)",
-    tooltip: (
-      <span>
-        Aadhaar format: <strong>12 digits only</strong>
-        <br />
-        (e.g.{" "}
-        <code style={{ fontWeight: "bold", color: "black" }}>123456789012</code>
-        )
-      </span>
-    ),
-  },
-  "driving licence": {
-    regex: /^[A-Z0-9]{10,14}$/,
-    message:
-      "Invalid Driving Licence format (10–14 uppercase letters or digits)",
-    tooltip: (
-      <span>
-        DL format: <strong>10–14 alphanumeric (uppercase)</strong>
-        <br />
-        (e.g.{" "}
-        <code style={{ fontWeight: "bold", color: "black" }}>
-          DL04A1234567890
-        </code>
-        )
-      </span>
-    ),
-  },
-  passport: {
-    regex: /^[A-Z][0-9]{7}$/,
-    message: "Invalid Passport format (1 letter + 7 digits)",
-    tooltip: (
-      <span>
-        Passport format: <strong>1 letter + 7 digits</strong>
-        <br />
-        (e.g.{" "}
-        <code style={{ fontWeight: "bold", color: "black" }}>A1234567</code>)
-      </span>
-    ),
-  },
-  pan: {
-    regex: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-    message: "Invalid PAN format (5 letters + 4 digits + 1 letter)",
-    tooltip: (
-      <span>
-        PAN format: <strong>5 letters + 4 digits + 1 letter</strong>
-        <br />
-        (e.g.{" "}
-        <code style={{ fontWeight: "bold", color: "black" }}>ABCDE1234F</code>)
-      </span>
-    ),
-  },
-  gst: {
-    regex: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-    message: "Invalid GST format (15 chars: state + PAN + suffix + Z + check)",
-    tooltip: (
-      <span>
-        GST format: <strong>15 characters</strong> — 2 digits + PAN + 1 char + Z
-        + 1 char
-        <br />
-        (e.g.{" "}
-        <code style={{ fontWeight: "bold", color: "black" }}>
-          27ABCDE1234F1Z5
-        </code>
-        )
-      </span>
-    ),
-  },
-};
+import Link from "next/link";
 
 const STEPS = [
   { label: "Business Information", icon: BusinessIcon, optional: false },
@@ -143,7 +74,6 @@ const B2bRegister = ({ searchParams }) => {
   const [isFirstTimeSuccess, setIsFirstTimeSuccess] = useState(true);
   const [checkLoading, setCheckLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
-  const sectionRefs = useRef([]);
   const mobileNoRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -165,14 +95,14 @@ const B2bRegister = ({ searchParams }) => {
     address_line: "",
     city: "",
     state: "",
-    country: "",
+    country: "India",
     password: "",
     confirm_password: "",
     pincode: "",
     first_name: "",
     last_name: "",
     mobileNo: "",
-    mobileCountry: "",
+    mobileCountry: "91",
     email: "",
     documents: {},
     declaration: false,
@@ -188,7 +118,6 @@ const B2bRegister = ({ searchParams }) => {
     searchParams?.search ||
     "";
   const cancelRedireactUrl = `/LoginOption?LoginRedirect=${search}`;
-  const singupRedirectUrl = `/LoginOption?LoginRedirect=${search}`;
 
   useEffect(() => {
     const queryEmail = searchParams?.email
@@ -285,7 +214,6 @@ const B2bRegister = ({ searchParams }) => {
     setCheckLoading(true);
     try {
       const visiterId = Cookies.get("visiterId");
-      // savedPassword is ALREADY the SHA-1 hashed password
       const response = await LoginWithEmailAPI(
         savedEmail,
         "",
@@ -352,14 +280,14 @@ const B2bRegister = ({ searchParams }) => {
       address_line: "",
       city: "",
       state: "",
-      country: "",
+      country: "India",
       password: "",
       confirm_password: "",
       pincode: "",
       first_name: "",
       last_name: "",
       mobileNo: "",
-      mobileCountry: "",
+      mobileCountry: "91",
       email: "",
       documents: {},
       declaration: false,
@@ -390,7 +318,7 @@ const B2bRegister = ({ searchParams }) => {
           formData.pincode.trim() !== ""
         );
 
-      case 1: // Authorized Representative
+      case 1:
         return (
           formData.first_name.trim() !== "" &&
           formData.last_name.trim() !== "" &&
@@ -401,8 +329,8 @@ const B2bRegister = ({ searchParams }) => {
           formData.password === formData.confirm_password &&
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
         );
-      // return formData.first_name.trim() !== "" && formData.last_name.trim() !== "" && formData.mobileNo.trim() !== "" && formData.email.trim() !== "" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-      case 2: // Business Documents
+
+      case 2:
         const docs = formData.documents || {};
         return DocumentType.every((doc) => {
           const docValue = docs[doc.id] || {};
@@ -411,7 +339,7 @@ const B2bRegister = ({ searchParams }) => {
           if (doc.IsMandatory === 1) {
             return number && number !== "" && file;
           }
-          return true; // optional docs don't block
+          return true;
         });
 
       case 3:
@@ -459,7 +387,7 @@ const B2bRegister = ({ searchParams }) => {
         if (!formData.last_name.trim())
           newErrors.last_name = "Last name is required";
         if (!formData.mobileNo.trim())
-          newErrors.mobileNo = "mobileNo number is required";
+          newErrors.mobileNo = "Mobile number is required";
         if (!formData.email.trim()) newErrors.email = "Email is required";
         if (!formData.password) newErrors.password = "Password is required";
         if (!formData.confirm_password)
@@ -480,13 +408,11 @@ const B2bRegister = ({ searchParams }) => {
           const file = docValue.file || null;
           const isMandatory = doc.IsMandatory === 1;
 
-          // Mandatory number check
           if (isMandatory && !number) {
             newErrors[`doc_${doc.id}_number`] =
               `${doc.DocumentTypeName} number is required`;
           }
 
-          // Mandatory file check
           if (isMandatory && !file) {
             newErrors[`doc_${doc.id}_file`] =
               `${doc.DocumentTypeName} file is required`;
@@ -516,7 +442,7 @@ const B2bRegister = ({ searchParams }) => {
   };
 
   const isStepComplete = (step) => {
-    return completedSteps.has(step) || isStepFieldsComplete(step);
+    return completedSteps.has(step);
   };
 
   const handleDocRemove = (id) => {
@@ -646,7 +572,6 @@ const B2bRegister = ({ searchParams }) => {
     setLoading(true);
     try {
       const hashedPassword = hashPasswordSHA1(formData?.password);
-      // const response = await WEBSignUpWithCompanyInfoAPI(formData);
       const response = await WEBSignUpWithCompanyInfoAPI({
         ...formData,
         password: hashedPassword,
@@ -659,7 +584,6 @@ const B2bRegister = ({ searchParams }) => {
         setIsFirstTimeSuccess(true);
         setSubmitSuccess(true);
         setCompletedSteps(new Set([0, 1, 2, 3]));
-        // navigation(singupRedirectUrl);
       } else {
         const newErrors = {};
         if (response.ismobileexists === 1) {
@@ -685,6 +609,31 @@ const B2bRegister = ({ searchParams }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeStep]);
 
+  const isGstValid =
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
+      formData.gst_number || "",
+    );
+
+  const inputFieldSx = {
+    width: "100%",
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "4px",
+      bgcolor: "#ffffff",
+      fontSize: "0.92rem",
+      "& fieldset": { borderColor: "#d1d5db" },
+      "&:hover fieldset": { borderColor: "#9ca3af" },
+      "&.Mui-focused fieldset": {
+        borderColor: "#0b291d",
+        borderWidth: "1.5px",
+      },
+    },
+    "& .MuiInputLabel-root": {
+      fontSize: "0.9rem",
+      color: "#6b7280",
+      "&.Mui-focused": { color: "#0b291d" },
+    },
+  };
+
   if (submitSuccess) {
     return (
       <Fade in={submitSuccess} timeout={500}>
@@ -708,12 +657,44 @@ const B2bRegister = ({ searchParams }) => {
       sx={{
         minHeight: "100vh",
         pb: 8,
-        pt: 3,
+        pt: { xs: 4, sm: 6 },
         width: "100%",
+        bgcolor: "#fbfbfc",
         boxSizing: "border-box",
       }}
     >
       <Container maxWidth="lg">
+        {/* Top Bar Header */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            mb: 2,
+            px: { xs: 1, sm: 0 },
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{ color: "#6b7280", fontSize: "0.9rem" }}
+          >
+            Already have an account?{" "}
+            <Box
+              component={Link}
+              href={cancelRedireactUrl}
+              sx={{
+                color: "#b45309",
+                fontWeight: 700,
+                textDecoration: "none",
+                "&:hover": { textDecoration: "underline" },
+              }}
+            >
+              Sign In
+            </Box>
+          </Typography>
+        </Box>
+
+        {/* Top Horizontal Stepper */}
         <HeaderStepper
           activeStep={activeStep}
           handleStepClick={handleStepClick}
@@ -721,742 +702,837 @@ const B2bRegister = ({ searchParams }) => {
           isMobile={isMobile}
           STEPS={STEPS}
         />
+
+        {/* Main Content Card */}
         <Paper
           elevation={0}
           sx={{
-            bgcolor: "#7e7e7e07",
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-            borderRadius: 0,
+            bgcolor: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: "8px",
+            boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+            p: { xs: 2.5, sm: 4, md: 5 },
+            maxWidth: "960px",
+            mx: "auto",
           }}
         >
-          <Grid container>
-            {/* Sidebar Navigation */}
-            <SidebarStepper
-              activeStep={activeStep}
-              handleStepClick={handleStepClick}
-              isStepComplete={isStepComplete}
-              isMobile={isMobile}
-              STEPS={STEPS}
-            />
-            <Grid
-              size={{
-                xs: 12,
-                md: 8.5,
+          {/* Headline & Subtitle */}
+          <Box sx={{ mb: 3.5, textAlign: "left" }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontWeight: 600,
+                color: "#0b291d",
+                fontSize: { xs: "1.35rem", sm: "1.65rem" },
+                letterSpacing: "-0.01em",
+                lineHeight: 1.25,
+                mb: 0.5,
               }}
-              sx={{ p: 4 }}
             >
-              {activeStep === 0 && (
-                <Fade in={activeStep === 0}>
-                  <Box>
-                    <SectionHeader
-                      isStepComplete={isStepComplete}
-                      sectionRefs={sectionRefs}
-                      title="Business Information"
-                      icon={BusinessIcon}
-                      stepIndex={0}
+              Create Your B2B Account
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#6b7280",
+                fontSize: "0.88rem",
+              }}
+            >
+              Register your business to access our exclusive B2B jewellery
+              platform
+            </Typography>
+          </Box>
+
+          {errors.step && (
+            <Alert severity="warning" sx={{ mb: 3, borderRadius: "4px" }}>
+              {errors.step}
+            </Alert>
+          )}
+
+          {/* STEP 0: Business Information */}
+          {activeStep === 0 && (
+            <Fade in={activeStep === 0}>
+              <Box>
+                {/* 1. Business Details */}
+                <SectionHeader
+                  icon={BusinessIcon}
+                  title="Business Details"
+                  subtitle="Tell us about your business"
+                />
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1.2fr 1fr 1fr" },
+                    gap: 2,
+                    mb: 4,
+                  }}
+                >
+                  <TextField
+                    fullWidth
+                    required
+                    label="Company / Firm Name"
+                    placeholder="Enter company or firm name"
+                    name="company_name"
+                    value={formData.company_name}
+                    onChange={handleInputChange}
+                    error={!!errors.company_name}
+                    helperText={errors.company_name}
+                    sx={inputFieldSx}
+                  />
+
+                  <FormControl
+                    fullWidth
+                    required
+                    error={!!errors.entity_type}
+                    sx={inputFieldSx}
+                  >
+                    <InputLabel>Type of Entity</InputLabel>
+                    <Select
+                      MenuProps={{
+                        PaperProps: { style: { maxHeight: 240 } },
+                      }}
+                      name="entity_type"
+                      value={formData.entity_type}
+                      onChange={handleSelectChange}
+                      label="Type of Entity"
+                    >
+                      {TypeofEntityOptions?.map((option) => (
+                        <MenuItem key={option?.id} value={option?.id}>
+                          {option?.TypeOfEntityName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl
+                    fullWidth
+                    required
+                    error={!!errors.industry_category}
+                    sx={inputFieldSx}
+                  >
+                    <InputLabel>Industry Category</InputLabel>
+                    <Select
+                      MenuProps={{
+                        PaperProps: { style: { maxHeight: 240 } },
+                      }}
+                      name="industry_category"
+                      value={formData.industry_category}
+                      onChange={handleSelectChange}
+                      label="Industry Category"
+                    >
+                      {CompanyType?.map((option) => (
+                        <MenuItem key={option?.id} value={option?.id}>
+                          {option?.CompnayTypeName ||
+                            option?.CompanyTypeName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                <Divider sx={{ my: 3.5, borderColor: "#f3f4f6" }} />
+
+                {/* 2. Tax & Registration */}
+                <SectionHeader
+                  icon={SecurityIcon}
+                  title="Tax & Registration"
+                  subtitle="Provide your tax and registration details"
+                />
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" },
+                    gap: 2,
+                    mb: 4,
+                  }}
+                >
+                  <Tooltip
+                    title="15 characters: 2 state digits + 10 PAN + 1 entity + 1 Z + 1 check digit"
+                    arrow
+                    placement="top-start"
+                  >
+                    <TextField
+                      fullWidth
+                      required
+                      error={!!errors.gst_number}
+                      helperText={
+                        errors.gst_number ||
+                        (isGstValid ? (
+                          <span style={{ color: "#059669", fontWeight: 600 }}>
+                            ✓ Valid GSTIN format
+                          </span>
+                        ) : (
+                          ""
+                        ))
+                      }
+                      label="GST Number"
+                      placeholder="24ABCDE1234F1Z5"
+                      name="gst_number"
+                      value={formData.gst_number}
+                      onChange={handleInputChange}
+                      sx={inputFieldSx}
                     />
-                    <Divider />
-                    {errors.step && (
-                      <Alert severity="warning" sx={{ mb: 2 }}>
-                        {errors.step}
-                      </Alert>
-                    )}
-                    <Grid container spacing={3} sx={{ mt: 2 }}>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          fullWidth
-                          required
-                          label="Company / Firm Name"
-                          name="company_name"
-                          value={formData.company_name}
-                          onChange={handleInputChange}
-                          error={!!errors.company_name}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControl
-                          fullWidth
-                          required
-                          error={!!errors.entity_type}
-                        >
-                          <InputLabel>Type of Entity</InputLabel>
-                          <Select
-                            MenuProps={{
-                              PaperProps: {
-                                style: {
-                                  maxHeight: 200, // control dropdown height
-                                },
-                              },
-                            }}
-                            name="entity_type"
-                            value={formData.entity_type}
-                            onChange={handleSelectChange}
-                            label="Type of Entity"
+                  </Tooltip>
+
+                  <Tooltip
+                    title="PAN format: 5 letters + 4 digits + 1 letter"
+                    arrow
+                    placement="top-start"
+                  >
+                    <TextField
+                      fullWidth
+                      required
+                      error={!!errors.pan_number}
+                      helperText={errors.pan_number}
+                      label="PAN Number"
+                      placeholder="ABCDE1234F"
+                      name="pan_number"
+                      value={formData.pan_number}
+                      onChange={handleInputChange}
+                      inputProps={{ style: { textTransform: "uppercase" } }}
+                      sx={inputFieldSx}
+                    />
+                  </Tooltip>
+
+                  <TextField
+                    fullWidth
+                    label="IEC Code (Optional)"
+                    placeholder="Enter IEC code"
+                    name="iec_code"
+                    value={formData.iec_code}
+                    onChange={handleInputChange}
+                    sx={inputFieldSx}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Import Export Code (Optional)"
+                    placeholder="Enter code"
+                    name="iec_code_alt"
+                    value={formData.iec_code}
+                    onChange={(e) =>
+                      setFormData((p) => ({
+                        ...p,
+                        iec_code: e.target.value,
+                      }))
+                    }
+                    sx={inputFieldSx}
+                  />
+                </Box>
+
+                <Divider sx={{ my: 3.5, borderColor: "#f3f4f6" }} />
+
+                {/* 3. Registered Business Address */}
+                <SectionHeader
+                  icon={LocationOnIcon}
+                  title="Registered Business Address"
+                  subtitle="Enter your registered business address"
+                />
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+                  <TextField
+                    required
+                    error={!!errors.address_line}
+                    helperText={errors.address_line}
+                    fullWidth
+                    multiline
+                    rows={2}
+                    label="Address"
+                    placeholder="Enter complete registered address"
+                    name="address_line"
+                    value={formData.address_line}
+                    onChange={handleInputChange}
+                    sx={inputFieldSx}
+                  />
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                      gap: 2,
+                    }}
+                  >
+                    <TextField
+                      required
+                      error={!!errors.city}
+                      helperText={errors.city}
+                      fullWidth
+                      label="City"
+                      placeholder="Enter city"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      sx={inputFieldSx}
+                    />
+                    <TextField
+                      required
+                      error={!!errors.state}
+                      helperText={errors.state}
+                      fullWidth
+                      label="State"
+                      placeholder="Enter state"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      sx={inputFieldSx}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                      gap: 2,
+                    }}
+                  >
+                    <TextField
+                      required
+                      error={!!errors.country}
+                      helperText={errors.country}
+                      fullWidth
+                      label="Country"
+                      placeholder="Enter country"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      sx={inputFieldSx}
+                    />
+                    <TextField
+                      required
+                      error={!!errors.pincode}
+                      helperText={errors.pincode}
+                      fullWidth
+                      label="Pincode"
+                      placeholder="Enter 6 digit pincode"
+                      name="pincode"
+                      value={formData.pincode}
+                      onChange={handleInputChange}
+                      sx={inputFieldSx}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            </Fade>
+          )}
+
+          {/* STEP 1: Personal Information */}
+          {activeStep === 1 && (
+            <Fade in={activeStep === 1}>
+              <Box>
+                <SectionHeader
+                  icon={PersonIcon}
+                  title="Personal Information"
+                  subtitle="Enter authorized representative details"
+                />
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                    gap: 2.5,
+                  }}
+                >
+                  <TextField
+                    required
+                    error={!!errors.first_name}
+                    helperText={errors.first_name}
+                    fullWidth
+                    label="First Name"
+                    placeholder="Enter first name"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    sx={inputFieldSx}
+                  />
+
+                  <TextField
+                    required
+                    error={!!errors.last_name}
+                    helperText={errors.last_name}
+                    fullWidth
+                    label="Last Name"
+                    placeholder="Enter last name"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    sx={inputFieldSx}
+                  />
+
+                  <CountryDropDown
+                    emailRef={null}
+                    Errors={errors}
+                    setErrors={setErrors}
+                    mobileNo={formData.mobileNo}
+                    setMobileNo={(val) =>
+                      setFormData((prev) => ({ ...prev, mobileNo: val }))
+                    }
+                    mobileNoRef={mobileNoRef}
+                    IsMobileThrough={IsMobileThrough}
+                    handleKeyDown={() => {}}
+                    handleInputChange={handleInputChange}
+                    Countrycodestate={formData.mobileCountry}
+                    setCountrycodestate={(val) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        mobileCountry: val,
+                      }))
+                    }
+                    isElvee={true}
+                    activeStep={activeStep}
+                  />
+
+                  <TextField
+                    fullWidth
+                    required
+                    error={!!errors.email}
+                    helperText={errors.email}
+                    label="Email Address"
+                    placeholder="Enter email address"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    type="email"
+                    sx={inputFieldSx}
+                  />
+
+                  <TextField
+                    fullWidth
+                    required
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            sx={{ color: "#6b7280" }}
                           >
-                            {TypeofEntityOptions?.map((option) => (
-                              <MenuItem key={option?.id} value={option?.id}>
-                                {option?.TypeOfEntityName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControl
-                          fullWidth
-                          required
-                          error={!!errors.industry_category}
-                        >
-                          <InputLabel>Industry Category</InputLabel>
-                          <Select
-                            MenuProps={{
-                              PaperProps: {
-                                style: {
-                                  maxHeight: 200,
-                                },
-                              },
-                            }}
-                            name="industry_category"
-                            value={formData.industry_category}
-                            onChange={handleSelectChange}
-                            label="Industry Category"
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    error={!!errors.password}
+                    helperText={errors.password}
+                    label="Password"
+                    placeholder="Create a strong password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    type={showPassword ? "text" : "password"}
+                    sx={inputFieldSx}
+                  />
+
+                  <TextField
+                    error={!!errors.confirm_password}
+                    helperText={errors.confirm_password}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() =>
+                              setShowConfirmPassword(!showConfirmPassword)
+                            }
+                            edge="end"
+                            sx={{ color: "#6b7280" }}
                           >
-                            {CompanyType?.map((option) => (
-                              <MenuItem key={option?.id} value={option?.id}>
-                                {option?.CompnayTypeName ||
-                                  option?.CompanyTypeName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Tooltip
-                          title={
-                            <span style={{ lineHeight: 1.5 }}>
-                              <strong>GSTIN format:</strong> 15 characters
-                              <br />
-                              <em>
-                                → 2 digits (state code) + 10-char PAN + 1 entity
-                                + 1 Z + 1 check digit
-                              </em>
-                              <br />
-                              (e.g.{" "}
-                              <code
-                                style={{ fontWeight: "bold", color: "black" }}
-                              >
-                                27ABCDE1234F1Z5
-                              </code>
-                              )
-                            </span>
-                          }
-                          arrow
-                          placement="top-start"
-                          enterTouchDelay={0}
+                            {showConfirmPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    fullWidth
+                    required
+                    label="Confirm Password"
+                    placeholder="Confirm password"
+                    name="confirm_password"
+                    value={formData.confirm_password}
+                    onChange={handleInputChange}
+                    type={showConfirmPassword ? "text" : "password"}
+                    sx={inputFieldSx}
+                  />
+                </Box>
+              </Box>
+            </Fade>
+          )}
+
+          {/* STEP 2: Documents Upload */}
+          {activeStep === 2 && (
+            <Fade in={activeStep === 2}>
+              <Box>
+                <SectionHeader
+                  icon={DocumentIcon}
+                  title="Business Documents Upload"
+                  subtitle="Upload required verification documents for your business"
+                />
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                    gap: 3,
+                  }}
+                >
+                  {DocumentType?.map((doc) => {
+                    const isMandatory = doc.IsMandatory === 1;
+                    return (
+                      <Box key={doc.id}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            mb: 1,
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
+                            color: "#374151",
+                          }}
+                        >
+                          {doc?.DocumentTypeName} Number{" "}
+                          {isMandatory ? "*" : "(Optional)"}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1.5,
+                            alignItems: "flex-start",
+                          }}
                         >
                           <TextField
+                            error={!!errors[`doc_${doc.id}_number`]}
+                            helperText={errors[`doc_${doc.id}_number`]}
                             fullWidth
-                            required
-                            error={!!errors.gst_number}
-                            label="GST Number"
-                            name="gst_number"
-                            value={formData.gst_number}
-                            onChange={handleInputChange}
-                          />
-                        </Tooltip>
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Tooltip
-                          title={
-                            <span>
-                              PAN format:{" "}
-                              <strong>5 letters + 4 digits + 1 letter</strong>
-                              <br />
-                              (e.g.{" "}
-                              <code
-                                style={{ fontWeight: "bold", color: "black" }}
-                              >
-                                ABCDE1234F
-                              </code>
+                            placeholder={`Enter ${doc?.DocumentTypeName} number`}
+                            value={
+                              formData.documents?.[doc.id]?.number || ""
+                            }
+                            onChange={(e) =>
+                              handleDocNumberChange(
+                                doc.id,
+                                e.target.value,
+                                doc?.DocumentTypeName,
                               )
-                            </span>
-                          }
-                          arrow
-                          placement="top-start"
-                          enterTouchDelay={0}
-                        >
-                          <TextField
-                            fullWidth
-                            required
-                            error={!!errors.pan_number}
-                            label="PAN (Permanent Account Number)"
-                            name="pan_number"
-                            value={formData.pan_number}
-                            onChange={handleInputChange}
-                            inputProps={{
-                              style: { textTransform: "uppercase" },
-                            }}
+                            }
+                            sx={inputFieldSx}
                           />
-                        </Tooltip>
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.iec_code}
-                          fullWidth
-                          label="Import Export Code (if applicable)"
-                          name="iec_code"
-                          value={formData.iec_code}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.address_line}
-                          fullWidth
-                          label="Address"
-                          name="address_line"
-                          value={formData.address_line}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.city}
-                          fullWidth
-                          label="City"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.state}
-                          fullWidth
-                          label="State"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.pincode}
-                          fullWidth
-                          label="Pincode"
-                          name="pincode"
-                          value={formData.pincode}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.country}
-                          fullWidth
-                          label="Country"
-                          name="country"
-                          value={formData.country}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Fade>
-              )}
-
-              {/* Step 1: Authorized Representative */}
-              {activeStep === 1 && (
-                <Fade in={activeStep === 1}>
-                  <Box>
-                    <SectionHeader
-                      isStepComplete={isStepComplete}
-                      sectionRefs={sectionRefs}
-                      title="Personal Information"
-                      icon={PersonIcon}
-                      stepIndex={1}
-                    />
-                    <Divider />
-                    {errors.step && (
-                      <Alert severity="warning" sx={{ mb: 2 }}>
-                        {errors.step}
-                      </Alert>
-                    )}
-                    <Grid container spacing={3} sx={{ mt: 2 }}>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.first_name}
-                          fullWidth
-                          label="First Name"
-                          name="first_name"
-                          value={formData.first_name}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          required
-                          error={!!errors.last_name}
-                          fullWidth
-                          label="Last Name"
-                          name="last_name"
-                          value={formData.last_name}
-                          onChange={handleInputChange}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        {/* <TextField fullWidth required error={!!errors.mobileNo} label="Mobile Number" name="mobileNo" value={formData.mobileNo} onChange={handleInputChange} type="tel" /> */}
-                        {/* <CountryDropDown
-                          emailRef={null}
-                          Errors={errors}                  
-                          setErrors={setErrors}            
-                          mobileNo={formData.mobileNo}     
-                          setMobileNo={(val) =>
-                            setFormData((prev) => ({ ...prev, mobileNo: val }))
-                          }
-                          mobileNoRef={mobileNoRef}
-                          IsMobileThrough={IsMobileThrough}
-                          handleKeyDown={() => { }}
-                          handleInputChange={(e) => {
-                            const { value } = e.target;
-                            setFormData((prev) => ({ ...prev, mobileNo: value }));
-                          }}
-                          Countrycodestate={formData.mobileCountry}
-                          setCountrycodestate={(val) =>
-                            setFormData((prev) => ({ ...prev, mobileCountry: val }))
-                          }
-                          isElvee={true}
-                        /> */}
-                        <CountryDropDown
-                          emailRef={null}
-                          Errors={errors}
-                          setErrors={setErrors}
-                          mobileNo={formData.mobileNo}
-                          setMobileNo={(val) =>
-                            setFormData((prev) => ({ ...prev, mobileNo: val }))
-                          }
-                          mobileNoRef={mobileNoRef}
-                          IsMobileThrough={IsMobileThrough}
-                          handleKeyDown={() => {}}
-                          handleInputChange={handleInputChange} // <-- pass your form handler
-                          Countrycodestate={formData.mobileCountry}
-                          setCountrycodestate={(val) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              mobileCountry: val,
-                            }))
-                          }
-                          isElvee={true}
-                          activeStep={activeStep}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          fullWidth
-                          required
-                          error={!!errors.email}
-                          label="Email Address"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          type="email"
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          fullWidth
-                          required
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  aria-label="toggle password visibility"
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  edge="end"
-                                >
-                                  {showPassword ? (
-                                    <VisibilityOff />
-                                  ) : (
-                                    <Visibility />
-                                  )}
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                          error={!!errors.password}
-                          label="Password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          type={showPassword ? "text" : "password"}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <TextField
-                          error={!!errors.confirm_password}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  aria-label="toggle password visibility"
-                                  onClick={() =>
-                                    setShowConfirmPassword(!showConfirmPassword)
-                                  }
-                                  edge="end"
-                                >
-                                  {showConfirmPassword ? (
-                                    <VisibilityOff />
-                                  ) : (
-                                    <Visibility />
-                                  )}
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                          fullWidth
-                          required
-                          label="Confirm Password"
-                          name="confirm_password"
-                          value={formData.confirm_password}
-                          onChange={handleInputChange}
-                          type={showConfirmPassword ? "text" : "password"}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-                </Fade>
-              )}
-
-              {/* Step 2: Documents Upload */}
-              {activeStep === 2 && (
-                <Fade in={activeStep === 2}>
-                  <Box>
-                    <SectionHeader
-                      isStepComplete={isStepComplete}
-                      sectionRefs={sectionRefs}
-                      title="Business Documents Upload"
-                      icon={DocumentIcon}
-                      stepIndex={2}
-                    />
-                    <Divider />
-
-                    {errors.step && (
-                      <Alert severity="warning" sx={{ mb: 2 }}>
-                        {errors.step}
-                      </Alert>
-                    )}
-
-                    <Grid container spacing={3} sx={{ mt: 2 }}>
-                      {DocumentType?.map((doc) => {
-                        const isMandatory = doc.IsMandatory === 1;
-                        return (
-                          <Grid size={{ xs: 12, md: 6 }} key={doc.id}>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                mb: 1.5,
-                                fontWeight: 500,
-                                fontSize: "0.875rem",
-                              }}
-                            >
-                              {doc?.DocumentTypeName} Number{" "}
-                              {isMandatory ? "*" : ""}
-                            </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                gap: 2,
-                                alignItems: "center",
-                              }}
-                            >
-                              <TextField
-                                error={!!errors[`doc_${doc.id}_number`]}
-                                fullWidth
-                                value={
-                                  formData.documents?.[doc.id]?.number || ""
-                                }
-                                onChange={(e) =>
-                                  handleDocNumberChange(
-                                    doc.id,
-                                    e.target.value,
-                                    doc?.DocumentTypeName,
-                                  )
-                                }
-                              />
-                              <FileUploadField
-                                error={!!errors[`doc_${doc.id}_file`]}
-                                handleDocRemove={() => handleDocRemove(doc?.id)}
-                                handleFileChange={(e) =>
-                                  handleDocFileChange(
-                                    doc.id,
-                                    e.target.files?.[0] || null,
-                                    doc?.DocumentTypeName,
-                                  )
-                                }
-                                label="Upload"
-                                name={`doc_${doc.id}`}
-                                file={
-                                  formData.documents?.[doc.id]?.file || null
-                                }
-                                compact
-                              />
-                            </Box>
-                          </Grid>
-                        );
-                      })}
-                    </Grid>
-                  </Box>
-                </Fade>
-              )}
-              {/* Step 3: Declarations & Consent */}
-              {activeStep === 3 && (
-                <Fade in={activeStep === 3}>
-                  <Box>
-                    <SectionHeader
-                      isStepComplete={isStepComplete}
-                      sectionRefs={sectionRefs}
-                      title="Declarations & Consent"
-                      icon={VerifiedIcon}
-                      stepIndex={3}
-                    />
-                    <Divider />
-                    {errors.step && (
-                      <Alert severity="warning" sx={{ mb: 2 }}>
-                        {errors.step}
-                      </Alert>
-                    )}
-                    <Box
-                      sx={{
-                        p: 3,
-                        borderRadius: "12px",
-                      }}
-                    >
-                      <Box sx={{ mb: 3 }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              name="declaration"
-                              checked={formData.declaration}
-                              onChange={handleInputChange}
-                            />
-                          }
-                          label={
-                            <Typography
-                              sx={{
-                                fontSize: "0.938rem",
-                                lineHeight: 1.6,
-                              }}
-                            >
-                              I/We hereby declare that the information and
-                              documents provided are true and correct. *
-                            </Typography>
-                          }
-                          error={!!errors.declaration}
-                          helperText={errors.declaration}
-                        />
+                          <FileUploadField
+                            error={!!errors[`doc_${doc.id}_file`]}
+                            handleDocRemove={() => handleDocRemove(doc?.id)}
+                            handleFileChange={(e) =>
+                              handleDocFileChange(
+                                doc.id,
+                                e.target.files?.[0] || null,
+                                doc?.DocumentTypeName,
+                              )
+                            }
+                            label="Upload"
+                            name={`doc_${doc.id}`}
+                            file={formData.documents?.[doc.id]?.file || null}
+                            compact
+                          />
+                        </Box>
                       </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
+            </Fade>
+          )}
 
-                      <Box>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              name="consent"
-                              checked={formData.consent}
-                              onChange={handleInputChange}
-                            />
-                          }
-                          label={
-                            <Typography
-                              sx={{
-                                fontSize: "0.938rem",
-                                lineHeight: 1.6,
-                              }}
-                            >
-                              I/We consent to the use of my/our data in
-                              accordance with the Privacy Policy & Terms &
-                              Conditions. *
-                            </Typography>
-                          }
-                          error={!!errors.consent}
-                          helperText={errors.consent}
+          {/* STEP 3: Declarations & Consent */}
+          {activeStep === 3 && (
+            <Fade in={activeStep === 3}>
+              <Box>
+                <SectionHeader
+                  icon={VerifiedIcon}
+                  title="Declarations & Consent"
+                  subtitle="Review our terms and submit your application"
+                />
+
+                <Box
+                  sx={{
+                    p: { xs: 2, sm: 3 },
+                    bgcolor: "#fafafa",
+                    borderRadius: "6px",
+                    border: "1px solid #f3f4f6",
+                    mb: 3,
+                  }}
+                >
+                  <Box sx={{ mb: 2 }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name="declaration"
+                          checked={formData.declaration}
+                          onChange={handleInputChange}
+                          sx={{
+                            color: "#9ca3af",
+                            "&.Mui-checked": { color: "#0b291d" },
+                          }}
                         />
-                      </Box>
-                    </Box>
-
-                    <Box
-                      sx={{
-                        mt: 3,
-                        p: 2.5,
-                        bgcolor: "rgba(251, 191, 36, 0.08)",
-                        border: "1px solid rgba(251, 191, 36, 0.2)",
-                        borderRadius: "12px",
-                      }}
-                    >
+                      }
+                      label={
+                        <Typography
+                          sx={{
+                            fontSize: "0.92rem",
+                            lineHeight: 1.5,
+                            color: "#374151",
+                          }}
+                        >
+                          I/We hereby declare that the information and documents
+                          provided are true and correct. *
+                        </Typography>
+                      }
+                    />
+                    {errors.declaration && (
                       <Typography
-                        variant="body2"
-                        sx={{
-                          color: "#fbbf24",
-                          fontSize: "0.875rem",
-                          lineHeight: 1.6,
-                        }}
+                        variant="caption"
+                        color="error"
+                        sx={{ display: "block", ml: 4 }}
                       >
-                        <strong>Important:</strong> By submitting this form, you
-                        acknowledge that all information provided is accurate
-                        and complete. False information may result in
-                        application rejection.
+                        {errors.declaration}
                       </Typography>
-                    </Box>
+                    )}
                   </Box>
-                </Fade>
-              )}
-              {/* Navigation Buttons */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mt: 5,
-                  pt: 4,
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-                }}
-              >
+
+                  <Box>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          name="consent"
+                          checked={formData.consent}
+                          onChange={handleInputChange}
+                          sx={{
+                            color: "#9ca3af",
+                            "&.Mui-checked": { color: "#0b291d" },
+                          }}
+                        />
+                      }
+                      label={
+                        <Typography
+                          sx={{
+                            fontSize: "0.92rem",
+                            lineHeight: 1.5,
+                            color: "#374151",
+                          }}
+                        >
+                          I/We consent to the use of my/our data in accordance
+                          with the Privacy Policy & Terms & Conditions. *
+                        </Typography>
+                      }
+                    />
+                    {errors.consent && (
+                      <Typography
+                        variant="caption"
+                        color="error"
+                        sx={{ display: "block", ml: 4 }}
+                      >
+                        {errors.consent}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+
+                <Box
+                  sx={{
+                    p: 2,
+                    bgcolor: "rgba(251, 191, 36, 0.08)",
+                    border: "1px solid rgba(251, 191, 36, 0.25)",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#92400e",
+                      fontSize: "0.85rem",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    <strong>Important:</strong> By submitting this form, you
+                    acknowledge that all information provided is accurate and
+                    complete. False information may result in application
+                    rejection.
+                  </Typography>
+                </Box>
+              </Box>
+            </Fade>
+          )}
+
+          {/* Action Navigation Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mt: 4,
+              pt: 2.5,
+              borderTop: "1px solid #f3f4f6",
+              flexDirection: { xs: "column-reverse", sm: "row" },
+              gap: 1.5,
+            }}
+          >
+            <Button
+              startIcon={<BookmarkIcon sx={{ fontSize: 18 }} />}
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                px: 2.5,
+                py: { xs: 1.25, sm: 1.1 },
+                fontSize: "0.88rem",
+                fontWeight: 600,
+                textTransform: "none",
+                border: "1px solid #d1d5db",
+                color: "#0b291d",
+                borderRadius: "4px",
+                "&:hover": {
+                  bgcolor: "#f9fafb",
+                  borderColor: "#9ca3af",
+                },
+              }}
+            >
+              Save & Continue Later
+            </Button>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                width: { xs: "100%", sm: "auto" },
+                flexDirection: { xs: "row", sm: "row" },
+              }}
+            >
+              {activeStep > 0 && (
                 <Button
                   onClick={handleBack}
-                  disabled={activeStep === 0}
-                  startIcon={<ArrowBackIcon />}
+                  startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
                   sx={{
-                    px: 3,
-                    py: 1.25,
-                    fontSize: "0.938rem",
+                    flex: { xs: 1, sm: "none" },
+                    px: 2,
+                    py: { xs: 1.25, sm: 1.1 },
+                    fontSize: "0.88rem",
                     fontWeight: 600,
                     textTransform: "none",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: 0.2,
-                    bgcolor: "rgba(255, 255, 255, 0.02)",
-                    transition: "all 0.2s ease",
+                    color: "#6b7280",
+                    border: { xs: "1px solid #e5e7eb", sm: "none" },
+                    borderRadius: "4px",
                     "&:hover": {
-                      backgroundColor: "#505050ff",
-                      borderColor: "rgba(255, 255, 255, 0.2)",
-                      color: "#fff",
-                    },
-                    "&:disabled": {
-                      color: "#4b5563",
-                      borderColor: "rgba(255, 255, 255, 0.05)",
+                      color: "#111827",
+                      bgcolor: "transparent",
                     },
                   }}
                 >
                   Back
                 </Button>
+              )}
 
-                <Box sx={{ display: "flex", gap: 2 }}>
-                  <Button
-                    onClick={() => navigation("/LoginOption")}
-                    sx={{
-                      px: 3,
-                      py: 1.25,
-                      fontSize: "0.938rem",
-                      fontWeight: 600,
-                      color: "#9ca3af",
-                      textTransform: "none",
-                      border: "2px solid rgba(255, 255, 255, 0.1)",
-                      borderRadius: 0.2,
-                      bgcolor: "transparent",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.03)",
-                        borderColor: "#10264E",
-                      },
-                    }}
-                  >
-                    Back to Login
-                  </Button>
-
-                  {activeStep === STEPS.length - 1 ? (
-                    <Button
-                      variant="contained"
-                      disabled={!areAllStepsComplete() || loading}
-                      startIcon={
-                        loading ? (
-                          <CircularProgress size={18} sx={{ color: "#fff" }} />
-                        ) : (
-                          <CheckIcon />
-                        )
-                      }
-                      sx={{
-                        px: 4,
-                        py: 1.25,
-                        fontSize: "0.938rem",
-                        fontWeight: 600,
-                        textTransform: "none",
-                        borderRadius: "10px",
-                        background: "#10264E",
-                        transition: "all 0.2s ease",
-                        "&:hover": {
-                          background: "#10264E",
-                          transform: "translateY(-1px)",
-                        },
-                        "&:disabled": {
-                          background: "rgba(139, 92, 246, 0.3)",
-                          color: "rgba(255, 255, 255, 0.5)",
-                        },
-                      }}
-                      type="submit"
-                      onClick={handleSubmit}
-                    >
-                      {loading ? "Submitting..." : "Submit Registration"}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleNext}
-                      variant="contained"
-                      endIcon={<ArrowForwardIcon />}
-                      sx={{
-                        px: 4,
-                        py: 1.25,
-                        fontSize: "0.938rem",
-                        fontWeight: 600,
-                        textTransform: "none",
-                        borderRadius: 0.2,
-                        background: "#505050ff",
-                        transition: "all 0.2s ease",
-                        "&:hover": {
-                          background: "#505050ff",
-                          transform: "translateY(-1px)",
-                        },
-                      }}
-                    >
-                      Continue
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-              {errors.submit && (
-                <Alert
-                  severity="error"
+              {activeStep === STEPS.length - 1 ? (
+                <Button
+                  variant="contained"
+                  disabled={!areAllStepsComplete() || loading}
+                  startIcon={
+                    loading ? (
+                      <CircularProgress size={18} sx={{ color: "#fff" }} />
+                    ) : (
+                      <CheckIcon />
+                    )
+                  }
                   sx={{
-                    mt: 3,
-                    bgcolor: "rgba(239, 68, 68, 0.15)",
-                    color: "#ef4444",
-                    border: "1px solid rgba(239, 68, 68, 0.3)",
-                    borderRadius: "12px",
-                    "& .MuiAlert-icon": {
-                      color: "#ef4444",
+                    flex: { xs: activeStep > 0 ? 2 : 1, sm: "none" },
+                    px: 3.5,
+                    py: { xs: 1.25, sm: 1.25 },
+                    fontSize: "0.92rem",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    borderRadius: "4px",
+                    bgcolor: "#0b291d",
+                    color: "#ffffff",
+                    "&:hover": {
+                      bgcolor: "#144230",
+                    },
+                    "&:disabled": {
+                      bgcolor: "#e5e7eb",
+                      color: "#9ca3af",
+                    },
+                  }}
+                  type="submit"
+                  onClick={handleSubmit}
+                >
+                  {loading ? "Submitting..." : "Submit Registration"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: 16 }} />}
+                  sx={{
+                    flex: { xs: activeStep > 0 ? 2 : 1, sm: "none" },
+                    px: 3.5,
+                    py: { xs: 1.25, sm: 1.25 },
+                    fontSize: "0.92rem",
+                    fontWeight: 600,
+                    textTransform: "none",
+                    borderRadius: "4px",
+                    bgcolor: "#0b291d",
+                    color: "#ffffff",
+                    "&:hover": {
+                      bgcolor: "#144230",
                     },
                   }}
                 >
-                  {errors.submit}
-                </Alert>
+                  Continue
+                </Button>
               )}
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Paper>
+
+        {/* Bottom Trust & Security Banner */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 2.5,
+            px: 2,
+            py: 1.25,
+            bgcolor: "#f0fdf4",
+            border: "1px solid #dcfce7",
+            borderRadius: "6px",
+            maxWidth: "960px",
+            mx: "auto",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <CheckIcon sx={{ fontSize: 18, color: "#16a34a" }} />
+            <Typography sx={{ fontSize: "0.82rem", color: "#166534", fontWeight: 500 }}>
+              Your information is secured with 256-bit SSL encryption
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+            <LockIcon sx={{ fontSize: 16, color: "#16a34a" }} />
+            <Typography sx={{ fontSize: "0.82rem", color: "#166534" }}>
+              We respect your privacy.{" "}
+              <Box
+                component={Link}
+                href="/privacyPolicy"
+                sx={{
+                  color: "#166534",
+                  fontWeight: 600,
+                  textDecoration: "underline",
+                  "&:hover": { color: "#14532d" },
+                }}
+              >
+                Privacy Policy
+              </Box>
+            </Typography>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );

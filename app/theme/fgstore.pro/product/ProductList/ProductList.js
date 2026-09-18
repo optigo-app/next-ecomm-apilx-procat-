@@ -126,12 +126,14 @@ const ProductList = ({ params, searchParams, storeinit }) => {
   const [diaQcCombo, setDiaQcCombo] = useState([]);
   const [csQcCombo, setCsQcCombo] = useState([]);
   const [selectedMetalId, setSelectedMetalId] = useState(
-    loginUserDetail?.MetalId,
+    loginUserDetail?.MetalId ?? storeInit?.MetalId,
   );
   const [selectedDiaId, setSelectedDiaId] = useState(
-    loginUserDetail?.cmboDiaQCid,
+    loginUserDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid,
   );
-  const [selectedCsId, setSelectedCsId] = useState(loginUserDetail?.cmboCSQCid);
+  const [selectedCsId, setSelectedCsId] = useState(
+    loginUserDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid,
+  );
   const [IsBreadCumShow, setIsBreadcumShow] = useState(false);
   const [loginInfo, setLoginInfo] = useState();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -191,14 +193,47 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     // setCSSVariable();
 
     let mtid = loginUserDetail?.MetalId ?? storeInit?.MetalId;
-    setSelectedMetalId(mtid);
+    if (mtid !== undefined) setSelectedMetalId(mtid);
 
     let diaid = loginUserDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid;
-    setSelectedDiaId(diaid);
+    if (diaid !== undefined) setSelectedDiaId(diaid);
 
     let csid = loginUserDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid;
-    setSelectedCsId(csid);
+    if (csid !== undefined) setSelectedCsId(csid);
   }, []);
+
+  useEffect(() => {
+    if (metalTypeCombo?.length > 0) {
+      const match = metalTypeCombo.find(
+        (m) => String(m?.Metalid) === String(selectedMetalId)
+      );
+      if (!match && metalTypeCombo[0]?.Metalid) {
+        setSelectedMetalId(metalTypeCombo[0].Metalid);
+      }
+    }
+  }, [metalTypeCombo, selectedMetalId]);
+
+  useEffect(() => {
+    if (diaQcCombo?.length > 0) {
+      const match = diaQcCombo.find(
+        (d) => `${d?.QualityId},${d?.ColorId}` === String(selectedDiaId)
+      );
+      if (!match && diaQcCombo[0]?.QualityId) {
+        setSelectedDiaId(`${diaQcCombo[0].QualityId},${diaQcCombo[0].ColorId}`);
+      }
+    }
+  }, [diaQcCombo, selectedDiaId]);
+
+  useEffect(() => {
+    if (csQcCombo?.length > 0) {
+      const match = csQcCombo.find(
+        (c) => `${c?.QualityId},${c?.ColorId}` === String(selectedCsId)
+      );
+      if (!match && csQcCombo[0]?.QualityId) {
+        setSelectedCsId(`${csQcCombo[0].QualityId},${csQcCombo[0].ColorId}`);
+      }
+    }
+  }, [csQcCombo, selectedCsId]);
 
   const callAllApi = () => {
     let mtTypeLocal = JSON.parse(sessionStorage.getItem("metalTypeCombo"));
@@ -350,7 +385,10 @@ const ProductList = ({ params, searchParams, storeinit }) => {
     isApiCallInProgressRef.current = true;
 
     const fetchData = async () => {
-      let obj = { mt: selectedMetalId, dia: selectedDiaId, cs: selectedCsId };
+      const effectiveMt = selectedMetalId ?? loginUserDetail?.MetalId ?? storeInit?.MetalId;
+      const effectiveDia = selectedDiaId ?? loginUserDetail?.cmboDiaQCid ?? storeInit?.cmboDiaQCid;
+      const effectiveCs = selectedCsId ?? loginUserDetail?.cmboCSQCid ?? storeInit?.cmboCSQCid;
+      let obj = { mt: effectiveMt, dia: effectiveDia, cs: effectiveCs };
       lastFetchedComboRef.current = obj;
       let UrlVal = result;
       let MenuVal = "";
@@ -4068,7 +4106,7 @@ const Product_Card = ({
               >
                 {(loginUserDetail?.CurrencyCode ?? storeInit?.CurrencyCode) +
                   " "}
-                {formatter.format(productData?.UnitCostWithMarkUp)}
+                {formatter.format(Number(productData?.UnitCostWithMarkUp) || 0)}
               </Typography>
             )}
           </Box>
@@ -4084,7 +4122,8 @@ const Product_Card = ({
               lineHeight: 1.3,
             }}
           >
-            {productData?.TitleLine || productData?.designno}
+            {productData?.designno}
+            {/* {productData?.TitleLine || productData?.designno} */}
           </Typography>
 
           {/* Gross Weight info if available */}

@@ -122,6 +122,8 @@ export function AuthProvider({ children, storeInit }) {
       "/terms-and-conditions",
       "/debug-internal-config-manager-v2",
       "/cache",
+      "/clear-cache",
+      "/clearCache"
     ];
 
     const protectedPages = [

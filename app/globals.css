@@ -1,3 +1,6 @@
+@import "react-toastify/dist/ReactToastify.css";
+@import "./(core)/styles/customToast.css";
+
 * {
   margin: 0;
   padding: 0;

@@ -258,6 +258,37 @@ export function useTestCheckout(initialStoreInit) {
     }
   };
 
+  // 6b. Handle Clear All Items
+  const handleRemoveAll = async () => {
+    const visiterId = Cookies.get("visiterId");
+    try {
+      const res = await removeFromCartList("IsDeleteAll", "Cart", visiterId);
+      const resStatus = res?.Data?.rd?.[0] || res;
+      if (
+        resStatus?.msg === "success" ||
+        resStatus?.stat === 1 ||
+        res?.msg === "success"
+      ) {
+        toast.success("All items removed from bag");
+        setCartItems([]);
+        setEditingItem(null);
+        setCustomizingItem(null);
+        const countRes = await GetCountAPI(visiterId);
+        if (countRes?.cartcount !== undefined) {
+          setCartCountNum(countRes.cartcount);
+        } else {
+          setCartCountNum(0);
+        }
+        await loadCartData(true);
+      } else {
+        toast.error(resStatus?.msg || "Failed to clear bag");
+      }
+    } catch (err) {
+      console.error("Clear all items error:", err);
+      toast.error("Failed to clear bag");
+    }
+  };
+
   // 7. Open Item Edit Mode
   const handleStartEdit = async (item) => {
     if (item?.IsMrpBase === 1) {
@@ -683,9 +714,14 @@ export function useTestCheckout(initialStoreInit) {
       return;
     }
 
+    if (!islogin) {
+      router.push(`/LoginOption?LoginRedirect=${encodeURIComponent("/cartPage")}`);
+      return;
+    }
+
     if (!selectedAddress) {
       toast.error("Please set a delivery address first");
-      router.push("/account");
+      setIsAddressModalOpen(true);
       return;
     }
 
@@ -825,6 +861,7 @@ export function useTestCheckout(initialStoreInit) {
 
     // Cart actions
     handleRemoveItem,
+    handleRemoveAll,
     handleSaveProductRemark,
     handleMoveToDetail,
 

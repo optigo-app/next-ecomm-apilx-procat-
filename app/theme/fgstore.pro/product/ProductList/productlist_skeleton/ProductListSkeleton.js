@@ -40,6 +40,12 @@ const ProductCardSkeleton = () => (
       border: "1px solid #EDEDED",
       bgcolor: "#FFFFFF",
       p: 1.5,
+      height: "100%",
+      width: "100%",
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
     }}
   >
     {/* 1:1 Square Image Container Skeleton */}
@@ -52,7 +58,7 @@ const ProductCardSkeleton = () => (
     </Box>
 
     {/* Card Details Skeleton */}
-    <Box sx={{ pt: 1.5 }}>
+    <Box sx={{ pt: 1.5, flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
       <Skeleton animation="wave" variant="text" width="50%" height={22} sx={{ mb: 0.5 }} />
       <Skeleton animation="wave" variant="text" width="70%" height={16} sx={{ mb: 1.2 }} />
       <Skeleton animation="wave" variant="rounded" height={32} sx={{ borderRadius: "6px" }} />
@@ -65,14 +71,14 @@ const SharedSkeletonLayout = () => {
   const cardsArray = Array.from({ length: 10 }, (_, index) => index);
 
   return (
-    <Box sx={{ pt: 1, pb: { xs: 6, md: 10 }, mb: 4 }}>
+    <Box sx={{ width: "100%" }}>
       <Grid container spacing={2}>
         {/* Left Filter Sidebar Skeleton (2.2 / 2.6 columns - 100% matches ProductList.js) */}
         <Grid
           size={{ xs: 12, md: 2.6, lg: 2.2 }}
           sx={{ display: { xs: "none", md: "block" } }}
         >
-          <Box>
+          <Box sx={{ pl: 2, pr: 0.5 }}>
             {/* Header FILTERS Paper */}
             <Paper
               elevation={0}
@@ -101,11 +107,12 @@ const SharedSkeletonLayout = () => {
 
         {/* Right Product Grid Skeleton (9.8 / 9.4 columns - 100% matches ProductList.js) */}
         <Grid size={{ xs: 12, md: 9.4, lg: 9.8 }}>
-          <Grid container spacing={2}>
+          <Grid container spacing={1.5}>
             {cardsArray.map((item) => (
               <Grid
                 key={item}
                 size={{ xs: 6, sm: 6, md: 4, lg: 2.4 }}
+                sx={{ display: "flex" }}
               >
                 <ProductCardSkeleton />
               </Grid>
