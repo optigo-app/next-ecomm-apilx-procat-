@@ -14,6 +14,8 @@ const LeftSide = ({
   isMediaReady,
   mediaBuildDone,
 }) => {
+
+  console.log(media , "media")
   const [selectedIndex, setSelectedIndex] = useState(0);
   const videoRefs = useRef([]);
   const thumbnailContainerRef = useRef(null);
@@ -133,7 +135,7 @@ const LeftSide = ({
             borderRadius: 2,
             overflow: "hidden",
             border: "1px solid #f2f0ee33",
-            bgcolor: "#fff9f266",
+            bgcolor: "#f4f4f466",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

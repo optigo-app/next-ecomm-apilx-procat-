@@ -846,6 +846,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     callAllApi();
   }, [storeInit]);
 
+  // http://nzen/R50B3/UFSImage/demostoreQI9S5BDATC0M1KYJH_uKey/Design_Image/Design_Thumb/FM27803~1.jpg
+  // CDNDesignImageFolThumb
+  // CDNDesignImageFol
+
   const generateThumbnails = (designNo, count, extension) => {
     const thumbBase = storeInit?.CDNDesignImageFolThumb || "";
     return Array.from({ length: count }, (_, i) => {
@@ -1254,7 +1258,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     if (pdImgList.length) {
       const thumbImagePath = pdImgList.map((url) => {
         const fileName = url?.imageUrl?.split("Design_Image/")[1];
-        const thumbImageUrl = `${storeInit?.CDNDesignImageFolThumb}${fileName?.split(".")[0]}.jpg`;
+        const thumbImageUrl = `${storeInit?.CDNDesignImageFol}${fileName?.split(".")[0]}.${url?.extension || "jpg"}`;
         const originalImageExtension = url?.extension;
         return { thumbImageUrl, originalImageExtension };
       });
@@ -1901,6 +1905,8 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
     }
   }, [stockItemArr]);
 
+  console.log(pdThumbImg,"pdThumbImg")
+
   return (
     <>
       <title>
@@ -1945,7 +1951,7 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
                       pt: { xs: 2, md: 4 },
                       px: { sm: 2, xs: 1, md: 8 },
                       width: "100%",
-                      boxSizing:'border-box'
+                      boxSizing:'border-box' ,
                     }}
                   >
                     <DetailBreadcrumb
@@ -1965,9 +1971,10 @@ const ProductDetail = ({ params, searchParams, storeInit }) => {
 
                     <Grid container spacing={{ xs: 1, md: 1 }}
                     sx={{
-                      marginBottom:'8rem'
+                      marginBottom:'8rem' ,
                     }}
                     >
+                      
                       <LeftSide
                         loading={!isImageload || !imagePromise}
                         media={(

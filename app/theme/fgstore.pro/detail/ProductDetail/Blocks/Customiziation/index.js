@@ -707,8 +707,8 @@ export default function CustomizerDrawer({
                           cursor: "pointer",
                           p: 1.5,
                           borderRadius: "12px",
-                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
-                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          border: isSelected ? "2px solid #97b8da" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#97b8da1f" : "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -718,7 +718,7 @@ export default function CustomizerDrawer({
                           transition: "all 0.18s ease",
                           boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
                           "&:hover": {
-                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            borderColor: isSelected ? "#97b8da" : "#D1D5DB",
                             transform: "translateY(-1px)",
                           },
                         }}
@@ -727,7 +727,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontWeight: 700,
                             fontSize: "13px",
-                            color: isSelected ? "#5A2A82" : "#111827",
+                            color: isSelected ? "#97b8da" : "#111827",
                             lineHeight: 1.2,
                           }}
                         >
@@ -737,7 +737,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontSize: "10.5px",
                             fontWeight: 600,
-                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            color: isSelected ? "#111827" : "#6B7280",
                             mt: 0.6,
                             letterSpacing: "0.2px",
                           }}
@@ -781,8 +781,8 @@ export default function CustomizerDrawer({
                           cursor: "pointer",
                           p: 1.5,
                           borderRadius: "12px",
-                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
-                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          border: isSelected ? "2px solid #97b8da" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#97b8da1f" : "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -792,7 +792,7 @@ export default function CustomizerDrawer({
                           transition: "all 0.18s ease",
                           boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
                           "&:hover": {
-                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            borderColor: isSelected ? "#97b8da" : "#D1D5DB",
                             transform: "translateY(-1px)",
                           },
                         }}
@@ -801,7 +801,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontWeight: 700,
                             fontSize: "13px",
-                            color: isSelected ? "#5A2A82" : "#111827",
+                            color: isSelected ? "#97b8da" : "#111827",
                             lineHeight: 1.2,
                           }}
                         >
@@ -811,7 +811,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontSize: "10.5px",
                             fontWeight: 600,
-                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            color: isSelected ? "#111827" : "#6B7280",
                             mt: 0.6,
                             letterSpacing: "0.2px",
                           }}
@@ -853,8 +853,8 @@ export default function CustomizerDrawer({
                           cursor: "pointer",
                           p: 1.5,
                           borderRadius: "12px",
-                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
-                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          border: isSelected ? "2px solid #97b8da" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#97b8da1f" : "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -864,7 +864,7 @@ export default function CustomizerDrawer({
                           transition: "all 0.18s ease",
                           boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
                           "&:hover": {
-                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            borderColor: isSelected ? "#97b8da" : "#D1D5DB",
                             transform: "translateY(-1px)",
                           },
                         }}
@@ -873,7 +873,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontWeight: 700,
                             fontSize: "13px",
-                            color: isSelected ? "#5A2A82" : "#111827",
+                            color: isSelected ? "#97b8da" : "#111827",
                             lineHeight: 1.2,
                           }}
                         >
@@ -883,7 +883,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontSize: "10.5px",
                             fontWeight: 600,
-                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            color: isSelected ? "#111827" : "#6B7280",
                             mt: 0.6,
                             letterSpacing: "0.2px",
                           }}
@@ -925,8 +925,8 @@ export default function CustomizerDrawer({
                           cursor: "pointer",
                           p: 1.5,
                           borderRadius: "12px",
-                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
-                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          border: isSelected ? "2px solid #97b8da" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#97b8da1f" : "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -936,7 +936,7 @@ export default function CustomizerDrawer({
                           transition: "all 0.18s ease",
                           boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
                           "&:hover": {
-                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            borderColor: isSelected ? "#97b8da" : "#D1D5DB",
                             transform: "translateY(-1px)",
                           },
                         }}
@@ -945,7 +945,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontWeight: 700,
                             fontSize: "13px",
-                            color: isSelected ? "#5A2A82" : "#111827",
+                            color: isSelected ? "#97b8da" : "#111827",
                             lineHeight: 1.2,
                           }}
                         >
@@ -955,7 +955,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontSize: "10.5px",
                             fontWeight: 600,
-                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            color: isSelected ? "#111827" : "#6B7280",
                             mt: 0.6,
                             letterSpacing: "0.2px",
                           }}
@@ -996,8 +996,8 @@ export default function CustomizerDrawer({
                           cursor: "pointer",
                           p: 1.5,
                           borderRadius: "12px",
-                          border: isSelected ? "2px solid #5A2A82" : "1.5px solid #E5E7EB",
-                          bgcolor: isSelected ? "#F3E8FF" : "#FFFFFF",
+                          border: isSelected ? "2px solid #97b8da" : "1.5px solid #E5E7EB",
+                          bgcolor: isSelected ? "#97b8da1f" : "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -1007,7 +1007,7 @@ export default function CustomizerDrawer({
                           transition: "all 0.18s ease",
                           boxShadow: isSelected ? "0 2px 8px rgba(90, 42, 130, 0.12)" : "none",
                           "&:hover": {
-                            borderColor: isSelected ? "#5A2A82" : "#D1D5DB",
+                            borderColor: isSelected ? "#97b8da" : "#D1D5DB",
                             transform: "translateY(-1px)",
                           },
                         }}
@@ -1016,7 +1016,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontWeight: 700,
                             fontSize: "13px",
-                            color: isSelected ? "#5A2A82" : "#111827",
+                            color: isSelected ? "#97b8da" : "#111827",
                             lineHeight: 1.2,
                           }}
                         >
@@ -1026,7 +1026,7 @@ export default function CustomizerDrawer({
                           sx={{
                             fontSize: "10px",
                             fontWeight: 600,
-                            color: isSelected ? "#7E22CE" : "#6B7280",
+                            color: isSelected ? "#111827" : "#6B7280",
                             mt: 0.4,
                             letterSpacing: "0.2px",
                           }}
@@ -1046,21 +1046,14 @@ export default function CustomizerDrawer({
         <Box sx={{ p: 2.5, px: 3, borderTop: "1px solid #E5E7EB", bgcolor: "#FFFFFF", flexShrink: 0 }}>
           <Button
             fullWidth
-            variant="contained"
+            className="btnColorProCatProduct"
             onClick={onClose}
             sx={{
               py: 1.6,
-              borderRadius: "12px",
               fontSize: "13.5px",
               fontWeight: 700,
               letterSpacing: "0.6px",
               textTransform: "uppercase",
-              backgroundColor: "#4C2068",
-              boxShadow: "0 4px 14px rgba(76, 32, 104, 0.25)",
-              "&:hover": {
-                backgroundColor: "#3B1553",
-                boxShadow: "0 6px 18px rgba(76, 32, 104, 0.35)",
-              },
             }}
           >
             CONFIRM CUSTOMISATION

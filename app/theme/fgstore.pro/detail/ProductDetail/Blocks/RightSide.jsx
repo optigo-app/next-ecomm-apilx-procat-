@@ -266,8 +266,8 @@ const RightSide = ({
           md: 5,
         }}
         sx={{
-          background:'#ecf3eb',
-          py:2
+          py:2 ,
+          // border:'1px solid #ddd  '
         }}
       >
         <Box
